@@ -1,0 +1,29 @@
+name: Check Version Bump
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check version bump in pubspec.yaml
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          BASE_VERSION=$(git show origin/${{ github.base_ref }}:pubspec.yaml | grep "^version:" | awk '{print $2}')
+          PR_VERSION=$(grep "^version:" pubspec.yaml | awk '{print $2}')
+          
+          echo "Base Branch Version: $BASE_VERSION"
+          echo "PR Version: $PR_VERSION"
+          
+          if [ "$BASE_VERSION" = "$PR_VERSION" ]; then
+            echo "::error file=pubspec.yaml::Error: version in pubspec.yaml ($PR_VERSION) must be upgraded before merging to main!"
+            exit 1
+          fi
+          echo "Version upgraded successfully from $BASE_VERSION to $PR_VERSION."
