@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-/// AppTheme defines a vibrant, premium design system with modern typography (Outfit),
+/// AppTheme defines a vibrant, premium design system with modern typography,
 /// harmonious color palettes, and sleek light/dark mode styling.
+/// Typography Rule:
+/// - Space Grotesk: Big headings (Display, Headline)
+/// - DM Sans: Section headings, medium text, labels (Title, Label)
+/// - DM Mono: General/body text (Body)
 class AppTheme {
   AppTheme._();
 
@@ -33,13 +36,48 @@ class AppTheme {
   static const EdgeInsets paddingMedium = EdgeInsets.all(16.0);
   static const EdgeInsets paddingLarge = EdgeInsets.all(24.0);
 
+  static TextTheme _buildTextTheme(TextTheme base, Color color) {
+    final spaceGrotesk = base.apply(
+      fontFamily: 'SpaceGrotesk',
+      bodyColor: color,
+      displayColor: color,
+    );
+    final dmSans = base.apply(
+      fontFamily: 'DMSans',
+      bodyColor: color,
+      displayColor: color,
+    );
+    final dmMono = base.apply(
+      fontFamily: 'DMMono',
+      bodyColor: color,
+      displayColor: color,
+    );
+
+    return TextTheme(
+      displayLarge: spaceGrotesk.displayLarge,
+      displayMedium: spaceGrotesk.displayMedium,
+      displaySmall: spaceGrotesk.displaySmall,
+      headlineLarge: spaceGrotesk.headlineLarge,
+      headlineMedium: spaceGrotesk.headlineMedium,
+      headlineSmall: spaceGrotesk.headlineSmall,
+      
+      titleLarge: dmSans.titleLarge,
+      titleMedium: dmSans.titleMedium,
+      titleSmall: dmSans.titleSmall,
+      labelLarge: dmSans.labelLarge,
+      labelMedium: dmSans.labelMedium,
+      labelSmall: dmSans.labelSmall,
+
+      bodyLarge: dmMono.bodyLarge,
+      bodyMedium: dmMono.bodyMedium,
+      bodySmall: dmMono.bodySmall,
+    );
+  }
+
   // Light Theme
   static ThemeData get lightTheme {
     final base = ThemeData.light(useMaterial3: true);
-    final textTheme = GoogleFonts.outfitTextTheme(base.textTheme).apply(
-      bodyColor: textLight,
-      displayColor: textLight,
-    );
+    final textTheme = _buildTextTheme(base.textTheme, textLight);
 
     return base.copyWith(
       scaffoldBackgroundColor: bgLight,
@@ -119,10 +157,7 @@ class AppTheme {
   // Dark Theme
   static ThemeData get darkTheme {
     final base = ThemeData.dark(useMaterial3: true);
-    final textTheme = GoogleFonts.outfitTextTheme(base.textTheme).apply(
-      bodyColor: textDark,
-      displayColor: textDark,
-    );
+    final textTheme = _buildTextTheme(base.textTheme, textDark);
 
     return base.copyWith(
       scaffoldBackgroundColor: bgDark,

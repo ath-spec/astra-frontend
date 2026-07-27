@@ -1,5 +1,11 @@
 # Project-Scoped Rules & Behavioral Constraints
 
-## Version Upgrade Enforcement for Main Branch Merges
-- **RULE**: Any pull request or merge into the `main` (or `master`) branch MUST include a version upgrade in `pubspec.yaml` (e.g., bumping `version: 1.0.0+1` to `1.0.1+2` or higher).
-- **ENFORCEMENT**: Before creating a commit or merging to main, verify that the `version` field in `pubspec.yaml` has been incremented compared to the target branch. Never merge without bumping the app version.
+## Compulsory Systematic Debugging
+- **RULE**: For any error or crash that is not a trivial syntax error, it is compulsory to use the Systematic Bugfix Skill (`.agents/skills/systematic_bugfixes/SKILL.md`) before attempting a fix. You must map out the component flow, identify precisely where the state breaks, and formulate a root-cause hypothesis instead of blindly guessing or immediately generating code.
+
+## Typography Rule
+- **RULE**: The app strictly uses a 3-font system via local `.ttf` files:
+  - **Space Grotesk**: Used for big headings (e.g., Display, Headline).
+  - **DM Sans**: Used for section headings, medium text, and buttons (e.g., Title, Label).
+  - **DM Mono**: Used for general/body text (e.g., Body, small prints).
+- **ENFORCEMENT**: When generating UI code or updating themes, always apply these fonts according to their respective textual hierarchy.

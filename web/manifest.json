@@ -1,6 +1,6 @@
 {
-    "name": "astra_frontend",
-    "short_name": "astra_frontend",
+    "name": "Astra",
+    "short_name": "Astra",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

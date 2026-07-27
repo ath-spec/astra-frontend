@@ -17,7 +17,11 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_screen.dart';
 import '../../features/auth/screens/pan_screen.dart';
+import '../../features/auth/screens/pan_otp_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
+import '../../features/auth/screens/notification_permission_screen.dart';
+import '../../features/auth/screens/dob_screen.dart';
+import '../../features/auth/screens/name_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 
 /// GoRouter configuration with auth state redirection.
@@ -33,7 +37,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isOnboardingRoute = loc == '/login' ||
           loc == '/splash' ||
           loc == '/pan' ||
+          loc == '/pan-otp' ||
           loc == '/otp' ||
+          loc == '/notification-permission' ||
+          loc == '/dob' ||
+          loc == '/name' ||
           loc == '/connect-assets' ||
           loc == '/mf-status' ||
           loc == '/stocks-otp' ||
@@ -67,6 +75,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/pan',
         builder: (context, state) => const PanVerificationScreen(),
+      ),
+      GoRoute(
+        path: '/pan-otp',
+        builder: (context, state) => const PanOtpVerificationScreen(),
+      ),
+      GoRoute(
+        path: '/notification-permission',
+        builder: (context, state) => const NotificationPermissionScreen(),
+      ),
+      GoRoute(
+        path: '/dob',
+        builder: (context, state) => const DobScreen(),
+      ),
+      GoRoute(
+        path: '/name',
+        builder: (context, state) => const NameScreen(),
       ),
       GoRoute(
         path: '/connect-assets',

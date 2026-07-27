@@ -76,7 +76,7 @@ class BanksLinkingScreen extends ConsumerWidget {
                       TextButton(
                         onPressed: () {
                           notifier.skipBanks();
-                          context.go('/profiling-intro');
+                          context.go('/');
                         },
                         child: const Text(
                           'Skip',
@@ -331,7 +331,7 @@ class BanksLinkingScreen extends ConsumerWidget {
                       : () {
                           if (isProceeding) {
                             notifier.finishAssetConnection();
-                            context.go('/profiling-intro');
+                            context.go('/');
                           } else {
                             _showConsentBottomSheet(context, ref);
                           }
@@ -364,7 +364,7 @@ class BanksLinkingScreen extends ConsumerWidget {
                 child: TextButton(
                   onPressed: () {
                     notifier.skipBanks();
-                    context.go('/profiling-intro');
+                    context.go('/');
                   },
                   child: const Text(
                     'Skip linking banks',

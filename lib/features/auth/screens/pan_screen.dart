@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,36 +7,173 @@ import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/why_pan_overlay.dart';
 
+class _PanInputFormatter extends TextInputFormatter {
+  final void Function(int index, bool wasNumber) onInvalidInput;
+  final VoidCallback onValidInput;
+
+  _PanInputFormatter({
+    required this.onInvalidInput,
+    required this.onValidInput,
+  });
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text.toUpperCase();
+    final buffer = StringBuffer();
+    bool hadInvalid = false;
+
+    for (int i = 0; i < text.length && i < 10; i++) {
+      final char = text[i];
+      if (i < 5) {
+        if (RegExp(r'[A-Z]').hasMatch(char)) {
+          buffer.write(char);
+        } else if (RegExp(r'[0-9]').hasMatch(char)) {
+          hadInvalid = true;
+          onInvalidInput(i, true);
+        } else {
+          hadInvalid = true;
+          onInvalidInput(i, false);
+        }
+      } else if (i < 9) {
+        if (RegExp(r'[0-9]').hasMatch(char)) {
+          buffer.write(char);
+        } else if (RegExp(r'[A-Z]').hasMatch(char)) {
+          hadInvalid = true;
+          onInvalidInput(i, false);
+        } else {
+          hadInvalid = true;
+          onInvalidInput(i, false);
+        }
+      } else if (i == 9) {
+        if (RegExp(r'[A-Z]').hasMatch(char)) {
+          buffer.write(char);
+        } else if (RegExp(r'[0-9]').hasMatch(char)) {
+          hadInvalid = true;
+          onInvalidInput(i, true);
+        } else {
+          hadInvalid = true;
+          onInvalidInput(i, false);
+        }
+      }
+    }
+
+    if (!hadInvalid && oldValue.text != newValue.text) {
+      onValidInput();
+    }
+
+    final newString = buffer.toString();
+    return TextEditingValue(
+      text: newString,
+      selection: TextSelection.collapsed(offset: newString.length),
+    );
+  }
+}
+
 /// PAN verification screen representing the secondary onboarding step.
-/// Validates 10 alphanumeric uppercase characters and collects Account Aggregator consent.
+/// Validates 10 alphanumeric uppercase characters (5 letters, 4 digits, 1 letter)
+/// and collects Account Aggregator / MF Central consent.
 class PanVerificationScreen extends ConsumerStatefulWidget {
   const PanVerificationScreen({super.key});
 
   @override
-  ConsumerState<PanVerificationScreen> createState() => _PanVerificationScreenState();
+  ConsumerState<PanVerificationScreen> createState() =>
+      _PanVerificationScreenState();
 }
 
-class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen> {
+class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
+    with SingleTickerProviderStateMixin {
   final _panController = TextEditingController();
   final _focusNode = FocusNode();
   bool _isConsented = false;
-  bool _isHoveredButton = false;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  String? _group1Error;
+  String? _group2Error;
+  String? _group3Error;
+  Timer? _errorTimer;
 
   @override
   void initState() {
     super.initState();
     _panController.addListener(_onPanChanged);
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        final text = _panController.text;
+        if (_panController.selection.baseOffset != text.length ||
+            _panController.selection.extentOffset != text.length) {
+          _panController.selection = TextSelection.collapsed(offset: text.length);
+        }
+      }
+      setState(() {});
+    });
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
   }
 
   void _onPanChanged() {
+    final text = _panController.text;
+    if (_panController.selection.baseOffset != text.length ||
+        _panController.selection.extentOffset != text.length) {
+      _panController.selection = TextSelection.collapsed(offset: text.length);
+    }
     setState(() {});
+  }
+
+  void _onInvalidPanInput(int index, bool wasNumber) {
+    _errorTimer?.cancel();
+    setState(() {
+      if (index < 5) {
+        _group1Error = 'Letters only';
+        _group2Error = null;
+        _group3Error = null;
+      } else if (index < 9) {
+        _group1Error = null;
+        _group2Error = 'Numbers only';
+        _group3Error = null;
+      } else {
+        _group1Error = null;
+        _group2Error = null;
+        _group3Error = 'Letters only';
+      }
+    });
+    _errorTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          _group1Error = null;
+          _group2Error = null;
+          _group3Error = null;
+        });
+      }
+    });
+  }
+
+  void _onValidPanInput() {
+    if (_group1Error != null || _group2Error != null || _group3Error != null) {
+      _errorTimer?.cancel();
+      setState(() {
+        _group1Error = null;
+        _group2Error = null;
+        _group3Error = null;
+      });
+    }
   }
 
   @override
   void dispose() {
+    _errorTimer?.cancel();
     _panController.removeListener(_onPanChanged);
     _panController.dispose();
     _focusNode.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -54,253 +192,519 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen> {
     if (pan.length == 10 && _isConsented) {
       final authNotifier = ref.read(authProvider.notifier);
       authNotifier.verifyPan(pan, phone: authNotifier.pendingPhone);
-      context.go('/connect-assets');
+      context.push('/pan-otp');
     }
+  }
+
+  Widget _buildPanSlot(int index, String char, bool isActive, {bool isError = false}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          height: 42,
+          child: Center(
+            child: Text(
+              char,
+              style: const TextStyle(
+                fontFamily: 'SpaceGrotesk',
+                fontSize: 36,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF111827),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: 22,
+          height: isActive || isError ? 2.5 : 2.0,
+          decoration: BoxDecoration(
+            color: isError
+                ? const Color(0xFFDC2626)
+                : isActive
+                    ? const Color(0xFF8634DE)
+                    : const Color(0xFF9CA3AF),
+            borderRadius: BorderRadius.circular(1),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGroup({
+    required List<Widget> slots,
+    required String label,
+    String? errorText,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(mainAxisSize: MainAxisSize.min, children: slots),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 9,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+            color: Color(0xFF9CA3AF),
+          ),
+        ),
+        if (errorText != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            errorText,
+            style: const TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 9,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFFDC2626),
+            ),
+          ),
+        ],
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final isLoading = authState is AuthLoading;
-    final isEnabled = _panController.text.trim().length == 10 && _isConsented && !isLoading;
+    final text = _panController.text.trim();
+    final isEnabled = text.length == 10 && _isConsented && !isLoading;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       behavior: HitTestBehavior.opaque,
       child: Scaffold(
-        backgroundColor: const Color(0xFF0B0F19),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
-            onPressed: () {
-              FocusScope.of(context).unfocus();
-              if (context.canPop()) {
-                context.pop();
-              }
-            },
-          ),
-        ),
+        backgroundColor: Colors.white,
         body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: const EdgeInsets.all(24.0),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 420),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text(
-                      'Enter your PAN',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
-                      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Back Button
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Color(0xFF111827),
+                      size: 20,
                     ),
-                    const SizedBox(height: 8),
-                    // Subtitle with clickable Why PAN?
-                    RichText(
-                      text: TextSpan(
-                        style: const TextStyle(fontSize: 14, color: Color(0xFF9CA3AF), height: 1.4),
-                        children: [
-                          const TextSpan(text: 'All investments linked to your PAN & mobile\nwill be fetched '),
-                          TextSpan(
-                            text: 'Why PAN?',
-                            style: const TextStyle(
-                              color: Color(0xFFF59E0B),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            recognizer: TapGestureRecognizer()..onTap = _showWhyPanOverlay,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-                    // PAN Number Input Box
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF13161F),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: _focusNode.hasFocus
-                              ? const Color(0xFF6366F1)
-                              : Colors.white.withValues(alpha: 0.12),
-                          width: _focusNode.hasFocus ? 1.5 : 1.0,
-                        ),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      if (context.canPop()) {
+                        context.pop();
+                      }
+                    },
+                  ),
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const SizedBox(height: 12),
                           const Text(
-                            'Enter your PAN Number',
+                            'PAN VERIFICATION',
                             style: TextStyle(
-                              color: Colors.white54,
-                              fontSize: 12,
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.8,
+                              color: Color(0xFF9CA3AF),
                             ),
                           ),
-                          TextField(
-                            controller: _panController,
-                            focusNode: _focusNode,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.5,
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Enter your PAN',
+                            style: TextStyle(
+                              fontFamily: 'SpaceGrotesk',
+                              fontSize: 32,
+                              fontWeight: FontWeight.w700,
+                              height: 1.15,
+                              letterSpacing: -1.0,
+                              color: Color(0xFF111827),
                             ),
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'ABCDE1234F',
-                              hintStyle: TextStyle(
-                                color: Colors.white24,
-                                letterSpacing: 1.5,
+                          ),
+                          const SizedBox(height: 12),
+                          RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                height: 1.4,
+                                letterSpacing: 0.8,
+                                color: Color(0xFF9CA3AF),
                               ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.only(top: 4),
-                            ),
-                            textCapitalization: TextCapitalization.characters,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
-                              LengthLimitingTextInputFormatter(10),
-                              TextInputFormatter.withFunction(
-                                (oldValue, newValue) => newValue.copyWith(
-                                  text: newValue.text.toUpperCase(),
+                              children: [
+                                const TextSpan(
+                                  text:
+                                      "ALL INVESTMENTS LINKED TO YOUR PAN & MOBILE WILL BE FETCHED. ",
                                 ),
-                              ),
-                            ],
-                            onChanged: (val) => setState(() {}),
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: GestureDetector(
+                                    onTap: _showWhyPanOverlay,
+                                    behavior: HitTestBehavior.opaque,
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 8.0,
+                                        horizontal: 2.0,
+                                      ),
+                                      child: Text(
+                                        "WHY PAN?",
+                                        style: TextStyle(
+                                          fontFamily: 'DMSans',
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.4,
+                                          letterSpacing: 0.8,
+                                          color: Color(0xFF111827),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                          // Interactive 3-group PAN character input
+                          GestureDetector(
+                            onTap: () {
+                              FocusScope.of(context).requestFocus(_focusNode);
+                              final text = _panController.text;
+                              if (_panController.selection.baseOffset != text.length ||
+                                  _panController.selection.extentOffset != text.length) {
+                                _panController.selection = TextSelection.collapsed(offset: text.length);
+                              }
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                LayoutBuilder(
+                                  builder: (context, constraints) => FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: SizedBox(
+                                      width: constraints.maxWidth,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Group 1: 5 letters
+                                          _buildGroup(
+                                            label: 'LETTERS',
+                                            errorText: _group1Error,
+                                            slots: List.generate(5, (index) {
+                                              final char = text.length > index
+                                                  ? text[index]
+                                                  : '';
+                                              final isActive =
+                                                  _focusNode.hasFocus &&
+                                                  text.length == index;
+                                              return Padding(
+                                                padding: EdgeInsets.only(
+                                                  right: index < 4 ? 4.0 : 0,
+                                                ),
+                                                child: _buildPanSlot(
+                                                  index,
+                                                  char,
+                                                  isActive,
+                                                  isError: _group1Error != null,
+                                                ),
+                                              );
+                                            }),
+                                          ),
+                                          // Group 2: 4 numbers
+                                          _buildGroup(
+                                            label: 'NUMBERS',
+                                            errorText: _group2Error,
+                                            slots: List.generate(4, (i) {
+                                              final index = i + 5;
+                                              final char = text.length > index
+                                                  ? text[index]
+                                                  : '';
+                                              final isActive =
+                                                  _focusNode.hasFocus &&
+                                                  text.length == index;
+                                              return Padding(
+                                                padding: EdgeInsets.only(
+                                                  right: i < 3 ? 4.0 : 0,
+                                                ),
+                                                child: _buildPanSlot(
+                                                  index,
+                                                  char,
+                                                  isActive,
+                                                  isError: _group2Error != null,
+                                                ),
+                                              );
+                                            }),
+                                          ),
+                                          // Group 3: 1 letter
+                                          _buildGroup(
+                                            label: 'LETTER',
+                                            errorText: _group3Error,
+                                            slots: [
+                                              _buildPanSlot(
+                                                9,
+                                                text.length > 9 ? text[9] : '',
+                                                _focusNode.hasFocus &&
+                                                    text.length == 9,
+                                                isError: _group3Error != null,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Hidden TextField capturing keyboard input over the visual slots
+                                Positioned.fill(
+                                  child: TextField(
+                                    controller: _panController,
+                                    focusNode: _focusNode,
+                                    enabled: !isLoading,
+                                    onTap: () {
+                                      final text = _panController.text;
+                                      if (_panController.selection.baseOffset != text.length ||
+                                          _panController.selection.extentOffset != text.length) {
+                                        _panController.selection = TextSelection.collapsed(offset: text.length);
+                                      }
+                                    },
+                                    keyboardType: TextInputType.text,
+                                    textCapitalization:
+                                        TextCapitalization.characters,
+                                    autocorrect: false,
+                                    enableSuggestions: false,
+                                    inputFormatters: [
+                                      _PanInputFormatter(
+                                        onInvalidInput: _onInvalidPanInput,
+                                        onValidInput: _onValidPanInput,
+                                      ),
+                                    ],
+                                    style: const TextStyle(
+                                      color: Colors.transparent,
+                                      fontSize: 1,
+                                    ),
+                                    cursorColor: Colors.transparent,
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      fillColor: Colors.transparent,
+                                      filled: true,
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    // Helper Text / Info
-                    Row(
+                  ),
+                ),
+              ),
+              // Bottom Section: Consent Checkbox & Continue Button
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 420),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.lock_outline_rounded, size: 14, color: Colors.white.withValues(alpha: 0.4)),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            'Your PAN is encrypted and securely stored',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
-                              fontSize: 12,
+                        // Consent Checkbox & Text from Image 1
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: isLoading
+                                  ? null
+                                  : () => setState(
+                                      () => _isConsented = !_isConsented,
+                                    ),
+                              behavior: HitTestBehavior.opaque,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 12,
+                                  bottom: 12,
+                                  top: 2,
+                                  left: 4,
+                                ),
+                                child: SizedBox(
+                                  width: 15,
+                                  height: 15,
+                                  child: Transform.scale(
+                                    scale: 0.75,
+                                    child: Checkbox(
+                                      value: _isConsented,
+                                      onChanged: isLoading
+                                          ? null
+                                          : (val) => setState(
+                                              () => _isConsented = val ?? false,
+                                            ),
+                                      activeColor: const Color(0xFF111827),
+                                      checkColor: Colors.white,
+                                      side: const BorderSide(
+                                        color: Color(0xFF9CA3AF),
+                                        width: 1.5,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                            overflow: TextOverflow.ellipsis,
+                            const SizedBox(width: 2),
+                            Expanded(
+                              child: RichText(
+                                text: TextSpan(
+                                  style: const TextStyle(
+                                    fontFamily: 'DMMono',
+                                    color: Color(0xFF6B7280),
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.6,
+                                    letterSpacing: 0.5,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: 'I authorise '.toUpperCase(),
+                                    ),
+                                    TextSpan(
+                                      text: 'Astra Investments (AIPL)'
+                                          .toUpperCase(),
+                                      style: const TextStyle(
+                                        color: Color(0xFF111827),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          ' to fetch my data via Account Aggregator & '
+                                              .toUpperCase(),
+                                    ),
+                                    TextSpan(
+                                      text: 'Astra Distribution (ADSPL)'
+                                          .toUpperCase(),
+                                      style: const TextStyle(
+                                        color: Color(0xFF111827),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          ' to fetch via MF Central. We will securely fetch your data from aggregators you have already consented to, helping us complete this faster.'
+                                              .toUpperCase(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        // Continue Button
+                        GestureDetector(
+                          onTapDown: isEnabled
+                              ? (_) => _animationController.forward()
+                              : null,
+                          onTapUp: isEnabled
+                              ? (_) => _animationController.reverse()
+                              : null,
+                          onTapCancel: isEnabled
+                              ? () => _animationController.reverse()
+                              : null,
+                          onTap: isEnabled ? _submit : null,
+                          child: AnimatedBuilder(
+                            animation: _scaleAnimation,
+                            builder: (context, child) => Transform.scale(
+                              scale: _scaleAnimation.value,
+                              child: child,
+                            ),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: isEnabled
+                                      ? [
+                                          const Color(0xFFE6E6FA),
+                                          const Color(0xFF8634DE),
+                                        ]
+                                      : [
+                                          const Color(0xFF9CA3AF),
+                                          const Color(0xFF6B7280),
+                                        ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  if (isLoading)
+                                    const SizedBox(
+                                      height: 18,
+                                      width: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.0,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  else
+                                    const Text(
+                                      'CONTINUE',
+                                      style: TextStyle(
+                                        fontFamily: 'DMSans',
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 1,
+                                      ),
+                                    ),
+                                  if (!isLoading)
+                                    const Positioned(
+                                      right: 20,
+                                      child: Icon(
+                                        Icons.arrow_forward_rounded,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    // Authorization Checkbox & Consent Text
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Checkbox(
-                          value: _isConsented,
-                          onChanged: isLoading
-                              ? null
-                              : (val) => setState(() => _isConsented = val ?? false),
-                          activeColor: Colors.white,
-                          checkColor: Colors.black,
-                          side: BorderSide(color: Colors.white.withValues(alpha: 0.4), width: 1.5),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                              color: Color(0xFF9CA3AF),
-                              fontSize: 13,
-                              height: 1.45,
-                            ),
-                            children: [
-                              const TextSpan(text: 'I authorise '),
-                              const TextSpan(
-                                text: 'Astra Investments (AIPL)',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                              ),
-                              const TextSpan(text: ' to fetch my data via Account Aggregator & '),
-                              const TextSpan(
-                                text: 'Astra Distribution (ADSPL)',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                              ),
-                              const TextSpan(
-                                text:
-                                    ' to fetch via MF Central. We will securely fetch your data from aggregators you have already consented to, helping us complete this faster. ',
-                              ),
-                              TextSpan(
-                                text: 'Know more',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  decoration: TextDecoration.underline,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                recognizer: TapGestureRecognizer()..onTap = _showWhyPanOverlay,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
-                  const SizedBox(height: 32),
-                  // Continue Button
-                  MouseRegion(
-                    onEnter: (_) => setState(() => _isHoveredButton = true),
-                    onExit: (_) => setState(() => _isHoveredButton = false),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 160),
-                      curve: Curves.easeOut,
-                      transform: Matrix4.translationValues(
-                          0.0, _isHoveredButton && isEnabled ? -2.0 : 0.0, 0.0),
-                      child: ElevatedButton(
-                        onPressed: isEnabled ? _submit : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isEnabled ? Colors.white : const Color(0xFF20232C),
-                          disabledBackgroundColor: const Color(0xFF20232C),
-                          foregroundColor: isEnabled ? Colors.black : Colors.white24,
-                          disabledForegroundColor: Colors.white24,
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: isEnabled && _isHoveredButton ? 8 : 0,
-                        ),
-                        child: isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  color: Colors.black,
-                                ),
-                              )
-                            : const Text(
-                                'Continue',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
-    ));
+    );
   }
 }

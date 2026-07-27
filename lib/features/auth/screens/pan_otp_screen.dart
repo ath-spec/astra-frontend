@@ -5,14 +5,14 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 import '../providers/auth_provider.dart';
 
-class OtpVerificationScreen extends ConsumerStatefulWidget {
-  const OtpVerificationScreen({super.key});
+class PanOtpVerificationScreen extends ConsumerStatefulWidget {
+  const PanOtpVerificationScreen({super.key});
 
   @override
-  ConsumerState<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
+  ConsumerState<PanOtpVerificationScreen> createState() => _PanOtpVerificationScreenState();
 }
 
-class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> with SingleTickerProviderStateMixin {
+class _PanOtpVerificationScreenState extends ConsumerState<PanOtpVerificationScreen> with SingleTickerProviderStateMixin {
   final _otpController = TextEditingController();
   final _focusNode = FocusNode();
   int _timerSeconds = 45;
@@ -57,7 +57,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> w
 
   void _submit() {
     if (_otpController.text.length == 6) {
-      context.push('/notification-permission');
+      context.go('/connect-assets');
     }
   }
 
@@ -185,7 +185,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> w
                                     ),
                                     TextSpan(
                                       text: _timerSeconds > 0 ? 'RESEND IN ${_timerSeconds}S' : 'RESEND NOW',
-                                      style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0))
+                                      style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                                     ),
                                   ],
                                 ),

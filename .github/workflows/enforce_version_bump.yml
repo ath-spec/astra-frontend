@@ -1,0 +1,29 @@
+name: Enforce Version Bump
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Needed to compare against the base branch
+
+      - name: Check if version changed in pubspec.yaml
+        run: |
+          echo "Checking if version was manually bumped in pubspec.yaml..."
+          
+          # Check if there is any addition (+) to the version line in pubspec.yaml
+          if git diff origin/${{ github.base_ref }} HEAD -- pubspec.yaml | grep -q '^+version:'; then
+            echo "✅ Version bump detected!"
+            exit 0
+          else
+            echo "❌ Error: No version bump detected in pubspec.yaml."
+            echo "You must manually increment the version in pubspec.yaml before merging this PR into main."
+            exit 1
+          fi

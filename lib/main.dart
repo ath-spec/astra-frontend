@@ -48,12 +48,28 @@ class AstraApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Astra Frontend',
+      title: 'Astra',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
       routerConfig: router,
+      builder: (context, child) {
+        // Calculate a responsive scale factor based on screen width
+        final width = MediaQuery.sizeOf(context).width;
+        // Cap the width at 420 since the UI has a ConstrainedBox
+        final effectiveWidth = width > 420 ? 420.0 : width;
+        // Base width is 390 (standard iPhone). Allow scaling down to 80% and up to 110%.
+        final scale = (effectiveWidth / 390.0).clamp(0.8, 1.1);
+
+        // Apply this scale factor globally to all text in the app
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(scale),
+          ),
+          child: child!,
+        );
+      },
     );
   }
 }

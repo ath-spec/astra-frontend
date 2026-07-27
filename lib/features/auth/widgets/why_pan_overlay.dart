@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Modal bottom sheet overlay shown when tapping "Why PAN?" or "Know more".
-/// Explains why PAN is needed and highlights data security and ease of use.
+/// Modal bottom sheet overlay shown when tapping "WHY PAN?".
+/// Uses the app's exact 3-font typography system, colors, and CTA styling.
 class WhyPanOverlay extends StatelessWidget {
   const WhyPanOverlay({super.key});
 
@@ -9,115 +9,119 @@ class WhyPanOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xFF0D1017),
+        color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 20,
-        bottom: MediaQuery.of(context).padding.bottom + 16,
+        top: 12,
+        bottom: MediaQuery.of(context).padding.bottom,
       ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Top drag handle
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE5E7EB),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             // Title and Close Button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Why PAN Number?',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Why PAN?',
+                    style: TextStyle(
+                      fontFamily: 'SpaceGrotesk',
+                      color: Color(0xFF111827),
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -1.0,
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close_rounded, color: Colors.white70, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: const Color(0xFF1B1E28),
-                    minimumSize: const Size(36, 36),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 24),
-            // Item 1: Fetch your data in just few clicks
-            _buildReasonItem(
-              icon: Icons.description_rounded,
-              iconColor: const Color(0xFFF59E0B), // Amber
-              title: 'Fetch your data in just few clicks',
-              subtitle: 'No hassle of forwarding email reports',
-            ),
-            const SizedBox(height: 20),
-            // Item 2: All investments linked to PAN & mobile
-            _buildReasonItem(
-              icon: Icons.mark_email_read_rounded,
-              iconColor: const Color(0xFF0D9488), // Teal
-              title: 'All investments linked to PAN & mobile',
-              subtitle: 'Including all your past holdings',
-            ),
-            const SizedBox(height: 20),
-            // Item 3: Your data is kept secure
-            _buildReasonItem(
-              icon: Icons.lock_rounded,
-              iconColor: const Color(0xFF10B981), // Green
-              title: 'Your data is kept secure',
-              subtitle: 'You can delete your data anytime',
+            // Reason Items with consistent horizontal padding
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                children: [
+                  _buildReasonItem(
+                    icon: Icons.auto_awesome_rounded,
+                    iconColor: const Color(0xFF8634DE), // Brand Purple
+                    bgColor: const Color(0xFFF3E8FF),
+                    title: 'Fetch your data in just a few clicks',
+                    subtitle:
+                        'NO HASSLE OF FORWARDING EMAIL REPORTS.',
+                  ),
+                  const SizedBox(height: 20),
+                  _buildReasonItem(
+                    icon: Icons.pie_chart_rounded,
+                    iconColor: const Color(0xFF0284C7), // Sky Blue
+                    bgColor: const Color(0xFFE0F2FE),
+                    title: 'All investments linked to PAN & mobile',
+                    subtitle:
+                        'INCLUDING ALL YOUR PAST HOLDINGS.',
+                  ),
+                  const SizedBox(height: 20),
+                  _buildReasonItem(
+                    icon: Icons.verified_user_rounded,
+                    iconColor: const Color(0xFF059669), // Emerald Green
+                    bgColor: const Color(0xFFD1FAE5),
+                    title: 'Your data is kept secure',
+                    subtitle:
+                        'YOU CAN DELETE YOUR DATA ANYTIME',
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 32),
-            // I understand Button
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'I understand',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+            // CTA Button matching exact app CONTINUE button style
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFE6E6FA), Color(0xFF8634DE)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Text(
+                        'I UNDERSTAND',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            // Footer: Powered by Pirimid Fintech
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Powered by ',
-                  style: TextStyle(
-                    color: Colors.white54,
-                    fontSize: 12,
-                  ),
-                ),
-                Icon(
-                  Icons.change_history_rounded,
-                  color: const Color(0xFF38BDF8), // Blue pyramid icon
-                  size: 14,
-                ),
-                const Text(
-                  ' Pirimid Fintech',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -127,6 +131,7 @@ class WhyPanOverlay extends StatelessWidget {
   Widget _buildReasonItem({
     required IconData icon,
     required Color iconColor,
+    required Color bgColor,
     required String title,
     required String subtitle,
   }) {
@@ -134,11 +139,7 @@ class WhyPanOverlay extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: iconColor.withValues(alpha: 0.15),
-            shape: BoxShape.circle,
-          ),
+          padding: const EdgeInsets.all(12),
           child: Icon(icon, color: iconColor, size: 22),
         ),
         const SizedBox(width: 16),
@@ -149,18 +150,22 @@ class WhyPanOverlay extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
+                  fontFamily: 'DMSans',
+                  color: Color(0xFF111827),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 subtitle,
                 style: const TextStyle(
-                  color: Colors.white54,
-                  fontSize: 13,
-                  height: 1.3,
+                  fontFamily: 'DMSans',
+                  color: Color(0xFF6B7280),
+                  fontSize: 8,
+                  fontWeight: FontWeight.w600,
+                  height: 1.4,
+                  letterSpacing: 0.8
                 ),
               ),
             ],
