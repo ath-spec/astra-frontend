@@ -35,7 +35,15 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
     _timer = Timer(const Duration(milliseconds: 2600), () {
       if (mounted) {
         ref.read(assetConnectionProvider.notifier).completeBankLinking();
-        context.go('/');
+        final state = ref.read(assetConnectionProvider);
+        if (state.hasUnlinkedAccounts) {
+          // Some accounts were not selected — loop back to linking screen
+          ref.read(assetConnectionProvider.notifier).resetSelectionForUnlinked();
+          context.go('/banks-linking', extra: true); // extra=true means returnMode
+        } else {
+          // All accounts linked or none left — done
+          context.go('/');
+        }
       }
     });
   }
@@ -98,10 +106,10 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
                             color: Color(0xFF0F172A),
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
-                            height: 1.2,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -1.0,
+                            height: 1.15,
                           ),
                         ),
                         const SizedBox(height: 8),

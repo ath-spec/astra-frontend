@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/edit_number_overlay.dart';
 
 /// Screen matching Image 0 & Image 1 for Account Aggregator Stocks OTP verification.
 /// Features 6-digit OTP input with zero IME cursor positioning bugs and an SMS consent modal.
@@ -23,6 +24,7 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   bool _isModalShown = false;
+  String? _overridePhone; // Set when user changes number via edit overlay
 
   @override
   void initState() {
@@ -250,7 +252,7 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
   @override
   Widget build(BuildContext context) {
     final phone = ref.watch(authProvider.notifier).pendingPhone;
-    final displayPhone = phone.isEmpty ? '6291328703' : phone;
+    final displayPhone = _overridePhone ?? (phone.isEmpty ? '6291328703' : phone);
     final text = _otpController.text;
     final isEnabled = text.length == 6;
 
@@ -281,7 +283,7 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                       onPressed: () => context.pop(),
                     ),
                     TextButton(
-                      onPressed: () => context.push('/connect-assets'),
+                      onPressed: () => context.push('/banks-linking'),
                       style: TextButton.styleFrom(
                         foregroundColor: const Color(0xFF6B7280),
                       ),
@@ -323,10 +325,10 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                             "Next up, let's connect your stocks",
                             style: TextStyle(
                               fontFamily: 'SpaceGrotesk',
-                              fontSize: 30,
+                              fontSize: 32,
                               fontWeight: FontWeight.w700,
                               height: 1.15,
-                              letterSpacing: -0.8,
+                              letterSpacing: -1.0,
                               color: Color(0xFF111827),
                             ),
                           ),
@@ -346,17 +348,35 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                           Row(
                             children: [
                               Text(
-                                "Enter the OTP sent to +91 $displayPhone",
+                                "ENTER THE OTP SENT TO +91 $displayPhone",
                                 style: const TextStyle(
                                   fontFamily: 'DMSans',
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF111827),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.8,
+                                  color: Color(0xFF9CA3AF),
                                 ),
                               ),
                               const SizedBox(width: 8),
                               GestureDetector(
-                                onTap: () => context.pop(),
+                                onTap: () {
+                                  FocusScope.of(context).unfocus();
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (ctx) => EditNumberOverlay(
+                                      currentNumber: displayPhone,
+                                      onConfirm: (newNumber) {
+                                        setState(() {
+                                          _overridePhone = newNumber;
+                                          _otpController.clear();
+                                        });
+                                        _startTimer();
+                                      },
+                                    ),
+                                  );
+                                },
                                 child: const Icon(
                                   Icons.edit_rounded,
                                   size: 16,
@@ -402,7 +422,7 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                                         char,
                                         style: const TextStyle(
                                           fontFamily: 'SpaceGrotesk',
-                                          fontSize: 24,
+                                          fontSize: 26,
                                           fontWeight: FontWeight.w700,
                                           color: Color(0xFF111827),
                                         ),
@@ -450,12 +470,13 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                             onTap: _timerSeconds == 0 ? _startTimer : null,
                             child: Text(
                               _timerSeconds > 0
-                                  ? 'Resend OTP in ${_timerSeconds}s'
-                                  : 'Resend OTP',
+                                  ? "DIDN'T GET IT? RESEND IN ${_timerSeconds}S"
+                                  : 'RESEND NOW',
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 13,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w600,
+                                letterSpacing: 0.8,
                                 color: _timerSeconds > 0
                                     ? const Color(0xFF9CA3AF)
                                     : const Color(0xFF031E6B),

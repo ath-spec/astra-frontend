@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/asset_connection/screens/banks_searching_screen.dart';
-import '../../features/asset_connection/screens/connecting_assets_screen.dart';
-import '../../features/asset_connection/screens/mutual_funds_status_screen.dart';
 import '../../features/asset_connection/screens/banks_linking_screen.dart';
 import '../../features/profiling/screens/profiling_intro_screen.dart';
 import '../../features/profiling/screens/profiling_questions_screen.dart';
@@ -43,9 +41,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           loc == '/aa-stocks-otp' ||
           loc == '/aa-stocks-fetching' ||
           loc == '/aa-stocks-status' ||
-          loc == '/connect-assets' ||
-          loc == '/mf-status' ||
-          loc == '/stocks-otp' ||
           loc == '/banks-searching' ||
           loc == '/banks-linking' ||
           loc == '/profiling-intro' ||
@@ -100,18 +95,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/aa-stocks-status',
         builder: (context, state) => const AaStocksStatusScreen(),
-      ),
-      GoRoute(
-        path: '/connect-assets',
-        builder: (context, state) => const ConnectingAssetsScreen(),
-      ),
-      GoRoute(
-        path: '/mf-status',
-        builder: (context, state) => const MutualFundsStatusScreen(),
-      ),
-      GoRoute(
-        path: '/stocks-otp',
-        builder: (context, state) => const AaStocksOtpScreen(),
       ),
       GoRoute(
         path: '/banks-searching',

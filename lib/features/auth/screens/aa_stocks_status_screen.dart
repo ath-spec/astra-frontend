@@ -101,7 +101,7 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: TextButton(
-              onPressed: () => context.push('/connect-assets'),
+              onPressed: () => context.push('/banks-linking'),
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFF6B7280),
               ),
@@ -207,7 +207,7 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF111827),
                             height: 1.15,
-                            letterSpacing: -0.8,
+                            letterSpacing: -1.0,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -327,7 +327,7 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                           onTapDown: (_) => _animationController.forward(),
                           onTapUp: (_) => _animationController.reverse(),
                           onTapCancel: () => _animationController.reverse(),
-                          onTap: () => context.push('/connect-assets'),
+                          onTap: () => context.push('/banks-linking'),
                           child: AnimatedBuilder(
                             animation: _scaleAnimation,
                             builder: (context, child) => Transform.scale(
@@ -356,7 +356,7 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                                 alignment: Alignment.center,
                                 children: [
                                   Text(
-                                    'CONTINUE TO ASSETS',
+                                    'CONTINUE TO BANKS',
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
                                       color: Colors.white,

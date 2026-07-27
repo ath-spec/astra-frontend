@@ -1,0 +1,269 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+/// Bottom sheet shown when the user taps the edit pencil on the AA Stocks OTP
+/// screen. Allows entering/changing the mobile number used for OTP.
+class EditNumberOverlay extends StatefulWidget {
+  final String currentNumber;
+  final ValueChanged<String>? onConfirm;
+
+  const EditNumberOverlay({
+    super.key,
+    required this.currentNumber,
+    this.onConfirm,
+  });
+
+  @override
+  State<EditNumberOverlay> createState() => _EditNumberOverlayState();
+}
+
+class _EditNumberOverlayState extends State<EditNumberOverlay> {
+  late final TextEditingController _controller;
+  bool get _isValid => _controller.text.length == 10;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.currentNumber);
+    _controller.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      // Lift sheet above keyboard
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: EdgeInsets.only(
+          top: 12,
+          left: 24,
+          right: 24,
+          bottom: MediaQuery.of(context).padding.bottom + 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Drag handle
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE5E7EB),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Title row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Change number',
+                  style: TextStyle(
+                    fontFamily: 'SpaceGrotesk',
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF111827),
+                    letterSpacing: -1.0,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF3F4F6),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close_rounded,
+                      size: 18,
+                      color: Color(0xFF6B7280),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Enter the mobile number you want to use for OTP verification.',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 14,
+                color: Color(0xFF6B7280),
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Phone input field
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF9FAFB),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFE5E7EB)),
+              ),
+              child: Row(
+                children: [
+                  // Country code badge
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFFE5E7EB)),
+                    ),
+                    child: const Text(
+                      '+91',
+                      style: TextStyle(
+                        fontFamily: 'DMMono',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF111827),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      autofocus: true,
+                      keyboardType: TextInputType.number,
+                      maxLength: 10,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      style: const TextStyle(
+                        fontFamily: 'DMMono',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF111827),
+                        letterSpacing: 1.5,
+                      ),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        counterText: '',
+                        hintText: '00000 00000',
+                        hintStyle: TextStyle(
+                          fontFamily: 'DMMono',
+                          fontSize: 16,
+                          color: Color(0xFFD1D5DB),
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (_controller.text.isNotEmpty)
+                    GestureDetector(
+                      onTap: () => _controller.clear(),
+                      child: const Padding(
+                        padding: EdgeInsets.only(right: 14),
+                        child: Icon(
+                          Icons.cancel_rounded,
+                          size: 18,
+                          color: Color(0xFFD1D5DB),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            // Helper text
+            Row(
+              children: const [
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 13,
+                  color: Color(0xFF9CA3AF),
+                ),
+                SizedBox(width: 6),
+                Text(
+                  'A new OTP will be sent to this number.',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 12,
+                    color: Color(0xFF9CA3AF),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 28),
+
+            // CTA
+            GestureDetector(
+              onTap: _isValid
+                  ? () {
+                      Navigator.of(context).pop();
+                      widget.onConfirm?.call(_controller.text);
+                    }
+                  : null,
+              child: Opacity(
+                opacity: _isValid ? 1.0 : 0.4,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFFFFFFF),
+                        Color(0xFF5BA1F7),
+                        Color(0xFF031E6B),
+                        Color(0xFF241714),
+                      ],
+                      stops: [0.0, 0.25, 0.7, 1.0],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Text(
+                        'SEND OTP',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      Positioned(
+                        right: 20,
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

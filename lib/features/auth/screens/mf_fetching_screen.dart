@@ -2,16 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Screen matching Image 2 for Account Aggregator Stocks data fetching state.
-/// Displays animated loader, skeleton cards, and automatically transitions to AaStocksStatusScreen.
-class AaStocksFetchingScreen extends StatefulWidget {
-  const AaStocksFetchingScreen({super.key});
+/// Mutual Funds data fetching screen.
+/// Displays animated skeleton loader and automatically transitions
+/// to MfStatusScreen after a brief delay.
+class MfFetchingScreen extends StatefulWidget {
+  const MfFetchingScreen({super.key});
 
   @override
-  State<AaStocksFetchingScreen> createState() => _AaStocksFetchingScreenState();
+  State<MfFetchingScreen> createState() => _MfFetchingScreenState();
 }
 
-class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
+class _MfFetchingScreenState extends State<MfFetchingScreen>
     with SingleTickerProviderStateMixin {
   Timer? _timer;
   late AnimationController _pulseController;
@@ -30,7 +31,7 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
 
     _timer = Timer(const Duration(milliseconds: 2500), () {
       if (mounted) {
-        context.pushReplacement('/aa-stocks-status');
+        context.pushReplacement('/mf-status');
       }
     });
   }
@@ -117,7 +118,7 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                   TextButton(
                     onPressed: () {
                       _timer?.cancel();
-                      context.pushReplacement('/aa-stocks-status');
+                      context.pushReplacement('/mf-status');
                     },
                     style: TextButton.styleFrom(
                       foregroundColor: const Color(0xFF6B7280),
@@ -183,7 +184,7 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                         ),
                         const SizedBox(height: 24),
                         const Text(
-                          'Securely fetching your stocks and ETFs',
+                          'Securely fetching your mutual funds',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
@@ -207,10 +208,10 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                             children: [
                               TextSpan(
                                 text:
-                                    "Hang tight. We're securely pulling your accounts, this should only take a moment. ",
+                                    "Hang tight. We're securely pulling your mutual fund folios, this should only take a moment. ",
                               ),
                               TextSpan(
-                                text: 'Account Aggregator',
+                                text: 'MF Central',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
                                   color: Color(0xFF111827),
@@ -241,7 +242,7 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                             const SizedBox(width: 8),
                             const Flexible(
                               child: Text(
-                                'Securely fetching all your accounts. This may take a few seconds.',
+                                'Securely fetching all your folios. This may take a few seconds.',
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
                                   fontSize: 12,
@@ -260,7 +261,7 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
-                                  'powered by RBI-regulated account aggregator ',
+                                  'powered by SEBI-regulated ',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
                                     fontSize: 11,
@@ -270,13 +271,13 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                                 Row(
                                   children: [
                                     Icon(
-                                      Icons.change_history_rounded,
+                                      Icons.auto_graph_rounded,
                                       color: const Color(0xFF1E3A8A),
                                       size: 14,
                                     ),
                                     const SizedBox(width: 2),
                                     const Text(
-                                      'FINVU',
+                                      'MF CENTRAL',
                                       style: TextStyle(
                                         fontFamily: 'DMSans',
                                         fontSize: 11,
@@ -300,7 +301,7 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                                 ),
                                 const SizedBox(width: 4),
                                 const Text(
-                                  'trusted by 3 crore citizens',
+                                  'trusted by 3 crore investors',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
                                     fontSize: 11,

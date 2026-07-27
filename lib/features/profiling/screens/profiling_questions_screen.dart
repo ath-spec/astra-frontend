@@ -127,19 +127,21 @@ class ProfilingQuestionsScreen extends ConsumerWidget {
                           Text(
                             question.title,
                             style: const TextStyle(
+                              fontFamily: 'SpaceGrotesk',
                               color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              height: 1.25,
-                              letterSpacing: -0.5,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w700,
+                              height: 1.15,
+                              letterSpacing: -1.0,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             question.subtitle,
                             style: const TextStyle(
+                              fontFamily: 'DMSans',
                               color: Color(0xFF94A3B8),
-                              fontSize: 15,
+                              fontSize: 14,
                               height: 1.4,
                             ),
                           ),
@@ -171,8 +173,9 @@ class ProfilingQuestionsScreen extends ConsumerWidget {
                                       child: Text(
                                         optionText,
                                         style: TextStyle(
+                                          fontFamily: 'DMSans',
                                           color: isSelected ? Colors.white : const Color(0xFFE2E8F0),
-                                          fontSize: 16,
+                                          fontSize: 15,
                                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                                         ),
                                       ),

@@ -77,6 +77,10 @@ class AssetConnectionState {
     return count;
   }
 
+  bool get hasUnlinkedAccounts => bankAccounts.any((b) => !b.isLinked);
+
+  bool get allAccountsLinked => bankAccounts.isNotEmpty && bankAccounts.every((b) => b.isLinked);
+
   AssetConnectionState copyWith({
     AssetConnectionStep? step,
     bool? mfConnected,
@@ -289,17 +293,29 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     _timer?.cancel();
     final updated = state.bankAccounts.map((b) {
       if (b.isSelected) {
-        return b.copyWith(isLinked: true);
+        return b.copyWith(isLinked: true, isSelected: false);
       }
       return b;
     }).toList();
     final hasAnyLinked = updated.any((b) => b.isLinked);
     state = state.copyWith(
-      step: AssetConnectionStep.completed,
+      step: AssetConnectionStep.banksLinking,
       bankAccounts: updated,
       banksConnected: hasAnyLinked,
       banksStatusMessage: hasAnyLinked ? 'Successfully Linked' : 'Accounts found',
     );
+  }
+
+  /// Called when returning to banks-linking after a partial link.
+  /// Ensures no previously-unlinked accounts are pre-selected.
+  void resetSelectionForUnlinked() {
+    final updated = state.bankAccounts.map((b) {
+      if (!b.isLinked) {
+        return b.copyWith(isSelected: false);
+      }
+      return b;
+    }).toList();
+    state = state.copyWith(bankAccounts: updated);
   }
 
   void skipBanks() {

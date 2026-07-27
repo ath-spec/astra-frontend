@@ -46,7 +46,12 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(assetConnectionProvider);
     final notifier = ref.read(assetConnectionProvider.notifier);
-    final hasSelected = state.bankAccounts.any((b) => b.isSelected);
+    // GoRouter extra: true means we returned after a partial link
+    final returnMode = GoRouterState.of(context).extra == true;
+    // In return mode: CTA active when any NEW (unlinked) account is selected
+    final hasSelected = state.bankAccounts.any((b) => b.isSelected && !b.isLinked);
+    final ctaLabel = returnMode ? 'LINK MORE ACCOUNTS' : 'APPROVE AND PROCEED';
+    final ctaActive = returnMode ? hasSelected : state.bankAccounts.any((b) => b.isSelected);
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
@@ -72,10 +77,10 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
                             color: Color(0xFF0F172A),
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
-                            height: 1.2,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -1.0,
+                            height: 1.15,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -88,7 +93,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                               style: TextStyle(
                                 fontFamily: 'DMSans',
                                 color: Color(0xFF64748B),
-                                fontSize: 13,
+                                fontSize: 14,
                                 height: 1.4,
                               ),
                             ),
@@ -99,7 +104,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
                                   color: Color(0xFF0F172A),
-                                  fontSize: 13,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   decoration: TextDecoration.underline,
                                 ),
@@ -131,7 +136,9 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                         ...state.bankAccounts.map((bank) {
                           return _buildBankCard(
                             bank: bank,
-                            onTap: () => notifier.toggleBankSelection(bank.id),
+                            onTap: bank.isLinked
+                                ? null // already linked, not interactive
+                                : () => notifier.toggleBankSelection(bank.id),
                           );
                         }),
 
@@ -171,9 +178,9 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        // CTA Button (Approve and proceed)
+                        // CTA Button
                         GestureDetector(
-                          onTap: hasSelected
+                          onTap: ctaActive
                               ? () => _showConsentBottomSheet(context, ref)
                               : null,
                           child: Container(
@@ -181,7 +188,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: hasSelected
+                                colors: ctaActive
                                     ? const [
                                         Color(0xFFFFFFFF),
                                         Color(0xFF5BA1F7),
@@ -199,12 +206,12 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                                 end: Alignment.bottomRight,
                               ),
                             ),
-                            child: const Stack(
+                            child: Stack(
                               alignment: Alignment.center,
                               children: [
                                 Text(
-                                  'APPROVE AND PROCEED',
-                                  style: TextStyle(
+                                  ctaLabel,
+                                  style: const TextStyle(
                                     fontFamily: 'DMSans',
                                     color: Colors.white,
                                     fontSize: 13,
@@ -212,7 +219,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                                     letterSpacing: 1.0,
                                   ),
                                 ),
-                                Positioned(
+                                const Positioned(
                                   right: 20,
                                   child: Icon(
                                     Icons.arrow_forward_rounded,
@@ -226,21 +233,32 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Deny Button
+                        // Secondary action
                         Center(
                           child: GestureDetector(
                             onTap: () {
-                              notifier.skipBanks();
-                              context.go('/');
+                              if (returnMode) {
+                                // User explicitly done — mark state complete and go home
+                                notifier.finishAssetConnection();
+                                context.go('/');
+                              } else {
+                                notifier.skipBanks();
+                                context.go('/');
+                              }
                             },
-                            child: const Text(
-                              'Deny',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                color: Color(0xFF64748B),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                decoration: TextDecoration.underline,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                returnMode
+                                    ? "Don't want to connect more"
+                                    : 'Deny',
+                                style: const TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: Color(0xFF64748B),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
                             ),
                           ),
@@ -291,11 +309,12 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
 
   Widget _buildBankCard({
     required BankAccountItem bank,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
     final accountLast4 = bank.accountNumber.length >= 4
         ? bank.accountNumber.substring(bank.accountNumber.length - 4)
         : bank.accountNumber;
+    final isLinked = bank.isLinked;
 
     return GestureDetector(
       onTap: onTap,
@@ -303,13 +322,17 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFFFFF),
+          color: isLinked
+              ? const Color(0xFFF0FDF4) // light green tint for linked
+              : const Color(0xFFFFFFFF),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: bank.isSelected
-                ? const Color(0xFF0F172A).withValues(alpha: 0.2)
-                : const Color(0xFFE2E8F0),
-            width: bank.isSelected ? 1.5 : 1.0,
+            color: isLinked
+                ? const Color(0xFF10B981).withValues(alpha: 0.4)
+                : bank.isSelected
+                    ? const Color(0xFF0F172A).withValues(alpha: 0.2)
+                    : const Color(0xFFE2E8F0),
+            width: (isLinked || bank.isSelected) ? 1.5 : 1.0,
           ),
           boxShadow: [
             BoxShadow(
@@ -371,51 +394,82 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
               ),
             ),
 
-            // DEPOSIT Badge
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-              ),
-              child: const Text(
-                'DEPOSIT',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  color: Color(0xFF64748B),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
+            if (isLinked) ...
+              // Linked badge
+              [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: const Text(
+                    'LINKED',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: Color(0xFF10B981),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 12),
-
-            // Checkbox
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: bank.isSelected
-                    ? const Color(0xFF0F172A)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
-                  color: bank.isSelected
-                      ? const Color(0xFF0F172A)
-                      : const Color(0xFFCBD5E1),
-                  width: 1.5,
+                const SizedBox(width: 10),
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: Color(0xFF10B981),
+                  size: 20,
                 ),
-              ),
-              child: bank.isSelected
-                  ? const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 15,
-                    )
-                  : null,
-            ),
+              ]
+            else ...
+              // DEPOSIT badge + checkbox
+              [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                  ),
+                  child: const Text(
+                    'DEPOSIT',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: Color(0xFF64748B),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: bank.isSelected
+                        ? const Color(0xFF0F172A)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: bank.isSelected
+                          ? const Color(0xFF0F172A)
+                          : const Color(0xFFCBD5E1),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: bank.isSelected
+                      ? const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 15,
+                        )
+                      : null,
+                ),
+              ],
           ],
         ),
       ),
@@ -547,10 +601,10 @@ class _ConsentBottomSheet extends StatelessWidget {
                 'DETAILS OF YOUR APPROVAL',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  color: Color(0xFF64748B),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
+                  color: Color(0xFF9CA3AF),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.8,
                 ),
               ),
               const SizedBox(height: 16),
@@ -662,7 +716,7 @@ class _ConsentBottomSheet extends StatelessWidget {
               fontFamily: 'DMSans',
               color: Color(0xFF94A3B8),
               fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 3),

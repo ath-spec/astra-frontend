@@ -182,15 +182,16 @@ class _ProfilingIntroScreenState extends ConsumerState<ProfilingIntroScreen>
                       ),
                       const Spacer(),
 
-                      // Heading
+                      // Title
                       const Text(
-                        'Unlock personal finance insights.',
+                        'Unlock your financial\nintelligence',
                         style: TextStyle(
                           fontFamily: 'SpaceGrotesk',
                           color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          height: 1.2,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          height: 1.15,
+                          letterSpacing: -1.0,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -199,8 +200,9 @@ class _ProfilingIntroScreenState extends ConsumerState<ProfilingIntroScreen>
                       const Text(
                         'Get personalized recommendations and financial planning tailored just for you.',
                         style: TextStyle(
+                          fontFamily: 'DMSans',
                           color: Color(0xFF94A3B8),
-                          fontSize: 16,
+                          fontSize: 14,
                           height: 1.5,
                         ),
                       ),

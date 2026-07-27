@@ -250,7 +250,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           icon: Icons.bar_chart_rounded,
                           title: 'Mutual Funds',
                           buttonText: 'Import',
-                          onPressed: () => context.push('/connect-assets'),
+                          onPressed: () => context.push('/mf-status'),
                         ),
                         _buildDottedDivider(),
 
