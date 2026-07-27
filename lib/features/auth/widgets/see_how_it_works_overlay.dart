@@ -313,25 +313,49 @@ class SeeHowItWorksOverlay extends StatelessWidget {
                 top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
               ),
             ),
-            child: ElevatedButton(
-              onPressed: () {
+            child: GestureDetector(
+              onTap: () {
                 Navigator.of(context).pop();
                 onGetStarted?.call();
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFFFFFFFF),
+                      Color(0xFF5BA1F7),
+                      Color(0xFF031E6B),
+                      Color(0xFF241714),
+                    ],
+                    stops: [0.0, 0.25, 0.7, 1.0],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                 ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'Get Started ->',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                child: const Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Text(
+                      'GET STARTED',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                    Positioned(
+                      right: 20,
+                      child: Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

@@ -207,31 +207,61 @@ class ProfilingQuestionsScreen extends ConsumerWidget {
               const SizedBox(height: 16),
 
               // CTA Button (strictly disabled until an option is selected)
-              SizedBox(
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: !canContinue
-                      ? null
-                      : () {
-                          final hasMore = notifier.nextQuestion();
-                          if (!hasMore) {
-                            context.pushReplacement('/profiling-status');
-                            notifier.submitProfiling();
-                          }
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: canContinue ? Colors.white : const Color(0xFF1E2433),
-                    foregroundColor: canContinue ? const Color(0xFF0B0F19) : const Color(0xFF64748B),
-                    disabledBackgroundColor: const Color(0xFF1E2433),
-                    disabledForegroundColor: const Color(0xFF64748B),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+              GestureDetector(
+                onTap: !canContinue
+                    ? null
+                    : () {
+                        final hasMore = notifier.nextQuestion();
+                        if (!hasMore) {
+                          context.pushReplacement('/profiling-status');
+                          notifier.submitProfiling();
+                        }
+                      },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: canContinue
+                          ? const [
+                              Color(0xFFFFFFFF),
+                              Color(0xFF5BA1F7),
+                              Color(0xFF031E6B),
+                              Color(0xFF241714),
+                            ]
+                          : const [
+                              Color(0xFFF3F4F6),
+                              Color(0xFFD1D5DB),
+                              Color(0xFF9CA3AF),
+                              Color(0xFF6B7280),
+                            ],
+                      stops: const [0.0, 0.25, 0.7, 1.0],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
                   ),
-                  child: const Text(
-                    'Continue ->',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  child: const Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Text(
+                        'CONTINUE',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      Positioned(
+                        right: 20,
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

@@ -2,10 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/widgets/arch_background.dart';
 import '../providers/asset_connection_provider.dart';
 
-/// Screen displaying bank accounts search with skeleton list and magnifying glass (Image 5).
-/// Automatically transitions to HomeScreen (Dashboard) when complete.
+/// Screen 2 of Banks Flow: Fetching Screen (Image 3) in clean light mode.
+/// Displays pulsing dots, skeleton account cards, and auto-navigates to HomeScreen.
 class BanksSearchingScreen extends ConsumerStatefulWidget {
   const BanksSearchingScreen({super.key});
 
@@ -13,16 +14,28 @@ class BanksSearchingScreen extends ConsumerStatefulWidget {
   ConsumerState<BanksSearchingScreen> createState() => _BanksSearchingScreenState();
 }
 
-class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen> {
+class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
+    with SingleTickerProviderStateMixin {
   Timer? _timer;
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(milliseconds: 2500), () {
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+
+    _pulseAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _timer = Timer(const Duration(milliseconds: 2600), () {
       if (mounted) {
-        ref.read(assetConnectionProvider.notifier).showFoundBanks();
-        context.pushReplacement('/banks-linking');
+        ref.read(assetConnectionProvider.notifier).completeBankLinking();
+        context.go('/');
       }
     });
   }
@@ -30,211 +43,287 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _pulseController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0F19),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-          child: Column(
-            children: [
-              const Spacer(),
-              // Skeleton search graphic (Image 5)
-              const _BankSkeletonSearchGraphic(),
-              const SizedBox(height: 36),
-              const Text(
-                'Securely looking for bank\naccounts linked to your mobile',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                  height: 1.3,
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'You can select which accounts to track in\nnext step.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xFF9CA3AF),
-                  fontSize: 15,
-                  height: 1.4,
-                ),
-              ),
-              const Spacer(),
-              // Quick finish CTA
-              ElevatedButton(
-                onPressed: () {
-                  _timer?.cancel();
-                  ref.read(assetConnectionProvider.notifier).showFoundBanks();
-                  context.pushReplacement('/banks-linking');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0D9488),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Continue to Bank Accounts ↗',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Security Shield Footer
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.security_rounded,
-                    color: Colors.white.withValues(alpha: 0.5),
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Your data is 100% protected',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+      backgroundColor: const Color(0xFFFFFFFF),
+      body: Stack(
+        children: [
+          // Subtle 3D Architectural Dome Background Graphic
+          const ArchBackground(height: 380),
+
+          SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 140),
+
+                        // Animated Pulsing Dots
+                        AnimatedBuilder(
+                          animation: _pulseAnimation,
+                          builder: (context, child) {
+                            return Opacity(
+                              opacity: _pulseAnimation.value,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: List.generate(3, (i) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(right: 6),
+                                    width: 8,
+                                    height: 8,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF64748B),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  );
+                                }),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Title
+                        const Text(
+                          'Securely fetching your Banks',
+                          style: TextStyle(
+                            fontFamily: 'SpaceGrotesk',
+                            color: Color(0xFF0F172A),
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Subtitle
+                        const Text(
+                          "Hang tight. We're securely pulling your accounts,\nthis should only take a moment.",
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            color: Color(0xFF64748B),
+                            fontSize: 14,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 36),
+
+                        // Skeleton Cards Graphic (matching Image 3)
+                        Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 340),
+                            child: Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                // Background stacked card 2
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 0),
+                                  child: Container(
+                                    height: 80,
+                                    width: 280,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF1F5F9).withValues(alpha: 0.5),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: const Color(0xFFE2E8F0),
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Background stacked card 1
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: Container(
+                                    height: 80,
+                                    width: 310,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF8FAFC),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: const Color(0xFFE2E8F0),
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                // Foreground main skeleton card
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 32),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(20),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFFFFFF),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: const Color(0xFFE2E8F0),
+                                        width: 1.5,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0xFF0F172A).withValues(alpha: 0.05),
+                                          blurRadius: 16,
+                                          offset: const Offset(0, 6),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        // Circle skeleton
+                                        Container(
+                                          width: 36,
+                                          height: 36,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFF1F5F9),
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: const Color(0xFFE2E8F0),
+                                              width: 3,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        // Lines skeleton
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: 140,
+                                                height: 12,
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xFFE2E8F0),
+                                                  borderRadius: BorderRadius.circular(6),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Container(
+                                                width: 80,
+                                                height: 10,
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xFFF1F5F9),
+                                                  borderRadius: BorderRadius.circular(5),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        // Pill skeleton
+                                        Container(
+                                          width: 50,
+                                          height: 14,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE2E8F0),
+                                            borderRadius: BorderRadius.circular(7),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 48),
+
+                        // Clock status text
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.access_time_filled_rounded,
+                              color: Color(0xFF94A3B8),
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Securely fetching all your accounts. This may take a few seconds.',
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: const Color(0xFF64748B).withValues(alpha: 0.9),
+                                  fontSize: 12,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              // FINVU Footer
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Powered by ',
-                    style: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.polyline_rounded, color: const Color(0xFF3B82F6), size: 18),
-                      const SizedBox(width: 4),
-                      const Text(
-                        'FINVU',
-                        style: TextStyle(
-                          color: Color(0xFF3B82F6),
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-            ],
+                ),
+
+                // Footer
+                _buildFooter(),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
-}
 
-class _BankSkeletonSearchGraphic extends StatelessWidget {
-  const _BankSkeletonSearchGraphic();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 240,
-      height: 220,
-      child: Stack(
-        alignment: Alignment.center,
+  Widget _buildFooter() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+      child: Column(
         children: [
-          // 4 Skeleton Rows
-          Column(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(4, (index) {
-              final opacity = 1.0 - (index * 0.22);
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF161922).withValues(alpha: opacity),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFF20232C).withValues(alpha: opacity),
-                  ),
+            children: [
+              const Text(
+                'powered by RBI-regulated account aggregator ',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  color: Color(0xFF64748B),
+                  fontSize: 11,
                 ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 14,
-                      height: 14,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF292C37).withValues(alpha: opacity),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF292C37).withValues(alpha: opacity),
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            width: 80,
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF20232C).withValues(alpha: opacity),
-                              borderRadius: BorderRadius.circular(2.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+              ),
+              Text(
+                'FINVU',
+                style: TextStyle(
+                  fontFamily: 'SpaceGrotesk',
+                  color: const Color(0xFF0F172A).withValues(alpha: 0.8),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
                 ),
-              );
-            }),
+              ),
+            ],
           ),
-          // Magnifying Glass Overlay
-          Positioned(
-            right: 40,
-            bottom: 20,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0D9488).withValues(alpha: 0.15),
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF0D9488).withValues(alpha: 0.4)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.verified_user_outlined,
+                color: Color(0xFF10B981),
+                size: 14,
               ),
-              child: const Icon(
-                Icons.search_rounded,
-                color: Color(0xFF0D9488),
-                size: 48,
+              const SizedBox(width: 6),
+              const Text(
+                'trusted by 3 crore citizens',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  color: Color(0xFF10B981),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

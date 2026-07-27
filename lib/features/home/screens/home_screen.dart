@@ -1,11 +1,12 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../widgets/feature_card.dart';
-import '../widgets/stats_summary_widget.dart';
+import '../../../core/widgets/arch_background.dart';
+import '../../asset_connection/providers/asset_connection_provider.dart';
 
-/// Main Home and Dashboard screen with typewriter onboarding message and fetching progress.
+/// Screen 4: New Home Screen / Dashboard (Image 4) in clean light mode.
+/// Displays user wealth header, portfolio chart card, asset status list (with FETCHING status),
+/// and floating pill bottom navigation bar.
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -13,360 +14,681 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedTab = 0;
-
-  // Typewriter animation state
-  final String _fullText =
-      "We are working on fetching your data safely and accurately. This might take a while.";
-  int _charCount = 0;
-  Timer? _typewriterTimer;
-
-  // Fetching progress state
-  double _fetchProgress = 0.1;
-  Timer? _progressTimer;
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
-    _startAnimations();
-  }
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
 
-  void _startAnimations() {
-    _charCount = 0;
-    _fetchProgress = 0.1;
-
-    _typewriterTimer?.cancel();
-    _typewriterTimer = Timer.periodic(const Duration(milliseconds: 25), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      if (_charCount < _fullText.length) {
-        setState(() {
-          _charCount++;
-        });
-      } else {
-        timer.cancel();
-      }
-    });
-
-    _progressTimer?.cancel();
-    _progressTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      if (_fetchProgress < 1.0) {
-        setState(() {
-          _fetchProgress += 0.025;
-          if (_fetchProgress > 1.0) _fetchProgress = 1.0;
-        });
-      } else {
-        timer.cancel();
-      }
-    });
+    _pulseAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
   }
 
   @override
   void dispose() {
-    _typewriterTimer?.cancel();
-    _progressTimer?.cancel();
+    _pulseController.dispose();
     super.dispose();
-  }
-
-  String get _currentFetchStatus {
-    if (_fetchProgress < 0.4) {
-      return 'Fetching bank accounts';
-    } else if (_fetchProgress < 0.75) {
-      return 'Fetching mutual funds';
-    } else if (_fetchProgress < 1.0) {
-      return 'Fetching stocks & investments';
-    } else {
-      return 'All assets synced & updated';
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final displayedText = _fullText.substring(0, _charCount);
+    final assetState = ref.watch(assetConnectionProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0F19),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // DEZERV Custom Top Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'DEZERV',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 2.0,
-                    ),
-                  ),
-                  Row(
+      backgroundColor: const Color(0xFFFFFFFF),
+      body: Stack(
+        children: [
+          // Subtle 3D Architectural Dome Background Graphic
+          const ArchBackground(height: 420),
+
+          // Main Content
+          SafeArea(
+            child: Column(
+              children: [
+                // Top App Bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Simulate No Internet disconnect button for easy verification
-                      IconButton(
-                        icon: const Icon(Icons.wifi_off_rounded, color: Color(0xFFEF4444), size: 20),
-                        tooltip: 'Simulate No Internet Disconnection',
-                        onPressed: () => context.push('/no-internet', extra: '/'),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFF2D3748)),
+                      // Profile Button
+                      GestureDetector(
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Profile settings coming soon'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF1F5F9),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.person_outline_rounded,
+                            color: Color(0xFF0F172A),
+                            size: 22,
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.person_outline,
-                          color: Color(0xFFE2E8F0),
-                          size: 20,
+                      ),
+                      // Lock / Security Button
+                      GestureDetector(
+                        onTap: () => context.push('/no-internet', extra: '/'),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF1F5F9),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.lock_outline_rounded,
+                            color: Color(0xFF0F172A),
+                            size: 20,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
+                ),
 
-            // Tab Body Content
-            Expanded(
-              child: _selectedTab == 0
-                  ? SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Fetching / Typewriter Onboarding Banner (Images 5 & 6)
-                          const Text(
-                            'Thanks for attaching your assets.',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              height: 1.3,
-                            ),
+                // Scrollable Dashboard Body
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 16),
+
+                        // Wealth Subtitle
+                        const Text(
+                          "ABHIMANYU'S WEALTH",
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            color: Color(0xFF64748B),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.5,
                           ),
-                          const SizedBox(height: 12),
-                          // Typewriter message
-                          MinHeightContainer(
-                            minHeight: 48,
-                            child: Text(
-                              displayedText,
-                              style: const TextStyle(
-                                color: Color(0xFF94A3B8),
-                                fontSize: 16,
-                                height: 1.4,
+                        ),
+                        const SizedBox(height: 6),
+
+                        // Amount & Refresh Button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              '₹ • • • •',
+                              style: TextStyle(
+                                fontFamily: 'SpaceGrotesk',
+                                color: Color(0xFF0F172A),
+                                fontSize: 28,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 2.0,
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 24),
-                          // Fetching progress bar
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: LinearProgressIndicator(
-                              value: _fetchProgress,
-                              backgroundColor: const Color(0xFF1E2433),
-                              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF0D9488)),
-                              minHeight: 6,
+                            const SizedBox(width: 10),
+                            GestureDetector(
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Refreshing portfolio summary...'),
+                                    duration: Duration(seconds: 1),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color(0xFFCBD5E1),
+                                    width: 1.2,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.refresh_rounded,
+                                  size: 16,
+                                  color: Color(0xFF64748B),
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            _currentFetchStatus,
-                            style: TextStyle(
-                              color: _fetchProgress >= 1.0
-                                  ? const Color(0xFF0D9488)
-                                  : const Color(0xFFE2E8F0),
-                              fontSize: 15,
-                              fontWeight: _fetchProgress >= 1.0 ? FontWeight.w600 : FontWeight.w400,
-                            ),
-                          ),
-                          const SizedBox(height: 36),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
 
-                          // Dashboard Main Content
-                          Text(
-                            'System Telemetry & Metrics',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                        // Main Chart Card
+                        Container(
+                          height: 180,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: const Color(0xFFE2E8F0),
+                              width: 1.2,
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Live overview of application health, active revenue, and orders.',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: const Color(0xFF94A3B8),
+                          child: Stack(
+                            children: [
+                              // Subtle background grid lines
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: List.generate(3, (i) {
+                                  return Container(
+                                    height: 1,
+                                    color: const Color(0xFFE2E8F0).withValues(alpha: 0.5),
+                                  );
+                                }),
+                              ),
+                              // Empty state placeholder
+                              Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.insights_rounded,
+                                      size: 32,
+                                      color: const Color(0xFFCBD5E1).withValues(alpha: 0.6),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Connect assets to generate insights',
+                                      style: TextStyle(
+                                        fontFamily: 'DMSans',
+                                        color: const Color(0xFF94A3B8).withValues(alpha: 0.8),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+
+                        // Asset Connection List
+                        _buildAssetRow(
+                          icon: Icons.bar_chart_rounded,
+                          title: 'Mutual Funds',
+                          buttonText: 'Import',
+                          onPressed: () => context.push('/connect-assets'),
+                        ),
+                        _buildDottedDivider(),
+
+                        _buildSurplusRow(),
+                        _buildDottedDivider(),
+
+                        _buildAssetRow(
+                          icon: Icons.candlestick_chart_rounded,
+                          title: 'Stocks',
+                          buttonText: assetState.stocksConnected ? '2 Linked' : 'Import',
+                          onPressed: () => context.push('/aa-stocks-otp'),
+                          isLinked: assetState.stocksConnected,
+                        ),
+                        _buildDottedDivider(),
+
+                        _buildBankAccountsRow(isLinked: assetState.banksConnected),
+                        const SizedBox(height: 28),
+
+                        // Bottom Insights Banner Card
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFFFFFFFF),
+                                Color(0xFFF8FAFC),
+                              ],
                             ),
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF0F172A).withValues(alpha: 0.02),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 20),
-                          const StatsSummaryWidget(),
-                          const SizedBox(height: 32),
-                          Text(
-                            'Feature Modules',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Unlock portfolio insights',
+                                style: TextStyle(
+                                  fontFamily: 'SpaceGrotesk',
+                                  color: Color(0xFF0F172A),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              const Text(
+                                'Connect funds, stocks and accounts to see\nyour holistic wealth summary',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: Color(0xFF64748B),
+                                  fontSize: 13,
+                                  height: 1.4,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                            ],
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Quick navigation to core architecture modules.',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: const Color(0xFF94A3B8),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              final crossAxisCount = constraints.maxWidth > 800
-                                  ? 3
-                                  : (constraints.maxWidth > 500 ? 2 : 1);
-                              return GridView.count(
-                                crossAxisCount: crossAxisCount,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                crossAxisSpacing: 16,
-                                mainAxisSpacing: 16,
-                                childAspectRatio: 1.4,
-                                children: [
-                                  FeatureCard(
-                                    title: 'Settings & Preferences',
-                                    subtitle:
-                                        'Configure theme modes, account profile, and preferences.',
-                                    icon: Icons.settings_rounded,
-                                    gradientColors: const [Color(0xFF6366F1), Color(0xFF4F46E5)],
-                                    onTap: () => context.go('/settings'),
-                                  ),
-                                  FeatureCard(
-                                    title: 'User Analytics',
-                                    subtitle:
-                                        'Detailed retention graphs, cohorts, and funnel conversions.',
-                                    icon: Icons.insights_rounded,
-                                    gradientColors: const [Color(0xFF0D9488), Color(0xFF14B8A6)],
-                                    onTap: () {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text('Analytics module coming in v1.1')),
-                                      );
-                                    },
-                                  ),
-                                  FeatureCard(
-                                    title: 'API Gateway Logs',
-                                    subtitle:
-                                        'Real-time HTTP request inspecting and latency monitoring.',
-                                    icon: Icons.api_rounded,
-                                    gradientColors: const [Color(0xFFF43F5E), Color(0xFFE11D48)],
-                                    onTap: () {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text('Gateway Logs module coming in v1.1')),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                        ],
+                        ),
+                        const SizedBox(height: 100), // Extra padding for floating nav bar
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Floating Pill Bottom Navigation Bar
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 24,
+            child: Center(
+              child: Container(
+                height: 56,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFFFF),
+                  borderRadius: BorderRadius.circular(32),
+                  border: Border.all(
+                    color: const Color(0xFFE2E8F0),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF0F172A).withValues(alpha: 0.08),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Home Tab (Active Pill)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(24),
                       ),
-                    )
-                  : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: const Row(
                         children: [
                           Icon(
-                            _selectedTab == 1
-                                ? Icons.pie_chart_outline_rounded
-                                : (_selectedTab == 2 ? Icons.trending_up_rounded : Icons.shield_outlined),
-                            size: 64,
-                            color: const Color(0xFF475569),
+                            Icons.home_rounded,
+                            color: Color(0xFF0F172A),
+                            size: 18,
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(width: 6),
                           Text(
-                            _selectedTab == 1
-                                ? 'Portfolio Management'
-                                : (_selectedTab == 2 ? 'Investment Opportunities' : 'Insurance & Protection'),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                            'Home',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              color: Color(0xFF0F172A),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'This section is synced with your attached assets.',
-                            style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
                           ),
                         ],
                       ),
                     ),
+                    const SizedBox(width: 4),
+
+                    // Explore Tab
+                    GestureDetector(
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Explore opportunities coming soon'),
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        color: Colors.transparent,
+                        child: const Row(
+                          children: [
+                            Icon(
+                              Icons.explore_outlined,
+                              color: Color(0xFF64748B),
+                              size: 18,
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              'Explore',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                color: Color(0xFF64748B),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+
+                    // Search Button
+                    GestureDetector(
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Search coming soon'),
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFFFFF),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: const Icon(
+                          Icons.search_rounded,
+                          color: Color(0xFF0F172A),
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAssetRow({
+    required IconData icon,
+    required String title,
+    required String buttonText,
+    required VoidCallback onPressed,
+    bool isLinked = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14.0),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFF64748B), size: 24),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                color: Color(0xFF0F172A),
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isLinked ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
+              foregroundColor: isLinked ? const Color(0xFF0F172A) : Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: isLinked
+                    ? const BorderSide(color: Color(0xFFCBD5E1))
+                    : BorderSide.none,
+              ),
+            ),
+            child: Text(
+              buttonText,
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSurplusRow() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14.0),
+      child: Row(
+        children: [
+          const Icon(Icons.auto_awesome_rounded, color: Color(0xFF64748B), size: 22),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Surplus',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    color: Color(0xFF0F172A),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                RichText(
+                  text: const TextSpan(
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 12,
+                      color: Color(0xFF64748B),
+                    ),
+                    children: [
+                      TextSpan(text: 'Earn '),
+                      TextSpan(
+                        text: '2.5x',
+                        style: TextStyle(
+                          color: Color(0xFF10B981),
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      TextSpan(text: ' on your idle money'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Surplus idle money management coming soon'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0F172A),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'Explore',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBankAccountsRow({required bool isLinked}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14.0),
+      child: GestureDetector(
+        onTap: () => context.push('/banks-linking'),
+        child: Row(
+          children: [
+            const Icon(Icons.account_balance_rounded, color: Color(0xFF64748B), size: 24),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Text(
+                'Bank Accounts',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  color: Color(0xFF0F172A),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            if (isLinked)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFCBD5E1)),
+                ),
+                child: const Text(
+                  'Connected',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    color: Color(0xFF0F172A),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              )
+            else
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedBuilder(
+                    animation: _pulseAnimation,
+                    builder: (context, child) {
+                      return Opacity(
+                        opacity: _pulseAnimation.value,
+                        child: const Text(
+                          '• • •',
+                          style: TextStyle(
+                            color: Color(0xFF94A3B8),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2.0,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'FETCHING',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: Color(0xFF94A3B8),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
-      // Bottom Navigation Bar (Image 6)
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF0B0F19),
-          border: Border(top: BorderSide(color: Color(0xFF1E2433), width: 1)),
-        ),
-        child: BottomNavigationBar(
-          backgroundColor: const Color(0xFF0B0F19),
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedTab,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: const Color(0xFF64748B),
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          onTap: (index) => setState(() => _selectedTab = index),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.pie_chart_outline_rounded),
-              label: 'Portfolio',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.trending_up_rounded),
-              label: 'Invest',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shield_outlined),
-              label: 'Insurance',
-            ),
-          ],
-        ),
-      ),
+    );
+  }
+
+  Widget _buildDottedDivider() {
+    return CustomPaint(
+      size: const Size(double.infinity, 1),
+      painter: _DottedLinePainter(),
     );
   }
 }
 
-class MinHeightContainer extends StatelessWidget {
-  const MinHeightContainer({super.key, required this.minHeight, required this.child});
-  final double minHeight;
-  final Widget child;
+/// Dotted horizontal line separator
+class _DottedLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFE2E8F0)
+      ..strokeWidth = 1.0;
+
+    double startX = 0;
+    const dashWidth = 4.0;
+    const dashSpace = 4.0;
+    while (startX < size.width) {
+      canvas.drawLine(
+        Offset(startX, 0),
+        Offset(startX + dashWidth, 0),
+        paint,
+      );
+      startX += dashWidth + dashSpace;
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(minHeight: minHeight),
-      alignment: Alignment.topLeft,
-      child: child,
-    );
-  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

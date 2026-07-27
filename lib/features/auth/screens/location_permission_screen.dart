@@ -138,9 +138,12 @@ class _LocationPermissionScreenState extends State<LocationPermissionScreen> wit
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Color(0xFFE6E6FA),
-                              Color(0xFF8634DE),
+                              Color(0xFFFFFFFF),
+                              Color(0xFF5BA1F7),
+                              Color(0xFF031E6B),
+                              Color(0xFF241714),
                             ],
+                            stops: [0.0, 0.25, 0.7, 1.0],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),

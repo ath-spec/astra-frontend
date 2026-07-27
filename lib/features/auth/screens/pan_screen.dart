@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -101,13 +100,6 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
     super.initState();
     _panController.addListener(_onPanChanged);
     _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
-        final text = _panController.text;
-        if (_panController.selection.baseOffset != text.length ||
-            _panController.selection.extentOffset != text.length) {
-          _panController.selection = TextSelection.collapsed(offset: text.length);
-        }
-      }
       setState(() {});
     });
     _animationController = AnimationController(
@@ -120,11 +112,6 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
   }
 
   void _onPanChanged() {
-    final text = _panController.text;
-    if (_panController.selection.baseOffset != text.length ||
-        _panController.selection.extentOffset != text.length) {
-      _panController.selection = TextSelection.collapsed(offset: text.length);
-    }
     setState(() {});
   }
 
@@ -223,7 +210,7 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
             color: isError
                 ? const Color(0xFFDC2626)
                 : isActive
-                    ? const Color(0xFF8634DE)
+                    ? const Color(0xFF031E6B)
                     : const Color(0xFF9CA3AF),
             borderRadius: BorderRadius.circular(1),
           ),
@@ -384,11 +371,6 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
                           GestureDetector(
                             onTap: () {
                               FocusScope.of(context).requestFocus(_focusNode);
-                              final text = _panController.text;
-                              if (_panController.selection.baseOffset != text.length ||
-                                  _panController.selection.extentOffset != text.length) {
-                                _panController.selection = TextSelection.collapsed(offset: text.length);
-                              }
                             },
                             behavior: HitTestBehavior.opaque,
                             child: Stack(
@@ -473,42 +455,43 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
                                     ),
                                   ),
                                 ),
-                                // Hidden TextField capturing keyboard input over the visual slots
-                                Positioned.fill(
-                                  child: TextField(
-                                    controller: _panController,
-                                    focusNode: _focusNode,
-                                    enabled: !isLoading,
-                                    onTap: () {
-                                      final text = _panController.text;
-                                      if (_panController.selection.baseOffset != text.length ||
-                                          _panController.selection.extentOffset != text.length) {
-                                        _panController.selection = TextSelection.collapsed(offset: text.length);
-                                      }
-                                    },
-                                    keyboardType: TextInputType.text,
-                                    textCapitalization:
-                                        TextCapitalization.characters,
-                                    autocorrect: false,
-                                    enableSuggestions: false,
-                                    inputFormatters: [
-                                      _PanInputFormatter(
-                                        onInvalidInput: _onInvalidPanInput,
-                                        onValidInput: _onValidPanInput,
+                                // Hidden 1x1 TextField capturing keyboard input without receiving direct hit tests
+                                IgnorePointer(
+                                  child: Opacity(
+                                    opacity: 0,
+                                    child: SizedBox(
+                                      width: 1,
+                                      height: 1,
+                                      child: TextField(
+                                        controller: _panController,
+                                        focusNode: _focusNode,
+                                        enabled: !isLoading,
+                                        enableInteractiveSelection: false,
+                                        keyboardType: TextInputType.text,
+                                        textCapitalization:
+                                            TextCapitalization.characters,
+                                        autocorrect: false,
+                                        enableSuggestions: false,
+                                        inputFormatters: [
+                                          _PanInputFormatter(
+                                            onInvalidInput: _onInvalidPanInput,
+                                            onValidInput: _onValidPanInput,
+                                          ),
+                                        ],
+                                        style: const TextStyle(
+                                          color: Colors.transparent,
+                                          fontSize: 1,
+                                        ),
+                                        cursorColor: Colors.transparent,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          fillColor: Colors.transparent,
+                                          filled: true,
+                                          contentPadding: EdgeInsets.zero,
+                                        ),
                                       ),
-                                    ],
-                                    style: const TextStyle(
-                                      color: Colors.transparent,
-                                      fontSize: 1,
-                                    ),
-                                    cursorColor: Colors.transparent,
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      fillColor: Colors.transparent,
-                                      filled: true,
-                                      contentPadding: EdgeInsets.zero,
                                     ),
                                   ),
                                 ),
@@ -647,14 +630,19 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: isEnabled
-                                      ? [
-                                          const Color(0xFFE6E6FA),
-                                          const Color(0xFF8634DE),
+                                      ? const [
+                                          Color(0xFFFFFFFF),
+                                          Color(0xFF5BA1F7),
+                                          Color(0xFF031E6B),
+                                          Color(0xFF241714),
                                         ]
-                                      : [
-                                          const Color(0xFF9CA3AF),
-                                          const Color(0xFF6B7280),
+                                      : const [
+                                          Color(0xFFF3F4F6),
+                                          Color(0xFFD1D5DB),
+                                          Color(0xFF9CA3AF),
+                                          Color(0xFF6B7280),
                                         ],
+                                  stops: const [0.0, 0.25, 0.7, 1.0],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),

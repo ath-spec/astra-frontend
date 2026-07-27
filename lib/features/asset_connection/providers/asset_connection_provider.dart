@@ -229,8 +229,8 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     _timer = Timer(const Duration(milliseconds: 1800), () {
       if (mounted) {
         state = state.copyWith(
-          step: AssetConnectionStep.banksSearching,
-          banksStatusMessage: 'Searching accounts...',
+          step: AssetConnectionStep.banksLinking,
+          banksStatusMessage: 'Select accounts to link',
         );
       }
     });
@@ -247,8 +247,8 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     _timer = Timer(const Duration(milliseconds: 1800), () {
       if (mounted) {
         state = state.copyWith(
-          step: AssetConnectionStep.banksSearching,
-          banksStatusMessage: 'Searching accounts...',
+          step: AssetConnectionStep.banksLinking,
+          banksStatusMessage: 'Select accounts to link',
         );
       }
     });
@@ -280,14 +280,9 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
   void startBankLinking() {
     _timer?.cancel();
     state = state.copyWith(
-      step: AssetConnectionStep.banksLinkingProgress,
-      banksStatusMessage: 'Linking accounts...',
+      step: AssetConnectionStep.banksSearching,
+      banksStatusMessage: 'Fetching accounts...',
     );
-    _timer = Timer(const Duration(milliseconds: 2000), () {
-      if (mounted) {
-        completeBankLinking();
-      }
-    });
   }
 
   void completeBankLinking() {
@@ -300,7 +295,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     }).toList();
     final hasAnyLinked = updated.any((b) => b.isLinked);
     state = state.copyWith(
-      step: AssetConnectionStep.banksLinking,
+      step: AssetConnectionStep.completed,
       bankAccounts: updated,
       banksConnected: hasAnyLinked,
       banksStatusMessage: hasAnyLinked ? 'Successfully Linked' : 'Accounts found',

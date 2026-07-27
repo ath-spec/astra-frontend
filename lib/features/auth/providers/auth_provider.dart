@@ -88,6 +88,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
   }
 
+  Future<void> verifyAccountAggregator({String? phone}) async {
+    state = const AuthLoading();
+    await Future.delayed(const Duration(milliseconds: 600));
+    final displayPhone = phone ?? pendingPhone;
+    state = AuthAuthenticated(
+      User(
+        id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
+        name: 'Investor ($displayPhone)',
+        email: '$displayPhone@astra.dev',
+        isAdmin: false,
+        avatarUrl: null,
+      ),
+    );
+  }
+
   void logout() {
     state = const AuthInitial();
   }

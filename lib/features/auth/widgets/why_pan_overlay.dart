@@ -60,7 +60,7 @@ class WhyPanOverlay extends StatelessWidget {
                 children: [
                   _buildReasonItem(
                     icon: Icons.auto_awesome_rounded,
-                    iconColor: const Color(0xFF8634DE), // Brand Purple
+                    iconColor: const Color(0xFF031E6B), // Brand Blue
                     bgColor: const Color(0xFFF3E8FF),
                     title: 'Fetch your data in just a few clicks',
                     subtitle:
@@ -98,7 +98,13 @@ class WhyPanOverlay extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFFE6E6FA), Color(0xFF8634DE)],
+                      colors: [
+                        Color(0xFFFFFFFF),
+                        Color(0xFF5BA1F7),
+                        Color(0xFF031E6B),
+                        Color(0xFF241714),
+                      ],
+                      stops: [0.0, 0.25, 0.7, 1.0],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),

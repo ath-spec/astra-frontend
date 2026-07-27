@@ -126,9 +126,12 @@ class _NotificationPermissionScreenState extends State<NotificationPermissionScr
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Color(0xFFE6E6FA),
-                              Color(0xFF8634DE),
+                              Color(0xFFFFFFFF),
+                              Color(0xFF5BA1F7),
+                              Color(0xFF031E6B),
+                              Color(0xFF241714),
                             ],
+                            stops: [0.0, 0.25, 0.7, 1.0],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -176,7 +179,7 @@ class _NotificationPermissionScreenState extends State<NotificationPermissionScr
           width: 44,
           height: 44,
           decoration: const BoxDecoration(
-            color: Color(0xFF8634DE), // Indigo matching our theme
+            color: Color(0xFF031E6B), // Brand Blue
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: Colors.white, size: 22),

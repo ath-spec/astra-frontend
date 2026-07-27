@@ -53,216 +53,238 @@ class _ProfilingIntroScreenState extends ConsumerState<ProfilingIntroScreen>
     return Scaffold(
       backgroundColor: const Color(0xFF0B0F19),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Spacer(),
-
-              // Podium & Rupee Coin Illustration
-              Center(
-                child: SizedBox(
-                  height: 220,
-                  width: 260,
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight - 40.0 > 0 ? constraints.maxHeight - 40.0 : 0,
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Back triangle / geometric shape
-                      Positioned(
-                        left: 20,
-                        bottom: 0,
-                        child: Container(
-                          width: 100,
-                          height: 110,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF131826),
-                            borderRadius: BorderRadius.only(topRight: Radius.circular(80)),
-                          ),
-                        ),
-                      ),
-                      // Right circle arc
-                      Positioned(
-                        right: 20,
-                        bottom: 0,
-                        child: Container(
-                          width: 90,
-                          height: 90,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF131826),
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(90)),
-                          ),
-                        ),
-                      ),
-                      // Left bar
-                      Positioned(
-                        left: 60,
-                        bottom: 0,
-                        child: Container(
-                          width: 50,
-                          height: 130,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF1E2433),
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                          ),
-                        ),
-                      ),
-                      // Center tall podium
-                      Positioned(
-                        bottom: 0,
-                        child: Container(
-                          width: 66,
-                          height: 160,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF2D3748),
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                          ),
-                        ),
-                      ),
-                      // Right bar
-                      Positioned(
-                        right: 60,
-                        bottom: 0,
-                        child: Container(
-                          width: 50,
-                          height: 110,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF1E2433),
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                          ),
-                        ),
-                      ),
-                      // Rupee Coin on top of center podium
-                      Positioned(
-                        bottom: 146,
-                        child: Container(
-                          width: 64,
-                          height: 64,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFFF1F5F9), Color(0xFF94A3B8)],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.4),
-                                blurRadius: 12,
-                                offset: const Offset(0, 6),
+                      const Spacer(),
+
+                      // Podium & Rupee Coin Illustration
+                      Center(
+                        child: SizedBox(
+                          height: 220,
+                          width: 260,
+                          child: Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              // Back triangle / geometric shape
+                              Positioned(
+                                left: 20,
+                                bottom: 0,
+                                child: Container(
+                                  width: 100,
+                                  height: 110,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF131826),
+                                    borderRadius: BorderRadius.only(topRight: Radius.circular(80)),
+                                  ),
+                                ),
+                              ),
+                              // Right circle arc
+                              Positioned(
+                                right: 20,
+                                bottom: 0,
+                                child: Container(
+                                  width: 90,
+                                  height: 90,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF131826),
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(90)),
+                                  ),
+                                ),
+                              ),
+                              // Left bar
+                              Positioned(
+                                left: 60,
+                                bottom: 0,
+                                child: Container(
+                                  width: 50,
+                                  height: 130,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF1E2433),
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
+                                  ),
+                                ),
+                              ),
+                              // Center tall podium
+                              Positioned(
+                                bottom: 0,
+                                child: Container(
+                                  width: 66,
+                                  height: 160,
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [Color(0xFF252D3D), Color(0xFF141923)],
+                                    ),
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
+                                  ),
+                                ),
+                              ),
+                              // Right bar
+                              Positioned(
+                                right: 60,
+                                bottom: 0,
+                                child: Container(
+                                  width: 50,
+                                  height: 90,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF191F2B),
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
+                                  ),
+                                ),
+                              ),
+                              // Rupee Coin on top of center podium
+                              Positioned(
+                                bottom: 146,
+                                child: Container(
+                                  width: 64,
+                                  height: 64,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: const LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [Color(0xFFF1F5F9), Color(0xFF94A3B8)],
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.4),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 6),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      '₹',
+                                      style: TextStyle(
+                                        color: Color(0xFF0B0F19),
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                          child: const Center(
-                            child: Text(
-                              '₹',
-                              style: TextStyle(
-                                color: Color(0xFF0B0F19),
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        ),
+                      ),
+                      const Spacer(),
+
+                      // Heading
+                      const Text(
+                        'Unlock personal finance insights.',
+                        style: TextStyle(
+                          fontFamily: 'SpaceGrotesk',
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Subtitle
+                      const Text(
+                        'Get personalized recommendations and financial planning tailored just for you.',
+                        style: TextStyle(
+                          color: Color(0xFF94A3B8),
+                          fontSize: 16,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Get Started CTA Button (Animated fill bar)
+                      GestureDetector(
+                        onTap: _isReady ? _onGetStarted : null,
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: _isReady
+                                  ? const [
+                                      Color(0xFFFFFFFF),
+                                      Color(0xFF5BA1F7),
+                                      Color(0xFF031E6B),
+                                      Color(0xFF241714),
+                                    ]
+                                  : const [
+                                      Color(0xFFF3F4F6),
+                                      Color(0xFFD1D5DB),
+                                      Color(0xFF9CA3AF),
+                                      Color(0xFF6B7280),
+                                    ],
+                              stops: const [0.0, 0.25, 0.7, 1.0],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
+                          ),
+                          child: const Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Text(
+                                'GET STARTED',
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                              Positioned(
+                                right: 20,
+                                child: Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
+                      const SizedBox(height: 20),
+
+                      // Security footer
+                      const FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.shield, size: 16, color: Color(0xFF64748B)),
+                            SizedBox(width: 8),
+                            Text(
+                              'Your data is 100% safe & secure',
+                              style: TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 36),
-
-              // Heading
-              const Text(
-                'Answer a few questions to\nget your analysis',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  height: 1.2,
-                  letterSpacing: -0.5,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-
-              // Subtitle
-              const Text(
-                'This will take less than 30 seconds',
-                style: TextStyle(
-                  color: Color(0xFF94A3B8),
-                  fontSize: 15,
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-              const Spacer(),
-
-              // Get Started CTA Button (Animated fill bar)
-              GestureDetector(
-                onTap: _isReady ? _onGetStarted : null,
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E2433),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return Stack(
-                          children: [
-                            // White progress fill bar from left to right
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: FractionallySizedBox(
-                                widthFactor: _controller.value,
-                                heightFactor: 1.0,
-                                child: Container(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            // Button Text
-                            Center(
-                              child: Text(
-                                'Get started',
-                                style: TextStyle(
-                                  color: _isReady ? const Color(0xFF0B0F19) : Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Security footer
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.shield, size: 16, color: Color(0xFF64748B)),
-                  SizedBox(width: 8),
-                  Text(
-                    'Your data is 100% safe & secure',
-                    style: TextStyle(
-                      color: Color(0xFF94A3B8),
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

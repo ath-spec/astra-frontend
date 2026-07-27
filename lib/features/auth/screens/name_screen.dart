@@ -85,7 +85,7 @@ class _NameScreenState extends State<NameScreen>
   bool get _isEnabled => _nameValid && _aadhaarConfirmed;
 
   void _submit() {
-    if (_isEnabled) context.push('/pan');
+    if (_isEnabled) context.push('/aa-stocks-otp');
   }
 
   @override
@@ -247,14 +247,14 @@ class _NameScreenState extends State<NameScreen>
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                       color: _aadhaarConfirmed
-                                          ? const Color(0xFF8634DE)
+                                          ? const Color(0xFF031E6B)
                                           : _nameValid
                                               ? const Color(0xFF6B7280)
                                               : const Color(0xFFD1D5DB),
                                       width: 1.5,
                                     ),
                                     color: _aadhaarConfirmed
-                                        ? const Color(0xFF8634DE)
+                                        ? const Color(0xFF031E6B)
                                         : Colors.transparent,
                                   ),
                                   child: _aadhaarConfirmed
@@ -321,14 +321,19 @@ class _NameScreenState extends State<NameScreen>
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: _isEnabled
-                                  ? [
-                                      const Color(0xFFE6E6FA),
-                                      const Color(0xFF8634DE),
+                                  ? const [
+                                      Color(0xFFFFFFFF),
+                                      Color(0xFF5BA1F7),
+                                      Color(0xFF031E6B),
+                                      Color(0xFF241714),
                                     ]
-                                  : [
-                                      const Color(0xFFE5E7EB),
-                                      const Color(0xFFD1D5DB),
+                                  : const [
+                                      Color(0xFFF3F4F6),
+                                      Color(0xFFD1D5DB),
+                                      Color(0xFF9CA3AF),
+                                      Color(0xFF6B7280),
                                     ],
+                              stops: const [0.0, 0.25, 0.7, 1.0],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),

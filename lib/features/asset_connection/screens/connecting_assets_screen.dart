@@ -39,8 +39,13 @@ class _ConnectingAssetsScreenState extends ConsumerState<ConnectingAssetsScreen>
           next.step == AssetConnectionStep.stocksOtp) {
         context.push('/stocks-otp');
       } else if (previous?.step == AssetConnectionStep.linkingBanks &&
-          next.step == AssetConnectionStep.banksSearching) {
-        context.push('/banks-searching');
+          (next.step == AssetConnectionStep.banksLinking ||
+              next.step == AssetConnectionStep.banksSearching)) {
+        if (next.step == AssetConnectionStep.banksLinking) {
+          context.push('/banks-linking');
+        } else {
+          context.push('/banks-searching');
+        }
       }
     });
 
@@ -66,8 +71,8 @@ class _ConnectingAssetsScreenState extends ConsumerState<ConnectingAssetsScreen>
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
-          if (context.canPop()) {
-            context.pop();
+          if (!didPop && !context.canPop()) {
+            context.go('/aa-stocks-status');
           } else {
             context.go('/pan');
           }

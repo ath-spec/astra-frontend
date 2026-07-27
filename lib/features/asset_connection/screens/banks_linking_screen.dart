@@ -1,412 +1,259 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/widgets/arch_background.dart';
 import '../providers/asset_connection_provider.dart';
 
-class BanksLinkingScreen extends ConsumerWidget {
+/// Screen 1 of Banks Flow: Shows Bank Accounts (Image 1) in clean light mode.
+/// Allows checking/unchecking accounts, viewing consent info bottom sheet (Image 2),
+/// and proceeding to account fetching.
+class BanksLinkingScreen extends ConsumerStatefulWidget {
   const BanksLinkingScreen({super.key});
+
+  @override
+  ConsumerState<BanksLinkingScreen> createState() => _BanksLinkingScreenState();
+}
+
+class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Ensure banks are shown in state if not already populated
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = ref.read(assetConnectionProvider);
+      if (state.bankAccounts.isEmpty) {
+        ref.read(assetConnectionProvider.notifier).showFoundBanks();
+      }
+    });
+  }
 
   void _showConsentBottomSheet(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF131826),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (sheetContext) => _ConsentBottomSheet(
-        onConfirm: () {
+        onUnderstood: () {
           Navigator.pop(sheetContext);
-          _showOtpBottomSheet(context, ref);
+          ref.read(assetConnectionProvider.notifier).startBankLinking();
+          context.push('/banks-searching');
         },
       ),
     );
   }
 
-  void _showOtpBottomSheet(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      backgroundColor: const Color(0xFF131826),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (sheetContext) => const _BankOtpBottomSheet(),
-    ).then((verified) {
-      if (verified == true && context.mounted) {
-        ref.read(assetConnectionProvider.notifier).startBankLinking();
-        context.pushReplacement('/banks-linking-progress');
-      }
-    });
-  }
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final state = ref.watch(assetConnectionProvider);
     final notifier = ref.read(assetConnectionProvider.notifier);
-    final hasAnyLinked = state.bankAccounts.any((b) => b.isLinked);
-    final selectedCount = state.bankAccounts.where((b) => b.isSelected && !b.isLinked).length;
-    final isProceeding = hasAnyLinked && selectedCount == 0;
+    final hasSelected = state.bankAccounts.any((b) => b.isSelected);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0F19),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '3 of 3',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.7),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          notifier.skipBanks();
-                          context.go('/');
-                        },
-                        child: const Text(
-                          'Skip',
-                          style: TextStyle(
-                            color: Color(0xFF0D9488),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Badge
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF132328),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: const Color(0xFF0D9488).withValues(alpha: 0.4)),
-                              ),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.account_balance, size: 14, color: Color(0xFF0D9488)),
-                                  SizedBox(width: 6),
-                                  Text(
-                                    'Banks',
-                                    style: TextStyle(
-                                      color: Color(0xFF0D9488),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Title & Subtitle
-                          const Text(
-                            'We found these bank accounts',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            'Link accounts which you want to track',
-                            style: TextStyle(
-                              color: Color(0xFF94A3B8),
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Shield Badge
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF131826),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFF1E2433)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  hasAnyLinked ? Icons.verified_user : Icons.security,
-                                  size: 16,
-                                  color: const Color(0xFF0D9488),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  hasAnyLinked ? 'Trusted by 5L+ users' : 'Data is 100% secure',
-                              style: const TextStyle(
-                                color: Color(0xFFE2E8F0),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Bank Card
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF131826),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFF1E2433)),
-                        ),
-                        child: Column(
-                          children: [
-                            // Card Header
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 36,
-                                    height: 36,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF1E2433),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Icon(Icons.account_balance, color: Color(0xFF0D9488), size: 20),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Expanded(
-                                    child: Text(
-                                      'Axis Bank',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  if (hasAnyLinked)
-                                    const Text(
-                                      'Link',
-                                      style: TextStyle(
-                                        color: Color(0xFF0D9488),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            const Divider(height: 1, color: Color(0xFF1E2433)),
-
-                            // Account Rows
-                            ...state.bankAccounts.map((acc) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        acc.accountNumber,
-                                        style: const TextStyle(
-                                          color: Color(0xFFE2E8F0),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    if (acc.isLinked)
-                                      const Flexible(
-                                        child: Text(
-                                          'You are already tracking this account',
-                                          style: TextStyle(
-                                            color: Color(0xFF0D9488),
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      )
-                                    else
-                                      GestureDetector(
-                                        onTap: () => notifier.toggleBankSelection(acc.id),
-                                        behavior: HitTestBehavior.opaque,
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(left: 12.0),
-                                          child: Icon(
-                                            acc.isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
-                                            color: acc.isSelected ? const Color(0xFF0D9488) : const Color(0xFF64748B),
-                                            size: 22,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              );
-                            }),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Didn't find your account
-                      Center(
-                        child: TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            "Didn't find your account?",
-                            style: TextStyle(
-                              color: Color(0xFF94A3B8),
-                              fontSize: 14,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Security Footer
-              Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  const Icon(Icons.shield, size: 14, color: Color(0xFF64748B)),
-                  const SizedBox(width: 6),
-                  const Text(
-                    'Your data is 100% safe',
-                    style: TextStyle(
-                      color: Color(0xFF64748B),
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    '• Powered by FINVU',
-                    style: TextStyle(
-                      color: const Color(0xFF64748B).withValues(alpha: 0.8),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // CTA Button
-              SizedBox(
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: (!hasAnyLinked && selectedCount == 0)
-                      ? null
-                      : () {
-                          if (isProceeding) {
-                            notifier.finishAssetConnection();
-                            context.go('/');
-                          } else {
-                            _showConsentBottomSheet(context, ref);
-                          }
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: (!hasAnyLinked && selectedCount == 0)
-                        ? const Color(0xFF1E2433)
-                        : Colors.white,
-                    foregroundColor: (!hasAnyLinked && selectedCount == 0)
-                        ? const Color(0xFF64748B)
-                        : const Color(0xFF0B0F19),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    isProceeding ? 'Complete and proceed ->' : 'Link selected accounts',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // Skip link
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    notifier.skipBanks();
-                    context.go('/');
-                  },
-                  child: const Text(
-                    'Skip linking banks',
-                    style: TextStyle(
-                      color: Color(0xFF94A3B8),
-                      fontSize: 14,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    )));
-  }
-}
-
-class _ConsentBottomSheet extends StatelessWidget {
-  const _ConsentBottomSheet({required this.onConfirm});
-
-  final VoidCallback onConfirm;
-
-  Widget _buildConsentRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: const Color(0xFFFFFFFF),
+      body: Stack(
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              value,
-              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.end,
+          // Subtle 3D Architectural Dome Background Graphic
+          const ArchBackground(height: 380),
+
+          SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 60),
+
+                        // Title
+                        const Text(
+                          'Get latest balance and transactions',
+                          style: TextStyle(
+                            fontFamily: 'SpaceGrotesk',
+                            color: Color(0xFF0F172A),
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Subtitle with link
+                        Wrap(
+                          children: [
+                            const Text(
+                              'Securely track on Kuvera (DASPL). Revoke this anytime. ',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                color: Color(0xFF64748B),
+                                fontSize: 13,
+                                height: 1.4,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => _showConsentBottomSheet(context, ref),
+                              child: const Text(
+                                'Know more',
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: Color(0xFF0F172A),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Stats Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildStatItem('UPDATED', 'Daily'),
+                            _buildStatItem('VALID FOR', '1 year'),
+                            _buildStatItem('ACCESS', '1 Month'),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Dotted Separator Line
+                        CustomPaint(
+                          size: const Size(double.infinity, 1),
+                          painter: _DottedLinePainter(),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Bank Accounts List
+                        ...state.bankAccounts.map((bank) {
+                          return _buildBankCard(
+                            bank: bank,
+                            onTap: () => notifier.toggleBankSelection(bank.id),
+                          );
+                        }),
+
+                        const SizedBox(height: 16),
+
+                        // Connect More Accounts Label
+                        const Text(
+                          'CONNECT MORE ACCOUNTS',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            color: Color(0xFF94A3B8),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Connect More Accounts Placeholder Box
+                        Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFFFFF),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFE2E8F0),
+                              width: 1.0,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF0F172A).withValues(alpha: 0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+
+                        // CTA Button (Approve and proceed)
+                        GestureDetector(
+                          onTap: hasSelected
+                              ? () => _showConsentBottomSheet(context, ref)
+                              : null,
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: hasSelected
+                                    ? const [
+                                        Color(0xFFFFFFFF),
+                                        Color(0xFF5BA1F7),
+                                        Color(0xFF031E6B),
+                                        Color(0xFF241714),
+                                      ]
+                                    : const [
+                                        Color(0xFFF3F4F6),
+                                        Color(0xFFD1D5DB),
+                                        Color(0xFF9CA3AF),
+                                        Color(0xFF6B7280),
+                                      ],
+                                stops: const [0.0, 0.25, 0.7, 1.0],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: const Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Text(
+                                  'APPROVE AND PROCEED',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 20,
+                                  child: Icon(
+                                    Icons.arrow_forward_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Deny Button
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              notifier.skipBanks();
+                              context.go('/');
+                            },
+                            child: const Text(
+                              'Deny',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                color: Color(0xFF64748B),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Footer
+                _buildFooter(),
+              ],
             ),
           ),
         ],
@@ -414,293 +261,422 @@ class _ConsentBottomSheet extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Providing consent to DEZERV',
-                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Color(0xFF94A3B8)),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
+  Widget _buildStatItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: 'DMSans',
+            color: Color(0xFF94A3B8),
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.0,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            fontFamily: 'DMSans',
+            color: Color(0xFF0F172A),
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBankCard({
+    required BankAccountItem bank,
+    required VoidCallback onTap,
+  }) {
+    final accountLast4 = bank.accountNumber.length >= 4
+        ? bank.accountNumber.substring(bank.accountNumber.length - 4)
+        : bank.accountNumber;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFFFFF),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: bank.isSelected
+                ? const Color(0xFF0F172A).withValues(alpha: 0.2)
+                : const Color(0xFFE2E8F0),
+            width: bank.isSelected ? 1.5 : 1.0,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-            const SizedBox(height: 16),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Bank Icon
             Container(
-              padding: const EdgeInsets.all(16),
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
-                color: const Color(0xFF1E2433),
-                borderRadius: BorderRadius.circular(12),
+                shape: BoxShape.circle,
+                color: const Color(0xFFF8FAFC),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
               ),
+              child: Center(
+                child: Icon(
+                  bank.bankName.toUpperCase().contains('ICICI')
+                      ? Icons.account_balance_wallet_rounded
+                      : Icons.account_balance_rounded,
+                  color: bank.bankName.toUpperCase().contains('ICICI')
+                      ? const Color(0xFFE11D48)
+                      : const Color(0xFF031E6B),
+                  size: 20,
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+
+            // Name & Account Number
+            Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildConsentRow('Consent Purpose', 'Wealth management service'),
-                  const Divider(height: 1, color: Color(0xFF2D3748)),
-                  _buildConsentRow('Account Types', 'Deposit'),
-                  const Divider(height: 1, color: Color(0xFF2D3748)),
-                  _buildConsentRow('Shared from', '26 Jul 2025 -> 25 Jul 2027'),
-                  const Divider(height: 1, color: Color(0xFF2D3748)),
-                  _buildConsentRow('Consent valid till', '25 Jul 2027'),
-                  const Divider(height: 1, color: Color(0xFF2D3748)),
-                  _buildConsentRow('Data Fetching', '31 times a month'),
+                  Text(
+                    bank.bankName.toUpperCase(),
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      color: Color(0xFF0F172A),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '.. $accountLast4',
+                    style: const TextStyle(
+                      fontFamily: 'DMMono',
+                      color: Color(0xFF94A3B8),
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 52,
-              child: ElevatedButton(
-                onPressed: onConfirm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF0B0F19),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: const Text(
-                  'Confirm permissions',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+
+            // DEPOSIT Badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: const Text(
+                'DEPOSIT',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  color: Color(0xFF64748B),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
                 ),
               ),
+            ),
+            const SizedBox(width: 12),
+
+            // Checkbox
+            Container(
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                color: bank.isSelected
+                    ? const Color(0xFF0F172A)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: bank.isSelected
+                      ? const Color(0xFF0F172A)
+                      : const Color(0xFFCBD5E1),
+                  width: 1.5,
+                ),
+              ),
+              child: bank.isSelected
+                  ? const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 15,
+                    )
+                  : null,
             ),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildFooter() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+      child: Column(
+        children: [
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'powered by RBI-regulated account aggregator ',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    color: Color(0xFF64748B),
+                    fontSize: 11,
+                  ),
+                ),
+                Text(
+                  'FINVU',
+                  style: TextStyle(
+                    fontFamily: 'SpaceGrotesk',
+                    color: const Color(0xFF0F172A).withValues(alpha: 0.8),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.verified_user_outlined,
+                  color: Color(0xFF10B981),
+                  size: 14,
+                ),
+                const SizedBox(width: 6),
+                const Text(
+                  'trusted by 3 crore citizens',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    color: Color(0xFF10B981),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _BankOtpBottomSheet extends ConsumerStatefulWidget {
-  const _BankOtpBottomSheet();
+/// Dotted horizontal line separator
+class _DottedLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFCBD5E1)
+      ..strokeWidth = 1.0;
+
+    double startX = 0;
+    const dashWidth = 4.0;
+    const dashSpace = 4.0;
+    while (startX < size.width) {
+      canvas.drawLine(
+        Offset(startX, 0),
+        Offset(startX + dashWidth, 0),
+        paint,
+      );
+      startX += dashWidth + dashSpace;
+    }
+  }
 
   @override
-  ConsumerState<_BankOtpBottomSheet> createState() => _BankOtpBottomSheetState();
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class _BankOtpBottomSheetState extends ConsumerState<_BankOtpBottomSheet> {
-  final TextEditingController _otpController = TextEditingController();
-  Timer? _resendTimer;
-  int _secondsLeft = 30;
+/// Consent Info Bottom Sheet (Image 2)
+class _ConsentBottomSheet extends StatelessWidget {
+  final VoidCallback onUnderstood;
 
-  @override
-  void initState() {
-    super.initState();
-    _startTimer();
-  }
-
-  void _startTimer() {
-    _resendTimer?.cancel();
-    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) return;
-      if (_secondsLeft > 0) {
-        setState(() => _secondsLeft--);
-      } else {
-        timer.cancel();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _resendTimer?.cancel();
-    _otpController.dispose();
-    super.dispose();
-  }
+  const _ConsentBottomSheet({required this.onUnderstood});
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(assetConnectionProvider);
-    final selectedAccs = state.bankAccounts.where((b) => b.isSelected && !b.isLinked).toList();
-    final accSubtitle = selectedAccs.isNotEmpty ? selectedAccs.first.accountNumber : 'SAVINGS account';
-
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 24,
-          right: 24,
-          top: 24,
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Bank 1 of 1',
-                      style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Color(0xFF94A3B8)),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Link your bank account',
-                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-
-                // Bank card preview
-                Container(
-                  padding: const EdgeInsets.all(16),
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+      child: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E2433),
-                    borderRadius: BorderRadius.circular(12),
+                    color: const Color(0xFFE2E8F0),
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  child: Row(
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Title
+              const Text(
+                'DETAILS OF YOUR APPROVAL',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  color: Color(0xFF64748B),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Divider(color: Color(0xFFE2E8F0), height: 1),
+              const SizedBox(height: 16),
+
+              // Details List
+              _buildDetailRow(
+                label: 'approval requested on',
+                value: '6 June 2026',
+              ),
+              _buildDetailRow(
+                label: 'purpose',
+                value:
+                    'to generate insights based on your overall finances and provide incidental recommendations, if any',
+              ),
+              _buildDetailRow(
+                label: 'balance and transactions updated',
+                value: 'upto 45 times per month',
+              ),
+              _buildDetailRow(
+                label: 'approval valid for',
+                value: '6 June 2026 - 6 June 2027',
+              ),
+              _buildDetailRow(
+                label: 'account details',
+                value: 'profile, summary, transactions',
+              ),
+              _buildDetailRow(
+                label: 'access period to find insights for you',
+                value: '1 month',
+              ),
+              _buildDetailRow(
+                label: 'approval expiry',
+                value: '6 June 2027',
+              ),
+              _buildDetailRow(
+                label: 'account types',
+                value: 'deposit',
+                isLast: true,
+              ),
+
+              const SizedBox(height: 28),
+
+              // CTA Button (Understood)
+              GestureDetector(
+                onTap: onUnderstood,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFFFFFFF),
+                        Color(0xFF5BA1F7),
+                        Color(0xFF031E6B),
+                        Color(0xFF241714),
+                      ],
+                      stops: [0.0, 0.25, 0.7, 1.0],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Stack(
+                    alignment: Alignment.center,
                     children: [
-                      Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0B0F19),
-                          borderRadius: BorderRadius.circular(8),
+                      Text(
+                        'UNDERSTOOD',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.0,
                         ),
-                        child: const Icon(Icons.account_balance, color: Color(0xFF0D9488), size: 20),
                       ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Axis Bank',
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            accSubtitle,
-                            style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
-                          ),
-                        ],
+                      Positioned(
+                        right: 20,
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
-
-                // OTP Input field
-                TextField(
-                  controller: _otpController,
-                  keyboardType: TextInputType.number,
-                  maxLength: 6,
-                  style: const TextStyle(color: Colors.white, fontSize: 16, letterSpacing: 2),
-                  onChanged: (val) => setState(() {}),
-                  decoration: InputDecoration(
-                    hintText: 'Enter OTP sent to +91-8826473535',
-                    hintStyle: const TextStyle(color: Color(0xFF64748B), fontSize: 14, letterSpacing: 0),
-                    filled: true,
-                    fillColor: const Color(0xFF1E2433),
-                    counterText: '',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF2D3748)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF2D3748)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF0D9488)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Buttons row
-                Row(
-                  children: [
-                    SizedBox(
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: _secondsLeft > 0
-                            ? null
-                            : () {
-                                setState(() => _secondsLeft = 30);
-                                _startTimer();
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1E2433),
-                          disabledBackgroundColor: const Color(0xFF1E2433),
-                          foregroundColor: Colors.white,
-                          disabledForegroundColor: const Color(0xFF64748B),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text(
-                          _secondsLeft > 0 ? 'Resend ($_secondsLeft)' : 'Resend',
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: SizedBox(
-                        height: 52,
-                        child: ElevatedButton(
-                          onPressed: _otpController.text.length != 6
-                              ? null
-                              : () {
-                                  Navigator.pop(context, true);
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _otpController.text.length == 6
-                                ? Colors.white
-                                : const Color(0xFF1E2433),
-                            foregroundColor: _otpController.text.length == 6
-                                ? const Color(0xFF0B0F19)
-                                : const Color(0xFF64748B),
-                            disabledBackgroundColor: const Color(0xFF1E2433),
-                            disabledForegroundColor: const Color(0xFF64748B),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          child: const Text(
-                            'Verify OTP',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Skip link
-                Center(
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Skip linking Axis Bank accounts',
-                      style: TextStyle(
-                        color: Color(0xFF94A3B8),
-                        fontSize: 14,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow({
+    required String label,
+    required String value,
+    bool isLast = false,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: isLast ? 0 : 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'DMSans',
+              color: Color(0xFF94A3B8),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: 'DMSans',
+              color: Color(0xFF0F172A),
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              height: 1.3,
+            ),
+          ),
+        ],
       ),
     );
   }

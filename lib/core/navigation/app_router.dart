@@ -3,12 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/asset_connection/screens/banks_searching_screen.dart';
 import '../../features/asset_connection/screens/connecting_assets_screen.dart';
 import '../../features/asset_connection/screens/mutual_funds_status_screen.dart';
-import '../../features/asset_connection/screens/stocks_connection_screen.dart';
-import '../../features/asset_connection/screens/stocks_searching_screen.dart';
-import '../../features/asset_connection/screens/stocks_status_screen.dart';
-import '../../features/asset_connection/screens/stocks_verifying_screen.dart';
 import '../../features/asset_connection/screens/banks_linking_screen.dart';
-import '../../features/asset_connection/screens/banks_linking_progress_screen.dart';
 import '../../features/profiling/screens/profiling_intro_screen.dart';
 import '../../features/profiling/screens/profiling_questions_screen.dart';
 import '../../features/profiling/screens/profiling_status_screen.dart';
@@ -22,6 +17,9 @@ import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/notification_permission_screen.dart';
 import '../../features/auth/screens/dob_screen.dart';
 import '../../features/auth/screens/name_screen.dart';
+import '../../features/auth/screens/aa_stocks_otp_screen.dart';
+import '../../features/auth/screens/aa_stocks_fetching_screen.dart';
+import '../../features/auth/screens/aa_stocks_status_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 
 /// GoRouter configuration with auth state redirection.
@@ -42,15 +40,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           loc == '/notification-permission' ||
           loc == '/dob' ||
           loc == '/name' ||
+          loc == '/aa-stocks-otp' ||
+          loc == '/aa-stocks-fetching' ||
+          loc == '/aa-stocks-status' ||
           loc == '/connect-assets' ||
           loc == '/mf-status' ||
           loc == '/stocks-otp' ||
-          loc == '/stocks-verifying' ||
-          loc == '/stocks-searching' ||
-          loc == '/stocks-status' ||
           loc == '/banks-searching' ||
           loc == '/banks-linking' ||
-          loc == '/banks-linking-progress' ||
           loc == '/profiling-intro' ||
           loc == '/profiling-questions' ||
           loc == '/profiling-status' ||
@@ -93,6 +90,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const NameScreen(),
       ),
       GoRoute(
+        path: '/aa-stocks-otp',
+        builder: (context, state) => const AaStocksOtpScreen(),
+      ),
+      GoRoute(
+        path: '/aa-stocks-fetching',
+        builder: (context, state) => const AaStocksFetchingScreen(),
+      ),
+      GoRoute(
+        path: '/aa-stocks-status',
+        builder: (context, state) => const AaStocksStatusScreen(),
+      ),
+      GoRoute(
         path: '/connect-assets',
         builder: (context, state) => const ConnectingAssetsScreen(),
       ),
@@ -102,19 +111,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/stocks-otp',
-        builder: (context, state) => const StocksConnectionScreen(),
-      ),
-      GoRoute(
-        path: '/stocks-verifying',
-        builder: (context, state) => const StocksVerifyingScreen(),
-      ),
-      GoRoute(
-        path: '/stocks-searching',
-        builder: (context, state) => const StocksSearchingScreen(),
-      ),
-      GoRoute(
-        path: '/stocks-status',
-        builder: (context, state) => const StocksStatusScreen(),
+        builder: (context, state) => const AaStocksOtpScreen(),
       ),
       GoRoute(
         path: '/banks-searching',
@@ -123,10 +120,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/banks-linking',
         builder: (context, state) => const BanksLinkingScreen(),
-      ),
-      GoRoute(
-        path: '/banks-linking-progress',
-        builder: (context, state) => const BanksLinkingProgressScreen(),
       ),
       GoRoute(
         path: '/profiling-intro',
