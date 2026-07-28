@@ -20,6 +20,8 @@ import '../../features/auth/screens/aa_stocks_fetching_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/search/screens/search_screen.dart';
 import '../../features/chat/screens/chat_screen.dart';
+import '../../features/chat/screens/chat_history_screen.dart';
+import 'package:flutter/material.dart';
 import '../../features/explore/screens/explore_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../widgets/app_shell.dart';
@@ -102,6 +104,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/banks-linking',
         builder: (context, state) => const BanksLinkingScreen(),
+      ),
+      GoRoute(
+        path: '/chat-history',
+        builder: (context, state) => const ChatHistoryScreen(),
       ),
 
       GoRoute(

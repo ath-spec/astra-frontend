@@ -186,8 +186,8 @@ class _HomeButtonState extends State<_HomeButton> {
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOut,
         child: Container(
-          width: 40,
-          height: 40,
+          width: 48,
+          height: 48,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -203,7 +203,7 @@ class _HomeButtonState extends State<_HomeButton> {
           child: const Icon(
             Icons.home_rounded,
             color: Color(0xFF334155),
-            size: 20,
+            size: 24,
           ),
         ),
       ),

@@ -104,7 +104,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
         child: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
                 child: Center(
                   child: ConstrainedBox(
@@ -169,8 +169,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     const SizedBox(height: 44),
 
                     // Bank Accounts List
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 296),
+                    Flexible(
                       child: SingleChildScrollView(
                         child: Column(
                           children: state.bankAccounts.map((bank) {
@@ -200,8 +199,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     ),
                     const SizedBox(height: 8),
 
-                    SizedBox(
-                      height: 240,
+                    Expanded(
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         itemCount: _popularBanks.length,

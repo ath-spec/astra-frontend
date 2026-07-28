@@ -51,84 +51,93 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           const ArchBackground(height: 420),
 
           // Main Content
-          SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 420),
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: SizedBox.expand(
                 child: Column(
                   children: [
-                // Top App Bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Profile Button
-                      GestureDetector(
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Profile settings coming soon'),
-                              duration: Duration(seconds: 2),
+                    // Top App Bar
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        24.0, 
+                        MediaQuery.of(context).padding.top + 12.0, 
+                        24.0, 
+                        12.0
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Profile Button
+                          GestureDetector(
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Profile settings coming soon'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF1F5F9),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.person_outline_rounded,
+                                color: Color(0xFF0F172A),
+                                size: 22,
+                              ),
                             ),
-                          );
-                        },
-                        child: Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF1F5F9),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF0F172A).withValues(alpha: 0.04),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
+                          ),
+                          // Lock / Security Button
+                          GestureDetector(
+                            onTap: () => context.push('/no-internet', extra: '/'),
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF1F5F9),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.person_outline_rounded,
-                            color: Color(0xFF0F172A),
-                            size: 22,
-                          ),
-                        ),
-                      ),
-                      // Lock / Security Button
-                      GestureDetector(
-                        onTap: () => context.push('/no-internet', extra: '/'),
-                        child: Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF1F5F9),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF0F172A).withValues(alpha: 0.04),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
+                              child: const Icon(
+                                Icons.lock_outline_rounded,
+                                color: Color(0xFF0F172A),
+                                size: 20,
                               ),
-                            ],
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.lock_outline_rounded,
-                            color: Color(0xFF0F172A),
-                            size: 20,
-                          ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
 
-                // Scrollable Dashboard Body
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
+                    // Scrollable Dashboard Body
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                          left: 24.0,
+                          right: 24.0,
+                          bottom: MediaQuery.of(context).padding.bottom + 100, // Space for nav pill and system nav
+                        ),
+                        child: Column(
                       children: [
                         const SizedBox(height: 16),
 

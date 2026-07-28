@@ -37,4 +37,18 @@ class ChatNotifier extends _$ChatNotifier {
       state = [...state, aiMsg];
     });
   }
+
+  void loadDummyThread(String title) {
+    final msgs = List.generate(12, (i) => ChatMessage(
+      id: _uuid.v4(),
+      text: i == 0 
+          ? 'Tell me about $title' 
+          : i.isEven 
+              ? 'Could you elaborate on how that affects my specific portfolio?' 
+              : 'Based on our analysis of $title, this represents a significant opportunity. Your current exposure is 15%, and we recommend rebalancing.',
+      isUser: i.isEven,
+      timestamp: DateTime.now().subtract(Duration(minutes: 12 - i)),
+    ));
+    state = msgs;
+  }
 }

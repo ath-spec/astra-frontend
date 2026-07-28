@@ -27,42 +27,56 @@ class ChatScreen extends ConsumerWidget {
               left: 0,
               right: 0,
               height: MediaQuery.of(context).size.height,
-              child: DecoratedBox(
+              child: const DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      const Color(0xFF1C3059),
-                      const Color(0xFF233A5F),
-                      const Color(0xFFD0D3DA),
-                      const Color(0xFFF9FDFF),
+                      Color(0xFF1C3059),
+                      Color(0xFF233A5F),
+                      Color(0xFFD0D3DA),
+                      Color(0xFFF9FDFF),
                     ],
-                    stops: const [0.0, 0.35, 0.75, 1.0],
+                    stops: [0.0, 0.35, 0.75, 1.0],
                   ),
                 ),
               ),
             ),
 
-            // Main Content Area with unified scroll view
-            const Positioned.fill(
-              child: ChatMessageList(),
-            ),
+            // Center everything else for responsiveness
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: SizedBox.expand(
+                  child: Stack(
+                    children: [
+                      // Main Content Area with unified scroll view
+                      const Positioned.fill(
+                        child: ChatMessageList(),
+                      ),
 
-            // Top floating App Bar
-            const Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: ChatAppBar(),
-            ),
+                      // Top floating App Bar
+                      const Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: ChatAppBar(),
+                      ),
 
-            // Bottom Input Field (floating above everything, responds to keyboard)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              child: const ChatInputField(),
+                      // Bottom Input Field (floating above everything, responds to keyboard and nav bar)
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: MediaQuery.of(context).viewInsets.bottom > 0
+                            ? MediaQuery.of(context).viewInsets.bottom
+                            : MediaQuery.of(context).padding.bottom,
+                        child: const ChatInputField(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ),

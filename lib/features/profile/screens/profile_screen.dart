@@ -20,13 +20,18 @@ class ProfileScreen extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
-      body: const Center(
-        child: Text(
-          'Profile settings coming soon',
-          style: TextStyle(
-            fontFamily: 'DMSans',
-            color: Color(0xFF64748B),
-            fontSize: 14,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: const Center(
+            child: Text(
+              'Profile settings coming soon',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                color: Color(0xFF64748B),
+                fontSize: 14,
+              ),
+            ),
           ),
         ),
       ),

@@ -129,6 +129,7 @@ class _HeaderButtonState extends State<_HeaderButton> {
           }
         } else {
           // Handle history tap
+          context.push('/chat-history');
         }
       },
       onTapCancel: () => setState(() => _isPressed = false),
