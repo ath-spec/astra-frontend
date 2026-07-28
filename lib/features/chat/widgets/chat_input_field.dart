@@ -75,7 +75,7 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                   hintStyle: const TextStyle(
                     fontFamily: 'DMSans',
                     color: Color(0xFF94A3B8),
-                    fontSize: 15,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
                   ),
                   filled: true,
@@ -108,7 +108,7 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                 style: const TextStyle(
                   fontFamily: 'DMSans',
                   color: Color(0xFF0F172A),
-                  fontSize: 15,
+                  fontSize: 12,
                   height: 1.3,
                 ),
               ),

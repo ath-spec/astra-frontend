@@ -34,27 +34,30 @@ class _ChatMessageListState extends ConsumerState<ChatMessageList> {
       controller: _scrollController,
       physics: const BouncingScrollPhysics(),
       slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.zero,
-            child: const ChatHeader(),
+        if (messages.isEmpty) ...[
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.zero,
+              child: ChatHeader(),
+            ),
           ),
-        ),
-        
-        // Flexible space when no messages, otherwise list of messages
-        if (messages.isEmpty)
           SliverFillRemaining(
             hasScrollBody: false,
             child: Column(
-              children: [
-                const Expanded(flex: 2, child: SizedBox(height: 32)),
-                const SizedBox(height: 120),
+              children: const [
+                Expanded(flex: 2, child: SizedBox(height: 32)),
+                SizedBox(height: 120),
               ],
             ),
-          )
-        else
+          ),
+        ] else ...[
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              MediaQuery.of(context).padding.top + 80,
+              20,
+              100,
+            ),
             sliver: SliverList.builder(
               itemCount: messages.length,
               itemBuilder: (context, index) {
@@ -63,6 +66,7 @@ class _ChatMessageListState extends ConsumerState<ChatMessageList> {
               },
             ),
           ),
+        ],
       ],
     );
   }
@@ -102,7 +106,7 @@ class _ChatBubble extends StatelessWidget {
           message.text,
           style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 15,
+            fontSize: 12,
             height: 1.4,
             color: message.isUser ? Colors.white : const Color(0xFF0F172A),
           ),
