@@ -34,6 +34,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   void dispose() {
+    _pulseController.stop();
     _pulseController.dispose();
     super.dispose();
   }
@@ -594,7 +595,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14.0),
       child: GestureDetector(
-        onTap: () => context.push('/banks-selection'),
+        onTap: () => context.push('/banks-linking'),
         child: Row(
           children: [
             const Icon(Icons.account_balance_rounded, color: Color(0xFF64748B), size: 24),
@@ -637,17 +638,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     builder: (context, child) {
                       return Opacity(
                         opacity: _pulseAnimation.value,
-                        child: const Text(
-                          '• • •',
-                          style: TextStyle(
-                            color: Color(0xFF94A3B8),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2.0,
-                          ),
-                        ),
+                        child: child,
                       );
                     },
+                    child: const Text(
+                      '• • •',
+                      style: TextStyle(
+                        color: Color(0xFF94A3B8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   const Text(

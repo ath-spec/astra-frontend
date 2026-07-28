@@ -15,6 +15,21 @@ class BanksLinkingScreen extends ConsumerStatefulWidget {
 }
 
 class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
+  List<String> _selectedMoreBanks = [];
+  final List<String> _popularBanks = [
+    'State Bank of India',
+    'Punjab National Bank',
+    'Bank of Baroda',
+    'Canara Bank',
+    'Union Bank of India',
+    'Bank of India',
+    'Indian Bank',
+    'Central Bank of India',
+    'Indian Overseas Bank',
+    'UCO Bank',
+    'Bank of Maharashtra',
+    'Punjab & Sind Bank',
+  ];
 
   @override
   void initState() {
@@ -54,16 +69,32 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     );
     final hasAnyLinked = state.bankAccounts.any((b) => b.isLinked);
 
-    String ctaLabel = 'APPROVE AND CONNECT';
-    bool ctaActive = hasSelected;
+    String ctaLabel;
+    bool ctaActive;
     VoidCallback? onCtaTap;
 
-    if (ctaActive) {
+    if (_selectedMoreBanks.isNotEmpty) {
+      ctaLabel = 'PROCEED';
+      ctaActive = true;
+      onCtaTap = () {
+        for (final bank in _selectedMoreBanks) {
+          notifier.searchAndAddBank(bank);
+        }
+        setState(() {
+          _selectedMoreBanks.clear();
+        });
+        context.push('/banks-searching');
+      };
+    } else if (hasSelected) {
+      ctaLabel = 'APPROVE AND CONNECT';
+      ctaActive = true;
       onCtaTap = () {
         notifier.startBankLinking();
         context.go('/');
       };
     } else {
+      ctaLabel = 'APPROVE AND CONNECT';
+      ctaActive = false;
       onCtaTap = null;
     }
 
@@ -112,7 +143,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                         GestureDetector(
                           onTap: () => _showConsentBottomSheet(context),
                           child: const Text(
-                            'KNOW MORE',
+                            'KNOW MORE.',
                             style: TextStyle(
                               fontFamily: 'DMSans',
                               color: Color(0xFF0F172A),
@@ -135,17 +166,129 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                         _buildStatItem('ACCESS', '1 Month'),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 44),
 
                     // Bank Accounts List
-                    ...state.bankAccounts.map((bank) {
-                      return _buildBankCard(
-                        bank: bank,
-                        onTap: bank.isLinked
-                            ? null // already linked, not interactive
-                            : () => notifier.toggleBankSelection(bank.id),
-                      );
-                    }),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 296),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: state.bankAccounts.map((bank) {
+                            return _buildBankCard(
+                              bank: bank,
+                              onTap: bank.isLinked
+                                  ? null // already linked, not interactive
+                                  : () => notifier.toggleBankSelection(bank.id),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 46),
+
+                    // Connect More Accounts Label
+                    const Text(
+                      'CONNECT MORE ACCOUNTS',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        color: Color(0xFF9CA3AF),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    SizedBox(
+                      height: 240,
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: _popularBanks.length,
+                        itemBuilder: (context, index) {
+                          final bankName = _popularBanks[index];
+                          final isSelected = _selectedMoreBanks.contains(bankName);
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFFFFF),
+                              border: Border.all(
+                                color: const Color(0xFFE2E8F0),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.zero,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF0F172A).withValues(alpha: 0.02),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              dense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 2,
+                              ),
+                              leading: _buildBankLogoWidget(bankName, size: 24),
+                              title: Text(
+                                bankName.toUpperCase(),
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: isSelected
+                                      ? const Color(0xFF0F172A)
+                                      : const Color(0xFF475569),
+                                  fontSize: 11,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w600,
+                                ),
+                              ),
+                              trailing: Container(
+                                width: 18,
+                                height: 18,
+                                decoration: BoxDecoration(
+                                  color: isSelected ? null : Colors.transparent,
+                                  gradient: isSelected
+                                      ? const LinearGradient(
+                                          colors: [
+                                            Color(0xFFFFFFFF),
+                                            Color(0xFF5BA1F7),
+                                            Color(0xFF031E6B),
+                                            Color(0xFF241714),
+                                          ],
+                                          stops: [0.0, 0.25, 0.7, 1.0],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        )
+                                      : null,
+                                  border: isSelected
+                                      ? null
+                                      : Border.all(
+                                          color: const Color(0xFFCBD5E1),
+                                          width: 1.5,
+                                        ),
+                                ),
+                                child: isSelected
+                                    ? const Icon(Icons.check,
+                                        color: Colors.white, size: 12)
+                                    : null,
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  if (_selectedMoreBanks.contains(bankName)) {
+                                    _selectedMoreBanks.remove(bankName);
+                                  } else {
+                                    _selectedMoreBanks.add(bankName);
+                                  }
+                                });
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
 
 
                       ],
@@ -283,6 +426,47 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     );
   }
 
+  String _getBankLogoUrl(String bankName) {
+    final name = bankName.toLowerCase();
+    if (name.contains('hdfc')) return 'https://logo.clearbit.com/hdfcbank.com';
+    if (name.contains('icici')) return 'https://logo.clearbit.com/icicibank.com';
+    if (name.contains('state bank') || name.contains('sbi')) return 'https://logo.clearbit.com/onlinesbi.sbi';
+    if (name.contains('axis')) return 'https://logo.clearbit.com/axisbank.com';
+    if (name.contains('kotak')) return 'https://logo.clearbit.com/kotak.com';
+    if (name.contains('yes')) return 'https://logo.clearbit.com/yesbank.in';
+    if (name.contains('punjab') || name.contains('pnb')) return 'https://logo.clearbit.com/pnbindia.in';
+    if (name.contains('indusind')) return 'https://logo.clearbit.com/indusind.com';
+    if (name.contains('bank of baroda') || name.contains('bob')) return 'https://logo.clearbit.com/bankofbaroda.in';
+    return 'https://logo.clearbit.com/bankofamerica.com';
+  }
+
+  Widget _buildBankLogoWidget(String bankName, {double size = 30}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size / 2),
+      child: Image.network(
+        _getBankLogoUrl(bankName),
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: size,
+            height: size,
+            decoration: const BoxDecoration(
+              color: Color(0xFFF1F5F9),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.account_balance_rounded,
+              size: size * 0.6,
+              color: Color(0xFF64748B),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildBankCard({
     required BankAccountItem bank,
     required VoidCallback? onTap,
@@ -290,6 +474,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     final accountLast4 = bank.accountNumber.length >= 4
         ? bank.accountNumber.substring(bank.accountNumber.length - 4)
         : bank.accountNumber;
+    final accountType = bank.accountNumber.split(' ').first.toUpperCase();
     final isLinked = bank.isLinked;
 
     return GestureDetector(
@@ -303,21 +488,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
         child: Row(
           children: [
             // Bank Icon
-            Container(
-              width: 30,
-              height: 30,
-              child: Center(
-                child: Icon(
-                  bank.bankName.toUpperCase().contains('ICICI')
-                      ? Icons.account_balance_wallet_rounded
-                      : Icons.account_balance_rounded,
-                  color: bank.bankName.toUpperCase().contains('ICICI')
-                      ? const Color(0xFFE11D48)
-                      : const Color(0xFF031E6B),
-                  size: 20,
-                ),
-              ),
-            ),
+            _buildBankLogoWidget(bank.bankName, size: 30),
             const SizedBox(width: 14),
 
             // Name & Account Number
@@ -336,7 +507,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '.. $accountLast4',
+                    '.. $accountLast4 • $accountType',
                     style: const TextStyle(
                       fontFamily: 'DMMono',
                       color: Color(0xFF9CA3AF),
@@ -357,32 +528,29 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
               ),
             ] else ...[
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                child: const Text(
-                  'DEPOSIT',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    color: Color(0xFF9CA3AF),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Container(
                 width: 18,
                 height: 18,
                 decoration: BoxDecoration(
-                  color: bank.isSelected
-                      ? const Color(0xFF0F172A)
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: bank.isSelected
-                        ? const Color(0xFF0F172A)
-                        : const Color(0xFFCBD5E1),
-                    width: 1.5,
-                  ),
+                  color: bank.isSelected ? null : Colors.transparent,
+                  gradient: bank.isSelected
+                      ? const LinearGradient(
+                          colors: [
+                            Color(0xFFFFFFFF),
+                            Color(0xFF5BA1F7),
+                            Color(0xFF031E6B),
+                            Color(0xFF241714),
+                          ],
+                          stops: [0.0, 0.25, 0.7, 1.0],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : null,
+                  border: bank.isSelected
+                      ? null
+                      : Border.all(
+                          color: const Color(0xFFCBD5E1),
+                          width: 1.5,
+                        ),
                 ),
                 child: bank.isSelected
                     ? const Icon(Icons.check, color: Colors.white, size: 12)
@@ -570,14 +738,6 @@ class _ConsentBottomSheet extends StatelessWidget {
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.0,
-                        ),
-                      ),
-                      Positioned(
-                        right: 20,
-                        child: Icon(
-                          Icons.arrow_forward_rounded,
-                          color: Colors.white,
-                          size: 18,
                         ),
                       ),
                     ],

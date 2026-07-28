@@ -39,6 +39,7 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
   @override
   void dispose() {
     _timer?.cancel();
+    _pulseController.stop();
     _pulseController.dispose();
     super.dispose();
   }
@@ -163,24 +164,25 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
                           builder: (context, child) {
                             return Opacity(
                               opacity: _pulseAnimation.value,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(3, (i) {
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
-                                    width: 10,
-                                    height: 10,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF031E6B),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  );
-                                }),
-                              ),
+                              child: child,
                             );
                           },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(3, (i) {
+                              return Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+                                width: 10,
+                                height: 10,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF031E6B),
+                                  shape: BoxShape.circle,
+                                ),
+                              );
+                            }),
+                          ),
                         ),
                         const SizedBox(height: 24),
                         const Text(

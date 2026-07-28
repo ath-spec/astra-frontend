@@ -14,11 +14,16 @@ class ArchBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned(
       top: -20,
-      left: 20,
-      right: 20,
-      child: IgnorePointer(
-        child: Container(
-          height: height,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: IgnorePointer(
+              child: Container(
+                height: height,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(220)),
             gradient: LinearGradient(
@@ -65,6 +70,9 @@ class ArchBackground extends StatelessWidget {
             ),
           ),
         ),
+      ),
+      ),
+      ),
       ),
     );
   }

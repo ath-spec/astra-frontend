@@ -50,6 +50,7 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
   @override
   void dispose() {
     _timer?.cancel();
+    _pulseController.stop();
     _pulseController.dispose();
     super.dispose();
   }

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/asset_connection/screens/banks_searching_screen.dart';
 import '../../features/asset_connection/screens/banks_linking_screen.dart';
-import '../../features/asset_connection/screens/banks_selection_screen.dart';
 import '../../features/profiling/screens/profiling_intro_screen.dart';
 import '../../features/profiling/screens/profiling_questions_screen.dart';
 import '../../features/profiling/screens/profiling_status_screen.dart';
@@ -99,10 +98,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/banks-linking',
         builder: (context, state) => const BanksLinkingScreen(),
       ),
-      GoRoute(
-        path: '/banks-selection',
-        builder: (context, state) => const BanksSelectionScreen(),
-      ),
+
       GoRoute(
         path: '/profiling-intro',
         builder: (context, state) => const ProfilingIntroScreen(),

@@ -46,6 +46,7 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
   @override
   void dispose() {
     _timer?.cancel();
+    _pulseController.stop();
     _pulseController.dispose();
     super.dispose();
   }
