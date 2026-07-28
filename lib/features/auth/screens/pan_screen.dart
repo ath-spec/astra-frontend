@@ -192,11 +192,21 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
           child: Center(
             child: Text(
               char,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'SpaceGrotesk',
                 fontSize: 36,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF111827),
+                foreground: Paint()
+                  ..shader = const LinearGradient(
+                    colors: [
+                      Color(0xFF5BA1F7),
+                      Color(0xFF031E6B),
+                      Color(0xFF241714),
+                    ],
+                    stops: [0.0, 0.5, 1.0],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
               ),
             ),
           ),

@@ -153,14 +153,24 @@ class _NameScreenState extends State<NameScreen>
                                 LengthLimitingTextInputFormatter(14),
                                 _NameInputFormatter(),
                               ],
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: 'SpaceGrotesk',
-                                fontSize: 28,
+                                fontSize: 32,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.5,
-                                color: Color(0xFF111827),
+                                foreground: Paint()
+                                  ..shader = const LinearGradient(
+                                    colors: [
+                                      Color(0xFF5BA1F7),
+                                      Color(0xFF031E6B),
+                                      Color(0xFF241714),
+                                    ],
+                                    stops: [0.0, 0.5, 1.0],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
                               ),
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none,
@@ -169,10 +179,10 @@ class _NameScreenState extends State<NameScreen>
                                 hintText: '(type your name)',
                                 hintStyle: TextStyle(
                                   fontFamily: 'SpaceGrotesk',
-                                  fontSize: 28,
+                                  fontSize: 32,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.5,
-                                  color: Color(0xFFD1D5DB),
+                                  foreground: Paint()..color = const Color(0xFFD1D5DB),
                                 ),
                               ),
                             ),

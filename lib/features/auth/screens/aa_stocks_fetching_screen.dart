@@ -2,20 +2,25 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/auth_provider.dart';
+
 /// Screen matching Image 2 for Account Aggregator Stocks data fetching state.
-/// Displays animated loader, skeleton cards, and automatically transitions to AaStocksStatusScreen.
-class AaStocksFetchingScreen extends StatefulWidget {
+/// Displays animated loader, skeleton cards, and automatically transitions to status UI.
+class AaStocksFetchingScreen extends ConsumerStatefulWidget {
   const AaStocksFetchingScreen({super.key});
 
   @override
-  State<AaStocksFetchingScreen> createState() => _AaStocksFetchingScreenState();
+  ConsumerState<AaStocksFetchingScreen> createState() => _AaStocksFetchingScreenState();
 }
 
-class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
+class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
     with SingleTickerProviderStateMixin {
   Timer? _timer;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  bool _showStatus = false;
+  final bool _hasDemat = false; // By default no demat
 
   @override
   void initState() {
@@ -30,7 +35,14 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
 
     _timer = Timer(const Duration(milliseconds: 2500), () {
       if (mounted) {
-        context.pushReplacement('/aa-stocks-status');
+        setState(() {
+          _showStatus = true;
+        });
+        _timer = Timer(const Duration(milliseconds: 2000), () {
+          if (mounted) {
+            context.pushReplacement('/banks-linking');
+          }
+        });
       }
     });
   }
@@ -99,6 +111,9 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final phone = ref.watch(authProvider.notifier).pendingPhone;
+    final displayPhone = phone.isEmpty ? '6291328703' : phone;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -123,30 +138,40 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                     },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0, top: 8.0),
-                  child: TextButton(
-                    onPressed: () {
-                      _timer?.cancel();
-                      context.pushReplacement('/aa-stocks-status');
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF6B7280),
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.only(bottom: 1),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Color(0xFF9CA3AF),
-                            width: 1.0,
-                            style: BorderStyle.solid,
+                if (!_showStatus)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0, top: 8.0),
+                    child: TextButton(
+                      onPressed: () {
+                        _timer?.cancel();
+                        context.pushReplacement('/banks-linking');
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF6B7280),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 1),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Color(0xFF9CA3AF),
+                              width: 1.0,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          'SKIP',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.8
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
             Expanded(
@@ -158,111 +183,171 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const SizedBox(height: 12),
-                        // Pulsing Loader Dots
-                        AnimatedBuilder(
-                          animation: _pulseAnimation,
-                          builder: (context, child) {
-                            return Opacity(
-                              opacity: _pulseAnimation.value,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(3, (i) {
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
-                                    width: 10,
-                                    height: 10,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF031E6B),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  );
-                                }),
-                              ),
-                            );
-                          },
-                        ),
                         const SizedBox(height: 24),
-                        const Text(
-                          'Securely fetching your stocks and ETFs',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'SpaceGrotesk',
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF111827),
-                            height: 1.15,
-                            letterSpacing: -1.0,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: const TextSpan(
-                            style: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                              height: 1.4,
-                            ),
+                        if (_showStatus) ...[
+                          // Status UI
+                          Stack(
+                            clipBehavior: Clip.none,
                             children: [
-                              TextSpan(
-                                text:
-                                    "Hang tight. We're securely pulling your accounts, this should only take a moment. ",
+                              Container(
+                                width: 64,
+                                height: 64,
+                                decoration: BoxDecoration(
+                                  color: _hasDemat
+                                      ? const Color(0xFF10B981).withValues(alpha: 0.1)
+                                      : const Color(0xFFF3F4F6),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: _hasDemat
+                                        ? const Color(0xFF10B981).withValues(alpha: 0.3)
+                                        : const Color(0xFFE5E7EB),
+                                  ),
+                                ),
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  _hasDemat
+                                      ? Icons.account_balance_wallet_rounded
+                                      : Icons.domain_disabled_rounded,
+                                  color: _hasDemat
+                                      ? const Color(0xFF10B981)
+                                      : const Color(0xFF6B7280),
+                                  size: 32,
+                                ),
                               ),
-                              TextSpan(
-                                text: 'Account Aggregator',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF111827),
-                                  decoration: TextDecoration.underline,
+                              Positioned(
+                                right: -4,
+                                top: -4,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: _hasDemat
+                                        ? const Color(0xFF10B981)
+                                        : const Color(0xFF6B7280),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    _hasDemat
+                                        ? Icons.check_rounded
+                                        : Icons.info_outline_rounded,
+                                    color: Colors.white,
+                                    size: 14,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 36),
-                        // Skeleton Cards
-                        Column(
-                          children: List.generate(
-                            3,
-                            (index) => _buildSkeletonCard(index),
+                          const SizedBox(height: 24),
+                          Text(
+                            _hasDemat ? 'Demat accounts linked!' : 'No Demat found',
+                            style: const TextStyle(
+                              fontFamily: 'SpaceGrotesk',
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF111827),
+                              height: 1.15,
+                              letterSpacing: -1.0,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 32),
-                        // Notice
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.access_time_rounded,
-                              size: 16,
+                          const SizedBox(height: 12),
+                          Text(
+                            _hasDemat
+                                ? 'We found active Demat accounts linked to your mobile number +91 $displayPhone.'
+                                : "We couldn't find any Demat accounts associated with your mobile number +91 $displayPhone.",
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 15,
                               color: Color(0xFF6B7280),
+                              height: 1.4,
                             ),
-                            const SizedBox(width: 8),
-                            const Flexible(
-                              child: Text(
-                                'Securely fetching all your accounts. This may take a few seconds.',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 12,
-                                  color: Color(0xFF6B7280),
-                                ),
-                                textAlign: TextAlign.center,
+                          ),
+                        ] else ...[
+                          // Fetching UI
+                          const Text(
+                            'Securely fetching your stocks and ETFs',
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontFamily: 'SpaceGrotesk',
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF111827),
+                              height: 1.15,
+                              letterSpacing: -1.0,
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                          RichText(
+                            textAlign: TextAlign.left,
+                            text: const TextSpan(
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 10,
+                                color: Color(0xFF9CA3AF),
+                                height: 1.4,
+                                fontWeight: FontWeight.w600,
                               ),
+                              children: [
+                                TextSpan(
+                                  text: "HANG TIGHT. WE'RE SECURELY PULLING YOUR ACCOUNTS, THIS SHOULD ONLY TAKE A MOMENT. ",
+                                ),
+                                TextSpan(
+                                  text: 'ACCOUNT AGGREGATOR',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF111827),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 48),
-                        const SizedBox(height: 24),
+                          ),
+                        ],
+                        const SizedBox(height: 32),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
+            const SizedBox(height: 8),
+            Center(
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'POWERED BY RBI-REGULATED ACCOUNT AGGREGATOR ',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 9,
+                          color: Color(0xFF9CA3AF),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.change_history_rounded,
+                            color: Color(0xFF1E3A8A),
+                            size: 14,
+                          ),
+                          const SizedBox(width: 2),
+                          const Text(
+                            'FINARKEIN',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF1E3A8A),
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
           ],
         ),
       ),

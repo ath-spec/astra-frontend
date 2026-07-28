@@ -188,59 +188,64 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                               color: Color(0xFF9CA3AF),
                               height: 1.4,
                               letterSpacing: 0.8,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 24),
-                          Row(
-                            children: [
-                              RichText(
-                                text: TextSpan(
-                                  style: const TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.8,
-                                    color: Color(0xFF9CA3AF),
-                                  ),
-                                  children: [
-                                    const TextSpan(text: "ENTER THE OTP SENT TO "),
-                                    TextSpan(
-                                      text: "+91 $displayPhone",
+                          GestureDetector(
+                            onTap: () {
+                              FocusScope.of(context).unfocus();
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (ctx) => EditNumberOverlay(
+                                  currentNumber: displayPhone,
+                                  onConfirm: (newNumber) {
+                                    setState(() {
+                                      _overridePhone = newNumber;
+                                      _otpController.clear();
+                                    });
+                                    _startTimer();
+                                  },
+                                ),
+                              );
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+                              child: Row(
+                                children: [
+                                  RichText(
+                                    text: TextSpan(
                                       style: const TextStyle(
-                                        color: Color(0xFF111827),
-                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'DMSans',
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.8,
+                                        color: Color(0xFF9CA3AF),
                                       ),
+                                      children: [
+                                        const TextSpan(text: "ENTER THE OTP SENT TO "),
+                                        TextSpan(
+                                          text: "+91 $displayPhone",
+                                          style: const TextStyle(
+                                            color: Color(0xFF111827),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.edit_rounded,
+                                    size: 16,
+                                    color: Color(0xFF6B7280),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () {
-                                  FocusScope.of(context).unfocus();
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (ctx) => EditNumberOverlay(
-                                      currentNumber: displayPhone,
-                                      onConfirm: (newNumber) {
-                                        setState(() {
-                                          _overridePhone = newNumber;
-                                          _otpController.clear();
-                                        });
-                                        _startTimer();
-                                      },
-                                    ),
-                                  );
-                                },
-                                child: const Icon(
-                                  Icons.edit_rounded,
-                                  size: 16,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                           const SizedBox(height: 16),
                           // 6-digit OTP input field
@@ -255,14 +260,24 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(6),
                                 ],
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'SpaceGrotesk',
-                                  fontSize: 36,
+                                  fontSize: 32,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 12.0,
-                                  color: Color(0xFF111827),
+                                  foreground: Paint()
+                                    ..shader = const LinearGradient(
+                                      colors: [
+                                        Color(0xFF5BA1F7),
+                                        Color(0xFF031E6B),
+                                        Color(0xFF241714),
+                                      ],
+                                      stops: [0.0, 0.5, 1.0],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
                                 ),
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -271,10 +286,10 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                                   hintText: '000000',
                                   hintStyle: TextStyle(
                                     fontFamily: 'SpaceGrotesk',
-                                    fontSize: 36,
+                                    fontSize: 32,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 12.0,
-                                    color: Color(0xFFE5E7EB),
+                                    foreground: Paint()..color = const Color(0xFFE5E7EB),
                                   ),
                                 ),
                               ),
@@ -399,6 +414,48 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
+              Center(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'POWERED BY RBI-REGULATED ACCOUNT AGGREGATOR ',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 9,
+                            color: Color(0xFF9CA3AF),
+                            fontWeight: FontWeight.w600
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.change_history_rounded,
+                              color: Color(0xFF1E3A8A),
+                              size: 11,
+                            ),
+                            const SizedBox(width: 2),
+                            const Text(
+                              'FINARKEIN',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF1E3A8A),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
             ],
           ),
         ),

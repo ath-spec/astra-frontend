@@ -124,14 +124,24 @@ class _PanOtpVerificationScreenState extends ConsumerState<PanOtpVerificationScr
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(6),
                                 ],
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'SpaceGrotesk',
                                   fontSize: 36,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 12.0,
-                                  color: Color(0xFF111827),
+                                  foreground: Paint()
+                                    ..shader = const LinearGradient(
+                                      colors: [
+                                        Color(0xFF5BA1F7),
+                                        Color(0xFF031E6B),
+                                        Color(0xFF241714),
+                                      ],
+                                      stops: [0.0, 0.5, 1.0],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
                                 ),
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -143,7 +153,7 @@ class _PanOtpVerificationScreenState extends ConsumerState<PanOtpVerificationScr
                                     fontSize: 36,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 12.0,
-                                    color: Color(0xFFE5E7EB),
+                                    foreground: Paint()..color = const Color(0xFFE5E7EB),
                                   ),
                                 ),
                               ),

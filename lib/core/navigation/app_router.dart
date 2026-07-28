@@ -17,7 +17,6 @@ import '../../features/auth/screens/dob_screen.dart';
 import '../../features/auth/screens/name_screen.dart';
 import '../../features/auth/screens/aa_stocks_otp_screen.dart';
 import '../../features/auth/screens/aa_stocks_fetching_screen.dart';
-import '../../features/auth/screens/aa_stocks_status_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 
 /// GoRouter configuration with auth state redirection.
@@ -40,7 +39,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           loc == '/name' ||
           loc == '/aa-stocks-otp' ||
           loc == '/aa-stocks-fetching' ||
-          loc == '/aa-stocks-status' ||
           loc == '/banks-searching' ||
           loc == '/banks-linking' ||
           loc == '/profiling-intro' ||
@@ -91,10 +89,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/aa-stocks-fetching',
         builder: (context, state) => const AaStocksFetchingScreen(),
-      ),
-      GoRoute(
-        path: '/aa-stocks-status',
-        builder: (context, state) => const AaStocksStatusScreen(),
       ),
       GoRoute(
         path: '/banks-searching',

@@ -87,10 +87,6 @@ class _EditNumberOverlayState extends State<EditNumberOverlay> {
                   onTap: () => Navigator.of(context).pop(),
                   child: Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF3F4F6),
-                      shape: BoxShape.circle,
-                    ),
                     child: const Icon(
                       Icons.close_rounded,
                       size: 18,
@@ -102,87 +98,96 @@ class _EditNumberOverlayState extends State<EditNumberOverlay> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Enter the mobile number you want to use for OTP verification.',
+              'ENTER THE MOBILE NUMBER YOU WANT TO USE FOR OTP VERFICATION.',
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 14,
+                fontSize: 10,
                 color: Color(0xFF6B7280),
                 height: 1.4,
+                letterSpacing: 0.8,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 24),
 
             // Phone input field
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF9FAFB),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xFFE5E7EB)),
-              ),
-              child: Row(
-                children: [
-                  // Country code badge
-                  Container(
-                    margin: const EdgeInsets.all(10),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFFE5E7EB)),
-                    ),
-                    child: const Text(
-                      '+91',
-                      style: TextStyle(
-                        fontFamily: 'DMMono',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF111827),
-                      ),
-                    ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'INDIA',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.8,
+                    color: Color(0xFF9CA3AF),
                   ),
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      autofocus: true,
-                      keyboardType: TextInputType.number,
-                      maxLength: 10,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      style: const TextStyle(
-                        fontFamily: 'DMMono',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF111827),
-                        letterSpacing: 1.5,
-                      ),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        counterText: '',
-                        hintText: '00000 00000',
-                        hintStyle: TextStyle(
-                          fontFamily: 'DMMono',
-                          fontSize: 16,
-                          color: Color(0xFFD1D5DB),
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 3,
+                  height: 3,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFD1D5DB),
+                    shape: BoxShape.circle,
                   ),
-                  if (_controller.text.isNotEmpty)
-                    GestureDetector(
-                      onTap: () => _controller.clear(),
-                      child: const Padding(
-                        padding: EdgeInsets.only(right: 14),
-                        child: Icon(
-                          Icons.cancel_rounded,
-                          size: 18,
-                          color: Color(0xFFD1D5DB),
-                        ),
-                      ),
-                    ),
-                ],
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  '+91',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 2.5,
+                    color: Color(0xFF9CA3AF),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Transform.translate(
+              offset: const Offset(-4, 0),
+              child: TextField(
+                controller: _controller,
+                autofocus: true,
+                keyboardType: TextInputType.number,
+                maxLength: 10,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(
+                  fontFamily: 'SpaceGrotesk',
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 2.0,
+                  foreground: Paint()
+                    ..shader = const LinearGradient(
+                      colors: [
+                        Color(0xFF5BA1F7),
+                        Color(0xFF031E6B),
+                        Color(0xFF241714),
+                      ],
+                      stops: [0.0, 0.5, 1.0],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  isDense: true,
+                  counterText: '',
+                  contentPadding: EdgeInsets.zero,
+                  hintText: '9876543210',
+                  hintStyle: TextStyle(
+                    fontFamily: 'SpaceGrotesk',
+                    fontSize: 32,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 2.0,
+                    foreground: Paint()..color = const Color(0xFFE5E7EB),
+                  ),
+                ),
               ),
             ),
 
@@ -198,10 +203,10 @@ class _EditNumberOverlayState extends State<EditNumberOverlay> {
                 ),
                 SizedBox(width: 6),
                 Text(
-                  'A new OTP will be sent to this number.',
+                  'A NEW OTP WILL BE SENT TO THIS NUMBER.',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 10,
                     color: Color(0xFF9CA3AF),
                   ),
                 ),

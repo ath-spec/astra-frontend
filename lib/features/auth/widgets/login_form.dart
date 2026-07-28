@@ -172,10 +172,20 @@ class _LoginFormState extends ConsumerState<LoginForm>
                     ],
                     style: TextStyle(
                       fontFamily: 'SpaceGrotesk',
-                      fontSize: 36,
+                      fontSize: 32,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 2.0,
-                      color: Color(0xFF111827),
+                      foreground: Paint()
+                        ..shader = const LinearGradient(
+                          colors: [
+                            Color(0xFF5BA1F7),
+                            Color(0xFF031E6B),
+                            Color(0xFF241714),
+                          ],
+                          stops: [0.0, 0.5, 1.0],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -184,16 +194,16 @@ class _LoginFormState extends ConsumerState<LoginForm>
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                       hintText: '9876543210',
-                      hintStyle: const TextStyle(
+                      hintStyle: TextStyle(
                         fontFamily: 'SpaceGrotesk',
-                        fontSize: 36,
+                        fontSize: 32,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 2.0,
-                        color: Color(0xFFE5E7EB),
+                        foreground: Paint()..color = const Color(0xFFE5E7EB), // Explicitly override foreground so it stays grey
                       ),
                     ),
                   ),
-                  ),
+                ),
                   const SizedBox(height: 16),
                   Text(
                     "WE'LL TEXT YOU A CODE.",
