@@ -15,6 +15,7 @@ class BanksLinkingScreen extends ConsumerStatefulWidget {
 }
 
 class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
+
   @override
   void initState() {
     super.initState();
@@ -27,17 +28,16 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     });
   }
 
-  void _showConsentBottomSheet(BuildContext context, WidgetRef ref) {
+  void _showConsentBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
       builder: (sheetContext) => _ConsentBottomSheet(
-        onUnderstood: () {
-          Navigator.pop(sheetContext);
-          ref.read(assetConnectionProvider.notifier).startBankLinking();
-          context.push('/banks-searching');
-        },
+        onUnderstood: () => Navigator.pop(sheetContext),
       ),
     );
   }
@@ -49,260 +49,208 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     // GoRouter extra: true means we returned after a partial link
     final returnMode = GoRouterState.of(context).extra == true;
     // In return mode: CTA active when any NEW (unlinked) account is selected
-    final hasSelected = state.bankAccounts.any((b) => b.isSelected && !b.isLinked);
-    final ctaLabel = returnMode ? 'LINK MORE ACCOUNTS' : 'APPROVE AND PROCEED';
-    final ctaActive = returnMode ? hasSelected : state.bankAccounts.any((b) => b.isSelected);
+    final hasSelected = state.bankAccounts.any(
+      (b) => b.isSelected && !b.isLinked,
+    );
+    final hasAnyLinked = state.bankAccounts.any((b) => b.isLinked);
+
+    String ctaLabel = 'APPROVE AND CONNECT';
+    bool ctaActive = hasSelected;
+    VoidCallback? onCtaTap;
+
+    if (ctaActive) {
+      onCtaTap = () {
+        notifier.startBankLinking();
+        context.go('/');
+      };
+    } else {
+      onCtaTap = null;
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      body: Stack(
-        children: [
-          // Subtle 3D Architectural Dome Background Graphic
-          const ArchBackground(height: 380),
-
-          SafeArea(
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Color(0xFF111827),
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        FocusScope.of(context).unfocus();
-                        if (context.canPop()) context.pop();
-                      },
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 420),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 60),
+                    const SizedBox(height: 24),
+                    // Title
+                    const Text(
+                      'Get latest balance and transactions',
+                      style: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
+                        color: Color(0xFF0F172A),
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -1.0,
+                        height: 1.15,
+                      ),
+                    ),
+                    const SizedBox(height: 22),
 
-                        // Title
+                    // Subtitle with link
+                    Wrap(
+                      children: [
                         const Text(
-                          'Get latest balance and transactions',
-                          style: TextStyle(
-                            fontFamily: 'SpaceGrotesk',
-                            color: Color(0xFF0F172A),
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -1.0,
-                            height: 1.15,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Subtitle with link
-                        Wrap(
-                          children: [
-                            const Text(
-                              'Securely track on Kuvera (DASPL). Revoke this anytime. ',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                color: Color(0xFF64748B),
-                                fontSize: 14,
-                                height: 1.4,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => _showConsentBottomSheet(context, ref),
-                              child: const Text(
-                                'Know more',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  color: Color(0xFF0F172A),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Stats Row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildStatItem('UPDATED', 'Daily'),
-                            _buildStatItem('VALID FOR', '1 year'),
-                            _buildStatItem('ACCESS', '1 Month'),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Dotted Separator Line
-                        CustomPaint(
-                          size: const Size(double.infinity, 1),
-                          painter: _DottedLinePainter(),
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Bank Accounts List
-                        ...state.bankAccounts.map((bank) {
-                          return _buildBankCard(
-                            bank: bank,
-                            onTap: bank.isLinked
-                                ? null // already linked, not interactive
-                                : () => notifier.toggleBankSelection(bank.id),
-                          );
-                        }),
-
-                        const SizedBox(height: 16),
-
-                        // Connect More Accounts Label
-                        const Text(
-                          'CONNECT MORE ACCOUNTS',
+                          'SECURELY TRACK ON ASTRA. REVOKE THIS ANYTIME. ',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            color: Color(0xFF94A3B8),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.2,
+                            color: Color(0xFF9CA3AF),
+                            fontSize: 10,
+                            height: 1.4,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 8),
-
-                        // Connect More Accounts Placeholder Box
-                        Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFFFFF),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color(0xFFE2E8F0),
-                              width: 1.0,
+                        GestureDetector(
+                          onTap: () => _showConsentBottomSheet(context),
+                          child: const Text(
+                            'KNOW MORE',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              color: Color(0xFF0F172A),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              height: 1.4,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF0F172A).withValues(alpha: 0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
                         ),
-                        const SizedBox(height: 32),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Stats Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildStatItem('UPDATED', 'Daily'),
+                        _buildStatItem('VALID FOR', '1 year'),
+                        _buildStatItem('ACCESS', '1 Month'),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Bank Accounts List
+                    ...state.bankAccounts.map((bank) {
+                      return _buildBankCard(
+                        bank: bank,
+                        onTap: bank.isLinked
+                            ? null // already linked, not interactive
+                            : () => notifier.toggleBankSelection(bank.id),
+                      );
+                    }),
+
 
                       ],
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 420),
-                      child: Column(
-                        children: [
-                          // CTA Button
-                          GestureDetector(
-                            onTap: ctaActive
-                                ? () => _showConsentBottomSheet(context, ref)
-                                : null,
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: ctaActive
-                                      ? const [
-                                          Color(0xFFFFFFFF),
-                                          Color(0xFF5BA1F7),
-                                          Color(0xFF031E6B),
-                                          Color(0xFF241714),
-                                        ]
-                                      : const [
-                                          Color(0xFFF3F4F6),
-                                          Color(0xFFD1D5DB),
-                                          Color(0xFF9CA3AF),
-                                          Color(0xFF6B7280),
-                                        ],
-                                  stops: const [0.0, 0.25, 0.7, 1.0],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                              ),
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Text(
-                                    ctaLabel,
-                                    style: const TextStyle(
-                                      fontFamily: 'DMSans',
-                                      color: Colors.white,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                  const Positioned(
-                                    right: 20,
-                                    child: Icon(
-                                      Icons.arrow_forward_rounded,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ],
-                              ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: onCtaTap,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: ctaActive
+                                  ? const [
+                                      Color(0xFFFFFFFF),
+                                      Color(0xFF5BA1F7),
+                                      Color(0xFF031E6B),
+                                      Color(0xFF241714),
+                                    ]
+                                  : const [
+                                      Color(0xFFF3F4F6),
+                                      Color(0xFFD1D5DB),
+                                      Color(0xFF9CA3AF),
+                                      Color(0xFF6B7280),
+                                    ],
+                              stops: const [0.0, 0.25, 0.7, 1.0],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
                           ),
-                          const SizedBox(height: 16),
-
-                          // Secondary action
-                          Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                if (returnMode) {
-                                  // User explicitly done — mark state complete and go home
-                                  notifier.finishAssetConnection();
-                                  context.go('/');
-                                } else {
-                                  notifier.skipBanks();
-                                  context.go('/');
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                child: Text(
-                                  returnMode
-                                      ? "Don't want to connect more"
-                                      : 'Deny',
-                                  style: const TextStyle(
-                                    fontFamily: 'DMSans',
-                                    color: Color(0xFF64748B),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    decoration: TextDecoration.underline,
-                                  ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Text(
+                                ctaLabel,
+                                style: const TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.0,
                                 ),
                               ),
-                            ),
+                              const Positioned(
+                                right: 20,
+                                child: Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 16),
+                      // Secondary action
+                      Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (hasAnyLinked || returnMode) {
+                              // User explicitly done — mark state complete and go home
+                              notifier.finishAssetConnection();
+                              context.go('/');
+                            } else {
+                              notifier.skipBanks();
+                              context.go('/');
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              (hasAnyLinked || returnMode)
+                                  ? "DON'T WANT TO CONNECT ANY MORE"
+                                  : 'DENY',
+                              style: const TextStyle(
+                                fontFamily: 'DMSans',
+                                color: Color(0xFF64748B),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-
-                // Footer
-                _buildFooter(),
-              ],
+              ),
             ),
-          ),
-        ],
+
+            // Footer
+            _buildFooter(),
+          ],
+        ),
       ),
     );
   }
@@ -315,10 +263,10 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
           label,
           style: const TextStyle(
             fontFamily: 'DMSans',
-            color: Color(0xFF94A3B8),
+            color: Color(0xFF9CA3AF),
             fontSize: 10,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.8,
           ),
         ),
         const SizedBox(height: 4),
@@ -327,8 +275,8 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
           style: const TextStyle(
             fontFamily: 'DMSans',
             color: Color(0xFF0F172A),
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],
@@ -349,38 +297,15 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          color: isLinked
-              ? const Color(0xFFF0FDF4) // light green tint for linked
-              : const Color(0xFFFFFFFF),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isLinked
-                ? const Color(0xFF10B981).withValues(alpha: 0.4)
-                : bank.isSelected
-                    ? const Color(0xFF0F172A).withValues(alpha: 0.2)
-                    : const Color(0xFFE2E8F0),
-            width: (isLinked || bank.isSelected) ? 1.5 : 1.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF0F172A).withValues(alpha: 0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+        decoration: const BoxDecoration(
+          color: Color(0xFFFFFFFF),
         ),
         child: Row(
           children: [
             // Bank Icon
             Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFF8FAFC),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-              ),
+              width: 30,
+              height: 30,
               child: Center(
                 child: Icon(
                   bank.bankName.toUpperCase().contains('ICICI')
@@ -405,7 +330,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       color: Color(0xFF0F172A),
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -414,90 +339,56 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     '.. $accountLast4',
                     style: const TextStyle(
                       fontFamily: 'DMMono',
-                      color: Color(0xFF94A3B8),
-                      fontSize: 12,
+                      color: Color(0xFF9CA3AF),
+                      fontSize: 10,
                     ),
                   ),
                 ],
               ),
             ),
 
-            if (isLinked) ...
-              // Linked badge
-              [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: const Text(
-                    'LINKED',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      color: Color(0xFF10B981),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
+            if (isLinked) ...[
+            // Linked badge
+              const SizedBox(width: 8),
+              const Icon(
+                Icons.check_circle_rounded,
+                color: Color(0xFF10B981),
+                size: 20,
+              ),
+            ] else ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                child: const Text(
+                  'DEPOSIT',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    color: Color(0xFF9CA3AF),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(width: 10),
-                const Icon(
-                  Icons.check_circle_rounded,
-                  color: Color(0xFF10B981),
-                  size: 20,
-                ),
-              ]
-            else ...
-              // DEPOSIT badge + checkbox
-              [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
-                  ),
-                  child: const Text(
-                    'DEPOSIT',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      color: Color(0xFF64748B),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  width: 22,
-                  height: 22,
-                  decoration: BoxDecoration(
+              ),
+              const SizedBox(width: 12),
+              Container(
+                width: 18,
+                height: 18,
+                decoration: BoxDecoration(
+                  color: bank.isSelected
+                      ? const Color(0xFF0F172A)
+                      : Colors.transparent,
+                  border: Border.all(
                     color: bank.isSelected
                         ? const Color(0xFF0F172A)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: bank.isSelected
-                          ? const Color(0xFF0F172A)
-                          : const Color(0xFFCBD5E1),
-                      width: 1.5,
-                    ),
+                        : const Color(0xFFCBD5E1),
+                    width: 1.5,
                   ),
-                  child: bank.isSelected
-                      ? const Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: 15,
-                        )
-                      : null,
                 ),
-              ],
+                child: bank.isSelected
+                    ? const Icon(Icons.check, color: Colors.white, size: 12)
+                    : null,
+              ),
+            ],
           ],
         ),
       ),
@@ -507,59 +398,38 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
   Widget _buildFooter() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-      child: Column(
-        children: [
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'powered by RBI-regulated account aggregator ',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    color: Color(0xFF64748B),
-                    fontSize: 11,
-                  ),
-                ),
-                Text(
-                  'FINVU',
-                  style: TextStyle(
-                    fontFamily: 'SpaceGrotesk',
-                    color: const Color(0xFF0F172A).withValues(alpha: 0.8),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'POWERED BY RBI-REGULATED ACCOUNT AGGREGATOR ',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 9,
+                color: Color(0xFF9CA3AF),
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.verified_user_outlined,
-                  color: Color(0xFF10B981),
-                  size: 14,
-                ),
-                const SizedBox(width: 6),
-                const Text(
-                  'trusted by 3 crore citizens',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    color: Color(0xFF10B981),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
+            const Icon(
+              Icons.change_history_rounded,
+              color: Color(0xFF1E3A8A),
+              size: 11,
             ),
-          ),
-        ],
+            const SizedBox(width: 2),
+            const Text(
+              'FINARKEIN',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF1E3A8A),
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -577,11 +447,7 @@ class _DottedLinePainter extends CustomPainter {
     const dashWidth = 4.0;
     const dashSpace = 4.0;
     while (startX < size.width) {
-      canvas.drawLine(
-        Offset(startX, 0),
-        Offset(startX + dashWidth, 0),
-        paint,
-      );
+      canvas.drawLine(Offset(startX, 0), Offset(startX + dashWidth, 0), paint);
       startX += dashWidth + dashSpace;
     }
   }
@@ -601,7 +467,7 @@ class _ConsentBottomSheet extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
       child: SafeArea(
@@ -641,37 +507,34 @@ class _ConsentBottomSheet extends StatelessWidget {
 
               // Details List
               _buildDetailRow(
-                label: 'approval requested on',
-                value: '6 June 2026',
+                label: 'APPROVAL REQUESTED ON',
+                value: '6 June 2026.',
               ),
               _buildDetailRow(
-                label: 'purpose',
+                label: 'PURPOSE',
                 value:
-                    'to generate insights based on your overall finances and provide incidental recommendations, if any',
+                    'To generate insights based on your overall finances and provide incidental recommendations, if any.',
               ),
               _buildDetailRow(
-                label: 'balance and transactions updated',
-                value: 'upto 45 times per month',
+                label: 'BALANCE AND TRANSACTIONS UPDATED',
+                value: 'Upto 45 times per month.',
               ),
               _buildDetailRow(
-                label: 'approval valid for',
-                value: '6 June 2026 - 6 June 2027',
+                label: 'APPROVAL VALID FOR',
+                value: '6 June 2026 - 6 June 2027.',
               ),
               _buildDetailRow(
-                label: 'account details',
-                value: 'profile, summary, transactions',
+                label: 'ACCOUNT DETAILS',
+                value: 'Profile, summary, transactions.',
               ),
               _buildDetailRow(
-                label: 'access period to find insights for you',
-                value: '1 month',
+                label: 'ACCESS PERIOD TO FIND INSIGHTS FOR YOU',
+                value: '1 month.',
               ),
+              _buildDetailRow(label: 'APPROVAL EXPIRY', value: '6 June 2027'),
               _buildDetailRow(
-                label: 'approval expiry',
-                value: '6 June 2027',
-              ),
-              _buildDetailRow(
-                label: 'account types',
-                value: 'deposit',
+                label: 'ACCOUNT TYPES',
+                value: 'Deposit.',
                 isLast: true,
               ),
 
@@ -742,8 +605,8 @@ class _ConsentBottomSheet extends StatelessWidget {
             label,
             style: const TextStyle(
               fontFamily: 'DMSans',
-              color: Color(0xFF94A3B8),
-              fontSize: 12,
+              color: Color(0xFF9CA3AF),
+              fontSize: 10,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -753,8 +616,8 @@ class _ConsentBottomSheet extends StatelessWidget {
             style: const TextStyle(
               fontFamily: 'DMSans',
               color: Color(0xFF0F172A),
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
               height: 1.3,
             ),
           ),

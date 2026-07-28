@@ -45,28 +45,26 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0F19),
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Spacer(),
               Center(
                 child: Container(
-                  width: 120,
-                  height: 120,
+                  width: 80,
+                  height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF1E2433),
-                    border: Border.all(color: const Color(0xFF2D3748), width: 2),
+                    color: const Color(0xFFFEF2F2),
                   ),
                   child: const Center(
                     child: Icon(
                       Icons.wifi_off_rounded,
-                      size: 56,
+                      size: 32,
                       color: Color(0xFFEF4444),
                     ),
                   ),
@@ -76,78 +74,82 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
               const Text(
                 'Connection Lost',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
+                  fontFamily: 'SpaceGrotesk',
+                  color: Color(0xFF0F172A),
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -1.0,
+                  height: 1.15,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               const Text(
                 'We could not connect to the internet.\nDon\'t worry, your progress has been securely saved locally.',
                 style: TextStyle(
-                  color: Color(0xFF94A3B8),
-                  fontSize: 15,
-                  height: 1.4,
+                  fontFamily: 'DMSans',
+                  color: Color(0xFF475569),
+                  fontSize: 14,
+                  height: 1.5,
                 ),
                 textAlign: TextAlign.center,
               ),
               const Spacer(),
-              SizedBox(
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _isRetrying ? null : _onRetry,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF0B0F19),
-                    disabledBackgroundColor: const Color(0xFF1E2433),
-                    disabledForegroundColor: const Color(0xFF64748B),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: _isRetrying
-                      ? const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0D9488)),
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            Text(
-                              'Reconnecting...',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        )
-                      : const Text(
-                          'Retry Connection ↻',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: _isRetrying ? null : _onRetry,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          decoration: BoxDecoration(
+                            color: _isRetrying ? const Color(0xFF94A3B8) : const Color(0xFF0F172A),
+                          ),
+                          child: Center(
+                            child: _isRetrying
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : const Text(
+                                    'RETRY CONNECTION',
+                                    style: TextStyle(
+                                      fontFamily: 'DMSans',
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
+                          ),
                         ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Security shield
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.shield, size: 16, color: Color(0xFF64748B)),
-                  SizedBox(width: 8),
-                  Text(
-                    'Your data is 100% safe & secure',
-                    style: TextStyle(
-                      color: Color(0xFF94A3B8),
-                      fontSize: 13,
-                    ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.shield, size: 14, color: Color(0xFF64748B)),
+                          SizedBox(width: 6),
+                          Text(
+                            'Your data is 100% safe & secure',
+                            style: TextStyle(
+                              fontFamily: 'DMMono',
+                              color: Color(0xFF9CA3AF),
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
               const SizedBox(height: 8),
             ],

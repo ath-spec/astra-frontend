@@ -40,7 +40,7 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
         });
         _timer = Timer(const Duration(milliseconds: 2000), () {
           if (mounted) {
-            context.pushReplacement('/banks-linking');
+            context.pushReplacement('/banks-searching');
           }
         });
       }
@@ -120,60 +120,8 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Top Bar with Back Arrow and Skip
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      color: Color(0xFF111827),
-                      size: 20,
-                    ),
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                      if (context.canPop()) context.pop();
-                    },
-                  ),
-                ),
-                if (!_showStatus)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0, top: 8.0),
-                    child: TextButton(
-                      onPressed: () {
-                        _timer?.cancel();
-                        context.pushReplacement('/banks-linking');
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFF6B7280),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.only(bottom: 1),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Color(0xFF9CA3AF),
-                              width: 1.0,
-                              style: BorderStyle.solid,
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          'SKIP',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.8
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+            // Top Bar removed as requested
+            const SizedBox(height: 16),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -184,116 +132,78 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const SizedBox(height: 24),
-                        if (_showStatus) ...[
-                          // Status UI
-                          Stack(
-                            clipBehavior: Clip.none,
+                        // Always show the Fetching UI text
+                        const Text(
+                          'Securely fetching your stocks and ETFs',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontFamily: 'SpaceGrotesk',
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF111827),
+                            height: 1.15,
+                            letterSpacing: -1.0,
+                          ),
+                        ),
+                        const SizedBox(height: 22),
+                        RichText(
+                          textAlign: TextAlign.left,
+                          text: const TextSpan(
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              color: Color(0xFF9CA3AF),
+                              height: 1.4,
+                              fontWeight: FontWeight.w600,
+                            ),
                             children: [
-                              Container(
-                                width: 64,
-                                height: 64,
-                                decoration: BoxDecoration(
-                                  color: _hasDemat
-                                      ? const Color(0xFF10B981).withValues(alpha: 0.1)
-                                      : const Color(0xFFF3F4F6),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: _hasDemat
-                                        ? const Color(0xFF10B981).withValues(alpha: 0.3)
-                                        : const Color(0xFFE5E7EB),
-                                  ),
-                                ),
-                                alignment: Alignment.center,
-                                child: Icon(
-                                  _hasDemat
-                                      ? Icons.account_balance_wallet_rounded
-                                      : Icons.domain_disabled_rounded,
-                                  color: _hasDemat
-                                      ? const Color(0xFF10B981)
-                                      : const Color(0xFF6B7280),
-                                  size: 32,
-                                ),
+                              TextSpan(
+                                text: "HANG TIGHT. WE'RE SECURELY PULLING YOUR ACCOUNTS, THIS SHOULD ONLY TAKE A MOMENT. ",
                               ),
-                              Positioned(
-                                right: -4,
-                                top: -4,
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    color: _hasDemat
-                                        ? const Color(0xFF10B981)
-                                        : const Color(0xFF6B7280),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    _hasDemat
-                                        ? Icons.check_rounded
-                                        : Icons.info_outline_rounded,
-                                    color: Colors.white,
-                                    size: 14,
-                                  ),
+                              TextSpan(
+                                text: 'ACCOUNT AGGREGATOR',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF111827),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
-                          Text(
-                            _hasDemat ? 'Demat accounts linked!' : 'No Demat found',
-                            style: const TextStyle(
-                              fontFamily: 'SpaceGrotesk',
-                              fontSize: 28,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF111827),
-                              height: 1.15,
-                              letterSpacing: -1.0,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            _hasDemat
-                                ? 'We found active Demat accounts linked to your mobile number +91 $displayPhone.'
-                                : "We couldn't find any Demat accounts associated with your mobile number +91 $displayPhone.",
-                            style: const TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 15,
-                              color: Color(0xFF6B7280),
-                              height: 1.4,
-                            ),
-                          ),
-                        ] else ...[
-                          // Fetching UI
-                          const Text(
-                            'Securely fetching your stocks and ETFs',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontFamily: 'SpaceGrotesk',
-                              fontSize: 28,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF111827),
-                              height: 1.15,
-                              letterSpacing: -1.0,
-                            ),
-                          ),
-                          const SizedBox(height: 22),
-                          RichText(
-                            textAlign: TextAlign.left,
-                            text: const TextSpan(
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 10,
-                                color: Color(0xFF9CA3AF),
-                                height: 1.4,
-                                fontWeight: FontWeight.w600,
-                              ),
+                        ),
+                        const SizedBox(height: 32),
+                        
+                        // Status Box appears without replacing the main UI
+                        if (_showStatus) ...[
+                          Container(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextSpan(
-                                  text: "HANG TIGHT. WE'RE SECURELY PULLING YOUR ACCOUNTS, THIS SHOULD ONLY TAKE A MOMENT. ",
+                                Icon(
+                                  _hasDemat
+                                      ? Icons.check_circle_rounded
+                                      : Icons.info_outline_rounded,
+                                  color: _hasDemat
+                                      ? const Color(0xFF10B981)
+                                      : const Color(0xFF9CA3AF),
+                                  size: 18,
                                 ),
-                                TextSpan(
-                                  text: 'ACCOUNT AGGREGATOR',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF111827),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _hasDemat
+                                            ? 'Demat accounts linked!'
+                                            : 'No Demat found',
+                                        style: const TextStyle(
+                                          fontFamily: 'DMSans',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF9CA3AF),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

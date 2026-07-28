@@ -51,8 +51,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
           // Main Content
           SafeArea(
-            child: Column(
-              children: [
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 420),
+                child: Column(
+                  children: [
                 // Top App Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
@@ -266,7 +269,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         ),
                         _buildDottedDivider(),
 
-                        _buildBankAccountsRow(isLinked: assetState.banksConnected),
+                        _buildBankAccountsRow(
+                          isLinked: assetState.banksConnected,
+                          isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
+                        ),
                         const SizedBox(height: 28),
 
                         // Bottom Insights Banner Card
@@ -323,7 +329,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ),
                   ),
                 ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -582,11 +590,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget _buildBankAccountsRow({required bool isLinked}) {
+  Widget _buildBankAccountsRow({required bool isLinked, required bool isLinking}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14.0),
       child: GestureDetector(
-        onTap: () => context.push('/banks-linking'),
+        onTap: () => context.push('/banks-selection'),
         child: Row(
           children: [
             const Icon(Icons.account_balance_rounded, color: Color(0xFF64748B), size: 24),
@@ -620,7 +628,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ),
                 ),
               )
-            else
+            else if (isLinking)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -653,6 +661,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ),
                   ),
                 ],
+              )
+            else
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: const Text(
+                  'Import',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    color: Color(0xFF0F172A),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
           ],
         ),

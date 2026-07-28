@@ -118,7 +118,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
             bankAccounts: [
               BankAccountItem(
                 id: '3192',
-                bankName: 'Axis Bank',
+                bankName: 'HDFC Bank',
                 accountNumber: 'SAVINGS account - xxxx 3192',
                 isSelected: true,
                 isLinked: false,
@@ -148,7 +148,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
       bankAccounts: [
         BankAccountItem(
           id: '3192',
-          bankName: 'Axis Bank',
+          bankName: 'HDFC Bank',
           accountNumber: 'SAVINGS account - xxxx 3192',
           isSelected: true,
           isLinked: false,
@@ -284,9 +284,12 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
   void startBankLinking() {
     _timer?.cancel();
     state = state.copyWith(
-      step: AssetConnectionStep.banksSearching,
-      banksStatusMessage: 'Fetching accounts...',
+      step: AssetConnectionStep.banksLinkingProgress,
+      banksStatusMessage: 'Linking accounts...',
     );
+    _timer = Timer(const Duration(milliseconds: 2600), () {
+      completeBankLinking();
+    });
   }
 
   void completeBankLinking() {
@@ -303,6 +306,32 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
       bankAccounts: updated,
       banksConnected: hasAnyLinked,
       banksStatusMessage: hasAnyLinked ? 'Successfully Linked' : 'Accounts found',
+    );
+  }
+
+  void searchAndAddBank(String bankName) {
+    _timer?.cancel();
+    final newBank = BankAccountItem(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      bankName: bankName,
+      accountNumber: 'SAVINGS account - xxxx ${DateTime.now().millisecondsSinceEpoch.toString().substring(9)}',
+      isSelected: true, // Auto-select the newly found bank
+      isLinked: false,
+    );
+    final updatedBanks = List<BankAccountItem>.from(state.bankAccounts)..add(newBank);
+    
+    state = state.copyWith(
+      step: AssetConnectionStep.banksSearching,
+      banksStatusMessage: 'Fetching accounts...',
+      bankAccounts: updatedBanks,
+    );
+  }
+
+  void removeBankByName(String bankName) {
+    _timer?.cancel();
+    final updatedBanks = state.bankAccounts.where((b) => b.bankName != bankName).toList();
+    state = state.copyWith(
+      bankAccounts: updatedBanks,
     );
   }
 

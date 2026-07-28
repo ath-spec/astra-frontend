@@ -48,9 +48,11 @@ class _ProfilingStatusScreenState extends ConsumerState<ProfilingStatusScreen> {
       backgroundColor: const Color(0xFF0B0F19),
       body: SafeArea(
         child: Center(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: state.isSubmitted
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: state.isSubmitted
                 ? Column(
                     key: const ValueKey('submitted'),
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -107,6 +109,7 @@ class _ProfilingStatusScreenState extends ConsumerState<ProfilingStatusScreen> {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 }
