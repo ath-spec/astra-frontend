@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/auth_provider.dart';
 // Only allows letters, spaces, dots, apostrophes and hyphens (common in names)
 class _NameInputFormatter extends TextInputFormatter {
   @override
@@ -17,14 +18,14 @@ class _NameInputFormatter extends TextInputFormatter {
 
 enum _NameError { none, tooShort, invalidChars }
 
-class NameScreen extends StatefulWidget {
+class NameScreen extends ConsumerStatefulWidget {
   const NameScreen({super.key});
 
   @override
-  State<NameScreen> createState() => _NameScreenState();
+  ConsumerState<NameScreen> createState() => _NameScreenState();
 }
 
-class _NameScreenState extends State<NameScreen>
+class _NameScreenState extends ConsumerState<NameScreen>
     with SingleTickerProviderStateMixin {
   final _nameController = TextEditingController();
   final _focusNode = FocusNode();
@@ -85,7 +86,10 @@ class _NameScreenState extends State<NameScreen>
   bool get _isEnabled => _nameValid && _aadhaarConfirmed;
 
   void _submit() {
-    if (_isEnabled) context.push('/aa-stocks-otp');
+    if (_isEnabled) {
+      ref.read(authProvider.notifier).setPendingName(_nameController.text.trim());
+      context.push('/aa-stocks-otp');
+    }
   }
 
   @override

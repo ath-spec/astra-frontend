@@ -18,6 +18,11 @@ import '../../features/auth/screens/name_screen.dart';
 import '../../features/auth/screens/aa_stocks_otp_screen.dart';
 import '../../features/auth/screens/aa_stocks_fetching_screen.dart';
 import '../../features/home/screens/home_screen.dart';
+import '../../features/search/screens/search_screen.dart';
+import '../../features/chat/screens/chat_screen.dart';
+import '../../features/explore/screens/explore_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
+import '../widgets/app_shell.dart';
 
 /// GoRouter configuration with auth state redirection.
 /// Follows navigation patterns in dart-flutter-patterns.
@@ -118,9 +123,52 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return NoInternetScreen(returnRoute: returnRoute);
         },
       ),
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const HomeScreen(),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return AppShell(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/',
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/search',
+                builder: (context, state) => const SearchScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/chat',
+                builder: (context, state) => const ChatScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/explore',
+                builder: (context, state) => const ExploreScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );

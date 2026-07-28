@@ -53,10 +53,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  String pendingPhone = '8826473535';
+  String pendingPhone = '000000000';
+  String pendingName = 'Investor';
 
   void setPendingPhone(String phone) {
     pendingPhone = phone;
+  }
+
+  void setPendingName(String name) {
+    pendingName = name;
   }
 
   Future<void> loginWithPhone(String phone) async {
@@ -65,7 +70,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthAuthenticated(
       User(
         id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Investor ($phone)',
+        name: pendingName,
         email: '$phone@astra.dev',
         isAdmin: false,
         avatarUrl: null,
@@ -80,7 +85,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthAuthenticated(
       User(
         id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Investor ($pan)',
+        name: pendingName,
         email: '$displayPhone@astra.dev',
         isAdmin: false,
         avatarUrl: null,
@@ -95,7 +100,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthAuthenticated(
       User(
         id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Investor ($displayPhone)',
+        name: pendingName,
         email: '$displayPhone@astra.dev',
         isAdmin: false,
         avatarUrl: null,

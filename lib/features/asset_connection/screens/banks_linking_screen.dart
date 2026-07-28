@@ -428,16 +428,29 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
 
   String _getBankLogoUrl(String bankName) {
     final name = bankName.toLowerCase();
-    if (name.contains('hdfc')) return 'https://logo.clearbit.com/hdfcbank.com';
-    if (name.contains('icici')) return 'https://logo.clearbit.com/icicibank.com';
-    if (name.contains('state bank') || name.contains('sbi')) return 'https://logo.clearbit.com/onlinesbi.sbi';
-    if (name.contains('axis')) return 'https://logo.clearbit.com/axisbank.com';
-    if (name.contains('kotak')) return 'https://logo.clearbit.com/kotak.com';
-    if (name.contains('yes')) return 'https://logo.clearbit.com/yesbank.in';
-    if (name.contains('punjab') || name.contains('pnb')) return 'https://logo.clearbit.com/pnbindia.in';
-    if (name.contains('indusind')) return 'https://logo.clearbit.com/indusind.com';
-    if (name.contains('bank of baroda') || name.contains('bob')) return 'https://logo.clearbit.com/bankofbaroda.in';
-    return 'https://logo.clearbit.com/bankofamerica.com';
+    String domain = 'rbi.org.in'; // Default fallback
+
+    if (name.contains('hdfc')) domain = 'hdfcbank.com';
+    else if (name.contains('icici')) domain = 'icicibank.com';
+    else if (name.contains('state bank') || name.contains('sbi')) domain = 'sbi.co.in';
+    else if (name.contains('axis')) domain = 'axisbank.com';
+    else if (name.contains('kotak')) domain = 'kotak.com';
+    else if (name.contains('yes')) domain = 'yesbank.in';
+    else if (name.contains('punjab national') || name.contains('pnb')) domain = 'pnbindia.in';
+    else if (name.contains('indusind')) domain = 'indusind.com';
+    else if (name.contains('bank of baroda') || name.contains('bob')) domain = 'bankofbaroda.in';
+    else if (name.contains('canara')) domain = 'canarabank.com';
+    else if (name.contains('union')) domain = 'unionbankofindia.co.in';
+    else if (name.contains('indian overseas')) domain = 'iob.in';
+    else if (name.contains('indian bank')) domain = 'indianbank.in';
+    else if (name.contains('central')) domain = 'centralbankofindia.co.in';
+    else if (name.contains('uco')) domain = 'ucobank.com';
+    else if (name.contains('maharashtra')) domain = 'bankofmaharashtra.in';
+    else if (name.contains('sind')) domain = 'punjabandsindbank.co.in';
+    else if (name.contains('bank of india')) domain = 'bankofindia.co.in';
+
+    // Using Google's favicon service which is more reliable for Indian PSU banks and avoids adblocker issues
+    return 'https://www.google.com/s2/favicons?domain=$domain&sz=128';
   }
 
   Widget _buildBankLogoWidget(String bankName, {double size = 30}) {

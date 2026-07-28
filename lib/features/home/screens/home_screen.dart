@@ -325,7 +325,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             ],
                           ),
                         ),
-                        const SizedBox(height: 100), // Extra padding for floating nav bar
+                        const SizedBox(height: 12), // Removed extra padding for floating nav bar
                       ],
                     ),
                   ),
@@ -336,128 +336,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
           ),
 
-          // Floating Pill Bottom Navigation Bar
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 24,
-            child: Center(
-              child: Container(
-                height: 56,
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFFFF),
-                  borderRadius: BorderRadius.circular(32),
-                  border: Border.all(
-                    color: const Color(0xFFE2E8F0),
-                    width: 1.2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF0F172A).withValues(alpha: 0.08),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Home Tab (Active Pill)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(
-                            Icons.home_rounded,
-                            color: Color(0xFF0F172A),
-                            size: 18,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            'Home',
-                            style: TextStyle(
-                              fontFamily: 'DMSans',
-                              color: Color(0xFF0F172A),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-
-                    // Explore Tab
-                    GestureDetector(
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Explore opportunities coming soon'),
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        color: Colors.transparent,
-                        child: const Row(
-                          children: [
-                            Icon(
-                              Icons.explore_outlined,
-                              color: Color(0xFF64748B),
-                              size: 18,
-                            ),
-                            SizedBox(width: 6),
-                            Text(
-                              'Explore',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                color: Color(0xFF64748B),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-
-                    // Search Button
-                    GestureDetector(
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Search coming soon'),
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFFFFF),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
-                        ),
-                        child: const Icon(
-                          Icons.search_rounded,
-                          color: Color(0xFF0F172A),
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
