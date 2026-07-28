@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/edit_number_overlay.dart';
 
 /// Screen matching Image 3 for Account Aggregator Stocks status result.
 /// Displays "No Demat found" (default) or "Demat accounts found" via demo toggle.
@@ -68,71 +69,49 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Color(0xFF111827),
-            size: 20,
-          ),
-          onPressed: () => context.pop(),
-        ),
-        title: TextButton.icon(
-          onPressed: () => setState(() => _hasDemat = !_hasDemat),
-          icon: Icon(
-            _hasDemat ? Icons.toggle_on_rounded : Icons.toggle_off_rounded,
-            color: const Color(0xFF031E6B),
-            size: 24,
-          ),
-          label: Text(
-            _hasDemat ? 'Demo: Demat Found' : 'Demo: No Demat Found',
-            style: const TextStyle(
-              fontFamily: 'DMSans',
-              color: Color(0xFF031E6B),
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: TextButton(
-              onPressed: () => context.push('/banks-linking'),
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF6B7280),
-              ),
-              child: Container(
-                padding: const EdgeInsets.only(bottom: 1),
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Color(0xFF9CA3AF),
-                      width: 1.0,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                ),
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Color(0xFF111827),
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      if (context.canPop()) context.pop();
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0, top: 8.0),
+                  child: TextButton.icon(
+                    onPressed: () => setState(() => _hasDemat = !_hasDemat),
+                    icon: Icon(
+                      _hasDemat ? Icons.toggle_on_rounded : Icons.toggle_off_rounded,
+                      color: const Color(0xFF031E6B),
+                      size: 24,
+                    ),
+                    label: Text(
+                      _hasDemat ? 'Demo: Demat Found' : 'Demo: No Demat Found',
+                      style: const TextStyle(
+                        fontFamily: 'DMSans',
+                        color: Color(0xFF031E6B),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -200,10 +179,10 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          _hasDemat ? 'Demat accounts found!' : 'No Demat found',
+                          _hasDemat ? 'Demat accounts linked!' : 'No Demat found',
                           style: const TextStyle(
                             fontFamily: 'SpaceGrotesk',
-                            fontSize: 32,
+                            fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF111827),
                             height: 1.15,
@@ -213,8 +192,8 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                         const SizedBox(height: 12),
                         Text(
                           _hasDemat
-                              ? 'We found active Demat accounts linked to your mobile number +91 $displayPhone and PAN ••••370H.'
-                              : "We couldn't find any Demat accounts associated with your mobile number +91 $displayPhone and PAN ••••370H.",
+                              ? 'We found active Demat accounts linked to your mobile number +91 $displayPhone.'
+                              : "We couldn't find any Demat accounts associated with your mobile number +91 $displayPhone.",
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 15,
@@ -268,15 +247,6 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                                           color: Color(0xFF111827),
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'PAN ••••370H • Active Holding',
-                                        style: TextStyle(
-                                          fontFamily: 'DMMono',
-                                          fontSize: 12,
-                                          color: const Color(0xFF6B7280),
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 ),
@@ -308,10 +278,10 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
-                                    'Tip: You can manually link your broker or mutual funds on the next screen.',
+                                    'Tip: You can link your broker or mutual funds via the home screen.',
                                     style: const TextStyle(
                                       fontFamily: 'DMSans',
-                                      fontSize: 13,
+                                      fontSize: 10,
                                       color: Color(0xFF4B5563),
                                       height: 1.4,
                                     ),
@@ -321,8 +291,20 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                             ),
                           ),
                         ],
-                        const SizedBox(height: 48),
-                        // CONTINUE TO ASSETS Button
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    children: [
+                      if (_hasDemat)
                         GestureDetector(
                           onTapDown: (_) => _animationController.forward(),
                           onTapUp: (_) => _animationController.reverse(),
@@ -377,72 +359,97 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 48),
-                        // Footer
-                        Center(
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                        )
+                      else ...[
+                        GestureDetector(
+                          onTapDown: (_) => _animationController.forward(),
+                          onTapUp: (_) => _animationController.reverse(),
+                          onTapCancel: () => _animationController.reverse(),
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (ctx) => EditNumberOverlay(
+                                currentNumber: displayPhone,
+                                onConfirm: (newNumber) {
+                                  ref
+                                      .read(authProvider.notifier)
+                                      .setPendingPhone(newNumber);
+                                  context.push('/aa-stocks-otp');
+                                },
+                              ),
+                            );
+                          },
+                          child: AnimatedBuilder(
+                            animation: _scaleAnimation,
+                            builder: (context, child) => Transform.scale(
+                              scale: _scaleAnimation.value,
+                              child: child,
+                            ),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 15,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFFFFFF),
+                                    Color(0xFF5BA1F7),
+                                    Color(0xFF031E6B),
+                                    Color(0xFF241714),
+                                  ],
+                                  stops: [0.0, 0.25, 0.7, 1.0],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                              child: const Stack(
+                                alignment: Alignment.center,
                                 children: [
-                                  const Text(
-                                    'powered by RBI-regulated account aggregator ',
+                                  Text(
+                                    'TRY WITH DIFFERENT NUMBER',
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
-                                      fontSize: 11,
-                                      color: Color(0xFF6B7280),
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.0,
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.change_history_rounded,
-                                        color: const Color(0xFF1E3A8A),
-                                        size: 14,
-                                      ),
-                                      const SizedBox(width: 2),
-                                      const Text(
-                                        'FINVU',
-                                        style: TextStyle(
-                                          fontFamily: 'DMSans',
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w800,
-                                          color: Color(0xFF1E3A8A),
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                    ],
+                                  Positioned(
+                                    right: 20,
+                                    child: Icon(
+                                      Icons.edit_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.security_rounded,
-                                    color: Color(0xFF10B981),
-                                    size: 14,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  const Text(
-                                    'trusted by 3 crore citizens',
-                                    style: TextStyle(
-                                      fontFamily: 'DMSans',
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF6B7280),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
+                        TextButton(
+                          onPressed: () => context.push('/banks-linking'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFF6B7280),
+                          ),
+                          child: const Text(
+                            'CONTINUE WITHOUT DEMAT',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.0,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
                       ],
-                    ),
+                    ],
                   ),
                 ),
               ),

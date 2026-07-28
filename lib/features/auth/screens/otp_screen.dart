@@ -105,7 +105,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> w
                             'Enter the OTP.',
                             style: TextStyle(
                               fontFamily: 'SpaceGrotesk',
-                              fontSize: 32,
+                              fontSize: 28,
                               fontWeight: FontWeight.w700,
                               height: 1.15,
                               letterSpacing: -1.0,

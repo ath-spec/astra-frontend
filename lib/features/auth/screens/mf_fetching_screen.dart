@@ -188,7 +188,7 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
-                            fontSize: 32,
+                            fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF111827),
                             height: 1.15,

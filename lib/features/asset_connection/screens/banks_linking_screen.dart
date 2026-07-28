@@ -63,6 +63,23 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
           SafeArea(
             child: Column(
               children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: Color(0xFF111827),
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        if (context.canPop()) context.pop();
+                      },
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -77,7 +94,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
                             color: Color(0xFF0F172A),
-                            fontSize: 32,
+                            fontSize: 28,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -1.0,
                             height: 1.15,
@@ -178,93 +195,104 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        // CTA Button
-                        GestureDetector(
-                          onTap: ctaActive
-                              ? () => _showConsentBottomSheet(context, ref)
-                              : null,
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: ctaActive
-                                    ? const [
-                                        Color(0xFFFFFFFF),
-                                        Color(0xFF5BA1F7),
-                                        Color(0xFF031E6B),
-                                        Color(0xFF241714),
-                                      ]
-                                    : const [
-                                        Color(0xFFF3F4F6),
-                                        Color(0xFFD1D5DB),
-                                        Color(0xFF9CA3AF),
-                                        Color(0xFF6B7280),
-                                      ],
-                                stops: const [0.0, 0.25, 0.7, 1.0],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      child: Column(
+                        children: [
+                          // CTA Button
+                          GestureDetector(
+                            onTap: ctaActive
+                                ? () => _showConsentBottomSheet(context, ref)
+                                : null,
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: ctaActive
+                                      ? const [
+                                          Color(0xFFFFFFFF),
+                                          Color(0xFF5BA1F7),
+                                          Color(0xFF031E6B),
+                                          Color(0xFF241714),
+                                        ]
+                                      : const [
+                                          Color(0xFFF3F4F6),
+                                          Color(0xFFD1D5DB),
+                                          Color(0xFF9CA3AF),
+                                          Color(0xFF6B7280),
+                                        ],
+                                  stops: const [0.0, 0.25, 0.7, 1.0],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Text(
+                                    ctaLabel,
+                                    style: const TextStyle(
+                                      fontFamily: 'DMSans',
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
+                                  const Positioned(
+                                    right: 20,
+                                    child: Icon(
+                                      Icons.arrow_forward_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Text(
-                                  ctaLabel,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Secondary action
+                          Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                if (returnMode) {
+                                  // User explicitly done — mark state complete and go home
+                                  notifier.finishAssetConnection();
+                                  context.go('/');
+                                } else {
+                                  notifier.skipBanks();
+                                  context.go('/');
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: Text(
+                                  returnMode
+                                      ? "Don't want to connect more"
+                                      : 'Deny',
                                   style: const TextStyle(
                                     fontFamily: 'DMSans',
-                                    color: Colors.white,
+                                    color: Color(0xFF64748B),
                                     fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 1.0,
+                                    fontWeight: FontWeight.w600,
+                                    decoration: TextDecoration.underline,
                                   ),
-                                ),
-                                const Positioned(
-                                  right: 20,
-                                  child: Icon(
-                                    Icons.arrow_forward_rounded,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Secondary action
-                        Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              if (returnMode) {
-                                // User explicitly done — mark state complete and go home
-                                notifier.finishAssetConnection();
-                                context.go('/');
-                              } else {
-                                notifier.skipBanks();
-                                context.go('/');
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Text(
-                                returnMode
-                                    ? "Don't want to connect more"
-                                    : 'Deny',
-                                style: const TextStyle(
-                                  fontFamily: 'DMSans',
-                                  color: Color(0xFF64748B),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 40),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

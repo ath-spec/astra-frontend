@@ -67,7 +67,7 @@ class _LocationPermissionScreenState extends State<LocationPermissionScreen> wit
                           'we need\npermissions for\nlocation.',
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
-                            fontSize: 32,
+                            fontSize: 28,
                             fontWeight: FontWeight.w700,
                             height: 1.15,
                             letterSpacing: -1.0,

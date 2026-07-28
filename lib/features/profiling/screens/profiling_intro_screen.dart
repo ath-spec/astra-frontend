@@ -169,7 +169,7 @@ class _ProfilingIntroScreenState extends ConsumerState<ProfilingIntroScreen>
                                       '₹',
                                       style: TextStyle(
                                         color: Color(0xFF0B0F19),
-                                        fontSize: 32,
+                                        fontSize: 28,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -188,7 +188,7 @@ class _ProfilingIntroScreenState extends ConsumerState<ProfilingIntroScreen>
                         style: TextStyle(
                           fontFamily: 'SpaceGrotesk',
                           color: Colors.white,
-                          fontSize: 32,
+                          fontSize: 28,
                           fontWeight: FontWeight.w700,
                           height: 1.15,
                           letterSpacing: -1.0,

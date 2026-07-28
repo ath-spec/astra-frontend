@@ -105,7 +105,7 @@ class _PanOtpVerificationScreenState extends ConsumerState<PanOtpVerificationScr
                             'Enter the OTP.',
                             style: TextStyle(
                               fontFamily: 'SpaceGrotesk',
-                              fontSize: 32,
+                              fontSize: 28,
                               fontWeight: FontWeight.w700,
                               height: 1.15,
                               letterSpacing: -1.0,

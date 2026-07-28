@@ -105,16 +105,27 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Top Bar with Skip
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
+            // Top Bar with Back Arrow and Skip
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Color(0xFF111827),
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      if (context.canPop()) context.pop();
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0, top: 8.0),
+                  child: TextButton(
                     onPressed: () {
                       _timer?.cancel();
                       context.pushReplacement('/aa-stocks-status');
@@ -133,18 +144,10 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                           ),
                         ),
                       ),
-                      child: const Text(
-                        'Skip',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -187,7 +190,7 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
-                            fontSize: 32,
+                            fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF111827),
                             height: 1.15,
@@ -253,65 +256,6 @@ class _AaStocksFetchingScreenState extends State<AaStocksFetchingScreen>
                           ],
                         ),
                         const SizedBox(height: 48),
-                        // Footer
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  'powered by RBI-regulated account aggregator ',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 11,
-                                    color: Color(0xFF6B7280),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.change_history_rounded,
-                                      color: const Color(0xFF1E3A8A),
-                                      size: 14,
-                                    ),
-                                    const SizedBox(width: 2),
-                                    const Text(
-                                      'FINVU',
-                                      style: TextStyle(
-                                        fontFamily: 'DMSans',
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w800,
-                                        color: Color(0xFF1E3A8A),
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.security_rounded,
-                                  color: Color(0xFF10B981),
-                                  size: 14,
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  'trusted by 3 crore citizens',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF6B7280),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 24),
                       ],
                     ),

@@ -106,7 +106,7 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
                             color: Color(0xFF0F172A),
-                            fontSize: 32,
+                            fontSize: 28,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -1.0,
                             height: 1.15,
