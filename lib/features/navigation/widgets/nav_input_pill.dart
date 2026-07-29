@@ -184,8 +184,11 @@ class _NavInputPillState extends ConsumerState<NavInputPill> {
     return BorderBeam(
       duration: 5,
       borderWidth: 2.0,
-      colorFrom: const Color(0xFF5BA1F7),
-      colorTo: const Color(0xFF8B5CF6),
+      colors: const [
+        Color(0xFF5BA1F7),
+        Color(0xFF8B5CF6),
+        Color(0xFFFFAA40),
+      ],
       staticBorderColor: Colors.transparent,
       borderRadius: BorderRadius.circular(32),
       child: pillContent,

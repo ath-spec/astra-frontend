@@ -6,8 +6,7 @@ class BorderBeam extends StatefulWidget {
   final Widget child;
   final double duration;
   final double borderWidth;
-  final Color colorFrom;
-  final Color colorTo;
+  final List<Color> colors;
   final Color staticBorderColor;
   final BorderRadius borderRadius;
   final EdgeInsetsGeometry padding;
@@ -17,8 +16,11 @@ class BorderBeam extends StatefulWidget {
     required this.child,
     this.duration = 15,
     this.borderWidth = 1.5,
-    this.colorFrom = const Color(0xFFFFAA40),
-    this.colorTo = const Color(0xFF9C40FF),
+    this.colors = const [
+      Color(0xFF5BA1F7),
+      Color(0xFF8B5CF6),
+      Color(0xFFFFAA40),
+    ],
     this.staticBorderColor = const Color(0xFFCCCCCC),
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.padding = EdgeInsets.zero,
@@ -61,8 +63,7 @@ class _BorderBeamState extends State<BorderBeam>
           painter: BorderBeamPainter(
             progress: _animation.value,
             borderWidth: widget.borderWidth,
-            colorFrom: widget.colorFrom,
-            colorTo: widget.colorTo,
+            colors: widget.colors,
             staticBorderColor: widget.staticBorderColor,
             borderRadius: widget.borderRadius,
           ),
@@ -79,16 +80,14 @@ class _BorderBeamState extends State<BorderBeam>
 class BorderBeamPainter extends CustomPainter {
   final double progress;
   final double borderWidth;
-  final Color colorFrom;
-  final Color colorTo;
+  final List<Color> colors;
   final Color staticBorderColor;
   final BorderRadius borderRadius;
 
   BorderBeamPainter({
     required this.progress,
     required this.borderWidth,
-    required this.colorFrom,
-    required this.colorTo,
+    required this.colors,
     required this.staticBorderColor,
     required this.borderRadius,
   });
@@ -111,53 +110,84 @@ class BorderBeamPainter extends CustomPainter {
     final pathMetrics = path.computeMetrics().first;
     final pathLength = pathMetrics.length;
 
-    // Make the beam cover 25% of the perimeter
-    final beamLength = pathLength * 0.25;
-
-    // Calculate tail and head positions along the path
-    final tail = (progress * pathLength) % pathLength;
-    final head = (tail + beamLength);
-
-    Path extractPath;
-    if (head <= pathLength) {
-      extractPath = pathMetrics.extractPath(tail, head);
-    } else {
-      // Wrap around the end of the path
-      extractPath = pathMetrics.extractPath(tail, pathLength);
-      extractPath.addPath(pathMetrics.extractPath(0, head % pathLength), Offset.zero);
+    // 8 Pulses exactly as requested: 4 corners + 4 flat sides
+    for (int i = 0; i < 8; i++) {
+      // 1. Phase Offset (Staggered starts)
+      // Space them out in time so it looks organic
+      final double phaseOffset = (i * 0.37) % 1.0; 
+      
+      // Calculate local progress for this specific pulse (0.0 to 1.0)
+      final double localProgress = (progress + phaseOffset) % 1.0;
+      
+      // Origin on the perimeter (evenly spaced 0/8, 1/8 ...)
+      final double originNormalized = i / 8.0;
+      final double originDistance = originNormalized * pathLength;
+      
+      // Travel distance
+      // Each pulse travels up to ~15% of the perimeter
+      final double maxTravel = pathLength * (0.10 + ((i % 3) * 0.03)); 
+      final double currentTravel = maxTravel * localProgress;
+      
+      // Opacity / Fade
+      // Spawns instantly (0 to 0.05), holds briefly, then fades out slowly
+      double opacity = 1.0;
+      if (localProgress < 0.05) {
+        opacity = localProgress / 0.05;
+      } else {
+        opacity = 1.0 - ((localProgress - 0.05) / 0.95);
+      }
+      
+      // Color: Prism effect. 
+      // Base hue rotates globally with `progress`. Offset it by `i` so they differ.
+      final double hue = ((progress * 360 * 2) + (i * 45)) % 360;
+      final Color pulseColor = HSVColor.fromAHSV(opacity, hue, 1.0, 1.0).toColor();
+      
+      // Beam head fixed length
+      final double beamLength = 16.0;
+      
+      // Head 1 (Clockwise)
+      double h1Center = originDistance + currentTravel;
+      _drawComet(canvas, pathMetrics, pathLength, h1Center, beamLength, pulseColor);
+      
+      // Head 2 (Counter-Clockwise)
+      double h2Center = originDistance - currentTravel;
+      _drawComet(canvas, pathMetrics, pathLength, h2Center, beamLength, pulseColor);
     }
+  }
 
-    // Get absolute coordinates for the linear gradient
-    final tailPosition = pathMetrics.getTangentForOffset(tail)?.position ?? Offset.zero;
-    final headPosition = pathMetrics.getTangentForOffset(head % pathLength)?.position ?? Offset.zero;
-
-    final paint = Paint()
+  void _drawComet(Canvas canvas, ui.PathMetric pathMetrics, double pathLength, double center, double length, Color color) {
+    double start = (center - length / 2) % pathLength;
+    if (start < 0) start += pathLength;
+    
+    double end = (center + length / 2) % pathLength;
+    if (end < 0) end += pathLength;
+    
+    Path segment = Path();
+    if (start < end) {
+      segment.addPath(pathMetrics.extractPath(start, end), Offset.zero);
+    } else {
+      // Wrapped around 0
+      segment.addPath(pathMetrics.extractPath(start, pathLength), Offset.zero);
+      segment.addPath(pathMetrics.extractPath(0, end), Offset.zero);
+    }
+    
+    // Outer Glow
+    final glowPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = borderWidth * 3.0
+      ..strokeCap = StrokeCap.round
+      ..color = color
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
+      
+    // Inner Solid Core
+    final corePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = borderWidth
       ..strokeCap = StrokeCap.round
-      ..shader = ui.Gradient.linear(
-        tailPosition,
-        headPosition,
-        [
-          colorTo.withOpacity(0.0), // Faded tail
-          colorTo,
-          colorFrom,                // Bright glowing head
-        ],
-        [0.0, 0.4, 1.0],
-      );
-
-    // Draw the glowing aura first
-    final glowPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = borderWidth * 2.0
-      ..strokeCap = StrokeCap.round
-      ..shader = paint.shader
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6.0);
-
-    canvas.drawPath(extractPath, glowPaint);
-    
-    // Draw the solid core on top
-    canvas.drawPath(extractPath, paint);
+      ..color = Colors.white.withOpacity(color.opacity); 
+      
+    canvas.drawPath(segment, glowPaint);
+    canvas.drawPath(segment, corePaint);
   }
 
   @override

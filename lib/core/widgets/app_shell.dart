@@ -23,7 +23,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   bool _navVisible = true;
   int _previousIndex = 0;
 
-  void _onPillTap(int index) {
+  void _onPillTap(int index, {bool clearChat = true}) {
     final goingToChat = index == 2;
     final currentIndex = widget.navigationShell.currentIndex;
 
@@ -33,7 +33,9 @@ class _AppShellState extends ConsumerState<AppShell> {
 
     if (goingToChat) {
       setState(() => _navVisible = false);
-      ref.invalidate(chatNotifierProvider);
+      if (clearChat) {
+        ref.invalidate(chatNotifierProvider);
+      }
     } else {
       if (index == 0) {
         ref.read(navContextProvider.notifier).state = NavContext.main;
@@ -162,7 +164,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                               child: isInputMode
                                   ? NavInputPill(
                                       key: const ValueKey('input_pill'),
-                                      onSend: () => _onPillTap(2),
+                                      onSend: () => _onPillTap(2, clearChat: false),
                                     )
                                   : AnimatedSwitcher(
                                       duration: const Duration(milliseconds: 400),
@@ -201,7 +203,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                                     padding: const EdgeInsets.only(left: 12.0),
                                     child: buildGemButton(() {
                                       if (navContext == NavContext.main) {
-                                        _onPillTap(2);
+                                        _onPillTap(2, clearChat: true);
                                       } else {
                                         ref.read(navInputModeProvider.notifier).state = true;
                                       }
