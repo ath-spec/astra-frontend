@@ -79,7 +79,7 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.08),
@@ -111,22 +111,22 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                   ),
                   filled: true,
                   fillColor: Colors.white, // Always solid white like the reference image
-                  contentPadding: const EdgeInsets.only(left: 20.0, right: 8.0, top: 16.0, bottom: 16.0), // Reduced vertical padding from 18 to 16 to offset the larger text size
+                  contentPadding: const EdgeInsets.only(left: 20.0, right: 8.0, top: 12.0, bottom: 12.0),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(26), // Half of 52
+                    borderRadius: BorderRadius.circular(32),
                     borderSide: BorderSide.none,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(26),
+                    borderRadius: BorderRadius.circular(32),
                     borderSide: BorderSide.none,
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(26),
+                    borderRadius: BorderRadius.circular(32),
                     borderSide: BorderSide.none,
                   ),
                   // Properly place the send button INSIDE the textbox using suffixIcon
                   suffixIcon: Padding(
-                    padding: const EdgeInsets.only(right: 8.0, bottom: 10.0), // 10px bottom to center the 32px button in a 52px container
+                    padding: const EdgeInsets.only(right: 8.0, bottom: 6.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       mainAxisSize: MainAxisSize.min,
@@ -239,8 +239,8 @@ class _HomeButtonState extends State<_HomeButton> {
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOut,
         child: Container(
-          width: 52,
-          height: 52,
+          width: 44,
+          height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -256,7 +256,7 @@ class _HomeButtonState extends State<_HomeButton> {
           child: const Icon(
             Icons.home_rounded,
             color: Color(0xFF334155),
-            size: 24,
+            size: 20,
           ),
         ),
       ),

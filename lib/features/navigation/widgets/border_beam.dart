@@ -37,10 +37,12 @@ class _BorderBeamState extends State<BorderBeam>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(seconds: widget.duration.toInt()),
+      duration: Duration(milliseconds: (widget.duration * 1000).toInt()),
       vsync: this,
     );
-    _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
+    _animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.linear),
+    );
     _controller.repeat();
   }
 
@@ -96,54 +98,65 @@ class BorderBeamPainter extends CustomPainter {
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
     final rrect = borderRadius.toRRect(rect);
 
-    // Draw static border
-    final staticPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = borderWidth
-      ..color = staticBorderColor;
-    canvas.drawRRect(rrect, staticPaint);
+    // Draw static border if visible
+    if (staticBorderColor != Colors.transparent) {
+      final staticPaint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = borderWidth
+        ..color = staticBorderColor;
+      canvas.drawRRect(rrect, staticPaint);
+    }
 
     final path = Path()..addRRect(rrect);
-
     final pathMetrics = path.computeMetrics().first;
     final pathLength = pathMetrics.length;
 
-    // Adjust the animation to prevent the jump
-    final animationProgress = progress % 1.0;
-    final start = animationProgress * pathLength;
-    final end = (start + pathLength / 4) % pathLength;
+    // Make the beam cover 25% of the perimeter
+    final beamLength = pathLength * 0.25;
+
+    // Calculate tail and head positions along the path
+    final tail = (progress * pathLength) % pathLength;
+    final head = (tail + beamLength);
 
     Path extractPath;
-    if (end > start) {
-      extractPath = pathMetrics.extractPath(start, end);
+    if (head <= pathLength) {
+      extractPath = pathMetrics.extractPath(tail, head);
     } else {
-      extractPath = pathMetrics.extractPath(start, pathLength);
-      extractPath.addPath(pathMetrics.extractPath(0, end), Offset.zero);
+      // Wrap around the end of the path
+      extractPath = pathMetrics.extractPath(tail, pathLength);
+      extractPath.addPath(pathMetrics.extractPath(0, head % pathLength), Offset.zero);
     }
 
-    // Calculate gradient start and end points
-    final gradientStart =
-        pathMetrics.getTangentForOffset(start)?.position ?? Offset.zero;
-    final gradientEnd = pathMetrics
-            .getTangentForOffset((start + pathLength / 8) % pathLength)
-            ?.position ??
-        Offset.zero;
+    // Get absolute coordinates for the linear gradient
+    final tailPosition = pathMetrics.getTangentForOffset(tail)?.position ?? Offset.zero;
+    final headPosition = pathMetrics.getTangentForOffset(head % pathLength)?.position ?? Offset.zero;
 
     final paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = borderWidth;
+      ..strokeWidth = borderWidth
+      ..strokeCap = StrokeCap.round
+      ..shader = ui.Gradient.linear(
+        tailPosition,
+        headPosition,
+        [
+          colorTo.withOpacity(0.0), // Faded tail
+          colorTo,
+          colorFrom,                // Bright glowing head
+        ],
+        [0.0, 0.4, 1.0],
+      );
 
-    paint.shader = ui.Gradient.linear(
-      gradientStart,
-      gradientEnd,
-      [
-        colorTo.withOpacity(0.0), // Transparent color for fading effect
-        colorTo,
-        colorFrom,
-      ],
-      [0.0, 0.3, 1.0],
-    );
+    // Draw the glowing aura first
+    final glowPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = borderWidth * 2.0
+      ..strokeCap = StrokeCap.round
+      ..shader = paint.shader
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6.0);
 
+    canvas.drawPath(extractPath, glowPaint);
+    
+    // Draw the solid core on top
     canvas.drawPath(extractPath, paint);
   }
 
