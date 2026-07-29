@@ -25,7 +25,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
-    )..repeat(reverse: true);
+    );
 
     _pulseAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
@@ -42,6 +42,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final assetState = ref.watch(assetConnectionProvider);
+
+    // Only run the pulse animation if we are actually linking
+    if (assetState.step == AssetConnectionStep.banksLinkingProgress) {
+      if (!_pulseController.isAnimating) _pulseController.repeat(reverse: true);
+    } else {
+      if (_pulseController.isAnimating) _pulseController.stop();
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),

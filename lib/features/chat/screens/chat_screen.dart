@@ -27,21 +27,7 @@ class ChatScreen extends ConsumerWidget {
               left: 0,
               right: 0,
               height: MediaQuery.of(context).size.height,
-              child: const DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF1C3059),
-                      Color(0xFF233A5F),
-                      Color(0xFFD0D3DA),
-                      Color(0xFFF9FDFF),
-                    ],
-                    stops: [0.0, 0.35, 0.75, 1.0],
-                  ),
-                ),
-              ),
+              child: const _AnimatedGradientBackground(),
             ),
 
             // Center everything else for responsiveness
@@ -81,6 +67,72 @@ class ChatScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _AnimatedGradientBackground extends StatefulWidget {
+  const _AnimatedGradientBackground();
+
+  @override
+  State<_AnimatedGradientBackground> createState() => _AnimatedGradientBackgroundState();
+}
+
+class _AnimatedGradientBackgroundState extends State<_AnimatedGradientBackground>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 12),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        // Smoothly shift the gradient alignments to create a flowing effect
+        final alignTop = AlignmentTween(
+          begin: Alignment.topLeft,
+          end: Alignment.topRight,
+        ).evaluate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
+        );
+
+        final alignBottom = AlignmentTween(
+          begin: Alignment.bottomRight,
+          end: Alignment.bottomLeft,
+        ).evaluate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
+        );
+
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: alignTop,
+              end: alignBottom,
+              colors: const [
+                Color(0xFF97AFD4), 
+                Color(0xFF7493D5),
+                Color(0xFFC5D2DE),
+                Color(0xFFE7F5FF), 
+              ],
+              stops: const [0.0, 0.35, 0.75, 1.0],
+            ),
+          ),
+        );
+      },
     );
   }
 }

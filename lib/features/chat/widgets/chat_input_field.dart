@@ -11,17 +11,9 @@ class ChatInputField extends ConsumerStatefulWidget {
 
 class _ChatInputFieldState extends ConsumerState<ChatInputField> {
   final TextEditingController _controller = TextEditingController();
-  bool _hasText = false;
-
   @override
   void initState() {
     super.initState();
-    _controller.addListener(() {
-      final hasText = _controller.text.isNotEmpty;
-      if (hasText != _hasText) {
-        setState(() => _hasText = hasText);
-      }
-    });
   }
 
   void _submit() {
@@ -40,17 +32,30 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // Home icon button (Outside the pill)
-          _HomeButton(),
-          const SizedBox(width: 8),
-          
-          // Text field with Send button properly nested inside as a suffixIcon
-          Expanded(
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.scale(
+            scale: 0.95 + (0.05 * value), // Slight scale up from 0.95 to 1.0 matching Emil's morph design
+            child: child,
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            // Home icon button (Outside the pill)
+            _HomeButton(),
+            const SizedBox(width: 8),
+            
+            // Text field with Send button properly nested inside as a suffixIcon
+            Expanded(
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
@@ -80,22 +85,22 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                   ),
                   filled: true,
                   fillColor: Colors.white, // Always solid white like the reference image
-                  contentPadding: const EdgeInsets.only(left: 20.0, right: 8.0, top: 12.0, bottom: 12.0), // increased left padding for pill
+                  contentPadding: const EdgeInsets.only(left: 20.0, right: 8.0, top: 18.0, bottom: 18.0), // increased vertical padding to match 52px height
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(26), // Half of 52
                     borderSide: BorderSide.none,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(26),
                     borderSide: BorderSide.none,
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(26),
                     borderSide: BorderSide.none,
                   ),
                   // Properly place the send button INSIDE the textbox using suffixIcon
                   suffixIcon: Padding(
-                    padding: const EdgeInsets.only(right: 6.0, bottom: 6.0),
+                    padding: const EdgeInsets.only(right: 8.0, bottom: 10.0), // 10px bottom to center the 32px button in a 52px container
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       mainAxisSize: MainAxisSize.min,
@@ -116,6 +121,7 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
           ),
         ],
       ),
+    ),
     );
   }
 }
@@ -186,8 +192,8 @@ class _HomeButtonState extends State<_HomeButton> {
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOut,
         child: Container(
-          width: 48,
-          height: 48,
+          width: 52,
+          height: 52,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,

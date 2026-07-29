@@ -1,0 +1,8 @@
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "lib/core/images/logo_full.png"
+  remove_alpha_ios: true
+  adaptive_icon_background: "lib/core/images/cta_gradient.png"
+  adaptive_icon_foreground: "lib/core/images/logo_text_only.png"
+  min_sdk_android: 21

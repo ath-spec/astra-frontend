@@ -43,7 +43,7 @@ class ChatAppBar extends ConsumerWidget {
                       builder: (context, ch) {
                         // Emil Design: use blur during the transition for a fluid morph effect
                         final blurValue = (1 - animation.value) * 4.0;
-                        if (blurValue == 0) return ch!;
+                        if (blurValue < 0.01) return ch!;
                         return ImageFilterWidget(
                           filter: ImageFilter.blur(sigmaX: blurValue, sigmaY: blurValue),
                           child: ch!,
