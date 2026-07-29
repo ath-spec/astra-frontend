@@ -19,11 +19,11 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark, // iOS native: light/white status bar text on dark background
+      statusBarIconBrightness: Brightness.dark,   // dark icons — correct for white-bg auth screens
+      statusBarBrightness: Brightness.light,       // iOS: dark status bar icons on light background
       systemNavigationBarColor: Colors.transparent,
       systemNavigationBarDividerColor: Colors.transparent,
-      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 

@@ -134,7 +134,7 @@ class _HeaderButtonState extends State<_HeaderButton> {
           child: Icon(
             widget.icon,
             size: 22,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

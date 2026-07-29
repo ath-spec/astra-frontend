@@ -5,6 +5,86 @@ import 'animated_orb.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
 
+class _SlidingGradientTransform extends GradientTransform {
+  final double slidePercent;
+  const _SlidingGradientTransform(this.slidePercent);
+
+  @override
+  Matrix4? transform(Rect bounds, {TextDirection? textDirection}) {
+    // We animate from -bounds.width (completely off-screen left) 
+    // to +bounds.width (completely off-screen right).
+    // This ensures the first and last frames of the animation are perfectly identical
+    // (solid dark blue), resulting in an absolutely flawless, zero-jump loop.
+    final translateX = bounds.width * (2 * slidePercent - 1);
+    return Matrix4.translationValues(translateX, 0.0, 0.0);
+  }
+}
+
+class _AnimatedGradientText extends StatefulWidget {
+  final String text;
+  const _AnimatedGradientText({required this.text});
+
+  @override
+  State<_AnimatedGradientText> createState() => _AnimatedGradientTextState();
+}
+
+class _AnimatedGradientTextState extends State<_AnimatedGradientText> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // 2.5 seconds loop for a smooth, premium sweep
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2500),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return ShaderMask(
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) => LinearGradient(
+            colors: const [
+              Color(0xFF031E6B),
+              Color(0xFF5BA1F7),
+              Color(0xFF031E6B),
+            ],
+            // A tighter highlight band
+            stops: const [0.3, 0.5, 0.7],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            // TileMode.clamp is default. It extends the edge colors (031E6B) infinitely.
+            tileMode: TileMode.clamp,
+            transform: _SlidingGradientTransform(_controller.value),
+          ).createShader(bounds),
+          child: Text(
+            widget.text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'SpaceGrotesk',
+              fontSize: 32,
+              height: 1.1,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -1,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class ChatHeader extends ConsumerWidget {
   const ChatHeader({super.key});
 
@@ -17,23 +97,32 @@ class ChatHeader extends ConsumerWidget {
     }
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         // Top safe area + heading
         SafeArea(
           bottom: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 80, 24, 0), // Increased top padding to avoid app bar
-            child: Text(
-              'Hi, $userName.',
-              style: TextStyle(
-                fontFamily: 'SpaceGrotesk',
-                fontSize: 28,
-                height: 1.1,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-                letterSpacing: -1,
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Hi, $userName.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 18,
+                    height: 1.1,
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    letterSpacing: -1,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _AnimatedGradientText(text: "What's on your money mind?"),
+              ],
             ),
           ),
         ),

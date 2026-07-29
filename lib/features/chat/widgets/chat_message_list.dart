@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/chat_message.dart';
 import '../providers/chat_provider.dart';
 import 'chat_initial_view.dart'; // Contains ChatHeader
+import 'quick_helps.dart';
 
 class ChatMessageList extends ConsumerStatefulWidget {
   const ChatMessageList({super.key});
@@ -61,19 +62,10 @@ class _ChatMessageListState extends ConsumerState<ChatMessageList> {
       physics: const ClampingScrollPhysics(),
       slivers: [
         if (messages.isEmpty) ...[
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.zero,
-              child: ChatHeader(),
-            ),
-          ),
-          SliverFillRemaining(
+          const SliverFillRemaining(
             hasScrollBody: false,
-            child: Column(
-              children: const [
-                Expanded(flex: 2, child: SizedBox(height: 32)),
-                SizedBox(height: 120),
-              ],
+            child: Center(
+              child: ChatHeader(),
             ),
           ),
         ] else ...[
@@ -105,48 +97,51 @@ class _ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
-        child: Column(
-          crossAxisAlignment: message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: EdgeInsets.only(bottom: message.isUser ? 16 : 8),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              constraints: BoxConstraints(
-                maxWidth: message.isUser 
-                    ? MediaQuery.of(context).size.width * 0.75 
-                    : double.infinity, // System messages use full screen width
-              ),
-              decoration: BoxDecoration(
-                color: message.isUser ? const Color(0xFFC5D2DE) : Colors.transparent,
-                borderRadius: BorderRadius.circular(20).copyWith(
-                  bottomRight: message.isUser ? const Radius.circular(4) : const Radius.circular(20),
-                  bottomLeft: !message.isUser ? const Radius.circular(4) : const Radius.circular(20),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Align(
+          alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
+          child: Column(
+            crossAxisAlignment: message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: EdgeInsets.only(bottom: message.isUser ? 16 : 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                constraints: BoxConstraints(
+                  maxWidth: message.isUser 
+                      ? constraints.maxWidth * 0.80 // 80% of available width for user messages
+                      : constraints.maxWidth,       // 100% of available width for system messages
                 ),
-                border: message.isUser 
-                    ? Border.all(color: const Color.fromARGB(30, 90, 102, 114), width: 1.0) 
-                    : null,
-
-              ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 12,
-                  height: 1.4,
-                  color: message.isUser ? const Color(0xFF475569) : const Color(0xFF0F172A),
+                decoration: BoxDecoration(
+                  color: message.isUser ? const Color.fromARGB(255, 46, 137, 222) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20).copyWith(
+                    bottomRight: message.isUser ? const Radius.circular(4) : const Radius.circular(20),
+                    bottomLeft: !message.isUser ? const Radius.circular(4) : const Radius.circular(20),
+                  ),
+                  border: message.isUser 
+                      ? Border.all(color: const Color.fromARGB(30, 90, 102, 114), width: 1.0) 
+                      : null,
+                ),
+                child: Text(
+                  message.text,
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 14, // Slightly larger for better readability
+                    height: 1.4,
+                    color: message.isUser ? const Color.fromARGB(255, 255, 255, 255) : const Color(0xFF0F172A),
+                  ),
                 ),
               ),
-            ),
-            if (!message.isUser)
-              Padding(
-                padding: const EdgeInsets.only(left: 12, bottom: 24),
-                child: _MessageActionRow(messageText: message.text),
-              ),
-          ],
-        ),
+              if (!message.isUser)
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, bottom: 24),
+                  child: _MessageActionRow(messageText: message.text),
+                ),
+            ],
+          ),
+        );
+      }
     );
   }
 }

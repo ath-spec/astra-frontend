@@ -119,17 +119,18 @@ class _AnimatedGradientBackgroundState extends State<_AnimatedGradientBackground
 
         return DecoratedBox(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: alignTop,
-              end: alignBottom,
-              colors: const [
-                Color(0xFF97AFD4), 
-                Color(0xFF7493D5),
-                Color(0xFFC5D2DE),
-                Color(0xFFE7F5FF), 
-              ],
-              stops: const [0.0, 0.25, 0.45, 1.0],
-            ),
+            // gradient: LinearGradient(
+            //   begin: alignTop,
+            //   end: alignBottom,
+            //   colors: const [
+            //     Color(0xFF97AFD4), 
+            //     Color(0xFF7493D5),
+            //     Color(0xFFC5D2DE),
+            //     Color(0xFFE7F5FF), 
+            //   ],
+            //   stops: const [0.0, 0.25, 0.45, 1.0],
+            // ),
+            color: Color.fromARGB(255, 231, 243, 254),
           ),
         );
       },

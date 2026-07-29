@@ -12,6 +12,7 @@ import '../../features/auth/screens/otp_screen.dart';
 import '../../features/auth/screens/pan_screen.dart';
 import '../../features/auth/screens/pan_otp_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
+import '../../features/auth/screens/intro_screen.dart';
 import '../../features/auth/screens/notification_permission_screen.dart';
 import '../../features/auth/screens/dob_screen.dart';
 import '../../features/auth/screens/name_screen.dart';
@@ -38,6 +39,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final loc = state.matchedLocation;
 
       final isOnboardingRoute = loc == '/login' ||
+          loc == '/intro' ||
           loc == '/splash' ||
           loc == '/pan' ||
           loc == '/pan-otp' ||
@@ -61,6 +63,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/splash',
         builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: '/intro',
+        pageBuilder: (context, state) {
+          // Accept a preloaded video controller from the splash screen
+          final preloadedController = state.extra as dynamic;
+          
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: IntroScreen(preloadedController: preloadedController),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },
       ),
       GoRoute(
         path: '/login',
