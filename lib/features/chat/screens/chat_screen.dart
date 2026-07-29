@@ -128,7 +128,7 @@ class _AnimatedGradientBackgroundState extends State<_AnimatedGradientBackground
                 Color(0xFFC5D2DE),
                 Color(0xFFE7F5FF), 
               ],
-              stops: const [0.0, 0.35, 0.75, 1.0],
+              stops: const [0.0, 0.25, 0.45, 1.0],
             ),
           ),
         );

@@ -11,9 +11,18 @@ class ChatInputField extends ConsumerStatefulWidget {
 
 class _ChatInputFieldState extends ConsumerState<ChatInputField> {
   final TextEditingController _controller = TextEditingController();
+  final ValueNotifier<bool> _hasTextNotifier = ValueNotifier(false);
+
   @override
   void initState() {
     super.initState();
+  }
+
+  void _onTextChanged() {
+    final hasText = _controller.text.trim().isNotEmpty;
+    if (_hasTextNotifier.value != hasText) {
+      _hasTextNotifier.value = hasText;
+    }
   }
 
   void _submit() {
@@ -21,12 +30,22 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
     if (text.trim().isNotEmpty) {
       ref.read(chatNotifierProvider.notifier).sendMessage(text);
       _controller.clear();
+      _onTextChanged(); // Manually trigger state update since programmatic clear() doesn't fire onChanged
+      FocusScope.of(context).unfocus(); // Close the keyboard
     }
+  }
+
+  void _startVoice() {
+    // Placeholder for voice recording logic
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Voice recording coming soon"), duration: Duration(seconds: 1)),
+    );
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _hasTextNotifier.dispose();
     super.dispose();
   }
 
@@ -71,21 +90,28 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
               ),
               child: TextField(
                 controller: _controller,
+                onChanged: (_) => _onTextChanged(),
                 minLines: 1,
                 maxLines: 5,
                 keyboardType: TextInputType.multiline,
                 textInputAction: TextInputAction.newline,
+                style: const TextStyle(
+                  fontFamily: 'DMSans',
+                  color: Color(0xFF1E293B),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
                 decoration: InputDecoration(
-                  hintText: 'How can I help you ?',
+                  hintText: 'Ask ASTRA',
                   hintStyle: const TextStyle(
                     fontFamily: 'DMSans',
-                    color: Color(0xFF94A3B8),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
+                    color: Color(0xFFCBD5E1), // Lighter color
+                    fontSize: 14,
+                    fontWeight: FontWeight.w300, // Lighter weight
                   ),
                   filled: true,
                   fillColor: Colors.white, // Always solid white like the reference image
-                  contentPadding: const EdgeInsets.only(left: 20.0, right: 8.0, top: 18.0, bottom: 18.0), // increased vertical padding to match 52px height
+                  contentPadding: const EdgeInsets.only(left: 20.0, right: 8.0, top: 16.0, bottom: 16.0), // Reduced vertical padding from 18 to 16 to offset the larger text size
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(26), // Half of 52
                     borderSide: BorderSide.none,
@@ -105,17 +131,21 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _SubmitButton(onPressed: _submit),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: _hasTextNotifier,
+                          builder: (context, hasText, child) {
+                            return _DynamicActionSuffix(
+                              hasText: hasText,
+                              onSend: _submit,
+                              onMic: _startVoice,
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
                 ),
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  color: Color(0xFF0F172A),
-                  fontSize: 12,
-                  height: 1.3,
-                ),
+                // The style property here is duplicated; removed the old lower-font-size one below
               ),
             ),
           ),
@@ -126,16 +156,22 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
   }
 }
 
-class _SubmitButton extends StatefulWidget {
-  final VoidCallback onPressed;
+class _DynamicActionSuffix extends StatefulWidget {
+  final bool hasText;
+  final VoidCallback onSend;
+  final VoidCallback onMic;
 
-  const _SubmitButton({required this.onPressed});
+  const _DynamicActionSuffix({
+    required this.hasText,
+    required this.onSend,
+    required this.onMic,
+  });
 
   @override
-  State<_SubmitButton> createState() => _SubmitButtonState();
+  State<_DynamicActionSuffix> createState() => _DynamicActionSuffixState();
 }
 
-class _SubmitButtonState extends State<_SubmitButton> {
+class _DynamicActionSuffixState extends State<_DynamicActionSuffix> {
   bool _isPressed = false;
 
   @override
@@ -144,25 +180,36 @@ class _SubmitButtonState extends State<_SubmitButton> {
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
         setState(() => _isPressed = false);
-        widget.onPressed();
+        if (widget.hasText) {
+          widget.onSend();
+        } else {
+          widget.onMic();
+        }
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(
         scale: _isPressed ? 0.90 : 1.0,
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOut,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
           width: 32,
           height: 32,
-          decoration: const BoxDecoration(
-            // Dark charcoal background matching reference
-            color: Color(0xFF1E293B),
+          decoration: BoxDecoration(
+            // Mic is a lighter color, Send is dark charcoal
+            color: widget.hasText ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
             shape: BoxShape.circle,
           ),
-          child: const Icon(
-            Icons.arrow_upward_rounded,
-            size: 18,
-            color: Colors.white,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
+            child: Icon(
+              widget.hasText ? Icons.arrow_upward_rounded : Icons.mic_none_rounded,
+              key: ValueKey(widget.hasText),
+              size: 18,
+              color: widget.hasText ? Colors.white : const Color(0xFF475569),
+            ),
           ),
         ),
       ),

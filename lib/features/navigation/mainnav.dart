@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class NavigationPill extends StatefulWidget {
@@ -27,26 +28,35 @@ class _NavigationPillState extends State<NavigationPill> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 8,
-        ),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFFFFF).withValues(alpha: 0.95),
-          borderRadius: BorderRadius.circular(32),
-          border: Border.all(
-            color: const Color(0xFFE6E6E6),
-            width: 1.0,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 4),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 24,
-              offset: const Offset(0, 4),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8,
+              horizontal: 8,
             ),
-          ],
-        ),
-        child: LayoutBuilder(
+            decoration: BoxDecoration(
+              // Reduced opacity so the blur is visible
+              color: const Color(0xFFFFFFFF).withValues(alpha: 0.70),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(
+                color: const Color(0xFFE6E6E6).withValues(alpha: 0.5),
+                width: 1.0,
+              ),
+            ),
+            child: LayoutBuilder(
           builder: (context, constraints) {
             final pillWidth = constraints.maxWidth;
             final tabWidth = pillWidth / widget.icons.length;
@@ -95,16 +105,16 @@ class _NavigationPillState extends State<NavigationPill> {
                           : const Duration(milliseconds: 200),
                       curve: Curves.easeOutQuad,
                       top: -4, // Centered inside the 36px tall container
-                      left: indicatorLeft + 4, // Horizontal padding
-                      width: tabWidth - 8, // Shrunk to fit nicely inside the tab bounds
-                      height: 42, // Reduced from 44 to tightly wrap the icon and text
+                      left: indicatorLeft - 4, // Moved more to the left per user request
+                      width: tabWidth +5 , // Increased width almost to full segment bounds
+                      height: 44, // Reduced from 44 to tightly wrap the icon and text
                       child: AnimatedOpacity(
                         opacity: visualIndex == -1 ? 0.0 : 1.0,
                         duration: const Duration(milliseconds: 200),
                         child: IgnorePointer(
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(22),
                             gradient: const LinearGradient(
                               colors: [
                                 Color(0xFFFFFFFF),
@@ -197,6 +207,9 @@ class _NavigationPillState extends State<NavigationPill> {
             );
           },
         ),
+          ),
+        ),
+      ),
     );
   }
 }

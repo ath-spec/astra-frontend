@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/chat_provider.dart';
 
+import '../../../core/widgets/progressive_blur.dart';
+
 class ChatAppBar extends ConsumerWidget {
   const ChatAppBar({super.key});
 
@@ -12,9 +14,11 @@ class ChatAppBar extends ConsumerWidget {
     final messages = ref.watch(chatNotifierProvider);
     final hasMessages = messages.isNotEmpty;
 
-    return Container(
-      // Transparent safe area background
-      color: Colors.transparent,
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          color: Colors.transparent,
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 8,
         bottom: 8,
@@ -54,22 +58,7 @@ class ChatAppBar extends ConsumerWidget {
                   ),
                 );
               },
-              child: hasMessages
-                  ? Text(
-                      messages.first.text, // Dynamic title from first message!
-                      key: const ValueKey('active_title'),
-                      style: const TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        letterSpacing: -0.3,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  : const SizedBox.shrink(key: ValueKey('empty_title')),
+              child: const SizedBox.shrink(key: ValueKey('empty_title')),
             ),
           ),
 
@@ -79,6 +68,8 @@ class ChatAppBar extends ConsumerWidget {
             isBack: false,
           ),
         ],
+      ),
+        ),
       ),
     );
   }

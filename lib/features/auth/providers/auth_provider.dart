@@ -64,6 +64,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
     pendingName = name;
   }
 
+  void skipLogin() {
+    state = const AuthAuthenticated(
+      User(
+        id: 'usr_hardcoded_skip',
+        name: 'Guest Investor',
+        email: 'guest@example.com',
+        isAdmin: false,
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=faces',
+      ),
+    );
+  }
+
   Future<void> loginWithPhone(String phone) async {
     state = const AuthLoading();
     await Future.delayed(const Duration(milliseconds: 600));

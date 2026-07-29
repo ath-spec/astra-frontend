@@ -41,31 +41,31 @@ class ChatHeader extends ConsumerWidget {
         const SizedBox(height: 28),
 
         // Cards — two equal cards filling width side by side
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: _buildCard(
-                    title: 'REVIEW CASH POSITION',
-                    subtitle: 'SEE INFLOWS, OUTFLOWS AND\nRUNWAY',
-                    chart: const _LineChart(),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildCard(
-                    title: 'MANAGE OUTGOING PAYMENTS',
-                    subtitle: 'VENDORS, CONTRACTORS,\nSUBSCRIPTIONS',
-                    chart: const _BarChart(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 20),
+        //   child: IntrinsicHeight(
+        //     child: Row(
+        //       crossAxisAlignment: CrossAxisAlignment.stretch,
+        //       children: [
+        //         Expanded(
+        //           child: _buildCard(
+        //             title: 'REVIEW CASH POSITION',
+        //             subtitle: 'SEE INFLOWS, OUTFLOWS AND\nRUNWAY',
+        //             chart: const _LineChart(),
+        //           ),
+        //         ),
+        //         const SizedBox(width: 12),
+        //         Expanded(
+        //           child: _buildCard(
+        //             title: 'MANAGE OUTGOING PAYMENTS',
+        //             subtitle: 'VENDORS, CONTRACTORS,\nSUBSCRIPTIONS',
+        //             chart: const _BarChart(),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

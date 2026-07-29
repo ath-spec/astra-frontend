@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import '../../features/explore/screens/explore_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/corner_fade_reveal_transition.dart';
 
 /// GoRouter configuration with auth state redirection.
 /// Follows navigation patterns in dart-flutter-patterns.
@@ -63,7 +64,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LoginScreen(),
+          transitionDuration: const Duration(milliseconds: 1200),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return CornerFadeRevealTransition(
+              animation: animation,
+              child: child,
+            );
+          },
+        ),
       ),
       GoRoute(
         path: '/otp',

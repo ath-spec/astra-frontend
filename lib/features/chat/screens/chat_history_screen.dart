@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/chat_provider.dart';
+import '../../../core/widgets/dashed_line.dart';
 
 class ChatHistoryScreen extends ConsumerStatefulWidget {
   const ChatHistoryScreen({super.key});
@@ -58,48 +59,44 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 2.0,
-          color: Color(0xFF334155),
+          color: Color(0xFF9CA3AF),
         ),
       ),
     );
   }
 
-  Widget _buildChatItem(String title, String meta) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.withValues(alpha: 0.15),
-            width: 1,
-          ),
+  Widget _buildChatItem(String title, {bool isLast = false}) {
+    return ScaleButton(
+      onTap: () {
+        ref.read(chatNotifierProvider.notifier).loadDummyThread(title);
+        context.pop();
+      },
+      child: Container(
+        color: Colors.transparent, // to expand touch target
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 18),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1E293B),
+                  height: 1.3,
+                ),
+              ),
+            ),
+            if (!isLast)
+              DashedLine(
+                color: Colors.grey.withValues(alpha: 0.15),
+                dashWidth: 4.0,
+                dashSpace: 4.0,
+              ),
+          ],
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1E293B),
-              height: 1.3,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            meta.toUpperCase(),
-            style: const TextStyle(
-              fontFamily: 'DMMono',
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.0,
-              color: Color(0xFF9CA3AF),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -141,27 +138,17 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        'threads',
+                        'History',
                         style: TextStyle(
                           fontFamily: 'SpaceGrotesk',
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: -2.0,
+                          letterSpacing: -1,
                           color: Color(0xFF0F172A),
-                          height: 1.0,
+                          height: 1.15,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        '12 THREADS · 3 TODAY',
-                        style: TextStyle(
-                          fontFamily: 'DMMono',
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.5,
-                          color: Color(0xFF94A3B8),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -169,23 +156,39 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
                 // Scrollable History List
                 Expanded(
                   child: ListView(
+                    physics: const ClampingScrollPhysics(),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 24,
                       vertical: 8,
                     ),
                     children: [
                       _buildSectionHeader('Today'),
-                      for (final chat in _todayChats)
-                        _buildChatItem(chat['title'], chat['meta']),
+                      for (int i = 0; i < _todayChats.length; i++)
+                        _buildChatItem(_todayChats[i]['title'], isLast: i == _todayChats.length - 1),
 
                       _buildSectionHeader('Last Month'),
-                      for (final chat in _lastMonthChats)
-                        _buildChatItem(chat['title'], chat['meta']),
+                      for (int i = 0; i < _lastMonthChats.length; i++)
+                        _buildChatItem(_lastMonthChats[i]['title'], isLast: i == _lastMonthChats.length - 1),
 
-                      _buildSectionHeader('Previous'),
-                      for (final chat in _previousChats)
-                        _buildChatItem(chat['title'], chat['meta']),
+                      _buildSectionHeader('Long Time'),
+                      for (int i = 0; i < _previousChats.length; i++)
+                        _buildChatItem(_previousChats[i]['title'], isLast: i == _previousChats.length - 1),
 
+                      const SizedBox(height: 40),
+                      
+                      const Center(
+                        child: Text(
+                          'END OF HISTORY',
+                          style: TextStyle(
+                            fontFamily: 'DMMono',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 2.0,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
+                      ),
+                      
                       const SizedBox(height: 40), // Bottom padding
                     ],
                   ),

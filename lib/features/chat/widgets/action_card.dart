@@ -62,7 +62,10 @@ class ActionCard extends StatelessWidget {
             const SizedBox(height: 12),
             // Chart area — takes up remaining space
             Expanded(
-              child: ClipRect(child: chartGraphic),
+              child: Visibility(
+                visible: false,
+                child: ClipRect(child: chartGraphic),
+              ),
             ),
             const SizedBox(height: 10),
             // Arrow button bottom-right
