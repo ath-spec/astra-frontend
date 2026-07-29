@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/navigation/mainnav.dart';
 import '../../features/chat/providers/chat_provider.dart';
+import '../providers/nav_context_provider.dart';
+import '../../features/navigation/widgets/main_nav_row.dart';
+import '../../features/navigation/widgets/mf_nav_row.dart';
+import '../../features/navigation/widgets/explore_nav_row.dart';
+import '../../features/navigation/widgets/nav_shared_components.dart';
+import '../../features/navigation/widgets/nav_input_pill.dart';
+import '../providers/nav_input_provider.dart';
 
 class AppShell extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -14,9 +20,7 @@ class AppShell extends ConsumerStatefulWidget {
 }
 
 class _AppShellState extends ConsumerState<AppShell> {
-  // Track visibility separately so we can flip it BEFORE the route changes
   bool _navVisible = true;
-  // Track the previous tab so hardware back button works correctly from Chat
   int _previousIndex = 0;
 
   void _onPillTap(int index) {
@@ -27,13 +31,17 @@ class _AppShellState extends ConsumerState<AppShell> {
       _previousIndex = currentIndex;
     }
 
-    // Hide nav INSTANTLY at tap time — before goBranch fires the route change.
     if (goingToChat) {
       setState(() => _navVisible = false);
-    }
-
-    if (index == 2) {
       ref.invalidate(chatNotifierProvider);
+    } else {
+      if (index == 0) {
+        ref.read(navContextProvider.notifier).state = NavContext.main;
+      } else if (index == 1) {
+        ref.read(navContextProvider.notifier).state = NavContext.mf;
+      } else if (index == 3) {
+        ref.read(navContextProvider.notifier).state = NavContext.explore;
+      }
     }
 
     widget.navigationShell.goBranch(
@@ -54,6 +62,8 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final currentIndex = widget.navigationShell.currentIndex;
+    final navContext = ref.watch(navContextProvider);
+    final isInputMode = ref.watch(navInputModeProvider);
 
     if (currentIndex != 2 && !_navVisible) {
       _navVisible = true;
@@ -62,133 +72,150 @@ class _AppShellState extends ConsumerState<AppShell> {
       _navVisible = false;
     }
 
+    Widget currentPill;
+    switch (navContext) {
+      case NavContext.main:
+        currentPill = MainNavPill(
+          key: const ValueKey('main_pill'),
+          currentIndex: currentIndex,
+          onPillTap: _onPillTap,
+        );
+        break;
+      case NavContext.mf:
+        currentPill = const MfNavPill(
+          key: ValueKey('mf_pill'),
+        );
+        break;
+      case NavContext.explore:
+        currentPill = const ExploreNavPill(
+          key: ValueKey('explore_pill'),
+        );
+        break;
+    }
+
     return PopScope(
-      canPop: currentIndex != 2,
+      canPop: currentIndex == 0 && !isInputMode,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         
-        if (currentIndex == 2) {
-          // Industry standard: if there's a nested route/dialog, pop that first.
-          if (context.canPop()) {
-            context.pop();
-          } else {
-            // Otherwise, switch to the previous tab.
-            widget.navigationShell.goBranch(_previousIndex);
-          }
+        if (isInputMode) {
+          FocusScope.of(context).unfocus();
+          ref.read(navInputModeProvider.notifier).state = false;
+        } else if (currentIndex == 2) {
+          widget.navigationShell.goBranch(_previousIndex);
+        } else {
+          _onPillTap(0); // Return to Home
         }
       },
       child: Scaffold(
-      extendBody: true,
-      body: Stack(
-        children: [
-          widget.navigationShell,
-
-          Positioned(
-            left: 16,
-            right: 16,
-            bottom: 12 + MediaQuery.of(context).viewPadding.bottom,
-            // _navVisible flips to false at tap time — the nav is ALREADY GONE
-            // before go_router starts the page transition. No fade-out on chat.
-            // TweenAnimationBuilder only plays when the widget is re-mounted
-            // (i.e. when returning FROM chat), giving a nice fade-in.
-            child: _navVisible
-                ? TweenAnimationBuilder<double>(
-                    key: const ValueKey('nav'), // Static key so it doesn't blink between normal tabs
-                    tween: Tween<double>(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 260),
-                    curve: Curves.easeOut,
-                    builder: (context, value, child) => Opacity(
-                      opacity: value,
-                      child: Transform.scale(
-                        scale: 0.94 + 0.06 * value,
-                        child: child,
-                      ),
-                    ),
-                    child: _NavRow(
-                      currentIndex: currentIndex,
-                      onPillTap: _onPillTap,
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
-      ),
-    ));
-  }
-}
-
-class _NavRow extends StatelessWidget {
-  final int currentIndex;
-  final void Function(int) onPillTap;
-
-  const _NavRow({
-    required this.currentIndex,
-    required this.onPillTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final pillIndex = currentIndex < 2 ? currentIndex : currentIndex - 1;
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(
-          child: NavigationPill(
-            currentIndex: pillIndex,
-            onTabTapped: (idx) {
-              final globalIndex = idx < 2 ? idx : idx + 1;
-              onPillTap(globalIndex);
-            },
-            isNavVisible: true,
-            icons: const [
-              Icons.home_rounded,
-              Icons.search_rounded,
-              Icons.explore_outlined,
-              Icons.person_outline_rounded,
-            ],
-            labels: const ['Home', 'Search', 'Explore', 'Profile'],
-          ),
-        ),
-        const SizedBox(width: 12),
-        GestureDetector(
-          onTap: () => onPillTap(2),
-          child: Container(
-            height: 52,
-            width: 52,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFFFFFFF),
-                  Color(0xFF5BA1F7),
-                  Color(0xFF031E6B),
-                  Color(0xFF241714),
-                ],
-                stops: [0.0, 0.25, 0.7, 1.0],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  blurRadius: 20,
-                  offset: const Offset(0, 4),
+        extendBody: true,
+        body: Stack(
+          children: [
+            widget.navigationShell,
+            if (isInputMode)
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    ref.read(navInputModeProvider.notifier).state = false;
+                  },
+                  child: Container(color: Colors.transparent),
                 ),
-              ],
+              ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeOutCubic,
+              left: 16,
+              right: 16,
+              // Slide off screen when not visible. Use padding instead of viewPadding so it sits flush with the keyboard when open.
+              bottom: _navVisible ? (12 + MediaQuery.of(context).padding.bottom) : -100,
+              child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 400),
+                            switchInCurve: Curves.easeOutCubic,
+                            switchOutCurve: Curves.easeInCubic,
+                            transitionBuilder: (child, animation) {
+                               return SizeTransition(
+                                 sizeFactor: animation,
+                                 axis: Axis.horizontal,
+                                 child: FadeTransition(opacity: animation, child: child),
+                               );
+                            },
+                            child: navContext == NavContext.main || isInputMode
+                                ? const SizedBox.shrink(key: ValueKey('no_home'))
+                                : Padding(
+                                    key: const ValueKey('has_home'),
+                                    padding: const EdgeInsets.only(right: 12.0),
+                                    child: buildHomeCircle(() => _onPillTap(0)),
+                                  ),
+                          ),
+                          Expanded(
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              switchInCurve: Curves.easeOutCubic,
+                              switchOutCurve: Curves.easeInCubic,
+                              transitionBuilder: (child, animation) {
+                                return FadeTransition(opacity: animation, child: child);
+                              },
+                              child: isInputMode
+                                  ? NavInputPill(
+                                      key: const ValueKey('input_pill'),
+                                      onSend: () => _onPillTap(2),
+                                    )
+                                  : AnimatedSwitcher(
+                                      duration: const Duration(milliseconds: 400),
+                                      switchInCurve: Curves.easeOutCubic,
+                                      switchOutCurve: Curves.easeInCubic,
+                                      transitionBuilder: (child, animation) {
+                                        // Use a subtle scale and fade instead of slide to prevent overlapping siblings
+                                        final scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(animation);
+                                        return FadeTransition(
+                                          opacity: animation,
+                                          child: ScaleTransition(
+                                            scale: scaleAnimation,
+                                            child: child,
+                                          ),
+                                        );
+                                      },
+                                      child: currentPill,
+                                    ),
+                            ),
+                          ),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 400),
+                            switchInCurve: Curves.easeOutCubic,
+                            switchOutCurve: Curves.easeInCubic,
+                            transitionBuilder: (child, animation) {
+                               return SizeTransition(
+                                 sizeFactor: animation,
+                                 axis: Axis.horizontal,
+                                 child: FadeTransition(opacity: animation, child: child),
+                               );
+                            },
+                            child: isInputMode
+                                ? const SizedBox.shrink(key: ValueKey('no_gem'))
+                                : Padding(
+                                    key: const ValueKey('has_gem'),
+                                    padding: const EdgeInsets.only(left: 12.0),
+                                    child: buildGemButton(() {
+                                      if (navContext == NavContext.main) {
+                                        _onPillTap(2);
+                                      } else {
+                                        ref.read(navInputModeProvider.notifier).state = true;
+                                      }
+                                    }),
+                                  ),
+                          ),
+                        ],
+                      ),
             ),
-            child: const Icon(
-              Icons.auto_awesome_rounded,
-              color: Colors.white,
-              size: 26,
-            ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
+
+// End of AppShell

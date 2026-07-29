@@ -78,12 +78,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           // Profile Button
                           GestureDetector(
                             onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Profile settings coming soon'),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
+                              context.push('/user-profile');
                             },
                             child: Container(
                               width: 44,

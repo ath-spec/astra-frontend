@@ -28,7 +28,7 @@ class ChatAppBar extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Left: Empty space to keep center alignment balanced with the right icon
+          // Left: Empty space to balance the right icon
           const SizedBox(width: 38),
 
           // Center: Animated Title
@@ -63,9 +63,9 @@ class ChatAppBar extends ConsumerWidget {
           ),
 
           // Right: History Icon
-          const _HeaderButton(
+          _HeaderButton(
             icon: Icons.history_rounded,
-            isBack: false,
+            onTap: () => context.push('/chat-history'),
           ),
         ],
       ),
@@ -95,9 +95,9 @@ class ImageFilterWidget extends StatelessWidget {
 
 class _HeaderButton extends StatefulWidget {
   final IconData icon;
-  final bool isBack;
+  final VoidCallback onTap;
 
-  const _HeaderButton({required this.icon, required this.isBack});
+  const _HeaderButton({required this.icon, required this.onTap});
 
   @override
   State<_HeaderButton> createState() => _HeaderButtonState();
@@ -112,16 +112,7 @@ class _HeaderButtonState extends State<_HeaderButton> {
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
         setState(() => _isPressed = false);
-        if (widget.isBack) {
-          if (context.canPop()) {
-            context.pop();
-          } else {
-            context.go('/');
-          }
-        } else {
-          // Handle history tap
-          context.push('/chat-history');
-        }
+        widget.onTap();
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(

@@ -1,85 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/nav_context_provider.dart';
+import 'holdings/holdings_screen.dart';
+import 'sip/sip_screen.dart';
+import 'fd/fd_screen.dart';
+import 'orders/orders_screen.dart';
+import 'watchlist/watchlist_screen.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends ConsumerWidget {
   const SearchScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tabIndex = ref.watch(mfTabIndexProvider);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
-      appBar: AppBar(
-        title: const Text(
-          'Search',
-          style: TextStyle(
-            fontFamily: 'SpaceGrotesk',
-            color: Color(0xFF0F172A),
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        backgroundColor: const Color(0xFFFFFFFF),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 24.0,
-              right: 24.0,
-              top: 16.0,
-              bottom: MediaQuery.of(context).padding.bottom + 100,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Search Bar
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.search_rounded, color: Color(0xFF64748B), size: 20),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Search assets, funds...',
-                            hintStyle: TextStyle(
-                              fontFamily: 'DMSans',
-                              color: Color(0xFF94A3B8),
-                              fontSize: 14,
-                            ),
-                            border: InputBorder.none,
-                          ),
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            color: Color(0xFF0F172A),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 32),
-                const Center(
-                  child: Text(
-                    'Search functionality coming soon',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      color: Color(0xFF64748B),
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+      backgroundColor: const Color(0xFFF9FAFB),
+      body: SafeArea(
+        bottom: false,
+        child: IndexedStack(
+          index: tabIndex,
+          children: const [
+            HoldingsScreen(),
+            SipScreen(),
+            FdScreen(),
+            OrdersScreen(),
+            WatchlistScreen(),
+          ],
         ),
       ),
     );

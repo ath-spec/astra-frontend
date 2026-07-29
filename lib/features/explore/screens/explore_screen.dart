@@ -1,38 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/nav_context_provider.dart';
+import 'stocks/stocks_screen.dart';
+import 'etfs/etfs_screen.dart';
+import 'crypto/crypto_screen.dart';
 
-class ExploreScreen extends StatelessWidget {
+class ExploreScreen extends ConsumerWidget {
   const ExploreScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tabIndex = ref.watch(exploreTabIndexProvider);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: const Text(
-          'Explore',
-          style: TextStyle(
-            fontFamily: 'SpaceGrotesk',
-            color: Color(0xFF0F172A),
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        backgroundColor: const Color(0xFFF8FAFC),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: const Center(
-            child: Text(
-              'Explore opportunities coming soon',
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                color: Color(0xFF64748B),
-                fontSize: 14,
-              ),
-            ),
-          ),
+      backgroundColor: const Color(0xFFF9FAFB),
+      body: SafeArea(
+        bottom: false,
+        child: IndexedStack(
+          index: tabIndex,
+          children: const [
+            StocksScreen(),
+            EtfScreen(),
+            CryptoScreen(),
+          ],
         ),
       ),
     );

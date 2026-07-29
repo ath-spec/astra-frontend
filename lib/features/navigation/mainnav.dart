@@ -24,6 +24,61 @@ class NavigationPill extends StatefulWidget {
 class _NavigationPillState extends State<NavigationPill> {
   double _dragX = 0.0;
   bool _isDragging = false;
+  final ScrollController _scrollController = ScrollController();
+  double _currentTabWidth = 0.0;
+  bool _needsScroll = false;
+
+  @override
+  void didUpdateWidget(NavigationPill oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.currentIndex != widget.currentIndex) {
+      _scrollToIndex(widget.currentIndex);
+    }
+  }
+
+  void _scrollToIndex(int index) {
+    if (!_needsScroll || !_scrollController.hasClients || _currentTabWidth == 0.0) return;
+    
+    final double tabLeft = index * _currentTabWidth;
+    final double tabRight = tabLeft + _currentTabWidth;
+    
+    final double viewportWidth = _scrollController.position.viewportDimension;
+    final double currentScroll = _scrollController.offset;
+    // We want to peek at least 60% of the adjacent tab
+    final double peekAmount = _currentTabWidth * 0.6;
+    
+    // The ideal view range we want visible
+    final double desiredLeft = tabLeft - peekAmount;
+    final double desiredRight = tabRight + peekAmount;
+    
+    if (desiredLeft < currentScroll) {
+      final double targetScroll = desiredLeft.clamp(
+        0.0,
+        _scrollController.position.maxScrollExtent,
+      );
+      _scrollController.animateTo(
+        targetScroll,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      );
+    } else if (desiredRight > currentScroll + viewportWidth) {
+      final double targetScroll = (desiredRight - viewportWidth).clamp(
+        0.0,
+        _scrollController.position.maxScrollExtent,
+      );
+      _scrollController.animateTo(
+        targetScroll,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +93,15 @@ class _NavigationPillState extends State<NavigationPill> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
-          child: Container(
+      child: RepaintBoundary(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
+            child: Container(
             padding: const EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 8,
+              vertical: 4,
+              horizontal: 0, // Padding moved to inner content to avoid scroll clipping
             ),
             decoration: BoxDecoration(
               // Reduced opacity so the blur is visible
@@ -58,43 +114,35 @@ class _NavigationPillState extends State<NavigationPill> {
             ),
             child: LayoutBuilder(
           builder: (context, constraints) {
-            final pillWidth = constraints.maxWidth;
-            final tabWidth = pillWidth / widget.icons.length;
+            // Subtract the 16px horizontal padding that we moved inside
+            final double pillWidth = constraints.maxWidth - 16.0;
+            // Standardize tab width so the 'pill light' is identical across Main, MF, and Explore screens
+            double tabWidth = pillWidth / 3;
+            bool needsScroll = widget.icons.length > 3;
+
+            final double totalWidth = tabWidth * widget.icons.length;
+            
+            // Save state for auto-scroll logic
+            _needsScroll = needsScroll;
+            _currentTabWidth = tabWidth;
 
             int visualIndex;
             double indicatorLeft;
 
-            if (_isDragging) {
+            if (_isDragging && !needsScroll) {
               visualIndex = ((_dragX + (tabWidth / 2)) / tabWidth).floor();
               visualIndex = visualIndex.clamp(0, widget.icons.length - 1);
-              indicatorLeft = _dragX.clamp(0.0, pillWidth - tabWidth);
+              indicatorLeft = _dragX.clamp(0.0, totalWidth - tabWidth);
             } else {
               visualIndex = widget.currentIndex;
               indicatorLeft = widget.currentIndex * tabWidth;
             }
 
-            return GestureDetector(
-              onHorizontalDragStart: (d) {
-                setState(() {
-                  _isDragging = true;
-                  _dragX = d.localPosition.dx - (tabWidth / 2);
-                });
-              },
-              onHorizontalDragUpdate: (d) {
-                setState(() {
-                  _dragX = d.localPosition.dx - (tabWidth / 2);
-                });
-              },
-              onHorizontalDragEnd: (d) {
-                setState(() {
-                  _isDragging = false;
-                });
-                widget.onTabTapped(visualIndex);
-              },
-              child: Container(
-                color: Colors.transparent,
-                height: 36,
-                child: Stack(
+            Widget content = Container(
+              color: Colors.transparent,
+              height: 38, 
+              width: needsScroll ? totalWidth : null,
+              child: Stack(
                   clipBehavior: Clip.none,
                   alignment: Alignment.centerLeft,
                   children: [
@@ -102,19 +150,19 @@ class _NavigationPillState extends State<NavigationPill> {
                     AnimatedPositioned(
                       duration: _isDragging
                           ? Duration.zero
-                          : const Duration(milliseconds: 200),
-                      curve: Curves.easeOutQuad,
-                      top: -4, // Centered inside the 36px tall container
-                      left: indicatorLeft - 4, // Moved more to the left per user request
-                      width: tabWidth +5 , // Increased width almost to full segment bounds
-                      height: 44, // Reduced from 44 to tightly wrap the icon and text
+                          : const Duration(milliseconds: 300),
+                      curve: Curves.easeOutCubic,
+                      top: 0, 
+                      left: indicatorLeft, 
+                      width: tabWidth, 
+                      height: 40,
                       child: AnimatedOpacity(
                         opacity: visualIndex == -1 ? 0.0 : 1.0,
-                        duration: const Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 300),
                         child: IgnorePointer(
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
+                            borderRadius: BorderRadius.circular(100),
                             gradient: const LinearGradient(
                               colors: [
                                 Color(0xFFFFFFFF),
@@ -162,7 +210,7 @@ class _NavigationPillState extends State<NavigationPill> {
                             child: Transform.scale(
                               scale: scale,
                               child: TweenAnimationBuilder<Color?>(
-                                duration: const Duration(milliseconds: 200),
+                                duration: const Duration(milliseconds: 300),
                                 tween: ColorTween(
                                   begin: const Color(0xFF1E293B),
                                   end: isActive
@@ -177,7 +225,7 @@ class _NavigationPillState extends State<NavigationPill> {
                                       Icon(
                                         widget.icons[index],
                                         color: color,
-                                        size: 18,
+                                        size: 16, // Increased from 16
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
@@ -186,7 +234,7 @@ class _NavigationPillState extends State<NavigationPill> {
                                         maxLines: 1,
                                         style: TextStyle(
                                           fontFamily: 'DMSans',
-                                          fontSize: 10,
+                                          fontSize: 10, 
                                           fontWeight:FontWeight.w600,
                                           color: color,
                                           decoration: TextDecoration.none,
@@ -203,11 +251,47 @@ class _NavigationPillState extends State<NavigationPill> {
                     ),
                   ],
                 ),
-              ),
+            );
+
+            if (needsScroll) {
+              content = SingleChildScrollView(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: content,
+              );
+            } else {
+              content = Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: content,
+              );
+            }
+
+            return GestureDetector(
+              onHorizontalDragStart: needsScroll ? null : (d) {
+                setState(() {
+                  _isDragging = true;
+                  _dragX = d.localPosition.dx - 8.0 - (tabWidth / 2);
+                });
+              },
+              onHorizontalDragUpdate: needsScroll ? null : (d) {
+                setState(() {
+                  _dragX = d.localPosition.dx - 8.0 - (tabWidth / 2);
+                });
+              },
+              onHorizontalDragEnd: needsScroll ? null : (d) {
+                setState(() {
+                  _isDragging = false;
+                });
+                widget.onTabTapped(visualIndex);
+              },
+              child: content,
             );
           },
         ),
           ),
+        ),
         ),
       ),
     );

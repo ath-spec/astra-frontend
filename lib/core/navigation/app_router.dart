@@ -25,6 +25,7 @@ import '../../features/chat/screens/chat_history_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/explore/screens/explore_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
+import '../../features/profile/screens/user_profile_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/corner_fade_reveal_transition.dart';
 
@@ -56,7 +57,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           loc == '/profiling-status' ||
           loc == '/no-internet';
 
-      if (!isLoggedIn && !isOnboardingRoute) return '/splash';
+      if (!isLoggedIn && !isOnboardingRoute) return '/intro';
       return null;
     },
     routes: [
@@ -157,6 +158,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return NoInternetScreen(returnRoute: returnRoute);
         },
       ),
+      GoRoute(
+        path: '/user-profile',
+        builder: (context, state) => const UserProfileScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return AppShell(navigationShell: navigationShell);
@@ -191,14 +196,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/explore',
                 builder: (context, state) => const ExploreScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/profile',
-                builder: (context, state) => const ProfileScreen(),
               ),
             ],
           ),
