@@ -226,6 +226,8 @@ class _IntroScreenState extends State<IntroScreen>
                             padding: const EdgeInsets.only(
                               top: 20.0,
                               bottom: 60.0,
+                              left: 24.0,
+                              right: 24.0,
                             ),
                             child: Center(
                               child: Builder(
@@ -242,28 +244,35 @@ class _IntroScreenState extends State<IntroScreen>
                                   }
 
                                   if (_videoState is _VideoReady) {
-                                    return ClipRect(
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: FittedBox(
-                                          fit: BoxFit.cover,
-                                          alignment: Alignment.topCenter,
-                                          child: SizedBox(
-                                              width: _videoController
-                                                  .value
-                                                  .size
-                                                  .width,
-                                              height: _videoController
-                                                  .value
-                                                  .size
-                                                  .height,
-                                              child: VideoPlayer(
-                                                _videoController,
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black, width: 2),
+                                      ),
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ClipRect(
+                                        child: SizedBox(
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          child: FittedBox(
+                                            fit: BoxFit.cover,
+                                            alignment: Alignment.topCenter,
+                                            child: SizedBox(
+                                                width: _videoController
+                                                    .value
+                                                    .size
+                                                    .width,
+                                                height: _videoController
+                                                    .value
+                                                    .size
+                                                    .height,
+                                                child: VideoPlayer(
+                                                  _videoController,
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      );
+                                    );
                                   }
 
                                   final e = _videoState as _VideoError;
