@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/providers/nav_context_provider.dart';
-import 'widgets/mf_explore_header.dart';
 import 'widgets/mf_explore_grid.dart';
 import 'widgets/mf_trending_funds.dart';
 import 'widgets/mf_fund_list_card.dart';
@@ -13,6 +12,7 @@ import 'widgets/mf_alternative_funds.dart';
 // NEW SECTIONS
 import 'widgets/mf_new_built_for_u.dart';
 import 'widgets/mf_new_quick_explore.dart';
+import 'widgets/mf_explore_assets.dart';
 import 'widgets/mf_new_trending_themes.dart';
 import 'widgets/mf_new_investment_ideas.dart';
 import 'widgets/mf_goal_planning.dart';
@@ -36,6 +36,7 @@ class MfExploreScreen extends ConsumerWidget {
             pinned: true,
             delegate: _MfExploreHeaderDelegate(
               safeAreaTop: MediaQuery.of(context).padding.top,
+              screenHeight: MediaQuery.of(context).size.height,
               onBackTap: () {
                 if (context.canPop()) {
                   context.pop();
@@ -47,9 +48,18 @@ class MfExploreScreen extends ConsumerWidget {
             ),
           ),
           SliverList.list(
-            children: [
-                const SizedBox(height: 24), // spacing since we removed MfExploreHeader
-                const MfExploreGrid(),
+            children: [// spacing since we removed MfExploreHeader
+                
+                // EXPLORE ASSETS
+                const SizedBox(height: 32),
+                const MfExploreAssets(),
+
+                // Section 1: TRENDING THEMES
+                const SizedBox(height: 48),
+                const MfNewTrendingThemes(),
+                const SizedBox(height: 48),
+                // Section 2: ALTERNATIVE ASSETS
+                const MfNewAlternativeAssets(),
                 const SizedBox(height: 48),
                 const MfTrendingFunds(),
                 const SizedBox(height: 48),
@@ -125,27 +135,21 @@ class MfExploreScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 64),
+                const SizedBox(height: 48),
                 
-                // === NEW SECTIONS APPENDED HERE ===
-                
-                // Section 1: AI PICKS (HERO)
+                // Section 3: AI PICKS (HERO)
                 const MfNewAiPicksHero(),
                 const SizedBox(height: 48),
 
-                // Section 2: QUICK EXPLORE
+                // Section 4: QUICK EXPLORE
                 const MfNewQuickExplore(),
                 const SizedBox(height: 48),
 
-                // Section 3: TRENDING THEMES
-                const MfNewTrendingThemes(),
-                const SizedBox(height: 48),
-
-                // Section 4: INVESTMENT IDEAS
+                // Section 5: INVESTMENT IDEAS
                 const MfNewInvestmentIdeas(),
                 const SizedBox(height: 48),
 
-                // Section 5: GOAL PLANNING
+                // Section 6: GOAL PLANNING
                 const MfGoalPlanning(),
                 const SizedBox(height: 48),
 
@@ -153,9 +157,7 @@ class MfExploreScreen extends ConsumerWidget {
                 const MfGlobalInvesting(),
                 const SizedBox(height: 48),
 
-                // Section 7: ALTERNATIVE ASSETS
-                const MfNewAlternativeAssets(),
-                const SizedBox(height: 48),
+                
 
                 // Section 8: INCOME & SAFETY
                 const MfIncomeSafety(),
@@ -171,6 +173,9 @@ class MfExploreScreen extends ConsumerWidget {
 
                 // Section 11: LEARN & GROW
                 const MfLearnAndGrow(),
+
+                const SizedBox(height: 48),
+                const MfExploreGrid(),
                 
                 const SizedBox(height: 120), // Bottom padding for nav bar
               ],
@@ -183,10 +188,12 @@ class MfExploreScreen extends ConsumerWidget {
 
 class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
+  final double screenHeight;
   final VoidCallback onBackTap;
 
   _MfExploreHeaderDelegate({
     required this.safeAreaTop,
+    required this.screenHeight,
     required this.onBackTap,
   });
 
@@ -194,7 +201,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => safeAreaTop + 84.0;
 
   @override
-  double get maxExtent => safeAreaTop + 280.0;
+  double get maxExtent => safeAreaTop + (screenHeight * 0.4);
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -205,7 +212,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
     final double easedRatio = curve.transform(shrinkRatio);
 
     // Layout Interpolations
-    final double startTop = maxExtent - 90.0;
+    final double startTop = maxExtent * 0.3;
     final double endTop = safeAreaTop + 18.0; // Vertically centered with 44px buttons
     final double currentTop = lerpDouble(startTop, endTop, easedRatio)!;
 
@@ -214,7 +221,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
     final double currentSubtitleTop = lerpDouble(startSubtitleTop, endSubtitleTop, easedRatio)!;
 
     // Style Interpolations
-    final double currentFontSize = lerpDouble(36.0, 14.0, easedRatio)!;
+    final double currentFontSize = lerpDouble(26.0, 14.0, easedRatio)!;
     final double currentBorderRadius = lerpDouble(0.0, 20.0, easedRatio)!;
     final double currentHPad = lerpDouble(0.0, 16.0, easedRatio)!;
     final double currentVPad = lerpDouble(0.0, 6.0, easedRatio)!;
@@ -227,14 +234,13 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
     return Container(
       color: Colors.transparent,
       child: Stack(
-        fit: StackFit.expand,
         children: [
           // Background Image
           Positioned(
-            top: -shrinkOffset * 0.5,
+            top: (-shrinkOffset * 0.1),
             left: 0,
             right: 0,
-            bottom: 0,
+            bottom: screenHeight * 0.035, // Responsive bottom spacing
             child: Opacity(
               opacity: 1.0 - shrinkRatio,
               child: Container(
@@ -242,8 +248,8 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                   color: Color(0xFFF9FAFB),
                   image: DecorationImage(
                     image: AssetImage('lib/core/images/net_value_bg.webp'),
-                    fit: BoxFit.fill,
-                    alignment: Alignment.bottomCenter,
+                    fit: BoxFit.fitWidth,
+                    alignment: Alignment(0.0, 0.3),
                   ),
                 ),
               ),
@@ -260,9 +266,11 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      const Color(0xFFF9FAFB).withOpacity(0.98),
-                      const Color(0xFFF9FAFB).withOpacity(0.92),
+                      const Color(0xFFF9FAFB),
+                      const Color(0xFFF9FAFB).withOpacity(0.95),
+                      const Color(0xFFF9FAFB).withOpacity(0.0),
                     ],
+                    stops: const [0.0, 0.7, 1.0],
                   ),
                 ),
               ),
@@ -318,9 +326,9 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '₹3,43,158',
+                      '₹ 3,43,158',
                       style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
+                        fontFamily: 'DMSans',
                         color: const Color(0xFF0F172A),
                         fontSize: currentFontSize,
                         fontWeight: FontWeight.w800,
@@ -343,16 +351,17 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                                 Icon(
                                   Icons.arrow_upward_rounded,
                                   size: lerpDouble(14.0, 0.0, easedRatio)!,
-                                  color: const Color(0xFF10B981), // Emerald 500
+                                  color: const Color.fromARGB(255, 5, 134, 91), // Emerald 500
                                 ),
                                 SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
                                 Text(
                                   '₹2,491 (0.73%)',
                                   style: TextStyle(
-                                    fontFamily: 'DMMono',
+                                    fontFamily: 'DMSans',
                                     fontSize: lerpDouble(10.0, 0.0, easedRatio)!,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF10B981),
+                                    color: const Color.fromARGB(255, 5, 134, 91),
+                                    letterSpacing: 0.8,
                                   ),
                                 ),
                                 SizedBox(width: lerpDouble(6.0, 0.0, easedRatio)!),

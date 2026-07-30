@@ -21,7 +21,7 @@ class MfTrendingFunds extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 20,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: -1.0,
                   color: Color.fromARGB(255, 0, 0, 0),
                 ),
@@ -49,34 +49,41 @@ class MfTrendingFunds extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        SizedBox(
-          height: 160, // Fixed height for horizontal scrolling cards
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              _buildTrendingCard(
-                context,
-                name: 'Parag Parikh Flexi Cap Fund',
-                category: 'Equity • Flexi Cap',
-                rating: '5',
-                expense: '0.53%',
-                returns: '13.8%',
-                logoIcon: Icons.pets, // Just a placeholder icon
-                logoColor: Colors.teal,
-              ),
-              const SizedBox(width: 16),
-              _buildTrendingCard(
-                context,
-                name: 'Quant Small Cap Fund',
-                category: 'Equity • Small Cap',
-                rating: '4',
-                expense: '0.62%',
-                returns: '21.4%',
-                logoIcon: Icons.bar_chart,
-                logoColor: Colors.deepPurple,
-              ),
-            ],
+        AspectRatio(
+          aspectRatio: 390 / 160,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final cardWidth = constraints.maxWidth * (300 / 390);
+              return ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  _buildTrendingCard(
+                    context,
+                    width: cardWidth,
+                    name: 'Parag Parikh Flexi Cap Fund',
+                    category: 'Equity • Flexi Cap',
+                    rating: '5',
+                    expense: '0.53%',
+                    returns: '13.8%',
+                    logoIcon: Icons.pets, // Just a placeholder icon
+                    logoColor: Colors.teal,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildTrendingCard(
+                    context,
+                    width: cardWidth,
+                    name: 'Quant Small Cap Fund',
+                    category: 'Equity • Small Cap',
+                    rating: '4',
+                    expense: '0.62%',
+                    returns: '21.4%',
+                    logoIcon: Icons.bar_chart,
+                    logoColor: Colors.deepPurple,
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ],
@@ -85,6 +92,7 @@ class MfTrendingFunds extends StatelessWidget {
 
   Widget _buildTrendingCard(
     BuildContext context, {
+    required double width,
     required String name,
     required String category,
     required String rating,
@@ -96,7 +104,7 @@ class MfTrendingFunds extends StatelessWidget {
     return GestureDetector(
       onTap: () => MfFundProfileScreen.showModal(context, name),
       child: Container(
-        width: 300,
+        width: width,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,

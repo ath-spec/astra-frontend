@@ -15,7 +15,7 @@ class MfNewTrendingThemes extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'DMSans',
               fontSize: 20,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               letterSpacing: -1.0,
               color: Color.fromARGB(255, 0, 0, 0),
             ),
@@ -29,32 +29,47 @@ class MfNewTrendingThemes extends StatelessWidget {
             children: [
               _buildThemeCard(
                 context,
+                title: 'Renewable Energy',
+                subtitle: 'Powering the future of energy.',
+                imageAsset: 'lib/core/images/renewal.webp',
+                bgColor: const Color.fromARGB(255, 255, 255, 255),
+                imageScaleFraction: 0.8,
+                imageRightFraction: 0.0,
+                imageBottomFraction: -0.05,
+              ),
+              const SizedBox(width: 12),
+
+              _buildThemeCard(
+                context,
+                title: 'Semiconductor',
+                subtitle: 'Powering the digital future.',
+                imageAsset: 'lib/core/images/semi.webp',
+                bgColor: const Color.fromARGB(255, 255, 255, 255),
+                imageScaleFraction: 0.8,
+                imageRightFraction: 0.0,
+                imageBottomFraction: -0.05,
+              ),
+              const SizedBox(width: 12),
+              _buildThemeCard(
+                context,
                 title: 'AI Revolution',
-                subtitle: 'Invest in companies\nbuilding AI.',
-                imageAsset: 'lib/core/images/india_ai.webp',
-                imageScaleFraction: 0.9,
-                imageRightFraction: 0.0,
-                imageBottomFraction: 0.0,
+                subtitle: 'Invest in companies building AI.',
+                imageAsset: 'lib/core/images/ai.webp',
+                bgColor: const Color.fromARGB(255, 255, 255, 255),
+                imageScaleFraction: 1,
+                imageRightFraction: -0.05,
+                imageBottomFraction: -0.05,
               ),
               const SizedBox(width: 12),
               _buildThemeCard(
                 context,
-                title: 'India Mfg',
-                subtitle: "Back India's next\ngrowth engine.",
-                imageAsset: 'lib/core/images/india_manufacturing.webp',
-                imageScaleFraction: 0.9,
+                title: 'India Manufacturing',
+                subtitle: "Back India's next growth engine.",
+                imageAsset: 'lib/core/images/manu.webp',
+                bgColor: const Color.fromARGB(255, 255, 255, 255),
+                imageScaleFraction: 1,
                 imageRightFraction: 0.0,
-                imageBottomFraction: 0.0,
-              ),
-              const SizedBox(width: 12),
-              _buildThemeCard(
-                context,
-                title: 'Semi-Conductor',
-                subtitle: 'Powering the\ndigital future.',
-                imageAsset: 'lib/core/images/semiconductor.webp',
-                imageScaleFraction: 0.9,
-                imageRightFraction: 0.0,
-                imageBottomFraction: 0.0,
+                imageBottomFraction: -0.05,
               ),
               const SizedBox(width: 12),
               _buildThemeCard(
@@ -62,10 +77,11 @@ class MfNewTrendingThemes extends StatelessWidget {
                 title: 'EV Mobility',
                 subtitle: 'The future of\nelectric mobility.',
                 imageAsset: 'lib/core/images/ev.webp',
-                imageScaleFraction: 0.9,
+                bgColor: const Color.fromARGB(255, 255, 255, 255),
+                imageScaleFraction: 0.8,
                 imageRightFraction: 0.0,
-                imageBottomFraction: 0.0,
-              ),
+                imageBottomFraction: -0.05,
+              ), 
             ],
           ),
         ),
@@ -78,13 +94,13 @@ class MfNewTrendingThemes extends StatelessWidget {
     required String title,
     required String subtitle,
     required String imageAsset,
+    required Color bgColor,
     required double imageScaleFraction,
     required double imageRightFraction,
     required double imageBottomFraction,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = screenWidth * 0.42;
-    const bgColor = Color(0xFFF8FAFC); // Default uniform background color
+    final cardWidth = screenWidth * 0.35;
 
     return SizedBox(
       width: cardWidth,
@@ -93,11 +109,16 @@ class MfNewTrendingThemes extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: HSLColor.fromColor(bgColor).withLightness(
-                (HSLColor.fromColor(bgColor).lightness - 0.12).clamp(0.0, 1.0)
-              ).toColor(),
+              color: HSLColor.fromColor(bgColor)
+                  .withLightness(
+                    (HSLColor.fromColor(bgColor).lightness - 0.12).clamp(
+                      0.0,
+                      1.0,
+                    ),
+                  )
+                  .toColor(),
             ),
             boxShadow: [
               BoxShadow(
@@ -108,7 +129,7 @@ class MfNewTrendingThemes extends StatelessWidget {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
             child: Stack(
               children: [
                 // Image Background (Responsive)
@@ -134,26 +155,11 @@ class MfNewTrendingThemes extends StatelessWidget {
                     },
                   ),
                 ),
-                // Gradient Overlay to ensure text readability
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          bgColor,
-                          bgColor.withOpacity(0.8),
-                          bgColor.withOpacity(0.0),
-                        ],
-                        stops: const [0.0, 0.4, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
                 // Text Content
-                Padding(
-                  padding: const EdgeInsets.all(16),
+                Positioned(
+                  top: 16,
+                  left: 16,
+                  right: 16,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -161,8 +167,8 @@ class MfNewTrendingThemes extends StatelessWidget {
                         title,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                           color: Color(0xFF0F172A),
                           height: 1.2,
                         ),
@@ -182,32 +188,32 @@ class MfNewTrendingThemes extends StatelessWidget {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const Spacer(),
-                      // Explore Button
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0F172A),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Text(
-                              'Explore',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 12),
-                          ],
-                        ),
-                      ),
                     ],
+                  ),
+                ),
+                // Explore Button
+                Positioned(
+                  bottom: 4,
+                  left: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F172A),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

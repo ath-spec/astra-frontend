@@ -22,7 +22,7 @@ class _MfExploreByRiskState extends State<MfExploreByRisk> {
             style: TextStyle(
               fontFamily: 'DMSans',
               fontSize: 20,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               letterSpacing: -1.0,
               color: Color.fromARGB(255, 0, 0, 0),
             ),
@@ -41,7 +41,7 @@ class _MfExploreByRiskState extends State<MfExploreByRisk> {
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -50,7 +50,7 @@ class _MfExploreByRiskState extends State<MfExploreByRisk> {
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -178,7 +178,7 @@ class _MfExploreByRiskState extends State<MfExploreByRisk> {
             style: TextStyle(
               fontFamily: 'DMSans',
               fontSize: 9,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: isActive ? const Color(0xFF8B5CF6) : const Color(0xFF0F172A),
             ),
           ),

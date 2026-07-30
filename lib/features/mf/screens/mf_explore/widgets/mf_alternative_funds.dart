@@ -24,7 +24,7 @@ class MfAlternativeFunds extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: 20,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -1.0,
                         color: Color.fromARGB(255, 0, 0, 0),
                       ),
@@ -66,32 +66,39 @@ class MfAlternativeFunds extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        SizedBox(
-          height: 140, // Slightly shorter than Trending because only 3 stats
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              _buildAlternativeCard(
-                name: 'Union Liquid Fund',
-                category: 'Debt • Liquid',
-                expense: '0.06%',
-                aum: '₹6649 Crs',
-                returns: '7.0%',
-                logoIcon: Icons.water_drop_outlined,
-                logoColor: Colors.blue,
-              ),
-              const SizedBox(width: 16),
-              _buildAlternativeCard(
-                name: 'HDFC Liquid Fund',
-                category: 'Debt • Liquid',
-                expense: '0.08%',
-                aum: '₹8000 Crs',
-                returns: '7.1%',
-                logoIcon: Icons.account_balance,
-                logoColor: Colors.red,
-              ),
-            ],
+        AspectRatio(
+          aspectRatio: 390 / 140,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final cardWidth = constraints.maxWidth * (280 / 390);
+              return ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  _buildAlternativeCard(
+                    width: cardWidth,
+                    name: 'Union Liquid Fund',
+                    category: 'Debt • Liquid',
+                    expense: '0.06%',
+                    aum: '₹6649 Crs',
+                    returns: '7.0%',
+                    logoIcon: Icons.water_drop_outlined,
+                    logoColor: Colors.blue,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildAlternativeCard(
+                    width: cardWidth,
+                    name: 'HDFC Liquid Fund',
+                    category: 'Debt • Liquid',
+                    expense: '0.08%',
+                    aum: '₹8000 Crs',
+                    returns: '7.1%',
+                    logoIcon: Icons.account_balance,
+                    logoColor: Colors.red,
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ],
@@ -99,6 +106,7 @@ class MfAlternativeFunds extends StatelessWidget {
   }
 
   Widget _buildAlternativeCard({
+    required double width,
     required String name,
     required String category,
     required String expense,
@@ -108,7 +116,7 @@ class MfAlternativeFunds extends StatelessWidget {
     required Color logoColor,
   }) {
     return Container(
-      width: 280,
+      width: width,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,

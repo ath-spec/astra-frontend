@@ -16,7 +16,7 @@ class MfNewAlternativeAssets extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'DMSans',
               fontSize: 20,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               letterSpacing: -1.0,
               color: Color.fromARGB(255, 0, 0, 0),
             ),
@@ -44,7 +44,7 @@ class MfNewAlternativeAssets extends StatelessWidget {
                   Expanded(
                     child: _AnimatedAssetCard(
                       title: 'Gold Funds',
-                      subtitle: 'Diversify with gold investments.',
+                      subtitle: 'Diversify with\ngold investments.',
                       imageAsset: 'lib/core/images/gold.webp',
                       backgroundColor: const Color(0xFFFDF0D5),
                       imageScaleFraction: 1.35,
@@ -198,8 +198,8 @@ class _AnimatedAssetCardState extends State<_AnimatedAssetCard> {
                         widget.title,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                           color: Color(0xFF0F172A),
                         ),
                       ),

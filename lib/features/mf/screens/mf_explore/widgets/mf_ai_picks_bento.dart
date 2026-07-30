@@ -24,8 +24,8 @@ class MfAiPicksBento extends StatelessWidget {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SizedBox(
-            height: 210,
+          child: AspectRatio(
+            aspectRatio: 358 / 210,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
