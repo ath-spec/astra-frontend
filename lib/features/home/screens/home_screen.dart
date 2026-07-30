@@ -10,6 +10,8 @@ import '../widgets/home_quick_actions.dart';
 import '../widgets/home_astra_intelligence.dart';
 import '../widgets/home_grow_wealth.dart';
 import '../widgets/home_explore_more.dart';
+import '../widgets/home_order_cards.dart';
+import '../widgets/home_portfolio_growth.dart';
 
 /// Screen 4: New Home Screen / Dashboard (Image 4) in clean light mode.
 /// Displays user wealth header, portfolio chart card, asset status list (with FETCHING status),
@@ -73,13 +75,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               onLockTap: () => context.push('/no-internet', extra: '/'),
             ),
           ),
-          
+          // 1. Main content with consistent horizontal padding
           SliverPadding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 24,
               right: 24,
               top: 16,
-              bottom: bottomPadding + 100, // Space for bottom nav
             ),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
@@ -127,8 +128,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 const SizedBox(height: 48),
                 const HomeExploreMore(),
                 
-                const SizedBox(height: 24),
+                const SizedBox(height: 48),
               ]),
+            ),
+          ),
+
+          // 2. "Your Orders" Header
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                'Your Orders',
+                style: TextStyle(
+                  fontFamily: 'SpaceGrotesk',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF0F172A),
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ),
+          ),
+          
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 16),
+          ),
+
+          // 3. Edge-to-edge Portfolio Cards
+          const SliverToBoxAdapter(
+            child: HomePortfolioCards(),
+          ),
+          
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 48),
+          ),
+
+          // 4. Edge-to-edge Portfolio Growth Graph with bottom padding for nav
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: bottomPadding + 100),
+              child: const HomePortfolioGrowth(),
             ),
           ),
         ],
@@ -168,7 +207,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               backgroundColor: isLinked ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
               foregroundColor: isLinked ? const Color(0xFF0F172A) : Colors.white,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
                 side: isLinked
@@ -180,7 +221,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               buttonText,
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -247,7 +288,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               backgroundColor: const Color(0xFF0F172A),
               foregroundColor: Colors.white,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -256,7 +299,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               'Explore',
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -270,7 +313,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14.0),
       child: GestureDetector(
-        onTap: () => context.push('/banks-linking'),
+        onTap: () {
+          if (isLinked) {
+            context.push('/manage-bank-accounts');
+          } else {
+            context.push('/banks-linking');
+          }
+        },
         child: Row(
           children: [
             const Icon(Icons.account_balance_rounded, color: Color(0xFF64748B), size: 24),

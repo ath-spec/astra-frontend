@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../fund_profile/mf_fund_profile_screen.dart';
 
 class MfFundListCard extends StatelessWidget {
   final String sectionTitle;
@@ -99,7 +100,7 @@ class MfFundListCard extends StatelessWidget {
                 ),
               ),
               // List of funds
-              ...funds.map((fund) => _buildFundRow(fund)).toList(),
+              ...funds.map((fund) => _buildFundRow(context, fund)).toList(),
               // Footer
               Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -130,81 +131,84 @@ class MfFundListCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFundRow(MfFundItemData fund) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Color(0xFFF1F5F9),
-            width: 1,
+  Widget _buildFundRow(BuildContext context, MfFundItemData fund) {
+    return GestureDetector(
+      onTap: () => MfFundProfileScreen.showModal(context, fund.name),
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Color(0xFFF1F5F9),
+              width: 1,
+            ),
           ),
         ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Icon(fund.logoIcon, color: fund.logoColor, size: 20),
             ),
-            child: Icon(fund.logoIcon, color: fund.logoColor, size: 20),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fund.name,
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    fund.category,
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                const Text(
+                  '3Y Returns',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF94A3B8),
+                  ),
+                ),
+                const SizedBox(height: 4),
                 Text(
-                  fund.name,
+                  fund.returns,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  fund.category,
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF9CA3AF),
+                    color: Color(0xFF10B981),
                   ),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const Text(
-                '3Y Returns',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF94A3B8),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                fund.returns,
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF10B981),
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

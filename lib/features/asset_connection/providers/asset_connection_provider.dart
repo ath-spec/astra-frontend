@@ -111,24 +111,24 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
             step: AssetConnectionStep.linkingMutualFunds,
             mfConnected: false,
             stocksConnected: false,
-            banksConnected: false,
+            banksConnected: true,
             mfStatusMessage: 'Linking now...',
             stocksStatusMessage: 'Pending',
-            banksStatusMessage: 'Pending',
+            banksStatusMessage: 'Successfully Linked',
             bankAccounts: [
               BankAccountItem(
                 id: '3192',
                 bankName: 'HDFC Bank',
                 accountNumber: 'SAVINGS account - xxxx 3192',
                 isSelected: true,
-                isLinked: false,
+                isLinked: true,
               ),
               BankAccountItem(
                 id: '8779',
                 bankName: 'Axis Bank',
                 accountNumber: 'SAVINGS account - xxxx 8779',
                 isSelected: true,
-                isLinked: false,
+                isLinked: true,
               ),
             ],
           ),
@@ -345,6 +345,22 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
       return b;
     }).toList();
     state = state.copyWith(bankAccounts: updated);
+  }
+
+  void revokeBankConnection(String id) {
+    _timer?.cancel();
+    final updated = state.bankAccounts.map((b) {
+      if (b.id == id) {
+        return b.copyWith(isLinked: false, isSelected: false);
+      }
+      return b;
+    }).toList();
+    final hasAnyLinked = updated.any((b) => b.isLinked);
+    state = state.copyWith(
+      bankAccounts: updated,
+      banksConnected: hasAnyLinked,
+      banksStatusMessage: hasAnyLinked ? 'Successfully Linked' : 'Accounts found',
+    );
   }
 
   void skipBanks() {

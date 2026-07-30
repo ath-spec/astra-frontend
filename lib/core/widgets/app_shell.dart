@@ -23,6 +23,22 @@ class _AppShellState extends ConsumerState<AppShell> {
   bool _navVisible = true;
   int _previousIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // Precache the heavy MF background image while the user is still on the
+    // home screen. By the time they tap the MF tab, the image is already
+    // decoded and uploaded to the GPU — zero jank on first entry.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        precacheImage(
+          const AssetImage('lib/core/images/xplore_pillars.webp'),
+          context,
+        );
+      }
+    });
+  }
+
   void _onPillTap(int index, {bool clearChat = true}) {
     final goingToChat = index == 2;
     final currentIndex = widget.navigationShell.currentIndex;

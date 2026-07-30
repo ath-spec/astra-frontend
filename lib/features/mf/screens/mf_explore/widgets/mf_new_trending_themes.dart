@@ -35,14 +35,14 @@ class MfNewTrendingThemes extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               _buildThemeCard(
-                title: 'India\nManufacturing',
+                title: 'India Manufacturing',
                 subtitle: 'Back India\'s next\ngrowth engine.',
                 icon: Icons.factory_rounded,
                 iconColor: const Color(0xFF3B82F6),
               ),
               const SizedBox(width: 12),
               _buildThemeCard(
-                title: 'Semi-\nConductor',
+                title: 'Semi-Conductor',
                 subtitle: 'Powering the\ndigital future.',
                 icon: Icons.developer_board_rounded,
                 iconColor: const Color(0xFF10B981),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../fund_profile/mf_fund_profile_screen.dart';
 
 class MfTrendingFunds extends StatelessWidget {
   const MfTrendingFunds({super.key});
@@ -55,6 +56,7 @@ class MfTrendingFunds extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
               _buildTrendingCard(
+                context,
                 name: 'Parag Parikh Flexi Cap Fund',
                 category: 'Equity • Flexi Cap',
                 rating: '5',
@@ -65,6 +67,7 @@ class MfTrendingFunds extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               _buildTrendingCard(
+                context,
                 name: 'Quant Small Cap Fund',
                 category: 'Equity • Small Cap',
                 rating: '4',
@@ -80,7 +83,8 @@ class MfTrendingFunds extends StatelessWidget {
     );
   }
 
-  Widget _buildTrendingCard({
+  Widget _buildTrendingCard(
+    BuildContext context, {
     required String name,
     required String category,
     required String rating,
@@ -89,8 +93,10 @@ class MfTrendingFunds extends StatelessWidget {
     required IconData logoIcon,
     required Color logoColor,
   }) {
-    return Container(
-      width: 300,
+    return GestureDetector(
+      onTap: () => MfFundProfileScreen.showModal(context, name),
+      child: Container(
+        width: 300,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -168,6 +174,7 @@ class MfTrendingFunds extends StatelessWidget {
             ],
           ),
         ],
+      ),
       ),
     );
   }

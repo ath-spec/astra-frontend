@@ -7,8 +7,8 @@ import 'mf_explore/mf_explore_screen.dart';
 import 'orders/orders_screen.dart';
 import 'watchlist/watchlist_screen.dart';
 
-class SearchScreen extends ConsumerWidget {
-  const SearchScreen({super.key});
+class MfContainerScreen extends ConsumerWidget {
+  const MfContainerScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

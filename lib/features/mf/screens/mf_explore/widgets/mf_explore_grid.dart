@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../fund_profile/mf_fund_profile_screen.dart';
 
 class MfExploreGrid extends StatelessWidget {
   const MfExploreGrid({super.key});
@@ -25,6 +26,7 @@ class MfExploreGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildGridCard(
+                  context,
                   title: 'Top rated',
                   colors: const [Color(0xFFA7F3D0), Color(0xFF6EE7B7)], // Emerald 200 -> 300
                   icon: Icons.star_rounded,
@@ -34,6 +36,7 @@ class MfExploreGrid extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildGridCard(
+                  context,
                   title: 'Global Exposure',
                   colors: const [Color(0xFFDBEAFE), Color(0xFF93C5FD)], // Blue 100 -> 300
                   icon: Icons.language_rounded,
@@ -47,6 +50,7 @@ class MfExploreGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildGridCard(
+                  context,
                   title: 'Silver Funds',
                   colors: const [Color(0xFFF8FAFC), Color(0xFFE2E8F0)], // Slate 50 -> 200
                   icon: Icons.monetization_on_rounded, // Simulating coins
@@ -57,6 +61,7 @@ class MfExploreGrid extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildGridCard(
+                  context,
                   title: 'Gold Funds',
                   colors: const [Color(0xFFFEF3C7), Color(0xFFFCD34D)], // Amber 100 -> 300
                   icon: Icons.view_agenda_rounded, // Simulating gold bars
@@ -71,7 +76,8 @@ class MfExploreGrid extends StatelessWidget {
     );
   }
 
-  Widget _buildGridCard({
+  Widget _buildGridCard(
+    BuildContext context, {
     required String title,
     required List<Color> colors,
     required IconData icon,
@@ -83,8 +89,10 @@ class MfExploreGrid extends StatelessWidget {
       textColor = const Color(0xFF1E3A8A); // Blue 900
     }
 
-    return Container(
-      height: 76,
+    return GestureDetector(
+      onTap: () => MfFundProfileScreen.showModal(context, title),
+      child: Container(
+        height: 76,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         gradient: LinearGradient(
@@ -122,6 +130,7 @@ class MfExploreGrid extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

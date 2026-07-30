@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/providers/nav_context_provider.dart';
 import 'widgets/mf_holdings_header.dart';
 import 'widgets/mf_holdings_empty_state.dart';
 
-class HoldingsScreen extends StatelessWidget {
+class HoldingsScreen extends ConsumerWidget {
   const HoldingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       body: CustomScrollView(
@@ -18,12 +21,22 @@ class HoldingsScreen extends StatelessWidget {
             leadingWidth: 64,
             leading: Padding(
               padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8),
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF1F5F9), // Slate 100
-                  shape: BoxShape.circle,
+              child: GestureDetector(
+                onTap: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    ref.read(navContextProvider.notifier).state = NavContext.main;
+                    context.go('/');
+                  }
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.chevron_left_rounded, color: Color(0xFF0F172A), size: 28),
                 ),
-                child: const Icon(Icons.chevron_left_rounded, color: Colors.black, size: 24),
               ),
             ),
             actions: [

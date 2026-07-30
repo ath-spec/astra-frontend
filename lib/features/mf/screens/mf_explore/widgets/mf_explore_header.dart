@@ -11,7 +11,7 @@ class MfExploreHeader extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Color(0xFFF9FAFB),
         image: DecorationImage(
-          image: AssetImage('lib/core/images/xplore_pillars.png'),
+          image: AssetImage('lib/core/images/xplore_pillars.webp'),
           fit: BoxFit.fill,
           alignment: Alignment.bottomCenter,
         ),

@@ -19,13 +19,14 @@ import '../../features/auth/screens/name_screen.dart';
 import '../../features/auth/screens/aa_stocks_otp_screen.dart';
 import '../../features/auth/screens/aa_stocks_fetching_screen.dart';
 import '../../features/home/screens/home_screen.dart';
-import '../../features/mf/screens/search_screen.dart';
 import '../../features/chat/screens/chat_screen.dart';
 import '../../features/chat/screens/chat_history_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/surpluse/screens/explore_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
+import '../../features/asset_connection/screens/manage_bank_accounts_screen.dart';
+import '../../features/mf/screens/mf_container_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/corner_fade_reveal_transition.dart';
 
@@ -139,6 +140,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const BanksLinkingScreen(),
       ),
       GoRoute(
+        path: '/manage-bank-accounts',
+        builder: (context, state) => const ManageBankAccountsScreen(),
+      ),
+      GoRoute(
         path: '/chat-history',
         builder: (context, state) => const ChatHistoryScreen(),
       ),
@@ -182,8 +187,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/search',
-                builder: (context, state) => const SearchScreen(),
+                path: '/mf',
+                builder: (context, state) => const MfContainerScreen(),
               ),
             ],
           ),

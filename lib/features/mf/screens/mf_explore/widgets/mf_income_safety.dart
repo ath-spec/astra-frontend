@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../fund_profile/mf_fund_profile_screen.dart';
 
 class MfIncomeSafety extends StatelessWidget {
   const MfIncomeSafety({super.key});
@@ -39,6 +40,7 @@ class MfIncomeSafety extends StatelessWidget {
           child: Column(
             children: [
               _buildRow(
+                context,
                 icon: Icons.shield_rounded,
                 iconBgColor: const Color(0xFFFFFBEB),
                 iconColor: const Color(0xFFF59E0B),
@@ -48,6 +50,7 @@ class MfIncomeSafety extends StatelessWidget {
               ),
               _buildDivider(),
               _buildRow(
+                context,
                 icon: Icons.lock_outline_rounded,
                 iconBgColor: const Color(0xFFEFF6FF),
                 iconColor: const Color(0xFF3B82F6),
@@ -57,6 +60,7 @@ class MfIncomeSafety extends StatelessWidget {
               ),
               _buildDivider(),
               _buildRow(
+                context,
                 icon: Icons.bar_chart_rounded,
                 iconBgColor: const Color(0xFFECFDF5),
                 iconColor: const Color(0xFF10B981),
@@ -66,6 +70,7 @@ class MfIncomeSafety extends StatelessWidget {
               ),
               _buildDivider(),
               _buildRow(
+                context,
                 icon: Icons.water_drop_outlined,
                 iconBgColor: const Color(0xFFF5F3FF),
                 iconColor: const Color(0xFF8B5CF6),
@@ -81,7 +86,8 @@ class MfIncomeSafety extends StatelessWidget {
     );
   }
 
-  Widget _buildRow({
+  Widget _buildRow(
+    BuildContext context, {
     required IconData icon,
     required Color iconBgColor,
     required Color iconColor,
@@ -90,7 +96,9 @@ class MfIncomeSafety extends StatelessWidget {
     required String returns,
     bool isLast = false,
   }) {
-    return Padding(
+    return GestureDetector(
+      onTap: () => MfFundProfileScreen.showModal(context, title),
+      child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       child: Row(
         children: [
@@ -149,6 +157,7 @@ class MfIncomeSafety extends StatelessWidget {
             ],
           ),
         ],
+      ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../fund_profile/mf_fund_profile_screen.dart';
 
 class MfGlobalInvesting extends StatelessWidget {
   const MfGlobalInvesting({super.key});
@@ -22,8 +23,10 @@ class MfGlobalInvesting extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16.0),
+        GestureDetector(
+          onTap: () => MfFundProfileScreen.showModal(context, 'Global Exposure'),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16.0),
           decoration: BoxDecoration(
             color: const Color(0xFF0F172A), // Slate 900
             borderRadius: BorderRadius.circular(24),
@@ -111,6 +114,7 @@ class MfGlobalInvesting extends StatelessWidget {
               ),
             ],
           ),
+          ),
         ),
         const SizedBox(height: 16),
         // Pills
@@ -119,15 +123,15 @@ class MfGlobalInvesting extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             children: [
-              _buildPill('Magnificent 7', isDark: true),
+              _buildPill(context, 'Magnificent 7', isDark: true),
               const SizedBox(width: 8),
-              _buildPill('AI'),
+              _buildPill(context, 'AI'),
               const SizedBox(width: 8),
-              _buildPill('Healthcare'),
+              _buildPill(context, 'Healthcare'),
               const SizedBox(width: 8),
-              _buildPill('Japan'),
+              _buildPill(context, 'Japan'),
               const SizedBox(width: 8),
-              _buildPill('Europe'),
+              _buildPill(context, 'Europe'),
             ],
           ),
         ),
@@ -135,9 +139,11 @@ class MfGlobalInvesting extends StatelessWidget {
     );
   }
 
-  Widget _buildPill(String text, {bool isDark = false}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  Widget _buildPill(BuildContext context, String text, {bool isDark = false}) {
+    return GestureDetector(
+      onTap: () => MfFundProfileScreen.showModal(context, text),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -153,6 +159,7 @@ class MfGlobalInvesting extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: isDark ? Colors.white : const Color(0xFF475569),
         ),
+      ),
       ),
     );
   }

@@ -1,4 +1,8 @@
+import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/providers/nav_context_provider.dart';
 import 'widgets/mf_explore_header.dart';
 import 'widgets/mf_quick_actions.dart';
 import 'widgets/mf_explore_grid.dart';
@@ -21,32 +25,32 @@ import 'widgets/mf_explore_by_risk.dart';
 import 'widgets/mf_ai_picks_bento.dart';
 import 'widgets/mf_learn_and_grow.dart';
 
-class MfExploreScreen extends StatelessWidget {
+class MfExploreScreen extends ConsumerWidget {
   const MfExploreScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            floating: true,
-            leading: Icon(Icons.chevron_left, color: Colors.black),
-            actions: [
-              Padding(
-                padding: EdgeInsets.only(right: 16.0),
-                child: Icon(Icons.lock_outline, color: Colors.black),
-              ),
-            ],
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _MfExploreHeaderDelegate(
+              safeAreaTop: MediaQuery.of(context).padding.top,
+              onBackTap: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  ref.read(navContextProvider.notifier).state = NavContext.main;
+                  context.go('/');
+                }
+              },
+            ),
           ),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const MfExploreHeader(),
+          SliverList.list(
+            children: [
+                const SizedBox(height: 24), // spacing since we removed MfExploreHeader
                 const MfQuickActions(),
                 const SizedBox(height: 48),
                 const MfExploreGrid(),
@@ -192,10 +196,258 @@ class MfExploreScreen extends StatelessWidget {
                 
                 const SizedBox(height: 120), // Bottom padding for nav bar
               ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final double safeAreaTop;
+  final VoidCallback onBackTap;
+
+  _MfExploreHeaderDelegate({
+    required this.safeAreaTop,
+    required this.onBackTap,
+  });
+
+  @override
+  double get minExtent => safeAreaTop + 84.0;
+
+  @override
+  double get maxExtent => safeAreaTop + 220.0;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    // 0.0 when fully expanded, 1.0 when fully collapsed
+    final shrinkRatio = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+    // Use an ease-in-out curve for the transition to make it feel organic (Emil style)
+    final curve = Curves.easeInOutCubic;
+    final double easedRatio = curve.transform(shrinkRatio);
+
+    // Layout Interpolations
+    final double startTop = maxExtent - 90.0;
+    final double endTop = safeAreaTop + 18.0; // Vertically centered with 44px buttons
+    final double currentTop = lerpDouble(startTop, endTop, easedRatio)!;
+
+    final double startSubtitleTop = startTop - 26.0;
+    final double endSubtitleTop = endTop - 40.0;
+    final double currentSubtitleTop = lerpDouble(startSubtitleTop, endSubtitleTop, easedRatio)!;
+
+    // Style Interpolations
+    final double currentFontSize = lerpDouble(36.0, 14.0, easedRatio)!;
+    final double currentBorderRadius = lerpDouble(0.0, 20.0, easedRatio)!;
+    final double currentHPad = lerpDouble(0.0, 16.0, easedRatio)!;
+    final double currentVPad = lerpDouble(0.0, 6.0, easedRatio)!;
+    
+    // Fade the background in slower so it looks like text first, then pill
+    final double pillBgRatio = (easedRatio * 1.5).clamp(0.0, 1.0);
+    final double currentBorderOpacity = lerpDouble(0.0, 1.0, pillBgRatio)!;
+    final double currentShadowOpacity = lerpDouble(0.0, 0.05, pillBgRatio)!;
+
+    return Container(
+      color: Colors.transparent,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background Image
+          Positioned(
+            top: -shrinkOffset * 0.5,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Opacity(
+              opacity: 1.0 - shrinkRatio,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF9FAFB),
+                  image: DecorationImage(
+                    image: AssetImage('lib/core/images/xplore_pillars.webp'),
+                    fit: BoxFit.fill,
+                    alignment: Alignment.bottomCenter,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Frosted-look overlay — pure gradient, zero GPU layer cost
+          Positioned.fill(
+            child: Opacity(
+              opacity: easedRatio.clamp(0.0, 1.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color(0xFFF9FAFB).withOpacity(0.98),
+                      const Color(0xFFF9FAFB).withOpacity(0.92),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Subtitle
+          Positioned(
+            top: currentSubtitleTop,
+            left: 0,
+            right: 0,
+            child: Opacity(
+              opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0), // Fades out quickly
+              child: const Center(
+                child: Text(
+                  "MUTUAL FUNDS VALUE",
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    color: Color(0xFF9CA3AF),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // The Transforming Wealth Number -> Pill
+          Positioned(
+            top: currentTop,
+            left: 0,
+            right: 0,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: currentHPad, vertical: currentVPad),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(pillBgRatio),
+                  borderRadius: BorderRadius.circular(currentBorderRadius),
+                  border: Border.all(
+                    color: const Color(0xFFE2E8F0).withOpacity(currentBorderOpacity),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(currentShadowOpacity),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '₹3,43,158',
+                      style: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
+                        color: const Color(0xFF0F172A),
+                        fontSize: currentFontSize,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: lerpDouble(-1.5, 0.0, easedRatio)!,
+                        height: 1.1,
+                      ),
+                    ),
+                    // Shrinking subtitle text (1D Change)
+                    if (shrinkRatio < 1.0)
+                      Opacity(
+                        opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: lerpDouble(8.0, 0.0, easedRatio)!),
+                          child: Container(
+                            height: lerpDouble(16.0, 0.0, easedRatio)!,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.arrow_upward_rounded,
+                                  size: lerpDouble(14.0, 0.0, easedRatio)!,
+                                  color: const Color(0xFF10B981), // Emerald 500
+                                ),
+                                SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
+                                Text(
+                                  '₹2,491 (0.73%)',
+                                  style: TextStyle(
+                                    fontFamily: 'DMMono',
+                                    fontSize: lerpDouble(10.0, 0.0, easedRatio)!,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF10B981),
+                                  ),
+                                ),
+                                SizedBox(width: lerpDouble(6.0, 0.0, easedRatio)!),
+                                Text(
+                                  '1D change',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: lerpDouble(10.0, 0.0, easedRatio)!,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF9CA3AF),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Top Row (Back, Lock)
+          Positioned(
+            top: safeAreaTop + 12.0,
+            left: 24.0,
+            right: 24.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: onBackTap,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.chevron_left,
+                      color: Color(0xFF0F172A),
+                      size: 28,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.lock_outline,
+                      color: Color(0xFF0F172A),
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  @override
+  bool shouldRebuild(covariant _MfExploreHeaderDelegate oldDelegate) {
+    return safeAreaTop != oldDelegate.safeAreaTop;
   }
 }

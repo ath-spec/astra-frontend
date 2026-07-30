@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../fund_profile/mf_fund_profile_screen.dart';
 
 class MfNewAlternativeAssets extends StatelessWidget {
   const MfNewAlternativeAssets({super.key});
@@ -80,8 +81,10 @@ class MfNewAlternativeAssets extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final itemWidth = screenWidth > 600 ? 200.0 : (screenWidth - 32 - 12) / 2;
 
-    return Container(
-      width: itemWidth,
+    return GestureDetector(
+      onTap: () => MfFundProfileScreen.showModal(context, title),
+      child: Container(
+        width: itemWidth,
       height: 140,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -126,6 +129,7 @@ class MfNewAlternativeAssets extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

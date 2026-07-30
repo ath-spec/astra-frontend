@@ -1,37 +1,34 @@
 import 'package:flutter/material.dart';
+import 'widgets/mf_orders_header.dart';
+import 'widgets/mf_orders_filters.dart';
+import 'widgets/mf_order_list.dart';
 
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  const _PlaceholderScreen({required this.title, required this.icon});
+class OrdersScreen extends StatelessWidget {
+  const OrdersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 48, color: const Color(0xFFCBD5E1)),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: const TextStyle(
-                fontFamily: 'SpaceGrotesk',
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF0F172A),
-              ),
+      body: SafeArea(
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            const SliverToBoxAdapter(
+              child: MfOrdersHeader(),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Coming soon',
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 14,
-                color: Colors.grey.shade400,
-              ),
+            const SliverToBoxAdapter(
+              child: MfOrdersFilters(),
+            ),
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 32),
+            ),
+            const SliverToBoxAdapter(
+              child: MfOrderList(),
+            ),
+            // Bottom padding for the navigation bar
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 120),
             ),
           ],
         ),
@@ -40,8 +37,3 @@ class _PlaceholderScreen extends StatelessWidget {
   }
 }
 
-class OrdersScreen extends StatelessWidget {
-  const OrdersScreen({super.key});
-  @override
-  Widget build(BuildContext context) => const _PlaceholderScreen(title: 'Orders', icon: Icons.receipt_long_outlined);
-}

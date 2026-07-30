@@ -31,6 +31,16 @@ class _NavigationPillState extends State<NavigationPill> {
   bool _needsScroll = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && widget.currentIndex != 0) {
+        _scrollToIndex(widget.currentIndex);
+      }
+    });
+  }
+
+  @override
   void didUpdateWidget(NavigationPill oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.currentIndex != widget.currentIndex) {
