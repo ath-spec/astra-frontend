@@ -38,7 +38,7 @@ class HomeExploreMore extends StatelessWidget {
             maxCrossAxisExtent: 110,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 0.9,
+            childAspectRatio: 1.15,
           ),
           itemCount: items.length,
           itemBuilder: (context, index) {
@@ -91,20 +91,20 @@ class HomeExploreMore extends StatelessWidget {
               ),
             )
           else
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
           
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, color: color, size: 28),
-                const SizedBox(height: 8),
+                Icon(icon, color: color, size: 24),
+                const SizedBox(height: 6),
                 Text(
                   title,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                     height: 1.2,

@@ -23,7 +23,7 @@ class HomeAstraIntelligence extends StatelessWidget {
         // Main Strategy Card
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -46,7 +46,7 @@ class HomeAstraIntelligence extends StatelessWidget {
                     'Mutual Fund Strategies',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
@@ -58,7 +58,7 @@ class HomeAstraIntelligence extends StatelessWidget {
                         'All-weather',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFFD97706), // Amber 600
                         ),
@@ -134,8 +134,8 @@ class HomeAstraIntelligence extends StatelessWidget {
   }) {
     return Container(
       width: 130,
-      height: 140,
-      padding: const EdgeInsets.all(16),
+      height: 100,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -161,7 +161,7 @@ class HomeAstraIntelligence extends StatelessWidget {
             title,
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 12,
+              fontSize: 10,
               fontWeight: FontWeight.w600,
               color: isAdd ? const Color(0xFF64748B) : const Color(0xFF0F172A),
               height: 1.3,

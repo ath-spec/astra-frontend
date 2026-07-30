@@ -28,7 +28,7 @@ class HomeGrowWealth extends StatelessWidget {
                 // Tall Blue Card
                 Expanded(
                   child: Container(
-                    height: 160,
+                    height: 130,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: const Color(0xFF2563EB), // Blue 600
@@ -42,7 +42,7 @@ class HomeGrowWealth extends StatelessWidget {
                           'All Mutual\nFunds',
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
-                            fontSize: 18,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                             height: 1.2,
@@ -58,7 +58,7 @@ class HomeGrowWealth extends StatelessWidget {
                             'Explore',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 12,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF0F172A),
                             ),
@@ -122,8 +122,8 @@ class HomeGrowWealth extends StatelessWidget {
     required Color iconColor,
   }) {
     return Container(
-      height: 74,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      height: 58,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -132,7 +132,7 @@ class HomeGrowWealth extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
               shape: BoxShape.circle,
@@ -149,7 +149,7 @@ class HomeGrowWealth extends StatelessWidget {
               title,
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
                 height: 1.3,

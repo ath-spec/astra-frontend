@@ -8,6 +8,19 @@ import 'widgets/mf_precious_metals_card.dart';
 import 'widgets/mf_popular_pills.dart';
 import 'widgets/mf_alternative_funds.dart';
 
+// NEW SECTIONS
+import 'widgets/mf_new_built_for_u.dart';
+import 'widgets/mf_new_quick_explore.dart';
+import 'widgets/mf_new_trending_themes.dart';
+import 'widgets/mf_new_investment_ideas.dart';
+import 'widgets/mf_goal_planning.dart';
+import 'widgets/mf_global_investing.dart';
+import 'widgets/mf_new_alternative_assets.dart';
+import 'widgets/mf_income_safety.dart';
+import 'widgets/mf_explore_by_risk.dart';
+import 'widgets/mf_ai_picks_bento.dart';
+import 'widgets/mf_learn_and_grow.dart';
+
 class MfExploreScreen extends StatelessWidget {
   const MfExploreScreen({super.key});
 
@@ -130,6 +143,53 @@ class MfExploreScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 64),
+                
+                // === NEW SECTIONS APPENDED HERE ===
+                
+                // Section 1: AI PICKS (HERO)
+                const MfNewAiPicksHero(),
+                const SizedBox(height: 48),
+
+                // Section 2: QUICK EXPLORE
+                const MfNewQuickExplore(),
+                const SizedBox(height: 48),
+
+                // Section 3: TRENDING THEMES
+                const MfNewTrendingThemes(),
+                const SizedBox(height: 48),
+
+                // Section 4: INVESTMENT IDEAS
+                const MfNewInvestmentIdeas(),
+                const SizedBox(height: 48),
+
+                // Section 5: GOAL PLANNING
+                const MfGoalPlanning(),
+                const SizedBox(height: 48),
+
+                // Section 6: GLOBAL INVESTING
+                const MfGlobalInvesting(),
+                const SizedBox(height: 48),
+
+                // Section 7: ALTERNATIVE ASSETS
+                const MfNewAlternativeAssets(),
+                const SizedBox(height: 48),
+
+                // Section 8: INCOME & SAFETY
+                const MfIncomeSafety(),
+                const SizedBox(height: 48),
+
+                // Section 9: EXPLORE BY RISK
+                const MfExploreByRisk(),
+                const SizedBox(height: 48),
+
+                // Section 10: AI PICKS (DYNAMIC BENTO)
+                const MfAiPicksBento(),
+                const SizedBox(height: 48),
+
+                // Section 11: LEARN & GROW
+                const MfLearnAndGrow(),
+                
                 const SizedBox(height: 120), // Bottom padding for nav bar
               ],
             ),

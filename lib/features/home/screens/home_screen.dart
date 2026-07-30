@@ -59,9 +59,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      body: Center(
+      body: Align(
+        alignment: Alignment.topCenter,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800), // Max width for tablet/web
+          constraints: const BoxConstraints(maxWidth: 800, minHeight: double.infinity), // Max width for tablet/web, full height
           child: CustomScrollView(
             slivers: [
           SliverPersistentHeader(
@@ -340,7 +341,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               )
             else
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(8),
