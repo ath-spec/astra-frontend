@@ -1,8 +1,15 @@
+import 'dart:ui' show lerpDouble, ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/arch_background.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
+import '../widgets/home_surplus_banner.dart';
+import '../widgets/home_portfolio_insights.dart';
+import '../widgets/home_quick_actions.dart';
+import '../widgets/home_astra_intelligence.dart';
+import '../widgets/home_grow_wealth.dart';
+import '../widgets/home_explore_more.dart';
 
 /// Screen 4: New Home Screen / Dashboard (Image 4) in clean light mode.
 /// Displays user wealth header, portfolio chart card, asset status list (with FETCHING status),
@@ -42,8 +49,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final assetState = ref.watch(assetConnectionProvider);
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
-    // Only run the pulse animation if we are actually linking
     if (assetState.step == AssetConnectionStep.banksLinkingProgress) {
       if (!_pulseController.isAnimating) _pulseController.repeat(reverse: true);
     } else {
@@ -52,302 +59,80 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      body: Stack(
-        children: [
-          // Subtle 3D Architectural Dome Background Graphic
-          const ArchBackground(height: 420),
-
-          // Main Content
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
-              child: SizedBox.expand(
-                child: Column(
-                  children: [
-                    // Top App Bar
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        24.0, 
-                        MediaQuery.of(context).padding.top + 12.0, 
-                        24.0, 
-                        12.0
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Profile Button
-                          GestureDetector(
-                            onTap: () {
-                              context.push('/user-profile');
-                            },
-                            child: Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF1F5F9),
-                                shape: BoxShape.circle,
-                                border: Border.all(color: const Color(0xFFE2E8F0)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF0F172A).withValues(alpha: 0.04),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.person_outline_rounded,
-                                color: Color(0xFF0F172A),
-                                size: 22,
-                              ),
-                            ),
-                          ),
-                          // Lock / Security Button
-                          GestureDetector(
-                            onTap: () => context.push('/no-internet', extra: '/'),
-                            child: Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF1F5F9),
-                                shape: BoxShape.circle,
-                                border: Border.all(color: const Color(0xFFE2E8F0)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF0F172A).withValues(alpha: 0.04),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.lock_outline_rounded,
-                                color: Color(0xFF0F172A),
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Scrollable Dashboard Body
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.only(
-                          left: 24.0,
-                          right: 24.0,
-                          bottom: MediaQuery.of(context).padding.bottom + 100, // Space for nav pill and system nav
-                        ),
-                        child: Column(
-                      children: [
-                        const SizedBox(height: 16),
-
-                        // Wealth Subtitle
-                        const Text(
-                          "ABHIMANYU'S WEALTH",
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            color: Color(0xFF64748B),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-
-                        // Amount & Refresh Button
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              '₹ • • • •',
-                              style: TextStyle(
-                                fontFamily: 'SpaceGrotesk',
-                                color: Color(0xFF0F172A),
-                                fontSize: 28,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 2.0,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            GestureDetector(
-                              onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Refreshing portfolio summary...'),
-                                    duration: Duration(seconds: 1),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: 28,
-                                height: 28,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: const Color(0xFFCBD5E1),
-                                    width: 1.2,
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.refresh_rounded,
-                                  size: 16,
-                                  color: Color(0xFF64748B),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Main Chart Card
-                        Container(
-                          height: 180,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF8FAFC),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: const Color(0xFFE2E8F0),
-                              width: 1.2,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF0F172A).withValues(alpha: 0.03),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            children: [
-                              // Subtle background grid lines
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: List.generate(3, (i) {
-                                  return Container(
-                                    height: 1,
-                                    color: const Color(0xFFE2E8F0).withValues(alpha: 0.5),
-                                  );
-                                }),
-                              ),
-                              // Empty state placeholder
-                              Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.insights_rounded,
-                                      size: 32,
-                                      color: const Color(0xFFCBD5E1).withValues(alpha: 0.6),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Connect assets to generate insights',
-                                      style: TextStyle(
-                                        fontFamily: 'DMSans',
-                                        color: const Color(0xFF94A3B8).withValues(alpha: 0.8),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-
-                        // Asset Connection List
-                        _buildAssetRow(
-                          icon: Icons.bar_chart_rounded,
-                          title: 'Mutual Funds',
-                          buttonText: 'Import',
-                          onPressed: () => context.push('/mf-status'),
-                        ),
-                        _buildDottedDivider(),
-
-                        _buildSurplusRow(),
-                        _buildDottedDivider(),
-
-                        _buildAssetRow(
-                          icon: Icons.candlestick_chart_rounded,
-                          title: 'Stocks',
-                          buttonText: assetState.stocksConnected ? '2 Linked' : 'Import',
-                          onPressed: () => context.push('/aa-stocks-otp'),
-                          isLinked: assetState.stocksConnected,
-                        ),
-                        _buildDottedDivider(),
-
-                        _buildBankAccountsRow(
-                          isLinked: assetState.banksConnected,
-                          isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
-                        ),
-                        const SizedBox(height: 28),
-
-                        // Bottom Insights Banner Card
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Color(0xFFFFFFFF),
-                                Color(0xFFF8FAFC),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF0F172A).withValues(alpha: 0.02),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              const Text(
-                                'Unlock portfolio insights',
-                                style: TextStyle(
-                                  fontFamily: 'SpaceGrotesk',
-                                  color: Color(0xFF0F172A),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              const Text(
-                                'Connect funds, stocks and accounts to see\nyour holistic wealth summary',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  color: Color(0xFF64748B),
-                                  fontSize: 13,
-                                  height: 1.4,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12), // Removed extra padding for floating nav bar
-                      ],
-                    ),
-                  ),
-                ),
-                  ],
-                ),
-              ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800), // Max width for tablet/web
+          child: CustomScrollView(
+            slivers: [
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _HomeHeaderDelegate(
+              safeAreaTop: MediaQuery.of(context).padding.top,
+              onProfileTap: () => context.push('/user-profile'),
+              onLockTap: () => context.push('/no-internet', extra: '/'),
             ),
           ),
-
+          
+          SliverPadding(
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: 16,
+              bottom: bottomPadding + 100, // Space for bottom nav
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                const HomeSurplusBanner(),
+                const SizedBox(height: 32),
+                
+                // Asset List
+                _buildBankAccountsRow(
+                  isLinked: assetState.banksConnected,
+                  isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
+                ),
+                _buildDottedDivider(),
+                
+                _buildAssetRow(
+                  icon: Icons.bar_chart_rounded,
+                  title: 'Mutual Funds',
+                  buttonText: 'Import',
+                  onPressed: () => context.push('/mf-status'),
+                ),
+                _buildDottedDivider(),
+                
+                _buildSurplusRow(),
+                _buildDottedDivider(),
+                
+                _buildAssetRow(
+                  icon: Icons.candlestick_chart_rounded,
+                  title: 'Stocks',
+                  buttonText: assetState.stocksConnected ? '2 Linked' : 'Import',
+                  onPressed: () => context.push('/aa-stocks-otp'),
+                  isLinked: assetState.stocksConnected,
+                ),
+                
+                const SizedBox(height: 40),
+                const HomePortfolioInsights(),
+                
+                const SizedBox(height: 48),
+                const HomeQuickActions(),
+                
+                const SizedBox(height: 48),
+                const HomeAstraIntelligence(),
+                
+                const SizedBox(height: 48),
+                const HomeGrowWealth(),
+                
+                const SizedBox(height: 48),
+                const HomeExploreMore(),
+                
+                const SizedBox(height: 24),
+              ]),
+            ),
+          ),
         ],
+      ),
+    ),
       ),
     );
   }
@@ -372,7 +157,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 fontFamily: 'DMSans',
                 color: Color(0xFF0F172A),
                 fontSize: 15,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -395,7 +180,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               style: const TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 13,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -421,7 +206,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     fontFamily: 'DMSans',
                     color: Color(0xFF0F172A),
                     fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -471,7 +256,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               style: TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 13,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -496,7 +281,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   fontFamily: 'DMSans',
                   color: Color(0xFF0F172A),
                   fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -514,7 +299,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     fontFamily: 'DMSans',
                     color: Color(0xFF0F172A),
                     fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               )
@@ -567,7 +352,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     fontFamily: 'DMSans',
                     color: Color(0xFF0F172A),
                     fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -609,3 +394,242 @@ class _DottedLinePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final double safeAreaTop;
+  final VoidCallback onProfileTap;
+  final VoidCallback onLockTap;
+
+  _HomeHeaderDelegate({
+    required this.safeAreaTop,
+    required this.onProfileTap,
+    required this.onLockTap,
+  });
+
+  @override
+  double get minExtent => safeAreaTop + 84.0;
+
+  @override
+  double get maxExtent => safeAreaTop + 220.0;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    // 0.0 when fully expanded, 1.0 when fully collapsed
+    final shrinkRatio = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+    // Use an ease-in-out curve for the transition to make it feel organic (Emil style)
+    final curve = Curves.easeInOutCubic;
+    final double easedRatio = curve.transform(shrinkRatio);
+
+    // Layout Interpolations
+    final double startTop = maxExtent - 84.0;
+    final double endTop = safeAreaTop + 18.0; // Vertically centered with 44px buttons
+    final double currentTop = lerpDouble(startTop, endTop, easedRatio)!;
+
+    final double startSubtitleTop = startTop - 26.0;
+    final double endSubtitleTop = endTop - 40.0;
+    final double currentSubtitleTop = lerpDouble(startSubtitleTop, endSubtitleTop, easedRatio)!;
+
+    // Style Interpolations
+    final double currentFontSize = lerpDouble(36.0, 14.0, easedRatio)!;
+    final double currentBorderRadius = lerpDouble(0.0, 20.0, easedRatio)!;
+    final double currentHPad = lerpDouble(0.0, 16.0, easedRatio)!;
+    final double currentVPad = lerpDouble(0.0, 6.0, easedRatio)!;
+    
+    // Fade the background in slower so it looks like text first, then pill
+    final double pillBgRatio = (easedRatio * 1.5).clamp(0.0, 1.0);
+    final double currentBorderOpacity = lerpDouble(0.0, 1.0, pillBgRatio)!;
+    final double currentShadowOpacity = lerpDouble(0.0, 0.05, pillBgRatio)!;
+
+    return Container(
+      color: Colors.transparent,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background Arch - fades out
+          Positioned(
+            top: -shrinkOffset * 0.5,
+            left: 0,
+            right: 0,
+            child: Opacity(
+              opacity: 1.0 - shrinkRatio,
+              child: const ArchBackground(height: 250),
+            ),
+          ),
+
+          // The frosted glass overlay with a soft gradient edge at the bottom
+          Positioned.fill(
+            child: ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.black, Colors.black, Colors.transparent],
+                stops: [0.0, 0.8, 1.0],
+              ).createShader(bounds),
+              blendMode: BlendMode.dstIn,
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: lerpDouble(0.0, 32.0, easedRatio)!,
+                    sigmaY: lerpDouble(0.0, 32.0, easedRatio)!,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white.withOpacity(lerpDouble(0.0, 0.98, easedRatio)!),
+                          Colors.white.withOpacity(lerpDouble(0.0, 0.85, easedRatio)!),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Subtitle "ABHIMANYU'S WEALTH"
+          Positioned(
+            top: currentSubtitleTop,
+            left: 0,
+            right: 0,
+            child: Opacity(
+              opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0), // Fades out quickly
+              child: const Center(
+                child: Text(
+                  "ABHIMANYU'S WEALTH",
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    color: Color(0xFF64748B),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // The Transforming Wealth Number -> Pill
+          Positioned(
+            top: currentTop,
+            left: 0,
+            right: 0,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: currentHPad, vertical: currentVPad),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(pillBgRatio),
+                  borderRadius: BorderRadius.circular(currentBorderRadius),
+                  border: Border.all(
+                    color: const Color(0xFFE2E8F0).withOpacity(currentBorderOpacity),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(currentShadowOpacity),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '₹4,267',
+                      style: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
+                        color: const Color(0xFF0F172A),
+                        fontSize: currentFontSize,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: lerpDouble(-1.0, 0.0, easedRatio)!,
+                        height: 1.1,
+                      ),
+                    ),
+                    // Shrinking Refresh Icon
+                    if (shrinkRatio < 1.0) ...[
+                      SizedBox(width: lerpDouble(12.0, 0.0, easedRatio)!),
+                      Opacity(
+                        opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
+                        child: Container(
+                          width: lerpDouble(28.0, 0.0, easedRatio)!,
+                          height: lerpDouble(28.0, 0.0, easedRatio)!,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFFCBD5E1),
+                              width: 1.2,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.refresh_rounded,
+                            size: lerpDouble(16.0, 0.0, easedRatio)!,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Top Row (Profile, Lock)
+          Positioned(
+            top: safeAreaTop + 12.0,
+            left: 24.0,
+            right: 24.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: onProfileTap,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: const Icon(
+                      Icons.person_outline_rounded,
+                      color: Color(0xFF0F172A),
+                      size: 22,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: onLockTap,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: const Icon(
+                      Icons.lock_outline_rounded,
+                      color: Color(0xFF0F172A),
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) {
+    return safeAreaTop != oldDelegate.safeAreaTop;
+  }
+}
+
