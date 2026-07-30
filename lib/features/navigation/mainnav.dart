@@ -7,6 +7,7 @@ class NavigationPill extends StatefulWidget {
   final bool isNavVisible;
   final List<IconData> icons;
   final List<String> labels;
+  final List<Widget Function(Color?)>? customIcons;
 
   const NavigationPill({
     super.key,
@@ -15,6 +16,7 @@ class NavigationPill extends StatefulWidget {
     required this.isNavVisible,
     required this.icons,
     required this.labels,
+    this.customIcons,
   });
 
   @override
@@ -237,24 +239,28 @@ class _NavigationPillState extends State<NavigationPill> {
                                       mainAxisSize: MainAxisSize.min,
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Icon(
-                                          widget.icons[index],
-                                          color: color,
-                                          size: 16,
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          widget.labels[index],
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            fontFamily: 'DMSans',
-                                            fontSize: 10, 
-                                            fontWeight:FontWeight.w600,
-                                            color: color,
-                                            decoration: TextDecoration.none,
+                                        widget.customIcons != null && widget.customIcons!.length > index
+                                            ? widget.customIcons![index](color)
+                                            : Icon(
+                                                widget.icons[index],
+                                                color: color,
+                                                size: 16,
+                                              ),
+                                        if (widget.labels[index].isNotEmpty) ...[
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            widget.labels[index],
+                                            textAlign: TextAlign.center,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              fontFamily: 'DMSans',
+                                              fontSize: 10, 
+                                              fontWeight:FontWeight.w600,
+                                              color: color,
+                                              decoration: TextDecoration.none,
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ],
                                     ),
                                   );

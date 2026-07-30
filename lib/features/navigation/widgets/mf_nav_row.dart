@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../navigation/mainnav.dart';
 import '../../../core/providers/nav_context_provider.dart';
+import '../../chat/widgets/thinking_orbs/thinking_orb.dart';
 import 'nav_shared_components.dart';
 
 class MfNavPill extends ConsumerWidget {
@@ -19,12 +20,19 @@ class MfNavPill extends ConsumerWidget {
       isNavVisible: true,
       icons: const [
         Icons.account_balance_wallet_outlined,
+        Icons.explore_outlined,
         Icons.autorenew_rounded,
-        Icons.lock_clock_outlined,
         Icons.receipt_long_outlined,
         Icons.bookmark_outline_rounded,
       ],
-      labels: const ['Holdings', 'SIP', 'FD', 'Orders', 'Watchlist'],
+      customIcons: [
+        (color) => Icon(Icons.account_balance_wallet_outlined, color: color, size: 16),
+        (color) => Icon(Icons.explore_outlined, color: color, size: 16),
+        (color) => Icon(Icons.autorenew_rounded, color: color, size: 16),
+        (color) => Icon(Icons.receipt_long_outlined, color: color, size: 16),
+        (color) => Icon(Icons.bookmark_outline_rounded, color: color, size: 16),
+      ],
+      labels: const ['Holdings', 'Explore', 'SIP', 'Orders', 'Watchlist'],
     );
   }
 }
