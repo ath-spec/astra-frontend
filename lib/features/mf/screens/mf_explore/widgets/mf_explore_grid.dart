@@ -14,7 +14,7 @@ class MfExploreGrid extends StatelessWidget {
           const Text(
             'Explore Funds',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,

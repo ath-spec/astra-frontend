@@ -4,11 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/providers/nav_context_provider.dart';
 import 'widgets/mf_explore_header.dart';
-import 'widgets/mf_quick_actions.dart';
 import 'widgets/mf_explore_grid.dart';
 import 'widgets/mf_trending_funds.dart';
 import 'widgets/mf_fund_list_card.dart';
-import 'widgets/mf_precious_metals_card.dart';
 import 'widgets/mf_popular_pills.dart';
 import 'widgets/mf_alternative_funds.dart';
 
@@ -51,8 +49,6 @@ class MfExploreScreen extends ConsumerWidget {
           SliverList.list(
             children: [
                 const SizedBox(height: 24), // spacing since we removed MfExploreHeader
-                const MfQuickActions(),
-                const SizedBox(height: 48),
                 const MfExploreGrid(),
                 const SizedBox(height: 48),
                 const MfTrendingFunds(),
@@ -96,27 +92,9 @@ class MfExploreScreen extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 48),
-                MfPreciousMetalsCard(
-                  title: 'Diversifying with Gold Funds',
-                  subtitle: 'Add Gold to your portfolio with ease with funds that track gold',
-                  baseColor: const Color(0xFFFCD34D), // Amber
-                  topFundName: 'Edelweiss Gold & Silver ETF FoF',
-                  topFundReturns: '37.5%',
-                  graphic: Icon(Icons.view_agenda_rounded, size: 100, color: const Color(0xFFFBBF24).withOpacity(0.5)),
-                ),
-                const SizedBox(height: 48),
                 const MfPopularPills(),
                 const SizedBox(height: 48),
                 const MfAlternativeFunds(),
-                const SizedBox(height: 48),
-                MfPreciousMetalsCard(
-                  title: 'Diversifying with Silver Funds',
-                  subtitle: 'Add Silver to your portfolio with ease with funds that track silver',
-                  baseColor: const Color(0xFFCBD5E1), // Slate
-                  topFundName: 'UTI Silver ETF FoF',
-                  topFundReturns: '41.73%',
-                  graphic: Icon(Icons.monetization_on_rounded, size: 100, color: const Color(0xFF94A3B8).withOpacity(0.5)),
-                ),
                 const SizedBox(height: 48),
                 MfFundListCard(
                   sectionTitle: 'Ride the Nifty',
@@ -216,7 +194,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => safeAreaTop + 84.0;
 
   @override
-  double get maxExtent => safeAreaTop + 220.0;
+  double get maxExtent => safeAreaTop + 280.0;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -263,7 +241,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                 decoration: const BoxDecoration(
                   color: Color(0xFFF9FAFB),
                   image: DecorationImage(
-                    image: AssetImage('lib/core/images/xplore_pillars.webp'),
+                    image: AssetImage('lib/core/images/net_value_bg.webp'),
                     fit: BoxFit.fill,
                     alignment: Alignment.bottomCenter,
                   ),

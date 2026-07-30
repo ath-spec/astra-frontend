@@ -14,7 +14,7 @@ class MfNewInvestmentIdeas extends StatelessWidget {
           child: Text(
             'Investment Ideas',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,

@@ -13,7 +13,7 @@ class MfPopularPills extends StatelessWidget {
           child: Text(
             'Popular Funds',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,

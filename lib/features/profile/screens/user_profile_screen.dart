@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../asset_connection/providers/asset_connection_provider.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
   const UserProfileScreen({super.key});
@@ -36,6 +37,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    final assetState = ref.watch(assetConnectionProvider);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -278,6 +280,13 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
                         index: 4,
                         icon: Icons.settings_outlined,
                         title: 'Manage AA accounts',
+                        onTap: () {
+                          if (assetState.banksConnected) {
+                            context.push('/manage-bank-accounts');
+                          } else {
+                            context.push('/banks-linking');
+                          }
+                        },
                       ),
                       _buildMenuItem(
                         index: 5,
@@ -297,7 +306,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
                       _buildMenuItem(
                         index: 8,
                         icon: Icons.info_outline_rounded,
-                        title: 'About Kuvera',
+                        title: 'About Astra',
                       ),
                       _buildMenuItem(
                         index: 9,

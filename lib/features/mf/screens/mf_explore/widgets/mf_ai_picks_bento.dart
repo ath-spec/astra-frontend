@@ -13,7 +13,7 @@ class MfAiPicksBento extends StatelessWidget {
           child: Text(
             'AI Picks',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,
@@ -58,7 +58,7 @@ class MfAiPicksBento extends StatelessWidget {
                         const Text(
                           'AI thinks\nthis week',
                           style: TextStyle(
-                            fontFamily: 'SpaceGrotesk',
+                            fontFamily: 'DMSans',
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,

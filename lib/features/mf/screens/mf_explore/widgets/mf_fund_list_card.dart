@@ -28,7 +28,7 @@ class MfFundListCard extends StatelessWidget {
             child: Text(
               sectionTitle,
               style: const TextStyle(
-                fontFamily: 'SpaceGrotesk',
+                fontFamily: 'DMSans',
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -1.0,

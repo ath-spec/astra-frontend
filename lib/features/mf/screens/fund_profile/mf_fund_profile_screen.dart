@@ -439,15 +439,14 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                 horizontal: BorderSide(color: Color(0xFFF1F5F9), style: BorderStyle.solid), // Actually flutter only supports uniform dashes easily, we'll use solid light line for now
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 12,
               children: [
                 _buildTimeframeToggle('1M'),
-                const SizedBox(width: 24),
                 _buildTimeframeToggle('6M'),
-                const SizedBox(width: 24),
                 _buildTimeframeToggle('1Y'),
-                const SizedBox(width: 24),
                 _buildTimeframeToggle('3Y'),
               ],
             ),

@@ -48,7 +48,7 @@ class HomePortfolioInsights extends StatelessWidget {
           
           // Simulated Interactive Box
           Container(
-            height: 110,
+            height: 125,
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),

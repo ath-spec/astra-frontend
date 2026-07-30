@@ -28,7 +28,7 @@ class HomeGrowWealth extends StatelessWidget {
                 // Tall Blue Card
                 Expanded(
                   child: Container(
-                    height: 130,
+                    height: 140,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: const Color(0xFF2563EB), // Blue 600
@@ -122,7 +122,7 @@ class HomeGrowWealth extends StatelessWidget {
     required Color iconColor,
   }) {
     return Container(
-      height: 58,
+      height: 64,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,

@@ -14,7 +14,7 @@ class MfGlobalInvesting extends StatelessWidget {
           child: Text(
             'Global Investing',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,
@@ -76,7 +76,7 @@ class MfGlobalInvesting extends StatelessWidget {
                     const Text(
                       'Global Investing',
                       style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
+                        fontFamily: 'DMSans',
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,

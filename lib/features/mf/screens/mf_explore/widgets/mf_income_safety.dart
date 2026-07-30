@@ -14,7 +14,7 @@ class MfIncomeSafety extends StatelessWidget {
           child: Text(
             'Income & Safety',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,

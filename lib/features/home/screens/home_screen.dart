@@ -88,11 +88,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 const SizedBox(height: 32),
                 
                 // Asset List
-                _buildBankAccountsRow(
-                  isLinked: assetState.banksConnected,
-                  isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
-                ),
-                _buildDottedDivider(),
                 
                 _buildAssetRow(
                   icon: Icons.bar_chart_rounded,

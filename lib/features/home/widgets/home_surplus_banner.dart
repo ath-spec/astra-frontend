@@ -107,7 +107,7 @@ class HomeSurplusBanner extends StatelessWidget {
           Expanded(
             flex: 4,
             child: SizedBox(
-              height: 120,
+              height: 135,
               child: Stack(
                 alignment: Alignment.center,
                 children: [

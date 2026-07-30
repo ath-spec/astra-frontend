@@ -25,7 +25,7 @@ class MfNewQuickExplore extends StatelessWidget {
           child: Text(
             'Quick Explore',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,

@@ -49,7 +49,7 @@ class _HomePortfolioCardsState extends State<HomePortfolioCards> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 120,
+      height: 130,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         scrollDirection: Axis.horizontal,

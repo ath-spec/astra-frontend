@@ -20,7 +20,7 @@ class _MfExploreByRiskState extends State<MfExploreByRisk> {
           child: Text(
             'Explore By Risk',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,

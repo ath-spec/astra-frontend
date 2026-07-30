@@ -11,7 +11,7 @@ class MfExploreHeader extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Color(0xFFF9FAFB),
         image: DecorationImage(
-          image: AssetImage('lib/core/images/xplore_pillars.webp'),
+          image: AssetImage('lib/core/images/net_value_bg.webp'),
           fit: BoxFit.fill,
           alignment: Alignment.bottomCenter,
         ),
@@ -32,7 +32,7 @@ class MfExploreHeader extends StatelessWidget {
           const Text(
             '₹3,43,158',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.5,

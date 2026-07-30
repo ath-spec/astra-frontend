@@ -13,7 +13,7 @@ class MfNewAiPicksHero extends StatelessWidget {
           child: Text(
             'For You',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,
@@ -46,7 +46,7 @@ class MfNewAiPicksHero extends StatelessWidget {
                     const Text(
                       'Built for you',
                       style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
+                        fontFamily: 'DMSans',
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -1.0,

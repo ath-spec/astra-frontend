@@ -130,19 +130,22 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
           ),
         ),
         const SizedBox(height: 12),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.bar_chart_rounded, size: 14, color: Color(0xFF94A3B8)),
-              SizedBox(width: 6),
-              Text(
-                'Portfolio growth does not include your bank balance',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF94A3B8),
+              const Icon(Icons.bar_chart_rounded, size: 14, color: Color(0xFF94A3B8)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  'Portfolio growth does not include your bank balance',
+                  style: const TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF94A3B8),
+                  ),
                 ),
               ),
             ],
@@ -172,15 +175,14 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
         // Timeline toggles
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 12,
+            runSpacing: 12,
             children: [
               _buildTimeframeToggle('1M'),
-              const SizedBox(width: 24),
               _buildTimeframeToggle('6M'),
-              const SizedBox(width: 24),
               _buildTimeframeToggle('1Y'),
-              const SizedBox(width: 24),
               _buildTimeframeToggle('ALL'),
             ],
           ),

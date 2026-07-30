@@ -22,7 +22,7 @@ class MfAlternativeFunds extends StatelessWidget {
                     Text(
                       'Alternative to FD',
                       style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
+                        fontFamily: 'DMSans',
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -1.0,

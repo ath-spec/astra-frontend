@@ -39,39 +39,41 @@ class HomeAstraIntelligence extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Mutual Fund Strategies',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F172A),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Mutual Fund Strategies',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF0F172A),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: const [
-                      Text(
-                        'All-weather',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFD97706), // Amber 600
+                    const SizedBox(height: 4),
+                    Row(
+                      children: const [
+                        Text(
+                          'All-weather',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFD97706), // Amber 600
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 4),
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 14,
-                        color: Color(0xFFD97706),
-                      ),
-                    ],
-                  ),
-                ],
+                        SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 14,
+                          color: Color(0xFFD97706),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               // Simulated sun/cloud icon
               Container(
@@ -133,8 +135,8 @@ class HomeAstraIntelligence extends StatelessWidget {
     bool isAdd = false,
   }) {
     return Container(
-      width: 130,
-      height: 100,
+      width: 145,
+      height: 125,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,

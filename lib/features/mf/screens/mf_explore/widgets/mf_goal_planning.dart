@@ -105,7 +105,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
           child: Text(
             'Goal Planning',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
+              fontFamily: 'DMSans',
               fontSize: 20,
               fontWeight: FontWeight.w700,
               letterSpacing: -1.0,
@@ -185,7 +185,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
                             Text(
                               selectedGoal['planTitle'] as String,
                               style: const TextStyle(
-                                fontFamily: 'SpaceGrotesk',
+                                fontFamily: 'DMSans',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF0F172A),
@@ -284,7 +284,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
                             selectedGoal['expectedValue'] as String,
                             key: ValueKey(selectedGoal['expectedValue']),
                             style: const TextStyle(
-                              fontFamily: 'SpaceGrotesk',
+                              fontFamily: 'DMSans',
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: Color.fromARGB(255, 0, 0, 0),
@@ -317,7 +317,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
                             selectedGoal['probability'] as String,
                             key: ValueKey(selectedGoal['probability']),
                             style: const TextStyle(
-                              fontFamily: 'SpaceGrotesk',
+                              fontFamily: 'DMSans',
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: Color.fromARGB(255, 0, 0, 0),
