@@ -2,11 +2,23 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// BorderBeam — Pulse Outside Effect
+//
+// Visual model (Sleek Continuous Aura):
+//   • 3 Layers: Outer Bloom (very blurred), Core Glow (moderately blurred), 
+//     and a crisp Stroke.
+//   • A SweepGradient that transitions through a colorful palette.
+//   • The SweepGradient hues rotate continuously (14s cycle).
+//   • The opacity of all layers pulses (breathes) simultaneously over a ~3.7s cycle.
+//   • The auras are drawn *behind* the widget to bloom outward, requiring 
+//     the child to be opaque to hide the inner bleed.
+// ─────────────────────────────────────────────────────────────────────────────
+
 class BorderBeam extends StatefulWidget {
   final Widget child;
   final double duration;
   final double borderWidth;
-  final List<Color> colors;
   final Color staticBorderColor;
   final BorderRadius borderRadius;
   final EdgeInsetsGeometry padding;
@@ -14,15 +26,10 @@ class BorderBeam extends StatefulWidget {
   const BorderBeam({
     Key? key,
     required this.child,
-    this.duration = 15,
+    this.duration = 3.7, // ~3.7s is the dark-theme pulse cycle in Magic UI
     this.borderWidth = 1.5,
-    this.colors = const [
-      Color(0xFF5BA1F7),
-      Color(0xFF8B5CF6),
-      Color(0xFFFFAA40),
-    ],
-    this.staticBorderColor = const Color(0xFFCCCCCC),
-    this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.staticBorderColor = Colors.transparent, 
+    this.borderRadius = const BorderRadius.all(Radius.circular(16)),
     this.padding = EdgeInsets.zero,
   }) : super(key: key);
 
@@ -30,46 +37,49 @@ class BorderBeam extends StatefulWidget {
   _BorderBeamState createState() => _BorderBeamState();
 }
 
-class _BorderBeamState extends State<BorderBeam>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+class _BorderBeamState extends State<BorderBeam> with TickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late AnimationController _hueController;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    // Opacity pulse (breathing effect)
+    _pulseController = AnimationController(
       duration: Duration(milliseconds: (widget.duration * 1000).toInt()),
       vsync: this,
-    );
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.linear),
-    );
-    _controller.repeat();
+    )..repeat(reverse: true);
+
+    // Continuous 360-degree hue rotation (slow lively wash)
+    _hueController = AnimationController(
+      duration: const Duration(seconds: 14),
+      vsync: this,
+    )..repeat();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _pulseController.dispose();
+    _hueController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
+      animation: Listenable.merge([_pulseController, _hueController]),
+      builder: (_, child) {
         return CustomPaint(
-          painter: BorderBeamPainter(
-            progress: _animation.value,
+          // Drawn *behind* the child so the inner glow is hidden by the opaque child
+          painter: _BorderBeamPainter(
+            pulseProgress: _pulseController.value,
+            hueProgress: _hueController.value,
             borderWidth: widget.borderWidth,
-            colors: widget.colors,
             staticBorderColor: widget.staticBorderColor,
             borderRadius: widget.borderRadius,
           ),
-          child: Padding(
-            padding: widget.padding,
-            child: widget.child,
+          child: RepaintBoundary(
+            child: Padding(padding: widget.padding, child: widget.child),
           ),
         );
       },
@@ -77,17 +87,17 @@ class _BorderBeamState extends State<BorderBeam>
   }
 }
 
-class BorderBeamPainter extends CustomPainter {
-  final double progress;
+class _BorderBeamPainter extends CustomPainter {
+  final double pulseProgress; // 0.0 to 1.0 (sine wave)
+  final double hueProgress;   // 0.0 to 1.0 (linear rotation)
   final double borderWidth;
-  final List<Color> colors;
   final Color staticBorderColor;
   final BorderRadius borderRadius;
 
-  BorderBeamPainter({
-    required this.progress,
+  _BorderBeamPainter({
+    required this.pulseProgress,
+    required this.hueProgress,
     required this.borderWidth,
-    required this.colors,
     required this.staticBorderColor,
     required this.borderRadius,
   });
@@ -97,101 +107,91 @@ class BorderBeamPainter extends CustomPainter {
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
     final rrect = borderRadius.toRRect(rect);
 
-    // Draw static border if visible
     if (staticBorderColor != Colors.transparent) {
-      final staticPaint = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = borderWidth
-        ..color = staticBorderColor;
-      canvas.drawRRect(rrect, staticPaint);
+      canvas.drawRRect(
+        rrect,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.0
+          ..color = staticBorderColor,
+      );
     }
 
-    final path = Path()..addRRect(rrect);
-    final pathMetrics = path.computeMetrics().first;
-    final pathLength = pathMetrics.length;
+    // The colorful palette (Pink -> Purple -> Blue -> Green -> Orange -> Pink)
+    const baseColors = [
+      Color(0xFFFF3264), // Pink
+      Color(0xFFB428F0), // Purple
+      Color(0xFF288CFF), // Blue
+      Color(0xFF32C850), // Green
+      Color(0xFFFF7828), // Orange
+      Color(0xFFFF3264), // Pink (wrap for seamless gradient)
+    ];
 
-    // 8 Pulses exactly as requested: 4 corners + 4 flat sides
-    for (int i = 0; i < 8; i++) {
-      // 1. Phase Offset (Staggered starts)
-      // Space them out in time so it looks organic
-      final double phaseOffset = (i * 0.37) % 1.0; 
-      
-      // Calculate local progress for this specific pulse (0.0 to 1.0)
-      final double localProgress = (progress + phaseOffset) % 1.0;
-      
-      // Origin on the perimeter (evenly spaced 0/8, 1/8 ...)
-      final double originNormalized = i / 8.0;
-      final double originDistance = originNormalized * pathLength;
-      
-      // Travel distance
-      // Each pulse travels up to ~15% of the perimeter
-      final double maxTravel = pathLength * (0.10 + ((i % 3) * 0.03)); 
-      final double currentTravel = maxTravel * localProgress;
-      
-      // Opacity / Fade
-      // Spawns instantly (0 to 0.05), holds briefly, then fades out slowly
-      double opacity = 1.0;
-      if (localProgress < 0.05) {
-        opacity = localProgress / 0.05;
-      } else {
-        opacity = 1.0 - ((localProgress - 0.05) / 0.95);
-      }
-      
-      // Color: Prism effect. 
-      // Base hue rotates globally with `progress`. Offset it by `i` so they differ.
-      final double hue = ((progress * 360 * 2) + (i * 45)) % 360;
-      final Color pulseColor = HSVColor.fromAHSV(opacity, hue, 1.0, 1.0).toColor();
-      
-      // Beam head fixed length
-      final double beamLength = 16.0;
-      
-      // Head 1 (Clockwise)
-      double h1Center = originDistance + currentTravel;
-      _drawComet(canvas, pathMetrics, pathLength, h1Center, beamLength, pulseColor);
-      
-      // Head 2 (Counter-Clockwise)
-      double h2Center = originDistance - currentTravel;
-      _drawComet(canvas, pathMetrics, pathLength, h2Center, beamLength, pulseColor);
-    }
-  }
+    // Shift hues continuously
+    final hueShift = hueProgress * 360.0;
+    
+    // Smooth ease-in-out breathing. 
+    // The controller is using `repeat(reverse: true)`, so pulseProgress linearly ping-pongs 0 to 1.
+    // We apply a sine curve to make the turnaround smooth.
+    final t = (math.sin((pulseProgress - 0.5) * math.pi) + 1) / 2.0;
+    
+    // Opacity pulses between roughly 40% and 100% intensity.
+    final double masterOpacity = 0.4 + (0.6 * t);
 
-  void _drawComet(Canvas canvas, ui.PathMetric pathMetrics, double pathLength, double center, double length, Color color) {
-    double start = (center - length / 2) % pathLength;
-    if (start < 0) start += pathLength;
+    // Apply hue rotation
+    final colors = baseColors.map((c) {
+      final hsv = HSVColor.fromColor(c);
+      return hsv.withHue((hsv.hue + hueShift) % 360).toColor();
+    }).toList();
     
-    double end = (center + length / 2) % pathLength;
-    if (end < 0) end += pathLength;
-    
-    Path segment = Path();
-    if (start < end) {
-      segment.addPath(pathMetrics.extractPath(start, end), Offset.zero);
-    } else {
-      // Wrapped around 0
-      segment.addPath(pathMetrics.extractPath(start, pathLength), Offset.zero);
-      segment.addPath(pathMetrics.extractPath(0, end), Offset.zero);
-    }
-    
-    // Outer Glow
-    final glowPaint = Paint()
+    const stops = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0];
+    final transform = GradientRotation(hueProgress * 2 * math.pi);
+
+    // 1. Bloom Layer (Highly blurred, spills far outside)
+    final bloomColors = colors.map((c) => c.withOpacity(0.35 * masterOpacity)).toList();
+    final bloomPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = borderWidth * 3.0
-      ..strokeCap = StrokeCap.round
-      ..color = color
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);
-      
-    // Inner Solid Core
+      ..strokeWidth = borderWidth * 4.0 // Thicker to create a wide halo
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22.5)
+      ..shader = SweepGradient(
+        colors: bloomColors,
+        stops: stops,
+        transform: transform,
+      ).createShader(rect);
+
+    canvas.drawRRect(rrect, bloomPaint);
+
+    // 2. Core Glow Layer (Moderately blurred)
+    final coreColors = colors.map((c) => c.withOpacity(0.7 * masterOpacity)).toList();
     final corePaint = Paint()
       ..style = PaintingStyle.stroke
+      ..strokeWidth = borderWidth * 1.5
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6.0)
+      ..shader = SweepGradient(
+        colors: coreColors,
+        stops: stops,
+        transform: transform,
+      ).createShader(rect);
+    
+    canvas.drawRRect(rrect, corePaint);
+
+    // 3. Crisp Stroke Layer
+    final strokeColors = colors.map((c) => c.withOpacity(1.0 * masterOpacity)).toList();
+    final strokePaint = Paint()
+      ..style = PaintingStyle.stroke
       ..strokeWidth = borderWidth
-      ..strokeCap = StrokeCap.round
-      ..color = Colors.white.withOpacity(color.opacity); 
-      
-    canvas.drawPath(segment, glowPaint);
-    canvas.drawPath(segment, corePaint);
+      ..shader = SweepGradient(
+        colors: strokeColors,
+        stops: stops,
+        transform: transform,
+      ).createShader(rect);
+
+    canvas.drawRRect(rrect, strokePaint);
   }
 
   @override
-  bool shouldRepaint(covariant BorderBeamPainter oldDelegate) {
-    return oldDelegate.progress != progress;
+  bool shouldRepaint(covariant _BorderBeamPainter old) {
+    return old.pulseProgress != pulseProgress || old.hueProgress != hueProgress;
   }
 }
+

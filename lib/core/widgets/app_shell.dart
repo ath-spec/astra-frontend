@@ -74,12 +74,16 @@ class _AppShellState extends ConsumerState<AppShell> {
       _navVisible = false;
     }
 
+    // Freeze the visual index if we're transitioning to Chat (2) so the active pill doesn't slide
+    // horizontally while the entire nav bar drops down vertically (which creates a diagonal glitch).
+    final displayIndex = currentIndex == 2 ? _previousIndex : currentIndex;
+
     Widget currentPill;
     switch (navContext) {
       case NavContext.main:
         currentPill = MainNavPill(
           key: const ValueKey('main_pill'),
-          currentIndex: currentIndex,
+          currentIndex: displayIndex,
           onPillTap: _onPillTap,
         );
         break;
@@ -124,20 +128,20 @@ class _AppShellState extends ConsumerState<AppShell> {
                   child: Container(color: Colors.transparent),
                 ),
               ),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeOutCubic,
-              left: 16,
-              right: 16,
-              // Slide off screen when not visible. Use padding instead of viewPadding so it sits flush with the keyboard when open.
-              bottom: _navVisible ? (12 + MediaQuery.of(context).padding.bottom) : -100,
-              child: Row(
+            if (_navVisible)
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeOutCubic,
+                left: 16,
+                right: 16,
+                bottom: 12 + MediaQuery.of(context).padding.bottom,
+                child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 400),
-                            switchInCurve: Curves.easeOutCubic,
-                            switchOutCurve: Curves.easeInCubic,
+                            duration: const Duration(milliseconds: 200),
+                            switchInCurve: Curves.easeOut,
+                            switchOutCurve: Curves.easeOut,
                             transitionBuilder: (child, animation) {
                                return SizeTransition(
                                  sizeFactor: animation,
@@ -155,9 +159,9 @@ class _AppShellState extends ConsumerState<AppShell> {
                           ),
                           Expanded(
                             child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              switchInCurve: Curves.easeOutCubic,
-                              switchOutCurve: Curves.easeInCubic,
+                              duration: const Duration(milliseconds: 200),
+                              switchInCurve: Curves.easeOut,
+                              switchOutCurve: Curves.easeOut,
                               transitionBuilder: (child, animation) {
                                 return FadeTransition(opacity: animation, child: child);
                               },
@@ -167,12 +171,12 @@ class _AppShellState extends ConsumerState<AppShell> {
                                       onSend: () => _onPillTap(2, clearChat: false),
                                     )
                                   : AnimatedSwitcher(
-                                      duration: const Duration(milliseconds: 400),
-                                      switchInCurve: Curves.easeOutCubic,
-                                      switchOutCurve: Curves.easeInCubic,
+                                      duration: const Duration(milliseconds: 200),
+                                      switchInCurve: Curves.easeOut,
+                                      switchOutCurve: Curves.easeOut,
                                       transitionBuilder: (child, animation) {
-                                        // Use a subtle scale and fade instead of slide to prevent overlapping siblings
-                                        final scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(animation);
+                                        // Subtle scale (0.95 instead of 0.9) and fade makes the transition lighter
+                                        final scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(animation);
                                         return FadeTransition(
                                           opacity: animation,
                                           child: ScaleTransition(
@@ -186,9 +190,9 @@ class _AppShellState extends ConsumerState<AppShell> {
                             ),
                           ),
                           AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 400),
-                            switchInCurve: Curves.easeOutCubic,
-                            switchOutCurve: Curves.easeInCubic,
+                            duration: const Duration(milliseconds: 200),
+                            switchInCurve: Curves.easeOut,
+                            switchOutCurve: Curves.easeOut,
                             transitionBuilder: (child, animation) {
                                return SizeTransition(
                                  sizeFactor: animation,

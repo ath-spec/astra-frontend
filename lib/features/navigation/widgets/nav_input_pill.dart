@@ -46,7 +46,10 @@ class _NavInputPillState extends ConsumerState<NavInputPill> {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
-    // Send the message directly to the chat state
+    // Clear the chat state to ensure we always start a brand new chat
+    ref.invalidate(chatNotifierProvider);
+
+    // Send the message to the freshly created chat state
     ref.read(chatNotifierProvider.notifier).sendMessage(text);
     
     // Close the input mode
@@ -184,14 +187,10 @@ class _NavInputPillState extends ConsumerState<NavInputPill> {
     return BorderBeam(
       duration: 5,
       borderWidth: 2.0,
-      colors: const [
-        Color(0xFF5BA1F7),
-        Color(0xFF8B5CF6),
-        Color(0xFFFFAA40),
-      ],
       staticBorderColor: Colors.transparent,
       borderRadius: BorderRadius.circular(32),
       child: pillContent,
     );
+
   }
 }

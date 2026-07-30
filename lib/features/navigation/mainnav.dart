@@ -99,10 +99,7 @@ class _NavigationPillState extends State<NavigationPill> {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
             child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 4,
-              horizontal: 0, // Padding moved to inner content to avoid scroll clipping
-            ),
+            padding: EdgeInsets.zero, // Removed vertical padding to allow inner pill to fill completely
             decoration: BoxDecoration(
               // Reduced opacity so the blur is visible
               color: const Color(0xFFFFFFFF).withValues(alpha: 0.70),
@@ -114,12 +111,11 @@ class _NavigationPillState extends State<NavigationPill> {
             ),
             child: LayoutBuilder(
           builder: (context, constraints) {
-            // Subtract the 16px horizontal padding that we moved inside
-            final double pillWidth = constraints.maxWidth - 16.0;
-            // Standardize tab width so the 'pill light' is identical across Main, MF, and Explore screens
-            double tabWidth = pillWidth / 3;
+            // Standardize tab width based on current row's max width and floor it to prevent sub-pixel clipping in ScrollViews
+            final double pillWidth = constraints.maxWidth;
+            double tabWidth = (pillWidth / 3).floorToDouble();
+            
             bool needsScroll = widget.icons.length > 3;
-
             final double totalWidth = tabWidth * widget.icons.length;
             
             // Save state for auto-scroll logic
@@ -129,7 +125,7 @@ class _NavigationPillState extends State<NavigationPill> {
             int visualIndex;
             double indicatorLeft;
 
-            if (_isDragging && !needsScroll) {
+            if (_isDragging) {
               visualIndex = ((_dragX + (tabWidth / 2)) / tabWidth).floor();
               visualIndex = visualIndex.clamp(0, widget.icons.length - 1);
               indicatorLeft = _dragX.clamp(0.0, totalWidth - tabWidth);
@@ -140,7 +136,7 @@ class _NavigationPillState extends State<NavigationPill> {
 
             Widget content = Container(
               color: Colors.transparent,
-              height: 38, 
+              height: 38,
               width: needsScroll ? totalWidth : null,
               child: Stack(
                   clipBehavior: Clip.none,
@@ -155,11 +151,28 @@ class _NavigationPillState extends State<NavigationPill> {
                       top: 0, 
                       left: indicatorLeft, 
                       width: tabWidth, 
-                      height: 40,
+                      height: 38, // Updated to match new container height 38
                       child: AnimatedOpacity(
                         opacity: visualIndex == -1 ? 0.0 : 1.0,
                         duration: const Duration(milliseconds: 300),
-                        child: IgnorePointer(
+                        child: GestureDetector(
+                          onHorizontalDragStart: (d) {
+                            setState(() {
+                              _isDragging = true;
+                              _dragX = widget.currentIndex * tabWidth;
+                            });
+                          },
+                          onHorizontalDragUpdate: (d) {
+                            setState(() {
+                              _dragX += d.delta.dx;
+                            });
+                          },
+                          onHorizontalDragEnd: (d) {
+                            setState(() {
+                              _isDragging = false;
+                            });
+                            widget.onTabTapped(visualIndex);
+                          },
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100),
@@ -218,29 +231,32 @@ class _NavigationPillState extends State<NavigationPill> {
                                       : const Color(0xFF64748B),
                                 ),
                                 builder: (context, color, child) {
-                                  return Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        widget.icons[index],
-                                        color: color,
-                                        size: 16, // Increased from 16
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        widget.labels[index],
-                                        textAlign: TextAlign.center,
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          fontFamily: 'DMSans',
-                                          fontSize: 10, 
-                                          fontWeight:FontWeight.w600,
+                                  return FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          widget.icons[index],
                                           color: color,
-                                          decoration: TextDecoration.none,
+                                          size: 16,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          widget.labels[index],
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                            fontFamily: 'DMSans',
+                                            fontSize: 10, 
+                                            fontWeight:FontWeight.w600,
+                                            color: color,
+                                            decoration: TextDecoration.none,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 },
                               ),
@@ -249,8 +265,7 @@ class _NavigationPillState extends State<NavigationPill> {
                         );
                       }),
                     ),
-                  ],
-                ),
+                  ]),
             );
 
             if (needsScroll) {
@@ -258,26 +273,21 @@ class _NavigationPillState extends State<NavigationPill> {
                 controller: _scrollController,
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: content,
-              );
-            } else {
-              content = Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: content,
               );
             }
 
             return GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onHorizontalDragStart: needsScroll ? null : (d) {
                 setState(() {
                   _isDragging = true;
-                  _dragX = d.localPosition.dx - 8.0 - (tabWidth / 2);
+                  _dragX = d.localPosition.dx - (tabWidth / 2);
                 });
               },
               onHorizontalDragUpdate: needsScroll ? null : (d) {
                 setState(() {
-                  _dragX = d.localPosition.dx - 8.0 - (tabWidth / 2);
+                  _dragX = d.localPosition.dx - (tabWidth / 2);
                 });
               },
               onHorizontalDragEnd: needsScroll ? null : (d) {

@@ -74,8 +74,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return CustomTransitionPage(
             key: state.pageKey,
             child: IntroScreen(preloadedController: preloadedController),
+            transitionDuration: const Duration(milliseconds: 1200),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
+              return CornerFadeRevealTransition(
+                animation: animation,
+                child: child,
+              );
             },
           );
         },

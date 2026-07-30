@@ -5,8 +5,8 @@ Widget buildGemButton(VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      height: 44,
-      width: 44,
+      height: 38,
+      width: 38,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: const LinearGradient(
@@ -28,7 +28,7 @@ Widget buildGemButton(VoidCallback onTap) {
       child: const Icon(
         Icons.auto_awesome_rounded,
         color: Colors.white,
-        size: 28,
+        size: 24,
       ),
     ),
   );
@@ -36,8 +36,8 @@ Widget buildGemButton(VoidCallback onTap) {
 
 Widget buildHomeCircle(VoidCallback onTap) {
   return Container(
-    height: 44,
-    width: 44,
+    height: 38,
+    width: 38,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(28),
     ),
@@ -60,7 +60,7 @@ Widget buildHomeCircle(VoidCallback onTap) {
             child: const Icon(
               Icons.home_rounded,
               color: Color(0xFF1E293B),
-              size: 26,
+              size: 22,
             ),
           ),
         ),
