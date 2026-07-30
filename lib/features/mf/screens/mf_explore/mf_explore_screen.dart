@@ -397,50 +397,6 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
               ),
             ),
           ),
-
-          // Top Row (Back, Lock)
-          Positioned(
-            top: safeAreaTop + 12.0,
-            left: 24.0,
-            right: 24.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: onBackTap,
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: const BoxDecoration(
-                      color: Colors.transparent,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.chevron_left,
-                      color: Color(0xFF0F172A),
-                      size: 28,
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: const BoxDecoration(
-                      color: Colors.transparent,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.lock_outline,
-                      color: Color(0xFF0F172A),
-                      size: 24,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

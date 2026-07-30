@@ -1,4 +1,4 @@
-import 'dart:ui' show lerpDouble, ImageFilter;
+import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -506,33 +506,19 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
 
-          // The frosted glass overlay with a soft gradient edge at the bottom
+          // Frosted-look overlay — pure gradient, zero GPU layer cost
           Positioned.fill(
-            child: ShaderMask(
-              shaderCallback: (bounds) => const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.black, Colors.black, Colors.transparent],
-                stops: [0.0, 0.8, 1.0],
-              ).createShader(bounds),
-              blendMode: BlendMode.dstIn,
-              child: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: lerpDouble(0.0, 32.0, easedRatio)!,
-                    sigmaY: lerpDouble(0.0, 32.0, easedRatio)!,
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.white.withOpacity(lerpDouble(0.0, 0.98, easedRatio)!),
-                          Colors.white.withOpacity(lerpDouble(0.0, 0.85, easedRatio)!),
-                        ],
-                      ),
-                    ),
+            child: Opacity(
+              opacity: easedRatio.clamp(0.0, 1.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withOpacity(0.98),
+                      Colors.white.withOpacity(0.92),
+                    ],
                   ),
                 ),
               ),

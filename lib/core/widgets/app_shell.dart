@@ -134,6 +134,20 @@ class _AppShellState extends ConsumerState<AppShell> {
         body: Stack(
           children: [
             widget.navigationShell,
+
+            // Pre-warm all nav pill variants offscreen so the first tap into MF
+            // or Explore has zero cold-build cost. Offstage keeps them in the
+            // element tree (measured + laid out) but never painted.
+            Offstage(
+              offstage: true,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  MfNavPill(),
+                  ExploreNavPill(),
+                ],
+              ),
+            ),
             if (isInputMode)
               Positioned.fill(
                 child: GestureDetector(
@@ -159,11 +173,11 @@ class _AppShellState extends ConsumerState<AppShell> {
                             switchInCurve: Curves.easeOut,
                             switchOutCurve: Curves.easeOut,
                             transitionBuilder: (child, animation) {
-                               return SizeTransition(
-                                 sizeFactor: animation,
-                                 axis: Axis.horizontal,
-                                 child: FadeTransition(opacity: animation, child: child),
-                               );
+                              return SizeTransition(
+                                sizeFactor: animation,
+                                axis: Axis.horizontal,
+                                child: FadeTransition(opacity: animation, child: child),
+                              );
                             },
                             child: navContext == NavContext.main || isInputMode
                                 ? const SizedBox.shrink(key: ValueKey('no_home'))
@@ -201,7 +215,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                                           ),
                                         );
                                       },
-                                      child: currentPill,
+                                      child: RepaintBoundary(child: currentPill),
                                     ),
                             ),
                           ),
@@ -210,11 +224,11 @@ class _AppShellState extends ConsumerState<AppShell> {
                             switchInCurve: Curves.easeOut,
                             switchOutCurve: Curves.easeOut,
                             transitionBuilder: (child, animation) {
-                               return SizeTransition(
-                                 sizeFactor: animation,
-                                 axis: Axis.horizontal,
-                                 child: FadeTransition(opacity: animation, child: child),
-                               );
+                              return SizeTransition(
+                                sizeFactor: animation,
+                                axis: Axis.horizontal,
+                                child: FadeTransition(opacity: animation, child: child),
+                              );
                             },
                             child: isInputMode
                                 ? const SizedBox.shrink(key: ValueKey('no_gem'))

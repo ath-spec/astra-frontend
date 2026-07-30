@@ -13,30 +13,6 @@ class MfOrdersHeader extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                ref.read(navContextProvider.notifier).state = NavContext.main;
-                context.go('/');
-              }
-            },
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9).withOpacity(0.5), // Very light grey circle from image
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.chevron_left,
-                color: Color(0xFF0F172A),
-                size: 28,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
           const Text(
             'Orders',
             style: TextStyle(
