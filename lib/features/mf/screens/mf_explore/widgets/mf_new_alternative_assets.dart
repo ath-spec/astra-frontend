@@ -11,15 +11,30 @@ class MfNewAlternativeAssets extends StatelessWidget {
       children: [
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            'Alternative Assets',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -1.0,
-              color: Color.fromARGB(255, 0, 0, 0),
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                'Alternative Assets',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -1.0,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Explore alternative investment options.',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),

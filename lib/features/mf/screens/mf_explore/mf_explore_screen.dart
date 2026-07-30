@@ -11,7 +11,6 @@ import 'widgets/mf_alternative_funds.dart';
 
 // NEW SECTIONS
 import 'widgets/mf_new_built_for_u.dart';
-import 'widgets/mf_new_quick_explore.dart';
 import 'widgets/mf_explore_assets.dart';
 import 'widgets/mf_new_trending_themes.dart';
 import 'widgets/mf_new_investment_ideas.dart';
@@ -139,10 +138,6 @@ class MfExploreScreen extends ConsumerWidget {
                 
                 // Section 3: AI PICKS (HERO)
                 const MfNewAiPicksHero(),
-                const SizedBox(height: 48),
-
-                // Section 4: QUICK EXPLORE
-                const MfNewQuickExplore(),
                 const SizedBox(height: 48),
 
                 // Section 5: INVESTMENT IDEAS

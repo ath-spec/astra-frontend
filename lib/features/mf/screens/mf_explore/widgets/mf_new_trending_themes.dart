@@ -34,8 +34,8 @@ class MfNewTrendingThemes extends StatelessWidget {
                 imageAsset: 'lib/core/images/renewal.webp',
                 bgColor: const Color.fromARGB(255, 255, 255, 255),
                 imageScaleFraction: 0.8,
-                imageRightFraction: 0.0,
-                imageBottomFraction: -0.05,
+                imageRightFraction: -0.05,
+                imageBottomFraction: -0.1,
               ),
               const SizedBox(width: 12),
 
@@ -47,7 +47,7 @@ class MfNewTrendingThemes extends StatelessWidget {
                 bgColor: const Color.fromARGB(255, 255, 255, 255),
                 imageScaleFraction: 0.8,
                 imageRightFraction: 0.0,
-                imageBottomFraction: -0.05,
+                imageBottomFraction: -0.1,
               ),
               const SizedBox(width: 12),
               _buildThemeCard(
@@ -75,12 +75,12 @@ class MfNewTrendingThemes extends StatelessWidget {
               _buildThemeCard(
                 context,
                 title: 'EV Mobility',
-                subtitle: 'The future of\nelectric mobility.',
+                subtitle: 'The future of electric mobility.',
                 imageAsset: 'lib/core/images/ev.webp',
                 bgColor: const Color.fromARGB(255, 255, 255, 255),
                 imageScaleFraction: 0.8,
                 imageRightFraction: 0.0,
-                imageBottomFraction: -0.05,
+                imageBottomFraction: -0.1,
               ), 
             ],
           ),
@@ -193,7 +193,7 @@ class MfNewTrendingThemes extends StatelessWidget {
                 ),
                 // Explore Button
                 Positioned(
-                  bottom: 4,
+                  bottom: 8,
                   left: 16,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
