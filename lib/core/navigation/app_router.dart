@@ -23,6 +23,10 @@ import '../../features/chat/screens/chat_screen.dart';
 import '../../features/chat/screens/chat_history_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/surpluse/screens/explore_screen.dart';
+import '../../features/budget/presentation/screens/budget_onboarding_intro_screen.dart';
+import '../../features/budget/presentation/screens/budget_control_screen.dart';
+import '../../features/recurring/presentation/screens/recurring_intro_screen.dart';
+import '../../features/recurring/presentation/screens/recurring_control_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
 import '../../features/asset_connection/screens/manage_bank_accounts_screen.dart';
@@ -159,6 +163,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profiling-status',
         builder: (context, state) => const ProfilingStatusScreen(),
+      ),
+      GoRoute(
+        path: '/init-budget',
+        builder: (context, state) => const BudgetOnboardingIntroScreen(),
+      ),
+      GoRoute(
+        path: '/budget-control',
+        builder: (context, state) => const BudgetControlScreen(),
+      ),
+      GoRoute(
+        path: '/recurring-intro',
+        builder: (context, state) => const RecurringIntroScreen(),
+      ),
+      GoRoute(
+        path: '/recurring-control',
+        builder: (context, state) => const RecurringControlScreen(),
       ),
       GoRoute(
         path: '/no-internet',

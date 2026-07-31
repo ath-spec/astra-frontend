@@ -12,9 +12,9 @@ class HomeQuickActions extends StatelessWidget {
           'Quick actions',
           style: TextStyle(
             fontFamily: 'SpaceGrotesk',
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.w600,
-            letterSpacing: -1.0,
+            letterSpacing: -0.5,
             color: Color.fromARGB(255, 0, 0, 0),
           ),
         ),

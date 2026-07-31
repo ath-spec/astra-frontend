@@ -94,7 +94,7 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
             'Portfolio Growth',
             style: TextStyle(
               fontFamily: 'SpaceGrotesk',
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
               letterSpacing: -0.5,
@@ -108,9 +108,8 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
             'PORTFOLIO VALUE',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
               color: Color(0xFF64748B),
             ),
           ),

@@ -11,7 +11,9 @@ import '../widgets/home_astra_intelligence.dart';
 import '../widgets/home_grow_wealth.dart';
 import '../widgets/home_explore_more.dart';
 import '../widgets/home_order_cards.dart';
-import '../widgets/home_portfolio_growth.dart';
+import 'package:astra_frontend/features/home/widgets/home_portfolio_growth.dart';
+import 'package:astra_frontend/features/home/widgets/budget_section.dart';
+import 'package:astra_frontend/features/home/widgets/recurring_section.dart';
 
 /// Screen 4: New Home Screen / Dashboard (Image 4) in clean light mode.
 /// Displays user wealth header, portfolio chart card, asset status list (with FETCHING status),
@@ -136,7 +138,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 'Your Orders',
                 style: TextStyle(
                   fontFamily: 'SpaceGrotesk',
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                   letterSpacing: -0.5,
@@ -158,11 +160,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             child: SizedBox(height: 48),
           ),
 
-          // 4. Edge-to-edge Portfolio Growth Graph with bottom padding for nav
+          // 4. Edge-to-edge Portfolio Growth Graph
+          const SliverToBoxAdapter(
+            child: HomePortfolioGrowth(),
+          ),
+
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 24),
+          ),
+
+          const SliverToBoxAdapter(
+            child: BudgetSection(),
+          ),
+
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(bottom: bottomPadding + 100),
-              child: const HomePortfolioGrowth(),
+              child: const RecurringSection(),
             ),
           ),
         ],

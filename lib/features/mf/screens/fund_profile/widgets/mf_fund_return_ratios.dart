@@ -84,14 +84,17 @@ class _MfFundReturnRatiosState extends State<MfFundReturnRatios> {
                         ),
                       ),
                       Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Fund',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10,
-                            color: Color(0xFF94A3B8),
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 16.0),
+                          child: Text(
+                            'Fund',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              color: Color(0xFF94A3B8),
+                            ),
                           ),
                         ),
                       ),
@@ -181,15 +184,18 @@ class _MfFundReturnRatiosState extends State<MfFundReturnRatios> {
           ),
         ),
         Expanded(
-          flex: 2,
-          child: Text(
-            fundVal,
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: isPositive ? const Color(0xFF00C75A) : const Color(0xFFEF4444), // Green or Red
+          flex: 3,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Text(
+              fundVal,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: isPositive ? const Color(0xFF00C75A) : const Color(0xFFEF4444), // Green or Red
+              ),
             ),
           ),
         ),

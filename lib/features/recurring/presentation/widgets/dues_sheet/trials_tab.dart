@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/responsive/size_config.dart';
+import 'package:astra_frontend/features/recurring/presentation/widgets/dues_sheet/subscription_tile.dart';
+
+class TrialsTab extends StatelessWidget {
+  final DateTime currentMonth;
+  final List<Map<String, dynamic>> payments;
+  final Function(String, String, {DateTime? pauseUntil}) onStatusChanged;
+  final ScrollController? scrollController;
+
+  const TrialsTab({
+    super.key,
+    required this.currentMonth,
+    required this.payments,
+    required this.onStatusChanged,
+    this.scrollController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (payments.isEmpty) {
+      return SingleChildScrollView(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.4,
+          alignment: Alignment.center,
+          child: Text(
+            "No trial subscriptions",
+            style: TextStyle(fontFamily: 'DMSans', 
+              color: Colors.black.withOpacity(0.4),
+              fontSize: getProportionateScreenWidth(14),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return ListView.separated(
+      controller: scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: EdgeInsets.only(
+        left: getProportionateScreenWidth(20),
+        right: getProportionateScreenWidth(20),
+        top: getProportionateScreenHeight(8),
+        bottom: MediaQuery.of(context).padding.bottom + getProportionateScreenHeight(8),
+      ),
+      itemCount: payments.length,
+      separatorBuilder: (context, index) =>
+          SizedBox(height: getProportionateScreenHeight(12)),
+      itemBuilder: (context, index) {
+        return SubscriptionTile(
+          item: payments[index],
+          onStatusChanged: onStatusChanged,
+        );
+      },
+    );
+  }
+}

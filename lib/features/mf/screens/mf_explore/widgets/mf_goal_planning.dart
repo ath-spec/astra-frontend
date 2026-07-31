@@ -13,7 +13,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
   final List<Map<String, dynamic>> _goals = [
     {
       'title': 'House',
-      'icon': Icons.home_rounded,
+      'image': 'lib/core/images/house\.webp',
       'planTitle': 'Your House Goal Plan',
       'planSubtitle': '₹50 Lakhs • 7 Years',
       'items': [
@@ -21,65 +21,48 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
         {'icon': Icons.lock_outline_rounded, 'title': 'Safe Instruments', 'subtitle': '1 Bond'},
         {'icon': Icons.apartment_rounded, 'title': 'Real Estate', 'subtitle': '1 REIT'},
       ],
-      'targetIcon': Icons.track_changes_rounded,
       'expectedValue': '₹52.3 Lakhs',
       'probability': '68%',
     },
     {
       'title': 'Travel',
-      'icon': Icons.flight_takeoff_rounded,
+      'image': 'lib/core/images/travel\.webp',
       'planTitle': 'Your Travel Goal Plan',
       'planSubtitle': '₹5 Lakhs • 2 Years',
       'items': [
         {'icon': Icons.pie_chart_outline_rounded, 'title': 'Recommended Funds', 'subtitle': '2 Funds'},
         {'icon': Icons.water_drop_outlined, 'title': 'Liquid Funds', 'subtitle': '1 Fund'},
       ],
-      'targetIcon': Icons.flight_rounded,
       'expectedValue': '₹5.5 Lakhs',
       'probability': '85%',
     },
     {
       'title': 'Education',
-      'icon': Icons.school_rounded,
+      'image': 'lib/core/images/edu\.webp',
       'planTitle': 'Your Education Goal Plan',
       'planSubtitle': '₹25 Lakhs • 10 Years',
       'items': [
         {'icon': Icons.pie_chart_outline_rounded, 'title': 'Recommended Funds', 'subtitle': '4 Funds'},
         {'icon': Icons.lock_outline_rounded, 'title': 'Safe Instruments', 'subtitle': '2 Bonds'},
       ],
-      'targetIcon': Icons.school_outlined,
       'expectedValue': '₹26.2 Lakhs',
       'probability': '75%',
     },
     {
       'title': 'Wedding',
-      'icon': Icons.celebration_rounded,
+      'image': 'lib/core/images/wed\.webp',
       'planTitle': 'Your Wedding Goal Plan',
       'planSubtitle': '₹30 Lakhs • 5 Years',
       'items': [
         {'icon': Icons.pie_chart_outline_rounded, 'title': 'Recommended Funds', 'subtitle': '3 Funds'},
         {'icon': Icons.lock_outline_rounded, 'title': 'Safe Instruments', 'subtitle': '1 FD'},
       ],
-      'targetIcon': Icons.favorite_border_rounded,
       'expectedValue': '₹31.5 Lakhs',
       'probability': '70%',
     },
     {
-      'title': 'Car',
-      'icon': Icons.directions_car_rounded,
-      'planTitle': 'Your Car Goal Plan',
-      'planSubtitle': '₹15 Lakhs • 3 Years',
-      'items': [
-        {'icon': Icons.pie_chart_outline_rounded, 'title': 'Recommended Funds', 'subtitle': '2 Funds'},
-        {'icon': Icons.water_drop_outlined, 'title': 'Liquid Funds', 'subtitle': '1 Fund'},
-      ],
-      'targetIcon': Icons.time_to_leave_rounded,
-      'expectedValue': '₹16.1 Lakhs',
-      'probability': '80%',
-    },
-    {
       'title': 'Retirement',
-      'icon': Icons.beach_access_rounded,
+      'image': 'lib/core/images/custom\.webp',
       'planTitle': 'Your Retirement Plan',
       'planSubtitle': '₹3.5 Crores • 25 Years',
       'items': [
@@ -87,7 +70,6 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
         {'icon': Icons.lock_outline_rounded, 'title': 'Safe Instruments', 'subtitle': '3 Bonds'},
         {'icon': Icons.apartment_rounded, 'title': 'Real Estate', 'subtitle': '2 REITs'},
       ],
-      'targetIcon': Icons.savings_outlined,
       'expectedValue': '₹3.8 Crores',
       'probability': '60%',
     },
@@ -114,7 +96,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
           ),
         ),
         const SizedBox(height: 16),
-        // Goal icons
+        // Goal image chips
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -125,7 +107,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
                 padding: const EdgeInsets.only(right: 20.0),
                 child: _buildGoalIcon(
                   index: index,
-                  icon: goal['icon'] as IconData,
+                  imagePath: goal['image'] as String,
                   title: goal['title'] as String,
                   isActive: _selectedIndex == index,
                 ),
@@ -216,7 +198,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
                         ),
                       ),
                     ),
-                    // Target graphic
+                    // Target graphic — image version
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 400),
                       transitionBuilder: (child, animation) {
@@ -226,19 +208,21 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
                         );
                       },
                       child: Container(
-                        key: ValueKey(selectedGoal['targetIcon']),
-                        width: 64,
-                        height: 64,
+                        key: ValueKey(selectedGoal['image']),
+                        width: 72,
+                        height: 72,
                         decoration: BoxDecoration(
                           color: const Color(0xFFF8FAFC),
                           shape: BoxShape.circle,
                           border: Border.all(color: const Color(0xFFE2E8F0)),
                         ),
-                        child: Center(
-                          child: Icon(
-                            selectedGoal['targetIcon'] as IconData,
-                            size: 32,
-                            color: const Color(0xFF94A3B8),
+                        child: ClipOval(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Image.asset(
+                              selectedGoal['image'] as String,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
                       ),
@@ -362,7 +346,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
 
   Widget _buildGoalIcon({
     required int index,
-    required IconData icon,
+    required String imagePath,
     required String title,
     required bool isActive,
   }) {
@@ -379,29 +363,14 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              border: Border.all(
-                color: isActive ? const Color(0xFF7C3AED) : const Color(0xFFE2E8F0),
-                width: isActive ? 1.5 : 1.0,
+            width: isActive ? 64 : 56,
+            height: isActive ? 64 : 56,
+            child: Opacity(
+              opacity: isActive ? 1.0 : 0.6,
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.contain,
               ),
-              boxShadow: isActive
-                  ? [
-                      BoxShadow(
-                        color: const Color(0xFF7C3AED).withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                  : [],
-            ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: isActive ? const Color(0xFF7C3AED) : const Color(0xFF64748B),
             ),
           ),
           const SizedBox(height: 8),
@@ -411,7 +380,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
             style: TextStyle(
               fontFamily: 'DMSans',
               fontSize: 12,
-              fontWeight: isActive ? FontWeight.w600 : FontWeight.w600,
+              fontWeight: FontWeight.w600,
               color: isActive ? const Color(0xFF7C3AED) : const Color(0xFF64748B),
             ),
             child: Text(title),
