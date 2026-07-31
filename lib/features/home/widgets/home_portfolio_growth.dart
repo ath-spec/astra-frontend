@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'portfolio_interactive_chart.dart';
 
@@ -94,7 +95,7 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
             'Portfolio Growth',
             style: TextStyle(
               fontFamily: 'SpaceGrotesk',
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
               letterSpacing: -0.5,
@@ -108,9 +109,8 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
             'PORTFOLIO VALUE',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
               color: Color(0xFF64748B),
             ),
           ),
@@ -175,16 +175,18 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
         // Timeline toggles
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _buildTimeframeToggle('1M'),
-              _buildTimeframeToggle('6M'),
-              _buildTimeframeToggle('1Y'),
-              _buildTimeframeToggle('ALL'),
-            ],
+          child: Center(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                _buildTimeframeToggle('1M'),
+                _buildTimeframeToggle('6M'),
+                _buildTimeframeToggle('1Y'),
+                _buildTimeframeToggle('ALL'),
+              ],
+            ),
           ),
         ),
         
@@ -209,23 +211,23 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
           });
         }
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(
             color: isSelected ? const Color(0xFF0F172A) : Colors.transparent,
-            width: 1.5,
+              width: 1.5,
+            ),
           ),
-        ),
-        child: Text(
+          child: Text(
           label,
-          style: TextStyle(
-            fontFamily: 'DMMono',
-            fontSize: 12,
+            style: TextStyle(
+              fontFamily: 'DMMono',
+              fontSize: 12,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
             color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
           ),
@@ -234,3 +236,4 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
     );
   }
 }
+
