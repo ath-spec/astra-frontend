@@ -1,6 +1,5 @@
 import 'package:astra_frontend/features/budget/theme/budget_colors.dart';
 
-import 'package:astra_frontend/features/budget/data/models/budget_api_models.dart';
 import 'package:astra_frontend/features/budget/data/models/budget_models.dart'
     hide BudgetDiagnosisResponse;
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
@@ -11,10 +10,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/features/budget/presentation/screens/finalize_total_budget_screen.dart';
-import 'package:astra_frontend/core/routes/app_routes.dart';
-import 'package:astra_frontend/core/theme/app_theme.dart';
+
 import 'package:astra_frontend/core/instrumentation/funnel_tracker.dart';
-import 'package:astra_frontend/features/budget/data/models/budget_api_models.dart';
+
 import 'package:astra_frontend/services/service_providers.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
 
@@ -431,13 +429,13 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 2),
-            child: Text('• ', style: TextStyle(fontSize: 16, color: color)),
+            child: Text('• ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: color)),
           ),
           Expanded(
             child: Text(
               text,
               textAlign: TextAlign.left,
-              style: TextStyle(
+              style: TextStyle(fontWeight: FontWeight.w600, 
                 fontFamily: 'DMSans',
                 fontSize: 11,
                 color: color,
@@ -473,7 +471,6 @@ class _SuggestedBarChart extends ConsumerWidget {
     final double barBottom = getProportionateScreenHeight(120);
     final double containerHeight = getProportionateScreenHeight(140);
     final double lineTop = barBottom - (maxBarHeight * budgetHeightFactor);
-    final double textOffset = getProportionateScreenHeight(38);
 
     return Stack(
       clipBehavior: Clip.none,
@@ -560,7 +557,7 @@ class _SuggestedBarChart extends ConsumerWidget {
 
     final historyMap = {for (var h in history) '${h.year}-${h.month}': h};
 
-    for (int i = 6; i >= 1; i--) {
+    for (int i = 5; i >= 0; i--) {
       int m = now.month - i;
       int y = now.year;
       while (m <= 0) {
@@ -568,7 +565,7 @@ class _SuggestedBarChart extends ConsumerWidget {
         y -= 1;
       }
       final date = DateTime(y, m, 1);
-      final monthStr = DateFormat('MMM').format(date).toLowerCase();
+      final monthStr = DateFormat('MMM').format(date);
 
       final h = historyMap['$y-$m'];
       double heightFactor = 0.0;
@@ -595,7 +592,7 @@ class _SuggestedBarChart extends ConsumerWidget {
         SizedBox(height: getProportionateScreenHeight(8)),
         Text(
           month,
-          style: TextStyle(
+          style: TextStyle(fontWeight: FontWeight.w600, 
             fontFamily: 'DMSans',
             fontSize: getProportionateScreenWidth(12),
             color: BudgetColors.grey7,

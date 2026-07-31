@@ -2,7 +2,7 @@ import 'package:astra_frontend/features/budget/theme/budget_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/features/budget/data/models/budget_api_models.dart';
-import 'package:astra_frontend/services/finance_repository.dart';
+
 import 'package:intl/intl.dart';
 
 class BudgetConflictBottomSheet extends StatelessWidget {
@@ -54,8 +54,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
               SizedBox(height: getProportionateScreenHeight(24)),
 
               // Title
-              Text(
-                "budget conflict",
+              Text("Budget conflict",
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
@@ -71,7 +70,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                 exception.type == 'scalable_floor_exceeded'
                     ? "your new budget covers your protected bills, but doesn't leave enough room for your other categories. you are short by ${nf.format(exception.amount)}."
                     : "we noticed your new spending limit is lower than what you've already committed to your protected bills. you are short by ${nf.format(exception.amount)}.",
-                style: TextStyle(fontFamily: 'DMSans', 
+                style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                   fontSize: 14,
                   height: 1.5,
                   color: const Color(0xFF133026).withOpacity(0.7),
@@ -94,7 +93,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                         exception.type == 'scalable_floor_exceeded'
                             ? (exception.conflicts.length > 1 ? "specifically, your flexible limits for" : "specifically, your flexible limit for")
                             : (exception.conflicts.length > 1 ? "specifically, your fixed limits for" : "specifically, your fixed limit for"),
-                        style: TextStyle(fontFamily: 'DMSans', 
+                        style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                           fontSize: 13,
                           color: const Color(0xFF133026).withOpacity(0.7),
                         ),
@@ -119,7 +118,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                             : (exception.conflicts.length > 1
                                 ? "add up to more than your new total. you'll need to lower those first to proceed."
                                 : "is more than your new total. you'll need to lower it first to proceed."),
-                        style: TextStyle(fontFamily: 'DMSans', 
+                        style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                           fontSize: 13,
                           color: const Color(0xFF133026).withOpacity(0.7),
                         ),
@@ -143,8 +142,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: Text(
-                  "i understand",
+                child: Text("I understand",
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

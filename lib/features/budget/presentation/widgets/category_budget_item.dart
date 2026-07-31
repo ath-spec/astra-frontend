@@ -62,7 +62,7 @@ class CategoryBudgetItem extends StatelessWidget {
                     ),
                     Text(
                       "${currencyFormat.format(spentAmount)} of ${currencyFormat.format(budgetedAmount)}",
-                      style: TextStyle(fontFamily: 'DMSans', 
+                      style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                         fontSize: 12,
                         color: BudgetColors.grey7,
                       ),

@@ -52,8 +52,7 @@ class BudgetConfirmationScreen extends StatelessWidget {
               SizedBox(height: getProportionateScreenHeight(24)),
 
               // Title message
-              Text(
-                "your budget is set at ${currencyFormat.format(finalBudgetAmount)}",
+              Text("Your budget is set at ${currencyFormat.format(finalBudgetAmount)}",
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(30),
                   fontWeight: FontWeight.w600,
@@ -64,9 +63,8 @@ class BudgetConfirmationScreen extends StatelessWidget {
               SizedBox(height: getProportionateScreenHeight(16)),
 
               // Sub text
-              Text(
-                "add category budgets to stay on top of your spending.",
-                style: TextStyle(fontFamily: 'DMSans', fontSize: 14, color: BudgetColors.grey7),
+              Text("Add category budgets to stay on top of your spending.",
+                style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', fontSize: 14, color: BudgetColors.grey7),
                 textAlign: TextAlign.center,
               ),
 
@@ -92,8 +90,7 @@ class BudgetConfirmationScreen extends StatelessWidget {
                   elevation: 4,
                   shadowColor: BudgetColors.black.withOpacity(0.3),
                 ),
-                child: Text(
-                  "set category budgets",
+                child: Text("Set category budgets",
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -114,8 +111,7 @@ class BudgetConfirmationScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: Text(
-                  "not now",
+                child: Text("Not now",
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: 15,
                     fontWeight: FontWeight.w600,

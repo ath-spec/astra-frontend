@@ -65,7 +65,7 @@ class CategoryBudgetScreen extends StatelessWidget {
                 SizedBox(height: getProportionateScreenHeight(8)),
                 Text(
                   "Your active budget categories for the month.",
-                  style: TextStyle(fontFamily: 'DMSans', 
+                  style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(14),
                     color: const Color(0xFF133026).withOpacity(0.8),
                   ),
@@ -115,7 +115,7 @@ class CategoryBudgetScreen extends StatelessWidget {
               Text(
                 "Create budgets for specific categories to better track your spending.",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: 'DMSans', 
+                style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(14),
                   color: const Color(0xFF133026).withOpacity(0.7),
                 ),

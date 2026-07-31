@@ -6,8 +6,6 @@ import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/features/budget/presentation/widgets/category_item_model.dart';
 import 'package:astra_frontend/features/budget/presentation/screens/budget_generate_screen.dart';
-import 'package:astra_frontend/features/budget/data/models/budget_api_models.dart';
-import 'package:astra_frontend/core/network/api.dart';
 import 'package:astra_frontend/services/finance_repository.dart';
 import 'package:astra_frontend/services/service_providers.dart';
 
@@ -22,10 +20,12 @@ class SetCategoryBottomSheet extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<SetCategoryBottomSheet> createState() => _SetCategoryBottomSheetState();
+  ConsumerState<SetCategoryBottomSheet> createState() =>
+      _SetCategoryBottomSheetState();
 }
 
-class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet> {
+class _SetCategoryBottomSheetState
+    extends ConsumerState<SetCategoryBottomSheet> {
   final currencyFormat = NumberFormat.currency(
     locale: 'en_IN',
     symbol: '₹',
@@ -43,6 +43,13 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
 
   void _initializeCategories() {
     final suggestions = ref.read(budgetStateProvider).suggestedCategories;
+    
+    // Calculate sum of all suggestions to determine proportional split
+    double totalSuggested = 0.0;
+    for (var s in suggestions) {
+      totalSuggested += s.suggestedAmount;
+    }
+
     setState(() {
       _categories = suggestions.map((s) {
         // Use the display name exactly as the backend sends it.
@@ -109,12 +116,17 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
             color = BudgetColors.midGrey;
         }
 
+        double scaledAmount = s.suggestedAmount;
+        if (totalSuggested > 0 && widget.totalBudget > 0) {
+          scaledAmount = (s.suggestedAmount / totalSuggested) * widget.totalBudget;
+        }
+
         return CategoryItem(
           categoryId: s.categoryId,
           title: displayName,
           icon: icon,
           iconColor: color,
-          suggestedAmount: s.suggestedAmount,
+          suggestedAmount: scaledAmount,
           isSet: true,
         );
       }).toList();
@@ -171,10 +183,13 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
           ),
 
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(24)),
+            padding: EdgeInsets.symmetric(
+              horizontal: getProportionateScreenWidth(24),
+            ),
             child: Text(
-              "set up category budgets",
-              style: TextStyle(fontFamily: 'DMSans', 
+              "Set up category budgets",
+              style: TextStyle(
+                fontFamily: 'DMSans',
                 fontSize: getProportionateScreenWidth(22),
                 fontWeight: FontWeight.w600,
                 color: BudgetColors.black,
@@ -184,10 +199,16 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
           SizedBox(height: getProportionateScreenHeight(8)),
 
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(24)),
+            padding: EdgeInsets.symmetric(
+              horizontal: getProportionateScreenWidth(24),
+            ),
             child: Text(
-              "we've set up a few budgets based on your new limit. you can change these at any time.",
-              style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: BudgetColors.grey7),
+              "We've set up a few budgets based on your new limit. you can change these at any time.",
+              style: TextStyle(fontWeight: FontWeight.w600, 
+                fontFamily: 'DMSans',
+                fontSize: 12,
+                color: BudgetColors.grey7,
+              ),
               textAlign: TextAlign.left,
             ),
           ),
@@ -196,9 +217,13 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
           // Categories List
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(24)),
+              padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(24),
+              ),
               child: ListView.separated(
-                padding: EdgeInsets.only(bottom: getProportionateScreenHeight(20)),
+                padding: EdgeInsets.only(
+                  bottom: getProportionateScreenHeight(20),
+                ),
                 itemCount: _categories.length,
                 separatorBuilder: (context, index) => Divider(
                   color: BudgetColors.black.withOpacity(0.05),
@@ -227,7 +252,8 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
                             children: [
                               Text(
                                 cat.title,
-                                style: TextStyle(fontFamily: 'DMSans', 
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color: BudgetColors.black,
@@ -236,11 +262,19 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  const Icon(Icons.auto_awesome, size: 12, color: BudgetColors.grey7),
+                                  const Icon(
+                                    Icons.auto_awesome,
+                                    size: 12,
+                                    color: BudgetColors.grey7,
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    "suggested: ${currencyFormat.format(cat.suggestedAmount)}/mo",
-                                    style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: BudgetColors.grey7),
+                                    "Suggested: ${currencyFormat.format(cat.suggestedAmount)}/mo",
+                                    style: TextStyle(fontWeight: FontWeight.w600, 
+                                      fontFamily: 'DMSans',
+                                      fontSize: 12,
+                                      color: BudgetColors.grey7,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -248,8 +282,12 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
                           ),
                         ),
                         Icon(
-                          cat.isSet ? Icons.check_circle_rounded : Icons.add_rounded,
-                          color: cat.isSet ? BudgetColors.successText : Colors.black45,
+                          cat.isSet
+                              ? Icons.check_circle_rounded
+                              : Icons.add_rounded,
+                          color: cat.isSet
+                              ? BudgetColors.successText
+                              : Colors.black45,
                           size: 28,
                         ),
                       ],
@@ -273,28 +311,44 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ZeyroButton(eventName: 'set_category_bottom_sheet_save_tapped',
+                  ZeyroButton(
+                    eventName: 'set_category_bottom_sheet_save_tapped',
                     onPressed: (_anyCategorySet && !_isLoading)
                         ? () {
                             const validCategorySlugs = {
-                              'food_dining', 'transportation', 'entertainment',
-                              'utilities', 'savings', 'healthcare', 'education',
-                              'shopping', 'travel', 'insurance',
+                              'food_dining',
+                              'transportation',
+                              'entertainment',
+                              'utilities',
+                              'savings',
+                              'healthcare',
+                              'education',
+                              'shopping',
+                              'travel',
+                              'insurance',
                             };
 
-                            final selectedCategories = _categories.where((c) => c.isSet).toList();
-                            final allocations = selectedCategories
-                                .map((c) => CategoryAllocation(
-                                      categoryId: c.categoryId ?? c.title.toLowerCase(),
-                                      amount: c.suggestedAmount,
-                                      isTracking: true,
-                                    ))
-                                .where((a) => validCategorySlugs.contains(a.categoryId))
+                            final selectedCategories = _categories
+                                .where((c) => c.isSet)
                                 .toList();
-                            
+                            final allocations = selectedCategories
+                                .map(
+                                  (c) => CategoryAllocation(
+                                    categoryId:
+                                        c.categoryId ?? c.title.toLowerCase(),
+                                    amount: c.suggestedAmount,
+                                    isTracking: true,
+                                  ),
+                                )
+                                .where(
+                                  (a) =>
+                                      validCategorySlugs.contains(a.categoryId),
+                                )
+                                .toList();
+
                             // Close bottom sheet, passing 'saved' so we don't revert
                             Navigator.pop(context, 'saved');
-                            
+
                             // Go to Generate Screen
                             Navigator.push(
                               context,
@@ -314,12 +368,28 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
                       disabledBackgroundColor: Colors.black12,
                       disabledForegroundColor: Colors.black38,
                       minimumSize: const Size(double.infinity, 56),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                       elevation: _anyCategorySet ? 4 : 0,
                     ),
                     child: _isLoading
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: BudgetColors.white, strokeWidth: 2))
-                        : Text("set category budgets", style: TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w600)),
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: BudgetColors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            "Set category budgets",
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                   SizedBox(height: getProportionateScreenHeight(16)),
                   OutlinedButton(
@@ -332,8 +402,11 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
                                 await FinanceRepository().updateBudgetSettings(
                                   spendingLimit: widget.oldBudgetLimit!,
                                 );
-                                final budgetState = ref.read(budgetStateProvider);
-                                if (budgetState.currentSessionId != null && budgetState.currentSessionId!.isNotEmpty) {
+                                final budgetState = ref.read(
+                                  budgetStateProvider,
+                                );
+                                if (budgetState.currentSessionId != null &&
+                                    budgetState.currentSessionId!.isNotEmpty) {
                                   await FinanceRepository().updateBudgetSession(
                                     sessionId: budgetState.currentSessionId!,
                                     totalBudget: widget.oldBudgetLimit!,
@@ -344,26 +417,46 @@ class _SetCategoryBottomSheetState extends ConsumerState<SetCategoryBottomSheet>
                                 }
                               } catch (e) {
                                 if (mounted) {
-                                  ScaffoldMessenger.of(context)..hideCurrentSnackBar()..showSnackBar(
-        SnackBar(behavior: SnackBarBehavior.floating, duration: const Duration(milliseconds: 1500), content: Text('Failed to revert: $e', style: TextStyle(fontFamily: 'DMSans', ))),
-                                  );
+                                  ScaffoldMessenger.of(context)
+                                    ..hideCurrentSnackBar()
+                                    ..showSnackBar(
+                                      SnackBar(
+                                        behavior: SnackBarBehavior.floating,
+                                        duration: const Duration(
+                                          milliseconds: 1500,
+                                        ),
+                                        content: Text(
+                                          'Failed to revert: $e',
+                                          style: TextStyle(fontWeight: FontWeight.w600, 
+                                            fontFamily: 'DMSans',
+                                          ),
+                                        ),
+                                      ),
+                                    );
                                 }
                               } finally {
                                 if (mounted) setState(() => _isLoading = false);
                               }
                             } else {
-                               Navigator.pop(context);
+                              Navigator.pop(context);
                             }
                           },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: BudgetColors.black,
                       side: BorderSide.none,
                       minimumSize: const Size(double.infinity, 56),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                     child: Text(
-                      "i've changed my mind",
-                      style: TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w600, color: BudgetColors.foreground),
+                      "I've changed my mind",
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: BudgetColors.foreground,
+                      ),
                     ),
                   ),
                 ],

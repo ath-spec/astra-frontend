@@ -69,7 +69,7 @@ class BudgetSummaryCard extends StatelessWidget {
           SizedBox(height: getProportionateScreenHeight(8)),
           Text(
             label,
-            style: TextStyle(fontFamily: 'DMSans', 
+            style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
               fontSize: getProportionateScreenWidth(12),
               color: textColor ?? const Color(0xFF133026),
             ),

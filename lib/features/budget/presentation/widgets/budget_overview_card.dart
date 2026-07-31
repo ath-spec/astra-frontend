@@ -127,7 +127,7 @@ class BudgetOverviewCard extends StatelessWidget {
           ],
           Text(
             _formatPeriod(),
-            style: TextStyle(fontFamily: 'DMSans', 
+            style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
               fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
               color: textColor.withOpacity(0.9),
             ),
@@ -168,7 +168,7 @@ class BudgetOverviewCard extends StatelessWidget {
                   if (remainingAmount < 0) ...[
                     TextSpan(
                       text: "Overspent by ",
-                      style: TextStyle(fontFamily: 'DMSans', 
+                      style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
                         color: textColor.withOpacity(0.9),
                       ),
@@ -190,9 +190,8 @@ class BudgetOverviewCard extends StatelessWidget {
                         color: textColor,
                       ),
                     ),
-                    TextSpan(
-                      text: "left",
-                      style: TextStyle(fontFamily: 'DMSans', 
+                    TextSpan(text: "Left",
+                      style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
                         color: textColor.withOpacity(0.9),
                       ),
@@ -219,9 +218,8 @@ class BudgetOverviewCard extends StatelessWidget {
                         color: textColor,
                       ),
                     ),
-                    TextSpan(
-                      text: "days to go",
-                      style: TextStyle(fontFamily: 'DMSans', 
+                    TextSpan(text: "Days to go",
+                      style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
                         color: textColor,
                       ),
@@ -241,9 +239,8 @@ class BudgetOverviewCard extends StatelessWidget {
                           color: textColor,
                         ),
                       ),
-                      TextSpan(
-                        text: "per day",
-                        style: TextStyle(fontFamily: 'DMSans', 
+                      TextSpan(text: "Per day",
+                        style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                           fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
                           color: textColor.withOpacity(0.8),
                         ),
@@ -380,7 +377,7 @@ class BudgetOverviewCard extends StatelessWidget {
         SizedBox(width: getProportionateScreenWidth(isMini ? 8 : 12)),
         Text(
           label,
-          style: TextStyle(fontFamily: 'DMSans', 
+          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
             fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
             color: textColor,
           ),

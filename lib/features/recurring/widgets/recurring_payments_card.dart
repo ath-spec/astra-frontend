@@ -46,7 +46,7 @@ class RecurringPaymentsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.push('/recurring-intro');
+        context.push('/recurring-control');
       },
       child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

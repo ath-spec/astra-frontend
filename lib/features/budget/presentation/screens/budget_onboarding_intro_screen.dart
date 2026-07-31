@@ -4,7 +4,6 @@ import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:astra_frontend/features/budget/presentation/screens/budget_analyzing_screen.dart';
-import 'package:astra_frontend/features/budget/presentation/screens/finalize_total_budget_screen.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
 
@@ -81,8 +80,7 @@ class _BudgetOnboardingIntroScreenState extends State<BudgetOnboardingIntroScree
               padding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(24),
               ),
-              child: Text(
-                "let's create your personalized budget",
+              child: Text("Let's create your personalized budget",
                 textAlign: TextAlign.left,
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(28),
@@ -141,8 +139,7 @@ class _BudgetOnboardingIntroScreenState extends State<BudgetOnboardingIntroScree
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'generate AI powered budget',
+                        Text('Generate AI powered budget',
                           style: TextStyle(fontFamily: 'DMSans', 
                             fontSize: 15,
                             fontWeight: FontWeight.w600,

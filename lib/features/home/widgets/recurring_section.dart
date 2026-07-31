@@ -11,37 +11,33 @@ import 'package:flutter_svg/flutter_svg.dart';
 ///
 /// Currently uses static mock data. When connecting to the Zeyro backend,
 /// add a `RecurringPaymentsSummary? summary` parameter and drive state from it.
-class RecurringSection extends StatefulWidget {
-  final bool hasSetupRecurring;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:astra_frontend/services/service_providers.dart';
 
+class RecurringSection extends ConsumerStatefulWidget {
   const RecurringSection({
     super.key,
-    this.hasSetupRecurring = false, // set to true to preview active state
   });
 
   @override
-  State<RecurringSection> createState() => _RecurringSectionState();
+  ConsumerState<RecurringSection> createState() => _RecurringSectionState();
 }
 
-class _RecurringSectionState extends State<RecurringSection> {
-  static bool _hasBeenClicked = false;
-
+class _RecurringSectionState extends ConsumerState<RecurringSection> {
   @override
   Widget build(BuildContext context) {
-    final showActive = widget.hasSetupRecurring || _hasBeenClicked;
+    final showActive = ref.watch(budgetStateProvider).hasSetupRecurring;
 
     return GestureDetector(
       onTap: () {
         if (showActive) {
           context.push('/recurring-control');
         } else {
-          context.push('/recurring-intro').then((_) {
-            if (mounted) {
-              setState(() {
-                _hasBeenClicked = true;
-              });
-            }
-          });
+          // push so home stays in the GoRouter stack beneath intro.
+          // The intro then uses context.go('/recurring-control')
+          // which replaces only the intro, leaving home below.
+          // Back from control → pops to home cleanly.
+          context.push('/recurring-intro');
         }
       },
       child: AnimatedContainer(

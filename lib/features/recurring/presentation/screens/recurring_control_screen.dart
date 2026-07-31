@@ -2,6 +2,7 @@ import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/recurring_calendar_widget.dart';
@@ -9,8 +10,6 @@ import 'package:astra_frontend/features/recurring/presentation/widgets/recurring
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/yearly_calendar_view.dart';
 import 'package:astra_frontend/features/recurring/presentation/screens/add_recurring_screen.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/day_payments_popup.dart';
-import 'dart:convert';
-import 'package:astra_frontend/features/recurring/widgets/noise_texture.dart';
 import 'package:astra_frontend/features/recurring/widgets/noise_cache.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
 
@@ -25,7 +24,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
     with TickerProviderStateMixin {
   bool _isYearlyView = false;
   DateTime _selectedDate = DateTime.now();
-  final ScrollController _yearlyScrollController = ScrollController();
+  ScrollController _yearlyScrollController = ScrollController();
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
   
@@ -394,7 +393,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
                                   if (_isYearlyView) {
                                     setState(() => _isYearlyView = false);
                                   } else {
-                                    Navigator.of(context).pop();
+                                    context.pop();
                                   }
                                 },
                               ),
@@ -531,6 +530,15 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
                                         });
                                       },
                                       onHeaderTapped: () {
+                                        final double sectionHeight = YearlyCalendarViewWidget.calculateYearSectionHeight(context);
+                                        final int targetIndex = _selectedDate.year - YearlyCalendarViewWidget.getStartYear();
+                                        
+                                        final oldController = _yearlyScrollController;
+                                        _yearlyScrollController = ScrollController(
+                                          initialScrollOffset: sectionHeight * targetIndex,
+                                        );
+                                        oldController.dispose();
+
                                         setState(() {
                                           _isYearlyView = true;
                                         });

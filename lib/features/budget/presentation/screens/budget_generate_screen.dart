@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:astra_frontend/features/budget/theme/budget_colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +30,9 @@ class BudgetGenerateScreen extends ConsumerStatefulWidget {
 class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
   int _textIndex = 0;
   final List<String> _loadingTexts = [
-    "saving your preferences...",
-    "generating final budget plan...",
-    "setting up budget control center for you...",
+    "Saving your preferences...",
+    "Generating final budget plan...",
+    "Setting up budget control center for you...",
   ];
 
   Timer? _textTimer;
@@ -48,7 +49,6 @@ class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
 
     _textTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (_hasError) return;
-
       if (_textIndex < _loadingTexts.length - 1) {
         setState(() {
           _textIndex++;
@@ -64,7 +64,11 @@ class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
     if (!isRetry) {
       setState(() {
         _hasError = false;
-        _loadingTexts.removeWhere((text) => text.contains("retrying...") || text.contains("reconnect...") || text.contains("went wrong") || text.contains("server error"));
+        _loadingTexts.removeWhere((text) =>
+            text.contains("Retrying...") ||
+            text.contains("Reconnect...") ||
+            text.contains("Went wrong") ||
+            text.contains("Server error"));
         if (_textIndex >= _loadingTexts.length) {
           _textIndex = _loadingTexts.length - 1;
         }
@@ -73,31 +77,35 @@ class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
 
     final budgetState = ref.read(budgetStateProvider);
     try {
-      await budgetState.generateBudget();
+      await budgetState.generateBudget(
+        totalBudget: widget.totalBudget,
+        allocations: widget.allocations,
+        categoryList: widget.categoryList,
+      );
 
       if (mounted) {
-        final nav = Navigator.of(context, rootNavigator: true);
-        nav.push(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const BudgetControlScreen(),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: const Duration(milliseconds: 300),
-          ),
-        );
+        // Delay one microtask so notifyListeners() propagates fully
+        // before the home BudgetSection rebuilds (avoids stale-state flash)
+        Future.microtask(() {
+          if (mounted) {
+            context.go('/');
+            context.push('/budget-control');
+          }
+        });
       }
     } catch (e) {
       if (mounted) {
         if (!isRetry) {
           setState(() {
             _hasError = true;
-            String errMsg = "something went wrong. retrying...";
+            String errMsg = "Something went wrong. Retrying...";
             if (!_loadingTexts.contains(errMsg)) {
               _loadingTexts.add(errMsg);
             }
             _textIndex = _loadingTexts.indexOf(errMsg);
           });
         }
-        
+
         _isAnalyzing = false;
         Future.delayed(const Duration(seconds: 5), () {
           if (mounted && _hasError) {
@@ -143,7 +151,8 @@ class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
                   _loadingTexts[_textIndex],
                   key: ValueKey<int>(_textIndex),
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontFamily: 'DMSans', 
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
                     color: BudgetColors.foreground,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -158,4 +167,3 @@ class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
     );
   }
 }
-

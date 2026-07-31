@@ -1,12 +1,18 @@
-
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
-import 'package:astra_frontend/features/recurring/presentation/screens/recurring_control_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:astra_frontend/services/service_providers.dart';
 
-class RecurringIntroScreen extends StatelessWidget {
+class RecurringIntroScreen extends ConsumerStatefulWidget {
   const RecurringIntroScreen({super.key});
 
+  @override
+  ConsumerState<RecurringIntroScreen> createState() => _RecurringIntroScreenState();
+}
+
+class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -96,13 +102,11 @@ class RecurringIntroScreen extends StatelessWidget {
               ),
               child: ZeyroButton(eventName: 'recurring_intro_screen_start_tapped', 
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RecurringControlScreen(),
-                      settings: const RouteSettings(name: '/recurring/control'),
-                    ),
-                  );
+                  ref.read(budgetStateProvider).setRecurringSetup(true);
+                  // Use go('/') to reset the stack, then push to get the normal 
+                  // forward slide transition, just like other screens.
+                  context.go('/');
+                  context.push('/recurring-control');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0A0B1A),

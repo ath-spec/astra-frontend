@@ -7,13 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:astra_frontend/services/service_providers.dart';
-import 'package:astra_frontend/features/budget/presentation/screens/budget_control_screen.dart';
 import 'package:astra_frontend/features/budget/presentation/widgets/category_item_model.dart';
-import 'package:astra_frontend/features/budget/presentation/widgets/ai_set_all_bottom_sheet.dart';
-import 'package:astra_frontend/core/routes/app_routes.dart';
-import 'package:astra_frontend/features/budget/data/models/budget_api_models.dart';
 import 'package:astra_frontend/features/budget/presentation/screens/budget_generate_screen.dart';
-import 'package:astra_frontend/services/finance_repository.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
 
 
@@ -46,6 +41,12 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
 
   void _initializeCategories() {
     final suggestions = ref.read(budgetStateProvider).suggestedCategories;
+    
+    double totalSuggested = 0;
+    for (var s in suggestions) {
+      totalSuggested += s.suggestedAmount;
+    }
+
     setState(() {
       _categories = suggestions.map((s) {
         // Map category ID to Icon and Color (simplified for now)
@@ -100,12 +101,17 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
             break;
         }
 
+        double scaledAmount = s.suggestedAmount;
+        if (totalSuggested > 0 && widget.totalBudget > 0) {
+          scaledAmount = (s.suggestedAmount / totalSuggested) * widget.totalBudget;
+        }
+
         return CategoryItem(
           categoryId: s.categoryId,
           title: name,
           icon: icon,
           iconColor: color,
-          suggestedAmount: s.suggestedAmount,
+          suggestedAmount: scaledAmount,
           isSet: true, // Default to true if suggested
         );
       }).toList();
@@ -167,8 +173,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                   padding: EdgeInsets.symmetric(
                     horizontal: getProportionateScreenWidth(24),
                   ),
-                  child: Text(
-                    "set up category budgets",
+                  child: Text("Set up category budgets",
                     style: TextStyle(fontFamily: 'DMSans', 
                       fontSize: getProportionateScreenWidth(26),
                       fontWeight: FontWeight.w600,
@@ -182,9 +187,8 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                   padding: EdgeInsets.symmetric(
                     horizontal: getProportionateScreenWidth(24),
                   ),
-                  child: Text(
-                    "we've set up a few budgets to get you started. you can change these at any time.",
-                    style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: BudgetColors.grey7),
+                  child: Text("We've set up a few budgets to get you started. you can change these at any time.",
+                    style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', fontSize: 12, color: BudgetColors.grey7),
                     textAlign: TextAlign.left,
                   ),
                 ),
@@ -247,9 +251,8 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                                           color: BudgetColors.grey7,
                                         ),
                                         const SizedBox(width: 4),
-                                        Text(
-                                          "suggested: ${currencyFormat.format(cat.suggestedAmount)}/mo",
-                                          style: TextStyle(fontFamily: 'DMSans', 
+                                        Text("Suggested: ${currencyFormat.format(cat.suggestedAmount)}/mo",
+                                          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                                             fontSize: 12,
                                             color: BudgetColors.grey7,
                                           ),
@@ -301,12 +304,6 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                   ZeyroButton(eventName: 'set_budget_category_screen_confirm_tapped', 
                     onPressed: (_anyCategorySet && !_isLoading)
                         ? () {
-                            const validCategorySlugs = {
-                              'food_dining', 'transportation', 'entertainment',
-                              'utilities', 'savings', 'healthcare', 'education',
-                              'shopping', 'travel', 'insurance',
-                            };
-
                             final selectedCategories = _categories
                                 .where((c) => c.isSet)
                                 .toList();
@@ -317,7 +314,6 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                                       amount: c.suggestedAmount,
                                       isTracking: true,
                                     ))
-                                .where((a) => validCategorySlugs.contains(a.categoryId))
                                 .toList();
                           
                             Navigator.push(
@@ -352,8 +348,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                               strokeWidth: 2,
                             ),
                           )
-                        : Text(
-                            "set category budgets",
+                        : Text("Set category budgets",
                             style: TextStyle(fontFamily: 'DMSans', 
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -365,12 +360,6 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                     onPressed: _isLoading
                         ? null
                         : () async {
-                            const validCategorySlugs = {
-                              'food_dining', 'transportation', 'entertainment',
-                              'utilities', 'savings', 'healthcare', 'education',
-                              'shopping', 'travel', 'insurance',
-                            };
-
                             // Map all ML-suggested categories but mark them hidden
                             final allocations = _categories
                                 .map((c) => CategoryAllocation(
@@ -379,7 +368,6 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                                       isTracking: true,
                                       isHidden: true,
                                     ))
-                                .where((a) => validCategorySlugs.contains(a.categoryId))
                                 .toList();
 
                             Navigator.push(
@@ -401,8 +389,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: Text(
-                      "not now",
+                    child: Text("Not now",
                       style: TextStyle(fontFamily: 'DMSans', 
                         fontSize: 15,
                         fontWeight: FontWeight.w600,

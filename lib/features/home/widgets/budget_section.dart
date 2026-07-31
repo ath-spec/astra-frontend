@@ -1,33 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:astra_frontend/features/budget/presentation/widgets/budget_overview_card.dart';
+import 'package:astra_frontend/services/service_providers.dart';
+import 'package:astra_frontend/features/budget/theme/budget_colors.dart';
+import 'package:astra_frontend/features/budget/presentation/widgets/category_budget_item.dart';
 
-/// Mirrors Zeyro's BudgetSection widget from the home screen.
-///
-/// Two visual states:
-///  - **Empty** (`isBudgetCreated == false`): shows [_BudgetCard] with image + CTA
-///  - **Active** (`isBudgetCreated == true`): shows [BudgetOverviewCard] in mini mode
-///
-/// Currently uses static mock data. When connecting to the Zeyro backend,
-/// convert to a ConsumerStatefulWidget and watch `budgetStateProvider`.
-class BudgetSection extends StatelessWidget {
-  // ── mock toggles ─────────────────────────────────────────────────────────
-  final bool isBudgetCreated;
-  final double totalBudget;
-  final double spentAmount;
-  final int daysRemaining;
+class BudgetSection extends ConsumerStatefulWidget {
+  const BudgetSection({super.key});
 
-  const BudgetSection({
-    super.key,
-    this.isBudgetCreated = false, // set to true to preview active state
-    this.totalBudget = 100000.0,
-    this.spentAmount = 67324.0,
-    this.daysRemaining = 8,
-  });
+  @override
+  ConsumerState<BudgetSection> createState() => _BudgetSectionState();
+}
+
+class _BudgetSectionState extends ConsumerState<BudgetSection> {
+  IconData _getIconForName(String name) {
+    final n = name.toLowerCase();
+    if (n.contains('grocer') || n.contains('food')) return Icons.shopping_basket_rounded;
+    if (n.contains('trans') || n.contains('travel') || n.contains('cab')) return Icons.directions_car_rounded;
+    if (n.contains('utilit') || n.contains('bill')) return Icons.bolt_rounded;
+    if (n.contains('house') || n.contains('rent')) return Icons.home_rounded;
+    if (n.contains('shop')) return Icons.shopping_bag_rounded;
+    if (n.contains('health') || n.contains('medic')) return Icons.medical_services_rounded;
+    if (n.contains('dine') || n.contains('restaurant') || n.contains('dining')) return Icons.restaurant_rounded;
+    return Icons.category_rounded;
+  }
+
+  Color _parseColor(String hexColor, {required Color fallback}) {
+    if (hexColor.isEmpty) return fallback;
+    try {
+      String hex = hexColor.replaceAll('#', '');
+      if (hex.length == 6) hex = 'FF$hex';
+      return Color(int.parse(hex, radix: 16));
+    } catch (_) {
+      return fallback;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final pct = totalBudget > 0 ? (spentAmount / totalBudget).clamp(0.0, 1.0) : 0.0;
+    final state = ref.watch(budgetStateProvider);
+    final dash = state.latestDashboard;
+    final isBudgetCreated = dash != null;
 
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 24, right: 24),
@@ -36,30 +50,33 @@ class BudgetSection extends StatelessWidget {
         children: [
           const SizedBox(height: 16),
           const Text(
-          'Budget',
-          style: TextStyle(
-            fontFamily: 'SpaceGrotesk',
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.5,
-            color: Color(0xFF0F172A),
+            'Budget',
+            style: TextStyle(
+              fontFamily: 'SpaceGrotesk',
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.5,
+              color: Color(0xFF0F172A),
+            ),
           ),
-        ),
-          const SizedBox(height: 6),
-          if (isBudgetCreated)
+          const SizedBox(height: 12),
+          if (isBudgetCreated) ...[
             GestureDetector(
               onTap: () => context.push('/budget-control'),
               child: BudgetOverviewCard(
-                totalBudget: totalBudget,
-                spentAmount: spentAmount,
-                percentageUsed: pct,
-                daysRemaining: daysRemaining,
+                totalBudget: dash.totalBudget,
+                spentAmount: dash.totalSpent,
+                percentageUsed: dash.totalBudget > 0 ? (dash.totalSpent / dash.totalBudget).clamp(0.0, 1.0) : 0.0,
+                daysRemaining: dash.daysRemainingInMonth,
                 isMini: true,
                 showIncomeOutcome: false,
                 title: '',
+                backgroundColor: const Color(0xFFF1F5F9), // Subtle grey matching home theme
+                textColor: const Color(0xFF0F172A),
               ),
-            )
-          else
+            ),
+
+          ] else
             _BudgetCard(onTap: () => context.push('/init-budget')),
         ],
       ),

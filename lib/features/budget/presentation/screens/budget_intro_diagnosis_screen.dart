@@ -91,8 +91,7 @@ class _BudgetIntroDiagnosisScreenState
                         padding: EdgeInsets.symmetric(
                           horizontal: (24),
                         ),
-                        child: Text(
-                          "here's what we gathered",
+                        child: Text("Here's what we gathered",
                           style: TextStyle(fontFamily: 'DMSans', 
                             fontSize: (22),
                             fontWeight: FontWeight.w600,
@@ -112,10 +111,10 @@ class _BudgetIntroDiagnosisScreenState
                         ),
                         child: Text(
                           hasNoData
-                              ? "we could not review your income and spending from the past 6 months as we found no transactions."
-                              : "we reviewed your income and spending from the past 6 months.",
+                              ? "We could not review your income and spending from the past 6 months as we found no transactions."
+                              : "We reviewed your income and spending from the past 6 months.",
                           textAlign: TextAlign.left,
-                          style: TextStyle(fontFamily: 'DMSans', 
+                          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                             fontSize: (13),
                             color: BudgetColors.grey7,
                           ),
@@ -134,7 +133,7 @@ class _BudgetIntroDiagnosisScreenState
                         children: [
                           Expanded(
                             child: _buildStatCol(
-                              "income",
+                              "Income",
                               currencyFormat.format(diag?.averageIncome ?? 0),
                               false,
                             ),
@@ -158,7 +157,7 @@ class _BudgetIntroDiagnosisScreenState
                                 ),
                               ),
                               child: _buildStatCol(
-                                "savings",
+                                "Savings",
                                 currencyFormat.format(diag?.averageSavings ?? 0),
                                 true,
                               ),
@@ -166,7 +165,7 @@ class _BudgetIntroDiagnosisScreenState
                           ),
                           Expanded(
                             child: _buildStatCol(
-                              "expenses",
+                              "Expenses",
                               currencyFormat.format(diag?.averageExpenses ?? 0),
                               false,
                             ),
@@ -198,8 +197,7 @@ class _BudgetIntroDiagnosisScreenState
                                 size: (32),
                               ),
                               SizedBox(height: (12)),
-                              Text(
-                                "no data available",
+                              Text("No data available",
                                 style: TextStyle(fontFamily: 'DMSans', 
                                   fontSize: (16),
                                   fontWeight: FontWeight.w600,
@@ -207,10 +205,9 @@ class _BudgetIntroDiagnosisScreenState
                                 ),
                               ),
                               SizedBox(height: (8)),
-                              Text(
-                                "zeyro has no data on you at the moment. please connect your accounts to get accurate results.",
+                              Text("Zeyro has no data on you at the moment. please connect your accounts to get accurate results.",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontFamily: 'DMSans', 
+                                style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                                   fontSize: (12),
                                   color: BudgetColors.grey7,
                                   height: 1.4,
@@ -244,8 +241,7 @@ class _BudgetIntroDiagnosisScreenState
                       ),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                          "our diagnosis",
+                        child: Text("Our diagnosis",
                           style: TextStyle(fontFamily: 'DMSans', 
                             fontSize: (15),
                             fontWeight: FontWeight.w600,
@@ -296,8 +292,7 @@ class _BudgetIntroDiagnosisScreenState
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "what this means",
+                            Text("What this means",
                               style: TextStyle(fontFamily: 'DMSans', 
                                 fontSize: (14),
                                 fontWeight: FontWeight.w600,
@@ -310,9 +305,9 @@ class _BudgetIntroDiagnosisScreenState
                               diag?.diagnosisInsights
                                       .map((e) => e.description)
                                       .join(". ") ??
-                                  "analyzing your data...",
+                                  "Analyzing your data...",
                               textAlign: TextAlign.left,
-                              style: TextStyle(fontFamily: 'DMSans', 
+                              style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                                 fontSize: (12),
                                 color: BudgetColors.grey7,
                                 height: 1.5,
@@ -377,8 +372,7 @@ class _BudgetIntroDiagnosisScreenState
                     ),
                     elevation: 4,
                   ),
-                  child: const Text(
-                    "continue to budget",
+                  child: const Text("Continue to budget",
                     style: TextStyle(fontFamily: 'DMSans', 
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -397,8 +391,7 @@ class _BudgetIntroDiagnosisScreenState
   Widget _buildStatCol(String label, String amount, bool isHighlight) {
     return Column(
       children: [
-        Text(
-          "avg.",
+        Text("Avg.",
           textAlign: TextAlign.center,
           style: TextStyle(fontFamily: 'DMSans', 
             fontSize: (12),
@@ -457,7 +450,7 @@ class _BudgetIntroDiagnosisScreenState
             child: SingleChildScrollView(
               child: Text(
                 (body).toLowerCase(),
-                style: TextStyle(fontFamily: 'DMSans', 
+                style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                   fontSize: (12),
                   height: 1.4,
                   color: BudgetColors.grey7,

@@ -9,7 +9,6 @@ import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:astra_frontend/services/service_providers.dart';
 import 'package:astra_frontend/features/budget/data/models/budget_api_models.dart';
-import 'package:astra_frontend/services/finance_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
 
@@ -26,9 +25,9 @@ class _BudgetCategoryAnalyzingScreenState
     extends ConsumerState<BudgetCategoryAnalyzingScreen> {
   int _textIndex = 0;
   final List<String> _loadingTexts = [
-    "reviewing your spending habits...",
-    "generating a budget plan...",
-    "generating category budgets...",
+    "Reviewing your spending habits...",
+    "Generating a budget plan...",
+    "Generating category budgets...",
   ];
 
   Timer? _textTimer;
@@ -81,7 +80,7 @@ class _BudgetCategoryAnalyzingScreenState
     if (!isRetry) {
       setState(() {
         _hasError = false;
-        _loadingTexts.removeWhere((text) => text.contains("retrying...") || text.contains("reconnect...") || text.contains("went wrong") || text.contains("server error"));
+        _loadingTexts.removeWhere((text) => text.contains("Retrying...") || text.contains("reconnect...") || text.contains("went wrong") || text.contains("server error"));
         if (_textIndex >= _loadingTexts.length) {
           _textIndex = _loadingTexts.length - 1;
         }
@@ -102,7 +101,7 @@ class _BudgetCategoryAnalyzingScreenState
         if (_hasError) {
           setState(() {
             _hasError = false;
-            _loadingTexts.removeWhere((text) => text.contains("retrying...") || text.contains("reconnect...") || text.contains("went wrong") || text.contains("server error"));
+            _loadingTexts.removeWhere((text) => text.contains("Retrying...") || text.contains("reconnect...") || text.contains("went wrong") || text.contains("server error"));
             if (_textIndex >= _loadingTexts.length) {
               _textIndex = _loadingTexts.length - 1;
             }
@@ -134,8 +133,8 @@ class _BudgetCategoryAnalyzingScreenState
           setState(() {
             _hasError = true;
             _lastException = e;
-            _loadingTexts.removeWhere((text) => text.contains("retrying...") || text.contains("reconnect...") || text.contains("went wrong") || text.contains("server error"));
-            _loadingTexts.add("no DMSansnet connection. please check network.");
+            _loadingTexts.removeWhere((text) => text.contains("Retrying...") || text.contains("reconnect...") || text.contains("went wrong") || text.contains("server error"));
+            _loadingTexts.add("No internet connection. Please check network.");
             _textIndex = _loadingTexts.length - 1;
           });
         }

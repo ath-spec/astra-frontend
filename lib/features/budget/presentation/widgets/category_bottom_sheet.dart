@@ -87,8 +87,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
           ),
         ),
         const SizedBox(height: 24),
-        Text(
-          "set budget for ${widget.category.title}",
+        Text("Set budget for ${widget.category.title}",
           style: TextStyle(fontFamily: 'DMSans', 
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -114,8 +113,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "let ai set limit",
+                      Text("Let ai set limit",
                         style: TextStyle(fontFamily: 'DMSans', 
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -123,9 +121,8 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        "recommended: ₹${widget.category.suggestedAmount.isFinite ? widget.category.suggestedAmount.toInt() : 0}",
-                        style: TextStyle(fontFamily: 'DMSans', 
+                      Text("Recommended: ₹${widget.category.suggestedAmount.isFinite ? widget.category.suggestedAmount.toInt() : 0}",
+                        style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                           fontSize: 12,
                           color: BudgetColors.grey7,
                         ),
@@ -154,8 +151,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
                 const Icon(Icons.edit_rounded, color: BudgetColors.grey7, size: 24),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: Text(
-                    "set your own limit",
+                  child: Text("Set your own limit",
                     style: TextStyle(fontFamily: 'DMSans', 
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -194,8 +190,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
           padding: EdgeInsets.zero,
         ),
         const SizedBox(height: 16),
-        Text(
-          "how much for ${widget.category.title}?",
+        Text("How much for ${widget.category.title}?",
           style: TextStyle(fontFamily: 'DMSans', 
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -246,8 +241,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
               borderRadius: BorderRadius.circular(15),
             ),
           ),
-          child: Text(
-            "save limit",
+          child: Text("Save limit",
             style: TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w600),
           ),
         ),
@@ -265,8 +259,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
         children: [
           const CircularProgressIndicator(color: BudgetColors.black),
           const SizedBox(height: 24),
-          Text(
-            "setting limit...",
+          Text("Setting limit...",
             style: TextStyle(fontFamily: 'DMSans', 
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -294,8 +287,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
           child: const Icon(Icons.check_rounded, color: BudgetColors.white, size: 32),
         ),
         const SizedBox(height: 24),
-        Text(
-          "limit set!",
+        Text("Limit set!",
           style: TextStyle(fontFamily: 'DMSans', 
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -305,7 +297,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
         const SizedBox(height: 8),
         Text(
           "${widget.category.title} budget updated successfully.",
-          style: TextStyle(fontFamily: 'DMSans', fontSize: 14, color: BudgetColors.grey7),
+          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', fontSize: 14, color: BudgetColors.grey7),
         ),
         const SizedBox(height: 32),
         ZeyroButton(eventName: 'category_bottom_sheet_save_tapped', 
@@ -321,8 +313,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
               borderRadius: BorderRadius.circular(15),
             ),
           ),
-          child: Text(
-            "done",
+          child: Text("Done",
             style: TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w600),
           ),
         ),

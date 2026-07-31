@@ -1,4 +1,4 @@
-import 'package:astra_frontend/services/analytics_service.dart';
+
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';

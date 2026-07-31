@@ -57,23 +57,6 @@ class _YearlyCalendarViewWidgetState extends State<YearlyCalendarViewWidget> {
       YearlyCalendarViewWidget.kTotalYears,
       (index) => startYear + index,
     );
-
-    // Auto-scroll to current year on open with subtle delay to ensure Layout 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        Future.delayed(const Duration(milliseconds: 50), () {
-          if (mounted && widget.scrollController != null &&
-              widget.scrollController!.hasClients) {
-            final double sectionHeight =
-                YearlyCalendarViewWidget.calculateYearSectionHeight(context);
-            final int currentYear = DateTime.now().year;
-            final int startYear = YearlyCalendarViewWidget.getStartYear();
-            final int targetIndex = currentYear - startYear;
-            widget.scrollController!.jumpTo(sectionHeight * targetIndex);
-          }
-        });
-      }
-    });
   }
 
   @override

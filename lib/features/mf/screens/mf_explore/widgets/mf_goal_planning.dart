@@ -62,7 +62,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
     },
     {
       'title': 'Retirement',
-      'image': 'lib/core/images/custom\.webp',
+      'image': 'lib/core/images/target.webp',
       'planTitle': 'Your Retirement Plan',
       'planSubtitle': '₹3.5 Crores • 25 Years',
       'items': [
@@ -363,8 +363,8 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
-            width: isActive ? 64 : 56,
-            height: isActive ? 64 : 56,
+            width: isActive ? 84 : 68,
+            height: isActive ? 84 : 68,
             child: Opacity(
               opacity: isActive ? 1.0 : 0.6,
               child: Image.asset(

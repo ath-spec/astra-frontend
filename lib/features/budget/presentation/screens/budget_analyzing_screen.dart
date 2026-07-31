@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:astra_frontend/services/service_providers.dart';
 import 'package:astra_frontend/features/budget/presentation/screens/budget_intro_diagnosis_screen.dart';
-import 'package:astra_frontend/services/analytics_service.dart';
+
 
 class BudgetAnalyzingScreen extends ConsumerStatefulWidget {
   final double totalBudget;
@@ -20,9 +20,9 @@ class BudgetAnalyzingScreen extends ConsumerStatefulWidget {
 class _BudgetAnalyzingScreenState extends ConsumerState<BudgetAnalyzingScreen> {
   int _textIndex = 0;
   final List<String> _loadingTexts = [
-    "analyzing your cash flow...",
-    "reviewing your spending habits...",
-    "generating a plan...",
+    "Analyzing your cash flow...",
+    "Reviewing your spending habits...",
+    "Generating a plan...",
   ];
 
   Timer? _textTimer;
@@ -50,9 +50,9 @@ class _BudgetAnalyzingScreenState extends ConsumerState<BudgetAnalyzingScreen> {
           _navigateToNext();
         } else {
           // If still loading, maybe add a final "hanging" text or just wait
-          if (!_loadingTexts.contains("finalizing your plan...")) {
+          if (!_loadingTexts.contains("Finalizing your plan...")) {
             setState(() {
-              _loadingTexts.add("finalizing your plan...");
+              _loadingTexts.add("Finalizing your plan...");
               _textIndex = _loadingTexts.length - 1;
             });
           }
@@ -72,10 +72,10 @@ class _BudgetAnalyzingScreenState extends ConsumerState<BudgetAnalyzingScreen> {
         _hasError = false;
         // Reset text if we were showing an error
         if (_loadingTexts.contains(
-          "no DMSansnet connection. waiting to reconnect...",
+          "No internet connection. waiting to reconnect...",
         )) {
           _loadingTexts.remove(
-            "no DMSansnet connection. waiting to reconnect...",
+            "No internet connection. waiting to reconnect...",
           );
           if (_textIndex >= _loadingTexts.length) {
             _textIndex = _loadingTexts.length - 1;
@@ -84,8 +84,6 @@ class _BudgetAnalyzingScreenState extends ConsumerState<BudgetAnalyzingScreen> {
       });
     }
 
-    final now = DateTime.now();
-    final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
 
     try {
       await Future.delayed(const Duration(seconds: 4));

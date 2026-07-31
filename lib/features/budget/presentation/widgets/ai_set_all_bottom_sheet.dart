@@ -55,8 +55,7 @@ class _AiSetAllBottomSheetState extends State<AiSetAllBottomSheet> {
         children: [
           const CircularProgressIndicator(color: BudgetColors.black),
           const SizedBox(height: 24),
-          Text(
-            "ai is analyzing and setting all limits...",
+          Text("Ai is analyzing and setting all limits...",
             style: TextStyle(fontFamily: 'DMSans', 
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -83,8 +82,7 @@ class _AiSetAllBottomSheetState extends State<AiSetAllBottomSheet> {
           child: const Icon(Icons.auto_awesome, color: Colors.amber, size: 32),
         ),
         const SizedBox(height: 24),
-        Text(
-          "all set!",
+        Text("All set!",
           style: TextStyle(fontFamily: 'DMSans', 
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -92,9 +90,8 @@ class _AiSetAllBottomSheetState extends State<AiSetAllBottomSheet> {
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          "we've optimized budgets for all your categories.",
-          style: TextStyle(fontFamily: 'DMSans', fontSize: 14, color: BudgetColors.grey7),
+        Text("We've optimized budgets for all your categories.",
+          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', fontSize: 14, color: BudgetColors.grey7),
         ),
         const SizedBox(height: 32),
         ZeyroButton(eventName: 'ai_set_all_bottom_sheet_apply_tapped', 
@@ -110,8 +107,7 @@ class _AiSetAllBottomSheetState extends State<AiSetAllBottomSheet> {
               borderRadius: BorderRadius.circular(15),
             ),
           ),
-          child: Text(
-            "done",
+          child: Text("Done",
             style: TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w600),
           ),
         ),

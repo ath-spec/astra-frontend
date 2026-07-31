@@ -1,4 +1,4 @@
-import 'package:astra_frontend/services/analytics_service.dart';
+
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'package:flutter/material.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';

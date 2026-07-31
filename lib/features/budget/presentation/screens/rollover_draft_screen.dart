@@ -8,7 +8,7 @@ import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:astra_frontend/services/service_providers.dart';
 import 'package:astra_frontend/features/budget/presentation/widgets/category_item_model.dart';
-import 'package:astra_frontend/features/budget/data/models/budget_api_models.dart';
+
 
 import 'package:astra_frontend/features/budget/presentation/screens/finalize_total_budget_screen.dart';
 import 'package:astra_frontend/features/budget/presentation/screens/budget_generate_screen.dart';
@@ -267,7 +267,7 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Unable to load budget draft',
-                  style: TextStyle(fontFamily: 'DMSans', color: BudgetColors.black)),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', color: BudgetColors.black)),
               const SizedBox(height: 16),
               ZeyroButton(eventName: 'rollover_draft_screen_retry_tapped',
                 onPressed: () {
@@ -278,12 +278,12 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                   _loadSession();
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: BudgetColors.black),
-                child: const Text('Retry', style: TextStyle(color: BudgetColors.white)),
+                child: const Text('Retry', style: TextStyle(fontWeight: FontWeight.w600, color: BudgetColors.white)),
               ),
               const SizedBox(height: 8),
               TextButton(
                   onPressed: () { AnalyticsService.instance.logEvent('back_button_tapped', properties: {'screen': 'rollover_draft_screen'}); Navigator.of(context).pop(); },
-                  child: const Text('Close', style: TextStyle(color: BudgetColors.black))),
+                  child: const Text('Close', style: TextStyle(fontWeight: FontWeight.w600, color: BudgetColors.black))),
             ],
           ),
         ),
@@ -298,11 +298,11 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Draft expired or unavailable',
-                  style: TextStyle(fontFamily: 'DMSans', color: BudgetColors.black)),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', color: BudgetColors.black)),
               const SizedBox(height: 16),
               TextButton(
                   onPressed: () { AnalyticsService.instance.logEvent('back_button_tapped', properties: {'screen': 'rollover_draft_screen'}); Navigator.of(context).pop(); },
-                  child: const Text('Close', style: TextStyle(color: BudgetColors.black))),
+                  child: const Text('Close', style: TextStyle(fontWeight: FontWeight.w600, color: BudgetColors.black))),
             ],
           ),
         ),
@@ -357,7 +357,7 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                       widget.isFallback
                           ? "we've prepared a baseline budget for you. review and adjust as needed."
                           : "we've drafted the perfect budget for ${_session!.month} to help you hit your goals.",
-                      style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: BudgetColors.grey7),
+                      style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', fontSize: 12, color: BudgetColors.grey7),
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -385,7 +385,7 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Total Budget',
-                              style: TextStyle(fontFamily: 'DMSans', 
+                              style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                                   color: BudgetColors.grey7, fontSize: 16)),
                           Text(
                               currencyFormat.format(_session!.totalBudget),
@@ -455,9 +455,8 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                                             color: BudgetColors.grey7,
                                           ),
                                           const SizedBox(width: 4),
-                                          Text(
-                                            "suggested: ${currencyFormat.format(cat.suggestedAmount)}/mo",
-                                            style: TextStyle(fontFamily: 'DMSans', 
+                                          Text("Suggested: ${currencyFormat.format(cat.suggestedAmount)}/mo",
+                                            style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                                               fontSize: 12,
                                               color: BudgetColors.grey7,
                                             ),
@@ -531,8 +530,7 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : Text(
-                                    "accept & apply",
+                                : Text("Accept & apply",
                                     style: TextStyle(fontFamily: 'DMSans', 
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -550,8 +548,7 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                             ),
-                            child: Text(
-                              "modify",
+                            child: Text("Modify",
                               style: TextStyle(fontFamily: 'DMSans', 
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -566,8 +563,7 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                               foregroundColor: BudgetColors.grey7,
                               minimumSize: const Size(double.infinity, 48),
                             ),
-                            child: Text(
-                              "not now",
+                            child: Text("Not now",
                               style: TextStyle(fontFamily: 'DMSans', 
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
