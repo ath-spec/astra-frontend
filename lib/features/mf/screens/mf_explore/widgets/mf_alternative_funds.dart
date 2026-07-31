@@ -51,7 +51,7 @@ class MfAlternativeFunds extends StatelessWidget {
                       fontFamily: 'DMSans',
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF9CA3AF),
+                      color: Color(0xFF0F172A),
                     ),
                   ),
                   const SizedBox(width: 2),
@@ -121,7 +121,7 @@ class MfAlternativeFunds extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF1F5F9)),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

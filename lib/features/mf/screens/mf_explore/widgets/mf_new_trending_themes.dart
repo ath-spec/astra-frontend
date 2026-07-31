@@ -1,28 +1,89 @@
 import 'package:flutter/material.dart';
 
-class MfNewTrendingThemes extends StatelessWidget {
+class MfNewTrendingThemes extends StatefulWidget {
   const MfNewTrendingThemes({super.key});
 
   @override
+  State<MfNewTrendingThemes> createState() => _MfNewTrendingThemesState();
+}
+
+class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
+  final ScrollController _scrollController = ScrollController();
+  double _scrollProgress = 0.3; // Initial approximate width factor
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.hasClients) {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      final viewport = _scrollController.position.viewportDimension;
+      if (maxScroll > 0) {
+        final progress = ((_scrollController.offset + viewport) / (maxScroll + viewport)).clamp(0.0, 1.0);
+        if (progress != _scrollProgress) {
+          setState(() {
+            _scrollProgress = progress;
+          });
+        }
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            'Trending Themes',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -1.0,
-              color: Color.fromARGB(255, 0, 0, 0),
-            ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Trending Themes',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -1.0,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              Container(
+                width: 60,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE2E8F0),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                alignment: Alignment.centerLeft,
+                child: FractionallySizedBox(
+                  widthFactor: _scrollProgress,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F172A),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),
         SingleChildScrollView(
+          controller: _scrollController,
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(

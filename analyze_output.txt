@@ -1,0 +1,876 @@
+﻿Analyzing astra-frontend...                                     
+
+warning - Unused import: 'package:flutter/material.dart' - lib\core\navigation\app_router.dart:24:8 - unused_import
+warning - Unused import: '../../features/profile/screens/profile_screen.dart' - lib\core\navigation\app_router.dart:26:8 - unused_import
+   info - Use 'whereType' to select elements of a given type - lib\core\zeyro_models\analytics_data.dart:369:17 - prefer_iterable_wheretype
+warning - Unused import: 'dart:convert' - lib\core\zeyro_models\budget_action_request.dart:1:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\core\zeyro_models\chat_conversations.dart:36:11 - avoid_print
+   info - Don't invoke 'print' in production code - lib\core\zeyro_models\chat_message.dart:143:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\core\zeyro_models\chat_message.dart:158:7 - avoid_print
+   info - Use 'whereType' to select elements of a given type - lib\core\zeyro_models\home_dashboard.dart:73:17 - prefer_iterable_wheretype
+   info - Use 'whereType' to select elements of a given type - lib\core\zeyro_models\home_dashboard.dart:79:17 - prefer_iterable_wheretype
+   info - Use 'whereType' to select elements of a given type - lib\core\zeyro_models\home_dashboard.dart:86:17 - prefer_iterable_wheretype
+   info - Use 'whereType' to select elements of a given type - lib\core\zeyro_models\home_dashboard.dart:91:17 - prefer_iterable_wheretype
+   info - Use 'whereType' to select elements of a given type - lib\core\zeyro_models\home_dashboard.dart:294:17 - prefer_iterable_wheretype
+   info - Dangling library doc comment - lib\core\zeyro_models\onboarding_models.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: '../../../core/widgets/arch_background.dart' - lib\features\asset_connection\screens\banks_linking_screen.dart:4:8 - unused_import
+   info - The private field _selectedMoreBanks could be 'final' - lib\features\asset_connection\screens\banks_linking_screen.dart:18:16 - prefer_final_fields
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:431:32 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:432:38 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:433:67 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:434:37 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:435:38 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:436:36 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:437:72 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:438:41 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:439:71 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:440:39 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:441:38 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:442:48 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:443:44 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:444:40 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:445:36 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:446:44 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:447:37 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\asset_connection\screens\banks_linking_screen.dart:448:46 - curly_braces_in_flow_control_structures
+warning - The declaration '_DottedLinePainter' isn't referenced - lib\features\asset_connection\screens\banks_linking_screen.dart:618:7 - unused_element
+warning - Unused import: '../../../core/widgets/arch_background.dart' - lib\features\asset_connection\screens\banks_searching_screen.dart:5:8 - unused_import
+warning - The value of the field '_pulseAnimation' isn't used - lib\features\asset_connection\screens\banks_searching_screen.dart:21:26 - unused_field
+warning - The value of the field '_pulseAnimation' isn't used - lib\features\auth\screens\aa_stocks_fetching_screen.dart:21:26 - unused_field
+warning - The declaration '_buildSkeletonCard' isn't referenced - lib\features\auth\screens\aa_stocks_fetching_screen.dart:58:10 - unused_element
+warning - The value of the local variable 'displayPhone' isn't used - lib\features\auth\screens\aa_stocks_fetching_screen.dart:116:11 - unused_local_variable
+   info - Unnecessary instance of 'Container' - lib\features\auth\screens\aa_stocks_fetching_screen.dart:178:27 - avoid_unnecessary_containers
+warning - The declaration '_buildDashedDivider' isn't referenced - lib\features\auth\screens\aa_stocks_otp_screen.dart:83:10 - unused_element
+  error - The method 'logStep' isn't defined for the type 'FunnelTracker' - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:43:28 - undefined_method
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:118:27 - invalid_use_of_null_value
+  error - Undefined name 'ref' - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:121:34 - undefined_identifier
+  error - Undefined name 'transactionRepositoryProvider' - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:122:17 - undefined_identifier
+  error - Undefined name 'ref' - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:127:9 - undefined_identifier
+  error - Undefined name 'budgetStateProvider' - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:128:19 - undefined_identifier
+  error - The method 'BudgetDiagnosisResponse' isn't defined for the type '_BudgetAnalyzingScreenState' - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:129:33 - undefined_method
+  error - Undefined name 'ref' - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:141:15 - undefined_identifier
+  error - Undefined name 'budgetStateProvider' - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:142:19 - undefined_identifier
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:191:43 - invalid_use_of_null_value
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\features\budget\presentation\screens\budget_analyzing_screen.dart:222:15 - sized_box_for_whitespace
+   info - The import of 'package:flutter/foundation.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\budget\presentation\screens\budget_category_analyzing_screen.dart:2:8 - unnecessary_import
+warning - Unused import: 'package:astra_frontend/zeyro_services/service_providers.dart' - lib\features\budget\presentation\screens\budget_category_analyzing_screen.dart:9:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_services/finance_repository.dart' - lib\features\budget\presentation\screens\budget_category_analyzing_screen.dart:10:8 - unused_import
+  error - The name 'BudgetConflictException' isn't defined, so it can't be used in an 'is' expression - lib\features\budget\presentation\screens\budget_category_analyzing_screen.dart:123:16 - type_test_with_undefined_name
+warning - Dead code - lib\features\budget\presentation\screens\budget_category_analyzing_screen.dart:130:7 - dead_code
+   info - The private field _hasScrolledToTarget could be 'final' - lib\features\budget\presentation\screens\budget_control_screen.dart:39:8 - prefer_final_fields
+warning - The value of the field '_hasScrolledToTarget' isn't used - lib\features\budget\presentation\screens\budget_control_screen.dart:39:8 - unused_field
+  error - The method 'logStep' isn't defined for the type 'FunnelTracker' - lib\features\budget\presentation\screens\budget_control_screen.dart:46:28 - undefined_method
+  error - The method 'endFunnel' isn't defined for the type 'FunnelTracker' - lib\features\budget\presentation\screens\budget_control_screen.dart:47:28 - undefined_method
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\budget_control_screen.dart:49:27 - invalid_use_of_null_value
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\budget_control_screen.dart:54:29 - invalid_use_of_null_value
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\budget_control_screen.dart:135:45 - invalid_use_of_null_value
+  error - The method 'triggerDashboardRefresh' isn't defined for the type 'DataEvents' - lib\features\budget\presentation\screens\budget_control_screen.dart:136:36 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_control_screen.dart:150:60 - deprecated_member_use
+  error - The method 'ZeyroIconButton' isn't defined for the type '_BudgetControlScreenState' - lib\features\budget\presentation\screens\budget_control_screen.dart:167:20 - undefined_method
+  error - The getter 'main' isn't defined for the type 'AppRoutes' - lib\features\budget\presentation\screens\budget_control_screen.dart:177:31 - undefined_getter
+  error - Undefined class 'BudgetLatestResponse' - lib\features\budget\presentation\screens\budget_control_screen.dart:192:56 - undefined_class
+  error - The name 'BudgetCategoryDetail' isn't a type, so it can't be used as a type argument - lib\features\budget\presentation\screens\budget_control_screen.dart:205:10 - non_type_as_type_argument
+  error - The name 'BudgetCategoryDetail' isn't a type, so it can't be used as a type argument - lib\features\budget\presentation\screens\budget_control_screen.dart:205:47 - non_type_as_type_argument
+  error - The property 'categoryName' can't be unconditionally accessed because the receiver can be 'null' - lib\features\budget\presentation\screens\budget_control_screen.dart:207:53 - unchecked_use_of_nullable_value
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_control_screen.dart:279:50 - deprecated_member_use
+   info - The import of 'package:flutter/foundation.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\budget\presentation\screens\budget_generate_screen.dart:1:8 - unnecessary_import
+warning - Unused import: 'package:astra_frontend/zeyro_services/service_providers.dart' - lib\features\budget\presentation\screens\budget_generate_screen.dart:6:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/zeyro_models/budget_models.dart' - lib\features\budget\presentation\screens\budget_generate_screen.dart:12:8 - unused_import
+  error - The name 'CategoryAllocation' isn't a type, so it can't be used as a type argument - lib\features\budget\presentation\screens\budget_generate_screen.dart:18:14 - non_type_as_type_argument
+  error - Couldn't infer type parameter 'E'.
+
+Tried to infer 'dynamic' for 'E' which doesn't work:
+  Return type declared as 'List<E>'
+              used where  'Iterable<Future<_>>' is required.
+The type 'dynamic' was inferred from:
+  Parameter 'element' declared as     'E'
+                      but argument is 'dynamic'.
+  Parameter 'element' declared as     'E'
+                      but argument is 'Future<dynamic>'.
+
+Consider passing explicit type argument(s) to the generic.
+
+ - lib\features\budget\presentation\screens\budget_generate_screen.dart:106:25 - could_not_infer
+  error - The argument type 'List<dynamic>' can't be assigned to the parameter type 'Iterable<Future<dynamic>>'.  - lib\features\budget\presentation\screens\budget_generate_screen.dart:106:25 - argument_type_not_assignable
+  error - The getter 'main' isn't defined for the type 'AppRoutes' - lib\features\budget\presentation\screens\budget_generate_screen.dart:122:21 - undefined_getter
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:4:8 - unnecessary_import
+warning - Unused import: 'package:astra_frontend/zeyro_services/service_providers.dart' - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:9:8 - unused_import
+  error - The method 'ZeyroIconButton' isn't defined for the type '_BudgetIntroDiagnosisScreenState' - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:79:32 - undefined_method
+  error - The method 'cancelFunnel' isn't defined for the type 'FunnelTracker' - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:85:52 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:194:66 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:238:44 - deprecated_member_use
+  error - The argument type 'ZeyroButton' can't be assigned to the parameter type 'Widget?'.  - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:351:24 - argument_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:351:36 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:375:19 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:383:47 - deprecated_member_use
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\budget_intro_diagnosis_screen.dart:385:19 - undefined_named_parameter
+warning - Unused import: 'package:astra_frontend/features/budget/presentation/screens/finalize_total_budget_screen.dart' - lib\features\budget\presentation\screens\budget_onboarding_intro_screen.dart:6:8 - unused_import
+  error - The method 'startFunnel' isn't defined for the type 'FunnelTracker' - lib\features\budget\presentation\screens\budget_onboarding_intro_screen.dart:22:28 - undefined_method
+  error - The method 'ZeyroIconButton' isn't defined for the type '_BudgetOnboardingIntroScreenState' - lib\features\budget\presentation\screens\budget_onboarding_intro_screen.dart:41:24 - undefined_method
+  error - The method 'cancelFunnel' isn't defined for the type 'FunnelTracker' - lib\features\budget\presentation\screens\budget_onboarding_intro_screen.dart:47:44 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_onboarding_intro_screen.dart:62:41 - deprecated_member_use
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\screens\budget_onboarding_intro_screen.dart:119:19 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\budget_onboarding_intro_screen.dart:119:31 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\screens\budget_onboarding_intro_screen.dart:127:21 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\budget_onboarding_intro_screen.dart:138:21 - undefined_named_parameter
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\budget_settings_screen.dart:93:50 - invalid_use_of_null_value
+  error - Undefined name 'AppErrorHandler' - lib\features\budget\presentation\screens\budget_settings_screen.dart:123:9 - undefined_identifier
+  error - Undefined name 'AppErrorHandler' - lib\features\budget\presentation\screens\budget_settings_screen.dart:133:9 - undefined_identifier
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\budget\presentation\screens\budget_settings_screen.dart:147:31 - extra_positional_arguments
+  error - Undefined name 'dioApiClient' - lib\features\budget\presentation\screens\budget_settings_screen.dart:147:31 - undefined_identifier
+  error - The method 'updateBudgetSettings' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\screens\budget_settings_screen.dart:147:45 - undefined_method
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\budget\presentation\screens\budget_settings_screen.dart:158:33 - extra_positional_arguments
+  error - Undefined name 'dioApiClient' - lib\features\budget\presentation\screens\budget_settings_screen.dart:158:33 - undefined_identifier
+  error - The method 'updateBudgetSession' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\screens\budget_settings_screen.dart:158:47 - undefined_method
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\budget\presentation\screens\budget_settings_screen.dart:177:39 - extra_positional_arguments
+  error - Undefined name 'dioApiClient' - lib\features\budget\presentation\screens\budget_settings_screen.dart:177:39 - undefined_identifier
+  error - The method 'updateBudgetSettings' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\screens\budget_settings_screen.dart:177:53 - undefined_method
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\budget_settings_screen.dart:181:41 - invalid_use_of_null_value
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\budget\presentation\screens\budget_settings_screen.dart:183:41 - extra_positional_arguments
+  error - Undefined name 'dioApiClient' - lib\features\budget\presentation\screens\budget_settings_screen.dart:183:41 - undefined_identifier
+  error - The method 'updateBudgetSession' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\screens\budget_settings_screen.dart:183:55 - undefined_method
+  error - The name 'BudgetConflictException' isn't a type and can't be used in an on-catch clause - lib\features\budget\presentation\screens\budget_settings_screen.dart:195:10 - non_type_in_catch_clause
+  error - Undefined name 'AppErrorHandler' - lib\features\budget\presentation\screens\budget_settings_screen.dart:215:9 - undefined_identifier
+warning - The declaration '_onResetBudget' isn't referenced - lib\features\budget\presentation\screens\budget_settings_screen.dart:222:16 - unused_element
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:234:80 - deprecated_member_use
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\budget\presentation\screens\budget_settings_screen.dart:252:31 - extra_positional_arguments
+  error - Undefined name 'dioApiClient' - lib\features\budget\presentation\screens\budget_settings_screen.dart:252:31 - undefined_identifier
+  error - The method 'resetActiveBudget' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\screens\budget_settings_screen.dart:252:45 - undefined_method
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\budget_settings_screen.dart:255:29 - invalid_use_of_null_value
+  error - Undefined name 'AppErrorHandler' - lib\features\budget\presentation\screens\budget_settings_screen.dart:260:9 - undefined_identifier
+  error - The method 'ZeyroIconButton' isn't defined for the type '_BudgetSettingsScreenState' - lib\features\budget\presentation\screens\budget_settings_screen.dart:285:19 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:340:59 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:354:76 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:376:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:406:80 - deprecated_member_use
+  error - The argument type 'ZeyroButton' can't be assigned to the parameter type 'Widget?'.  - lib\features\budget\presentation\screens\budget_settings_screen.dart:430:40 - argument_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\budget_settings_screen.dart:430:52 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\screens\budget_settings_screen.dart:431:35 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:433:86 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:435:75 - deprecated_member_use
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\budget_settings_screen.dart:440:35 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:463:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:529:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:561:73 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:565:73 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\budget_settings_screen.dart:587:94 - deprecated_member_use
+  error - Undefined class 'BudgetLatestResponse' - lib\features\budget\presentation\screens\category_budget_screen.dart:12:9 - undefined_class
+  error - The method 'ZeyroIconButton' isn't defined for the type 'CategoryBudgetScreen' - lib\features\budget\presentation\screens\category_budget_screen.dart:28:18 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\category_budget_screen.dart:68:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\category_budget_screen.dart:94:63 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\category_budget_screen.dart:101:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\category_budget_screen.dart:118:50 - deprecated_member_use
+  error - Undefined class 'BudgetConflictException' - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:49:3 - undefined_class
+  error - The method 'logStep' isn't defined for the type 'FunnelTracker' - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:68:28 - undefined_method
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:69:45 - invalid_use_of_null_value
+  error - The method 'ZeyroIconButton' isn't defined for the type '_FinalizeBudgetScreenState' - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:279:34 - undefined_method
+   info - Use interpolation to compose strings and values - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:510:51 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:511:51 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:513:51 - prefer_interpolation_to_compose_strings
+   info - Use interpolation to compose strings and values - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:514:51 - prefer_interpolation_to_compose_strings
+  error - The argument type 'ZeyroButton' can't be assigned to the parameter type 'Widget?'.  - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:579:26 - argument_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:580:21 - undefined_named_parameter
+   info - Unnecessary 'const' keyword - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:586:71 - unnecessary_const
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:621:35 - extra_positional_arguments
+  error - Undefined name 'dioApiClient' - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:621:35 - undefined_identifier
+  error - The method 'updateBudgetSession' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:622:35 - undefined_method
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:647:37 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:659:37 - use_build_context_synchronously
+  error - Undefined name 'ref' - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:668:48 - undefined_identifier
+  error - Undefined name 'budgetStateProvider' - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:669:45 - undefined_identifier
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:673:39 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:683:39 - use_build_context_synchronously
+  error - The name 'BudgetConflictException' isn't defined, so it can't be used in an 'is' expression - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:693:51 - type_test_with_undefined_name
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:707:21 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:715:49 - deprecated_member_use
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:717:21 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:906:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:918:47 - deprecated_member_use
+  error - The method 'ZeyroIconButton' isn't defined for the type '_BudgetDialState' - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:929:19 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:948:47 - deprecated_member_use
+  error - The method 'ZeyroIconButton' isn't defined for the type '_BudgetDialState' - lib\features\budget\presentation\screens\finalize_total_budget_screen.dart:955:19 - undefined_method
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\budget\presentation\screens\init_budget_screen.dart:24:34 - extra_positional_arguments
+  error - Undefined name 'dioApiClient' - lib\features\budget\presentation\screens\init_budget_screen.dart:24:34 - undefined_identifier
+  error - The method 'initialAverages' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\screens\init_budget_screen.dart:28:47 - undefined_method
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\init_budget_screen.dart:29:25 - invalid_use_of_null_value
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\init_budget_screen.dart:36:39 - invalid_use_of_null_value
+  error - The method 'saveBudgets' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\screens\init_budget_screen.dart:39:16 - undefined_method
+  error - The constructor being called isn't a const constructor - lib\features\budget\presentation\screens\init_budget_screen.dart:47:41 - const_with_non_const
+  error - The returned type 'MainNavigationScreen' isn't returnable from a 'Widget' function, as required by the closure's context - lib\features\budget\presentation\screens\init_budget_screen.dart:47:41 - return_of_invalid_type_from_closure
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\screens\init_budget_screen.dart:84:19 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\init_budget_screen.dart:84:31 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\init_budget_screen.dart:89:21 - undefined_named_parameter
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\screens\init_budget_screen.dart:113:19 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\init_budget_screen.dart:113:31 - undefined_named_parameter
+  error - The constructor being called isn't a const constructor - lib\features\budget\presentation\screens\init_budget_screen.dart:117:59 - const_with_non_const
+  error - The returned type 'MainNavigationScreen' isn't returnable from a 'Widget' function, as required by the closure's context - lib\features\budget\presentation\screens\init_budget_screen.dart:117:59 - return_of_invalid_type_from_closure
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\init_budget_screen.dart:121:21 - undefined_named_parameter
+   info - Unnecessary use of multiple underscores - lib\features\budget\presentation\screens\init_budget_screen.dart:140:41 - unnecessary_underscores
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\init_budget_screen.dart:158:49 - invalid_use_of_null_value
+  error - The argument type 'ZeyroButton' can't be assigned to the parameter type 'Widget?'.  - lib\features\budget\presentation\screens\init_budget_screen.dart:173:26 - argument_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\init_budget_screen.dart:173:38 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\init_budget_screen.dart:174:21 - undefined_named_parameter
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:6:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_services/service_providers.dart' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:8:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/zeyro_models/budget_models.dart' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:10:8 - unused_import
+warning - Unused import: 'package:astra_frontend/state/budget_coordinator_notifier.dart' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:14:8 - unused_import
+  error - The method 'CategoryAllocation' isn't defined for the type '_RolloverDraftScreenState' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:148:21 - undefined_method
+  error - The property 'categoryId' can't be unconditionally accessed because the receiver can be 'null' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:153:53 - unchecked_use_of_nullable_value
+  error - The getter 'id' isn't defined for the type 'BudgetSetupSession' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:157:46 - undefined_getter
+  error - The getter 'totalBudget' isn't defined for the type 'BudgetSetupSession' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:163:34 - undefined_getter
+  error - The getter 'id' isn't defined for the type 'BudgetSetupSession' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:179:46 - undefined_getter
+  error - The getter 'categoryAllocations' isn't defined for the type 'BudgetSetupSession' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:180:49 - undefined_getter
+  error - The method 'CategorySuggestion' isn't defined for the type '_RolloverDraftScreenState' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:181:14 - undefined_method
+  error - The method 'AdjustmentBounds' isn't defined for the type '_RolloverDraftScreenState' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:186:27 - undefined_method
+  error - The getter 'totalBudget' isn't defined for the type 'BudgetSetupSession' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:197:34 - undefined_getter
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\rollover_draft_screen.dart:214:27 - invalid_use_of_null_value
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:270:15 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\rollover_draft_screen.dart:270:27 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\screens\rollover_draft_screen.dart:277:17 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\rollover_draft_screen.dart:278:17 - undefined_named_parameter
+  error - The method 'ZeyroIconButton' isn't defined for the type '_RolloverDraftScreenState' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:323:30 - undefined_method
+  error - The getter 'month' isn't defined for the type 'BudgetSetupSession' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:355:79 - undefined_getter
+  error - The getter 'totalBudget' isn't defined for the type 'BudgetSetupSession' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:387:63 - undefined_getter
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\screens\rollover_draft_screen.dart:505:27 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\rollover_draft_screen.dart:506:29 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\screens\rollover_draft_screen.dart:509:29 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\rollover_draft_screen.dart:520:29 - undefined_named_parameter
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:6:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_services/service_providers.dart' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:8:8 - unused_import
+warning - Unused import: 'package:astra_frontend/features/budget/presentation/screens/budget_control_screen.dart' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:9:8 - unused_import
+warning - Unused import: 'package:astra_frontend/features/budget/presentation/widgets/ai_set_all_bottom_sheet.dart' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:11:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/routes/app_routes.dart' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:12:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/zeyro_models/budget_models.dart' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:13:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_services/finance_repository.dart' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:15:8 - unused_import
+   info - The private field _isLoading could be 'final' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:37:8 - prefer_final_fields
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\set_budget_category_screen.dart:47:45 - invalid_use_of_null_value
+  error - The method 'ZeyroIconButton' isn't defined for the type '_SetBudgetCategoryScreenState' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:153:28 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\set_budget_category_screen.dart:203:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\set_budget_category_screen.dart:211:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\set_budget_category_screen.dart:217:56 - deprecated_member_use
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:299:19 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\set_budget_category_screen.dart:299:31 - undefined_named_parameter
+  error - The method 'CategoryAllocation' isn't defined for the type '_SetBudgetCategoryScreenState' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:312:45 - undefined_method
+  error - The property 'categoryId' can't be unconditionally accessed because the receiver can be 'null' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:317:77 - unchecked_use_of_nullable_value
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\screens\set_budget_category_screen.dart:333:21 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\set_budget_category_screen.dart:344:21 - undefined_named_parameter
+  error - The method 'CategoryAllocation' isn't defined for the type '_SetBudgetCategoryScreenState' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:374:45 - undefined_method
+  error - The property 'categoryId' can't be unconditionally accessed because the receiver can be 'null' - lib\features\budget\presentation\screens\set_budget_category_screen.dart:380:77 - unchecked_use_of_nullable_value
+   info - The imported package 'shared_preferences' isn't a dependency of the importing package - lib\features\budget\presentation\screens\suggested_budget_screen.dart:7:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:shared_preferences/shared_preferences.dart' - lib\features\budget\presentation\screens\suggested_budget_screen.dart:7:8 - uri_does_not_exist
+  error - The method 'logStep' isn't defined for the type 'FunnelTracker' - lib\features\budget\presentation\screens\suggested_budget_screen.dart:32:28 - undefined_method
+  error - Undefined name 'SharedPreferences' - lib\features\budget\presentation\screens\suggested_budget_screen.dart:37:25 - undefined_identifier
+  error - Undefined class 'BudgetDiagnosisResponse' - lib\features\budget\presentation\screens\suggested_budget_screen.dart:48:37 - undefined_class
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\suggested_budget_screen.dart:177:39 - invalid_use_of_null_value
+  error - The method 'ZeyroIconButton' isn't defined for the type '_SuggestedBudgetScreenState' - lib\features\budget\presentation\screens\suggested_budget_screen.dart:203:34 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\suggested_budget_screen.dart:308:46 - deprecated_member_use
+  error - The method 'displayStyle' isn't defined for the type 'AppTheme' - lib\features\budget\presentation\screens\suggested_budget_screen.dart:329:57 - undefined_method
+  error - The argument type 'ZeyroButton' can't be assigned to the parameter type 'Widget?'.  - lib\features\budget\presentation\screens\suggested_budget_screen.dart:371:26 - argument_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\suggested_budget_screen.dart:372:17 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\screens\suggested_budget_screen.dart:381:17 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\suggested_budget_screen.dart:389:45 - deprecated_member_use
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\suggested_budget_screen.dart:391:17 - undefined_named_parameter
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\screens\suggested_budget_screen.dart:438:39 - invalid_use_of_null_value
+warning - The value of the local variable 'textOffset' isn't used - lib\features\budget\presentation\screens\suggested_budget_screen.dart:452:18 - unused_local_variable
+  error - The name 'HistoricalSpending' isn't a type, so it can't be used as a type argument - lib\features\budget\presentation\screens\suggested_budget_screen.dart:524:35 - non_type_as_type_argument
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\screens\total_budget_confirmation_screen.dart:75:15 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\screens\total_budget_confirmation_screen.dart:75:27 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\screens\total_budget_confirmation_screen.dart:83:17 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\screens\total_budget_confirmation_screen.dart:91:45 - deprecated_member_use
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\screens\total_budget_confirmation_screen.dart:93:17 - undefined_named_parameter
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\widgets\ai_set_all_bottom_sheet.dart:99:9 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\widgets\ai_set_all_bottom_sheet.dart:99:21 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\widgets\ai_set_all_bottom_sheet.dart:103:11 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\widgets\ai_set_all_bottom_sheet.dart:111:11 - undefined_named_parameter
+  error - Undefined class 'BudgetConflictException' - lib\features\budget\presentation\widgets\budget_conflict_bottom_sheet.dart:8:9 - undefined_class
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_conflict_bottom_sheet.dart:76:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_conflict_bottom_sheet.dart:88:71 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_conflict_bottom_sheet.dart:98:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_conflict_bottom_sheet.dart:123:58 - deprecated_member_use
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\widgets\budget_conflict_bottom_sheet.dart:135:15 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\widgets\budget_conflict_bottom_sheet.dart:136:17 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\widgets\budget_conflict_bottom_sheet.dart:137:17 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\widgets\budget_conflict_bottom_sheet.dart:146:17 - undefined_named_parameter
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\budget\presentation\widgets\budget_overview_card.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\budget\presentation\widgets\budget_overview_card.dart:3:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/widgets/visibility_tracker.dart' - lib\features\budget\presentation\widgets\budget_overview_card.dart:4:8 - unused_import
+   info - The local variable '_formatPeriod' starts with an underscore - lib\features\budget\presentation\widgets\budget_overview_card.dart:61:12 - no_leading_underscores_for_local_identifiers
+  error - The method 'ZeyroVisibilityTracker' isn't defined for the type 'BudgetOverviewCard' - lib\features\budget\presentation\widgets\budget_overview_card.dart:87:12 - undefined_method
+  error - Expected to find ')' - lib\features\budget\presentation\widgets\budget_overview_card.dart:94:51 - expected_token
+  error - Expected an identifier - lib\features\budget\presentation\widgets\budget_overview_card.dart:95:10 - missing_identifier
+  error - Expected to find ':' - lib\features\budget\presentation\widgets\budget_overview_card.dart:95:10 - expected_token
+  error - The method 'ZeyroIconButton' isn't defined for the type 'BudgetOverviewCard' - lib\features\budget\presentation\widgets\budget_overview_card.dart:119:19 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_overview_card.dart:130:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_overview_card.dart:171:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_overview_card.dart:195:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_overview_card.dart:246:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_overview_card.dart:367:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\budget_overview_card.dart:403:42 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\budget\presentation\widgets\budget_summary_card.dart:2:8 - unused_import
+  error - The method 'ZeyroIconButton' isn't defined for the type '_CategoryBottomSheetState' - lib\features\budget\presentation\widgets\category_bottom_sheet.dart:186:9 - undefined_method
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\widgets\category_bottom_sheet.dart:238:9 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\widgets\category_bottom_sheet.dart:238:21 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\widgets\category_bottom_sheet.dart:239:11 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\widgets\category_bottom_sheet.dart:247:11 - undefined_named_parameter
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\widgets\category_bottom_sheet.dart:309:9 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\widgets\category_bottom_sheet.dart:309:21 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\widgets\category_bottom_sheet.dart:313:11 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\widgets\category_bottom_sheet.dart:321:11 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\category_budget_item.dart:45:32 - deprecated_member_use
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:44:45 - invalid_use_of_null_value
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:166:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:203:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:211:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:217:50 - deprecated_member_use
+  error - The element type 'ZeyroButton' can't be assigned to the list type 'Widget' - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:275:19 - list_element_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:275:31 - undefined_named_parameter
+  error - The method 'CategoryAllocation' isn't defined for the type '_SetCategoryBottomSheetState' - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:285:45 - undefined_method
+  error - The property 'categoryId' can't be unconditionally accessed because the receiver can be 'null' - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:290:77 - unchecked_use_of_nullable_value
+  error - The named parameter 'style' isn't defined - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:309:21 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:318:21 - undefined_named_parameter
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:330:57 - extra_positional_arguments
+  error - Undefined name 'dioApiClient' - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:330:57 - undefined_identifier
+  error - The method 'updateBudgetSettings' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:330:71 - undefined_method
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:335:59 - extra_positional_arguments
+  error - Undefined name 'dioApiClient' - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:335:59 - undefined_identifier
+  error - The method 'updateBudgetSession' isn't defined for the type 'FinanceRepository' - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:335:73 - undefined_method
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:341:49 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\budget\presentation\widgets\set_category_bottom_sheet.dart:345:56 - use_build_context_synchronously
+   info - 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead - lib\features\chat\screens\chat_history_screen.dart:299:40 - deprecated_member_use
+warning - Unused import: 'package:go_router/go_router.dart' - lib\features\chat\screens\chat_screen.dart:3:8 - unused_import
+warning - Unused import: '../providers/chat_provider.dart' - lib\features\chat\screens\chat_screen.dart:4:8 - unused_import
+warning - The value of the local variable 'alignTop' isn't used - lib\features\chat\screens\chat_screen.dart:106:15 - unused_local_variable
+warning - The value of the local variable 'alignBottom' isn't used - lib\features\chat\screens\chat_screen.dart:113:15 - unused_local_variable
+warning - Unused import: '../../../core/widgets/progressive_blur.dart' - lib\features\chat\widgets\chat_app_bar.dart:7:8 - unused_import
+warning - The value of the local variable 'hasMessages' isn't used - lib\features\chat\widgets\chat_app_bar.dart:15:11 - unused_local_variable
+warning - Unused import: 'dart:math' - lib\features\chat\widgets\chat_initial_view.dart:1:8 - unused_import
+warning - Unused import: 'action_card.dart' - lib\features\chat\widgets\chat_initial_view.dart:3:8 - unused_import
+warning - Unused import: 'animated_orb.dart' - lib\features\chat\widgets\chat_initial_view.dart:4:8 - unused_import
+warning - The declaration '_buildCard' isn't referenced - lib\features\chat\widgets\chat_initial_view.dart:162:10 - unused_element
+warning - The declaration '_LineChart' isn't referenced - lib\features\chat\widgets\chat_initial_view.dart:238:7 - unused_element
+warning - The value of the local variable 'dotOutline' isn't used - lib\features\chat\widgets\chat_initial_view.dart:292:11 - unused_local_variable
+warning - The declaration '_BarChart' isn't referenced - lib\features\chat\widgets\chat_initial_view.dart:329:7 - unused_element
+warning - Unused import: 'dart:math' - lib\features\chat\widgets\chat_message_list.dart:2:8 - unused_import
+warning - Unused import: 'quick_helps.dart' - lib\features\chat\widgets\chat_message_list.dart:9:8 - unused_import
+warning - Unused import: 'profiles.dart' - lib\features\chat\widgets\thinking_orbs\engine\lattice.dart:4:8 - unused_import
+   info - Use a function declaration rather than a variable assignment to bind a function to a name - lib\features\chat\widgets\thinking_orbs\engine\morph.dart:42:19 - prefer_function_declarations_over_variables
+   info - The constant name 'HOLD' isn't a lowerCamelCase identifier - lib\features\chat\widgets\thinking_orbs\engine\morph.dart:67:14 - constant_identifier_names
+   info - The constant name 'MORPH' isn't a lowerCamelCase identifier - lib\features\chat\widgets\thinking_orbs\engine\morph.dart:68:14 - constant_identifier_names
+   info - The constant name 'SEG' isn't a lowerCamelCase identifier - lib\features\chat\widgets\thinking_orbs\engine\morph.dart:69:14 - constant_identifier_names
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\features\credit_card\models\credit_card_model.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\features\credit_card\presentation\widgets\bank_selection_sheet.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\features\fd\presentation\screens\fd_intro_screen.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\features\home\presentation\widgets\card_design_utils.dart:4:11 - annotate_overrides
+warning - The declaration '_buildBankAccountsRow' isn't referenced - lib\features\home\screens\home_screen.dart:307:10 - unused_element
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\screens\home_screen.dart:514:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\screens\home_screen.dart:515:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\screens\home_screen.dart:555:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\screens\home_screen.dart:558:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\screens\home_screen.dart:562:43 - deprecated_member_use
+  error - 'Object.toString' ('String Function()') isn't a valid concrete implementation of 'Diagnosticable.toString' ('String Function({DiagnosticLevel minLevel})') - lib\features\home\widgets\home_app_bar.dart:7:7 - invalid_implementation_override
+  error - Missing concrete implementations of 'abstract class DiagnosticableTree with Diagnosticable.debugDescribeChildren', 'abstract class DiagnosticableTree with Diagnosticable.toDiagnosticsNode', 'abstract class DiagnosticableTree with Diagnosticable.toStringDeep', 'abstract class DiagnosticableTree with Diagnosticable.toStringShallow', and 4 more - lib\features\home\widgets\home_app_bar.dart:7:7 - non_abstract_class_inherits_abstract_member
+  error - Classes can only extend other classes - lib\features\home\widgets\home_app_bar.dart:7:26 - extends_non_class
+  error - No associated named super constructor parameter - lib\features\home\widgets\home_app_bar.dart:8:27 - super_formal_parameter_without_associated_named
+warning - The method doesn't override an inherited method - lib\features\home\widgets\home_app_bar.dart:14:10 - override_on_non_overriding_member
+  error - Undefined class 'WidgetRef' - lib\features\home\widgets\home_app_bar.dart:14:38 - undefined_class
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_astra_intelligence.dart:33:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_order_cards.dart:100:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_order_cards.dart:105:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_portfolio_insights.dart:17:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_portfolio_insights.dart:70:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_portfolio_insights.dart:86:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_quick_actions.dart:55:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_surplus_banner.dart:24:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_surplus_banner.dart:87:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_surplus_banner.dart:119:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_surplus_banner.dart:124:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\home_surplus_banner.dart:134:56 - deprecated_member_use
+   info - The import of 'package:flutter/gestures.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\home\widgets\portfolio_interactive_chart.dart:2:8 - unnecessary_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\portfolio_interactive_chart.dart:175:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\portfolio_interactive_chart.dart:332:21 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\portfolio_interactive_chart.dart:333:21 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\portfolio_interactive_chart.dart:355:63 - deprecated_member_use
+warning - The value of the local variable 'dy' isn't used - lib\features\home\widgets\portfolio_interactive_chart.dart:366:12 - unused_local_variable
+warning - A value for optional parameter 'arrowWidth' isn't ever given - lib\features\home\widgets\portfolio_interactive_chart.dart:391:10 - unused_element_parameter
+warning - A value for optional parameter 'radius' isn't ever given - lib\features\home\widgets\portfolio_interactive_chart.dart:393:10 - unused_element_parameter
+warning - A value for optional parameter 'borderColor' isn't ever given - lib\features\home\widgets\portfolio_interactive_chart.dart:394:10 - unused_element_parameter
+warning - A value for optional parameter 'borderWidth' isn't ever given - lib\features\home\widgets\portfolio_interactive_chart.dart:395:10 - unused_element_parameter
+  error - Classes can only extend other classes - lib\features\home\widgets\stats_summary_widget.dart:10:34 - extends_non_class
+  error - No associated named super constructor parameter - lib\features\home\widgets\stats_summary_widget.dart:11:35 - super_formal_parameter_without_associated_named
+warning - The method doesn't override an inherited method - lib\features\home\widgets\stats_summary_widget.dart:14:10 - override_on_non_overriding_member
+  error - Undefined class 'WidgetRef' - lib\features\home\widgets\stats_summary_widget.dart:14:38 - undefined_class
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:172:31 - deprecated_member_use
+   info - 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead - lib\features\home\widgets\zeyro_new_home_widgets.dart:203:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:207:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:210:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:214:57 - deprecated_member_use
+   info - 'translate' is deprecated and shouldn't be used. Use translateByVector3, translateByVector4, or translateByDouble instead - lib\features\home\widgets\zeyro_new_home_widgets.dart:227:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:231:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:234:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:238:57 - deprecated_member_use
+  error - Undefined name 'cardThemes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:257:35 - undefined_identifier
+  error - Undefined name 'cardThemes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:258:43 - undefined_identifier
+  error - The method 'PatternPainter' isn't defined for the type '_BalanceCardState' - lib\features\home\widgets\zeyro_new_home_widgets.dart:266:46 - undefined_method
+  error - Undefined name 'cardThemes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:267:39 - undefined_identifier
+  error - Undefined name 'cardThemes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:268:47 - undefined_identifier
+  error - Undefined name 'cardThemes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:270:39 - undefined_identifier
+  error - Undefined name 'cardThemes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:271:47 - undefined_identifier
+  error - The getter 'bankName' isn't defined for the type 'BankAccount' - lib\features\home\widgets\zeyro_new_home_widgets.dart:293:70 - undefined_getter
+  error - Expected an identifier - lib\features\home\widgets\zeyro_new_home_widgets.dart:298:53 - missing_identifier
+  error - The getter 'accountNumber' isn't defined for the type 'BankAccount' - lib\features\home\widgets\zeyro_new_home_widgets.dart:314:72 - undefined_getter
+  error - The getter 'accountNumber' isn't defined for the type 'BankAccount' - lib\features\home\widgets\zeyro_new_home_widgets.dart:314:119 - undefined_getter
+  error - Expected an identifier - lib\features\home\widgets\zeyro_new_home_widgets.dart:318:43 - missing_identifier
+  error - The getter 'qrScan' isn't defined for the type 'AppRoutes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:558:48 - undefined_getter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:569:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:579:37 - deprecated_member_use
+  error - Expected an identifier - lib\features\home\widgets\zeyro_new_home_widgets.dart:589:19 - missing_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:717:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:727:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:799:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:918:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:973:55 - deprecated_member_use
+  error - Expected an identifier - lib\features\home\widgets\zeyro_new_home_widgets.dart:1000:53 - missing_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1008:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1018:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1022:65 - deprecated_member_use
+  error - Expected an identifier - lib\features\home\widgets\zeyro_new_home_widgets.dart:1075:31 - missing_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1104:55 - deprecated_member_use
+  error - Expected an identifier - lib\features\home\widgets\zeyro_new_home_widgets.dart:1116:43 - missing_identifier
+  error - Expected an identifier - lib\features\home\widgets\zeyro_new_home_widgets.dart:1132:51 - missing_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1252:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1286:29 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1319:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1398:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1433:33 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\features\home\widgets\zeyro_new_home_widgets.dart:1455:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\widgets\zeyro_new_home_widgets.dart:1457:9 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1475:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1482:45 - deprecated_member_use
+  error - The getter 'goals' isn't defined for the type 'AppRoutes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:1837:48 - undefined_getter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:1983:29 - deprecated_member_use
+  error - The getter 'tags' isn't defined for the type 'GoalDto' - lib\features\home\widgets\zeyro_new_home_widgets.dart:1989:31 - undefined_getter
+  error - The getter 'tags' isn't defined for the type 'GoalDto' - lib\features\home\widgets\zeyro_new_home_widgets.dart:1989:54 - undefined_getter
+  error - The getter 'name' isn't defined for the type 'GoalDto' - lib\features\home\widgets\zeyro_new_home_widgets.dart:1999:24 - undefined_getter
+  error - The getter 'allocatedAmount' isn't defined for the type 'GoalDto' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2006:28 - undefined_getter
+  error - The getter 'targetAmount' isn't defined for the type 'GoalDto' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2006:74 - undefined_getter
+  error - The getter 'allocatedAmount' isn't defined for the type 'GoalDto' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2016:26 - undefined_getter
+  error - The getter 'targetAmount' isn't defined for the type 'GoalDto' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2016:49 - undefined_getter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2118:33 - deprecated_member_use
+  error - An expression whose value is always 'null' can't be dereferenced - lib\features\home\widgets\zeyro_new_home_widgets.dart:2259:29 - invalid_use_of_null_value
+  error - The method 'showBankSelection' isn't defined for the type '_CreditCollectionCardState' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2390:23 - undefined_method
+  error - The getter 'creditCardControl' isn't defined for the type 'AppRoutes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2422:62 - undefined_getter
+  error - The getter 'creditCardControl' isn't defined for the type 'AppRoutes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2475:54 - undefined_getter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2482:37 - deprecated_member_use
+  error - Undefined name 'cardThemes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2500:19 - undefined_identifier
+  error - The getter 'themeIndex' isn't defined for the type 'CreditCardModel' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2500:36 - undefined_getter
+  error - Undefined name 'cardThemes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2500:55 - undefined_identifier
+  error - The getter 'creditCardControl' isn't defined for the type 'AppRoutes' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2503:48 - undefined_getter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2522:35 - deprecated_member_use
+  error - The method 'PatternPainter' isn't defined for the type '_CreditCollectionCardState' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2533:26 - undefined_method
+  error - Undefined name 'CardPattern' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2533:41 - undefined_identifier
+  error - The method 'PatternPainter' isn't defined for the type '_CreditCollectionCardState' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2540:26 - undefined_method
+  error - Undefined name 'CardPattern' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2541:19 - undefined_identifier
+  error - The method 'PatternPainter' isn't defined for the type '_CreditCollectionCardState' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2552:28 - undefined_method
+  error - Undefined name 'CardPattern' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2552:43 - undefined_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2569:43 - deprecated_member_use
+  error - The method 'PatternPainter' isn't defined for the type '_CreditCollectionCardState' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2581:36 - undefined_method
+  error - The getter 'bankName' isn't defined for the type 'CreditCardModel' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2599:40 - undefined_getter
+  error - The getter 'last4Digits' isn't defined for the type 'CreditCardModel' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2623:40 - undefined_getter
+  error - The getter 'cardHolderName' isn't defined for the type 'CreditCardModel' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2636:40 - undefined_getter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2679:43 - deprecated_member_use
+  error - The method 'PatternPainter' isn't defined for the type '_CreditCollectionCardState' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2690:34 - undefined_method
+  error - Undefined name 'CardPattern' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2691:27 - undefined_identifier
+  error - The method 'PatternPainter' isn't defined for the type '_CreditCollectionCardState' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2699:34 - undefined_method
+  error - Undefined name 'CardPattern' - lib\features\home\widgets\zeyro_new_home_widgets.dart:2700:27 - undefined_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2718:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2722:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2727:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2740:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2744:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2749:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2772:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2776:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2781:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2794:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2798:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2803:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\home\widgets\zeyro_new_home_widgets.dart:2886:33 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\home\widgets\zeyro_revamped_home_widgets.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_services/service_providers.dart' - lib\features\home\widgets\zeyro_revamped_home_widgets.dart:5:8 - unused_import
+warning - Unused import: 'package:astra_frontend/features/fd/presentation/screens/fd_intro_screen.dart' - lib\features\home\widgets\zeyro_revamped_home_widgets.dart:8:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\fund_profile\mf_fund_profile_screen.dart:272:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\fund_profile\mf_fund_profile_screen.dart:307:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\fund_profile\mf_fund_profile_screen.dart:508:33 - deprecated_member_use
+   info - Unnecessary use of 'toList' in a spread - lib\features\mf\screens\fund_profile\widgets\mf_asset_allocation_bottom_sheet.dart:491:14 - unnecessary_to_list_in_spreads
+   info - Unnecessary use of 'toList' in a spread - lib\features\mf\screens\fund_profile\widgets\mf_asset_allocation_bottom_sheet.dart:735:14 - unnecessary_to_list_in_spreads
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\fund_profile\widgets\mf_fund_chart_widget.dart:85:21 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\fund_profile\widgets\mf_fund_chart_widget.dart:86:21 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\fund_profile\widgets\mf_fund_details_house.dart:100:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\fund_profile\widgets\mf_fund_overview_card.dart:86:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\holdings_screen.dart:56:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\holdings_screen.dart:93:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\holdings_screen.dart:94:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\holdings_screen.dart:141:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\holdings_screen.dart:225:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\holdings_screen.dart:226:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\holdings_screen.dart:266:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\holdings_screen.dart:269:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\holdings_screen.dart:273:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\widgets\mf_holdings_empty_state.dart:17:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\widgets\mf_holdings_empty_state.dart:64:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\widgets\mf_holdings_empty_state.dart:69:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\widgets\mf_holdings_empty_state.dart:131:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\holdings\widgets\mf_holdings_header.dart:55:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_bonds\widgets\mf_bonds_banner.dart:101:68 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_bonds\widgets\mf_bonds_know_more.dart:30:39 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\features\mf\screens\mf_collection\mf_collection_screen.dart:85:22 - sized_box_for_whitespace
+   info - Unnecessary use of 'toList' in a spread - lib\features\mf\screens\mf_collection\mf_collection_screen.dart:183:68 - unnecessary_to_list_in_spreads
+warning - Unused import: 'widgets/mf_explore_grid.dart' - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:6:8 - unused_import
+warning - Unused import: 'widgets/mf_trending_funds.dart' - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:7:8 - unused_import
+warning - Unused import: 'widgets/mf_fund_list_card.dart' - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:8:8 - unused_import
+warning - Unused import: 'widgets/mf_popular_pills.dart' - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:9:8 - unused_import
+warning - Unused import: 'widgets/mf_income_safety.dart' - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:20:8 - unused_import
+warning - Unused import: 'widgets/mf_learn_and_grow.dart' - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:23:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:183:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:184:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:225:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:228:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:232:43 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\features\mf\screens\mf_explore\mf_explore_screen.dart:258:34 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_ai_picks_bento.dart:48:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_ai_picks_bento.dart:75:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_ai_picks_bento.dart:82:87 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_ai_picks_bento.dart:132:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_ai_picks_bento.dart:198:33 - deprecated_member_use
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\features\mf\screens\mf_explore\widgets\mf_explore_assets.dart:101:23 - sized_box_for_whitespace
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_explore_by_risk.dart:68:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_explore_by_risk.dart:147:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_explore_by_risk.dart:153:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_explore_by_risk.dart:193:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_explore_grid.dart:112:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_fund_list_card.dart:53:37 - deprecated_member_use
+   info - Unnecessary use of 'toList' in a spread - lib\features\mf\screens\mf_explore\widgets\mf_fund_list_card.dart:109:68 - unnecessary_to_list_in_spreads
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_global_investing.dart:35:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_global_investing.dart:55:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_global_investing.dart:56:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_global_investing.dart:57:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_global_investing.dart:66:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_goal_planning.dart:145:37 - deprecated_member_use
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\features\mf\screens\mf_explore\widgets\mf_goal_planning.dart:177:31 - use_null_aware_elements
+   info - Unnecessary use of 'toList' in a spread - lib\features\mf\screens\mf_explore\widgets\mf_goal_planning.dart:214:32 - unnecessary_to_list_in_spreads
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\features\mf\screens\mf_explore\widgets\mf_goal_planning.dart:281:61 - use_null_aware_elements
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\features\mf\screens\mf_explore\widgets\mf_goal_planning.dart:314:61 - use_null_aware_elements
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_goal_planning.dart:394:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_income_safety.dart:34:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_learn_and_grow.dart:68:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_learn_and_grow.dart:98:33 - deprecated_member_use
+   info - Unnecessary 'const' keyword - lib\features\mf\screens\mf_explore\widgets\mf_new_alternative_assets.dart:16:23 - unnecessary_const
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_new_alternative_assets.dart:200:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_new_built_for_u.dart:34:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_new_built_for_u.dart:102:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_new_trending_themes.dart:186:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_explore\widgets\mf_trending_funds.dart:114:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_banner.dart:102:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_banner.dart:119:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_banner.dart:136:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_highest_rates.dart:144:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_plans_list.dart:146:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_plans_list.dart:184:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_specific_needs.dart:38:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_specific_needs.dart:51:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_specific_needs.dart:64:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_specific_needs.dart:77:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_specific_needs.dart:90:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_specific_needs.dart:103:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_specific_needs.dart:231:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\mf_fd\widgets\mf_fd_specific_needs.dart:245:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\mf\screens\orders\widgets\mf_order_item_card.dart:63:43 - deprecated_member_use
+warning - Unused import: 'package:go_router/go_router.dart' - lib\features\mf\screens\orders\widgets\mf_orders_header.dart:3:8 - unused_import
+warning - Unused import: '../../../../../core/providers/nav_context_provider.dart' - lib\features\mf\screens\orders\widgets\mf_orders_header.dart:4:8 - unused_import
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\features\navigation\main_navigation_screen.dart:4:11 - annotate_overrides
+warning - Unused import: 'dart:ui' - lib\features\navigation\widgets\border_beam.dart:3:8 - unused_import
+   info - Parameter 'key' could be a super parameter - lib\features\navigation\widgets\border_beam.dart:26:9 - use_super_parameters
+   info - Invalid use of a private type in a public API - lib\features\navigation\widgets\border_beam.dart:37:3 - library_private_types_in_public_api
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\navigation\widgets\border_beam.dart:151:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\navigation\widgets\border_beam.dart:165:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\navigation\widgets\border_beam.dart:179:46 - deprecated_member_use
+warning - Unused import: 'nav_shared_components.dart' - lib\features\navigation\widgets\explore_nav_row.dart:5:8 - unused_import
+warning - Unused import: 'nav_shared_components.dart' - lib\features\navigation\widgets\main_nav_row.dart:3:8 - unused_import
+warning - Unused import: '../../chat/widgets/thinking_orbs/thinking_orb.dart' - lib\features\navigation\widgets\mf_nav_row.dart:5:8 - unused_import
+warning - Unused import: 'nav_shared_components.dart' - lib\features\navigation\widgets\mf_nav_row.dart:6:8 - unused_import
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\navigation\widgets\nav_input_pill.dart:1:8 - unnecessary_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\screens\add_recurring_screen.dart:2:8 - unused_import
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\recurring\presentation\screens\add_recurring_screen.dart:3:8 - unnecessary_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\add_recurring_screen.dart:43:71 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\add_recurring_screen.dart:52:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\add_recurring_screen.dart:56:71 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\add_recurring_screen.dart:208:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\add_recurring_screen.dart:234:78 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\add_recurring_screen.dart:240:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\add_recurring_screen.dart:296:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\add_recurring_screen.dart:321:31 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:2:8 - unused_import
+   info - The private field _scrollEnabled could be 'final' - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:28:8 - prefer_final_fields
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:141:63 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:270:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:319:99 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:327:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:334:68 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:391:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:451:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:542:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:568:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:594:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:610:38 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\features\recurring\presentation\screens\manage_autopay_screen.dart:622:9 - curly_braces_in_flow_control_structures
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\screens\recurring_control_screen.dart:1:8 - unused_import
+warning - Unused import: 'dart:convert' - lib\features\recurring\presentation\screens\recurring_control_screen.dart:12:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/widgets/noise_texture.dart' - lib\features\recurring\presentation\screens\recurring_control_screen.dart:13:8 - unused_import
+  error - The getter 'bytes' isn't defined for the type 'NoiseCache' - lib\features\recurring\presentation\screens\recurring_control_screen.dart:59:37 - undefined_getter
+warning - The declaration '_onTodayPressed' isn't referenced - lib\features\recurring\presentation\screens\recurring_control_screen.dart:209:8 - unused_element
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_control_screen.dart:369:53 - deprecated_member_use
+  error - The method 'ZeyroIconButton' isn't defined for the type '_RecurringControlScreenState' - lib\features\recurring\presentation\screens\recurring_control_screen.dart:386:31 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_control_screen.dart:561:47 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\screens\recurring_history_screen.dart:2:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_history_screen.dart:104:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_history_screen.dart:141:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_history_screen.dart:181:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_history_screen.dart:240:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_history_screen.dart:283:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_history_screen.dart:303:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_history_screen.dart:306:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_history_screen.dart:317:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_history_screen.dart:366:39 - deprecated_member_use
+  error - The method 'ZeyroIconButton' isn't defined for the type 'RecurringIntroScreen' - lib\features\recurring\presentation\screens\recurring_intro_screen.dart:24:24 - undefined_method
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\screens\recurring_intro_screen.dart:42:41 - deprecated_member_use
+  error - The argument type 'ZeyroButton' can't be assigned to the parameter type 'Widget?'.  - lib\features\recurring\presentation\screens\recurring_intro_screen.dart:96:22 - argument_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\recurring\presentation\screens\recurring_intro_screen.dart:96:34 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\recurring\presentation\screens\recurring_intro_screen.dart:105:17 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\recurring\presentation\screens\recurring_intro_screen.dart:114:17 - undefined_named_parameter
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\dues_sheet\all_time_tab.dart:2:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\all_time_tab.dart:31:35 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\dues_sheet\paused_tab.dart:2:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\paused_tab.dart:32:35 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\dues_sheet\subscription_tile.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\dues_sheet\subscription_tile.dart:4:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\subscription_tile.dart:99:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\subscription_tile.dart:127:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\subscription_tile.dart:181:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\subscription_tile.dart:192:41 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\dues_sheet\this_month_tab.dart:2:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\this_month_tab.dart:31:35 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\dues_sheet\trials_tab.dart:2:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\trials_tab.dart:31:35 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\dues_sheet\upcoming_tab.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\dues_sheet\upcoming_tab.dart:6:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\upcoming_tab.dart:41:36 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\upcoming_tab.dart:142:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\upcoming_tab.dart:188:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\upcoming_tab.dart:228:66 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\dues_sheet\upcoming_tab.dart:239:39 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\cancel_success_bottom_sheet.dart:3:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\cancel_success_bottom_sheet.dart:34:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\cancel_success_bottom_sheet.dart:53:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\cancel_success_bottom_sheet.dart:65:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\cancel_success_bottom_sheet.dart:126:39 - deprecated_member_use
+  error - The argument type 'ZeyroButton' can't be assigned to the parameter type 'Widget?'.  - lib\features\recurring\presentation\widgets\recurring_control\cancel_success_bottom_sheet.dart:138:22 - argument_type_not_assignable
+  error - The named parameter 'onPressed' isn't defined - lib\features\recurring\presentation\widgets\recurring_control\cancel_success_bottom_sheet.dart:138:34 - undefined_named_parameter
+  error - The named parameter 'style' isn't defined - lib\features\recurring\presentation\widgets\recurring_control\cancel_success_bottom_sheet.dart:139:17 - undefined_named_parameter
+  error - The named parameter 'child' isn't defined - lib\features\recurring\presentation\widgets\recurring_control\cancel_success_bottom_sheet.dart:147:17 - undefined_named_parameter
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\day_payments_popup.dart:3:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\day_payments_popup.dart:33:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\day_payments_popup.dart:47:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\day_payments_popup.dart:58:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\day_payments_popup.dart:132:41 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:1:8 - unused_import
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'dart:ui' - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:4:8 - unnecessary_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:5:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:119:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:129:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:252:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:301:99 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:309:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:316:68 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:336:126 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:384:15 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:393:95 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:443:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:464:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:481:146 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\manage_autopay_bottom_sheet.dart:483:153 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\recurring_control\pause_autopay_bottom_sheet.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\pause_autopay_bottom_sheet.dart:4:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\pause_autopay_bottom_sheet.dart:94:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\pause_autopay_bottom_sheet.dart:140:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\pause_autopay_bottom_sheet.dart:207:34 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_services/analytics_service.dart' - lib\features\recurring\presentation\widgets\recurring_control\pause_date_selection_bottom_sheet.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\recurring_control\pause_date_selection_bottom_sheet.dart:2:8 - unused_import
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/cupertino.dart' - lib\features\recurring\presentation\widgets\recurring_control\pause_date_selection_bottom_sheet.dart:3:8 - unnecessary_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\pause_date_selection_bottom_sheet.dart:6:8 - unused_import
+warning - The declaration '_onConfirmPause' isn't referenced - lib\features\recurring\presentation\widgets\recurring_control\pause_date_selection_bottom_sheet.dart:40:8 - unused_element
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\pause_date_selection_bottom_sheet.dart:92:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\pause_date_selection_bottom_sheet.dart:126:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\pause_date_selection_bottom_sheet.dart:180:39 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\recurring_control\recurring_calendar_widget.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\recurring_calendar_widget.dart:4:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_calendar_widget.dart:95:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_calendar_widget.dart:164:32 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_calendar_widget.dart:179:73 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_calendar_widget.dart:204:31 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\recurring_control\recurring_dues_sheet.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\recurring_dues_sheet.dart:3:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_dues_sheet.dart:138:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_dues_sheet.dart:158:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_dues_sheet.dart:162:67 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_dues_sheet.dart:178:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_dues_sheet.dart:198:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_dues_sheet.dart:230:78 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\recurring_dues_sheet.dart:236:69 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_services/analytics_service.dart' - lib\features\recurring\presentation\widgets\recurring_control\resume_autopay_bottom_sheet.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\recurring_control\resume_autopay_bottom_sheet.dart:2:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\resume_autopay_bottom_sheet.dart:4:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\resume_autopay_bottom_sheet.dart:92:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\resume_autopay_bottom_sheet.dart:138:39 - deprecated_member_use
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:2:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:4:8 - unused_import
+warning - The declaration '_onBackspace' isn't referenced - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:29:8 - unused_element
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:70:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:103:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:120:60 - deprecated_member_use
+  error - Expected to find ';' - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:169:48 - expected_token
+warning - Dead code - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:169:49 - dead_code
+  error - Expected an identifier - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:169:49 - missing_identifier
+  error - Expected to find ';' - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:169:49 - expected_token
+  error - Unexpected text ';' - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:169:49 - unexpected_token
+  error - Expected an identifier - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:170:5 - missing_identifier
+  error - Unexpected text ';' - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:170:5 - unexpected_token
+   info - Unnecessary empty statement - lib\features\recurring\presentation\widgets\recurring_control\upi_pin_bottom_sheet.dart:170:6 - empty_statements
+warning - Unused import: 'package:astra_frontend/zeyro_core/instrumentation/instrumentation.dart' - lib\features\recurring\presentation\widgets\recurring_control\yearly_calendar_view.dart:1:8 - unused_import
+warning - Unused import: 'package:astra_frontend/zeyro_core/responsive/size_config.dart' - lib\features\recurring\presentation\widgets\recurring_control\yearly_calendar_view.dart:5:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\yearly_calendar_view.dart:147:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\recurring\presentation\widgets\recurring_control\yearly_calendar_view.dart:195:45 - deprecated_member_use
+   info - Use 'whereType' to select elements of a given type - lib\models\analytics_data.dart:369:17 - prefer_iterable_wheretype
+warning - Unused import: 'dart:convert' - lib\models\budget_action_request.dart:1:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\models\chat_conversations.dart:36:11 - avoid_print
+   info - Don't invoke 'print' in production code - lib\models\chat_message.dart:143:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\models\chat_message.dart:158:7 - avoid_print
+   info - The imported package 'zeyro_app' isn't a dependency of the importing package - lib\models\home_dashboard.dart:1:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:zeyro_app/models/bank_account.dart' - lib\models\home_dashboard.dart:1:8 - uri_does_not_exist
+   info - The imported package 'zeyro_app' isn't a dependency of the importing package - lib\models\home_dashboard.dart:2:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:zeyro_app/features/credit_card/models/credit_card_model.dart' - lib\models\home_dashboard.dart:2:8 - uri_does_not_exist
+   info - The imported package 'zeyro_app' isn't a dependency of the importing package - lib\models\home_dashboard.dart:3:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:zeyro_app/services/dtos/goal_dto.dart' - lib\models\home_dashboard.dart:3:8 - uri_does_not_exist
+  error - The name 'BankAccount' isn't a type, so it can't be used as a type argument - lib\models\home_dashboard.dart:46:14 - non_type_as_type_argument
+  error - The name 'GoalDto' isn't a type, so it can't be used as a type argument - lib\models\home_dashboard.dart:50:14 - non_type_as_type_argument
+  error - The name 'CreditCardModel' isn't a type, so it can't be used as a type argument - lib\models\home_dashboard.dart:51:14 - non_type_as_type_argument
+   info - Use 'whereType' to select elements of a given type - lib\models\home_dashboard.dart:73:17 - prefer_iterable_wheretype
+  error - Undefined name 'BankAccount' - lib\models\home_dashboard.dart:74:27 - undefined_identifier
+   info - Use 'whereType' to select elements of a given type - lib\models\home_dashboard.dart:79:17 - prefer_iterable_wheretype
+   info - Use 'whereType' to select elements of a given type - lib\models\home_dashboard.dart:86:17 - prefer_iterable_wheretype
+  error - Undefined name 'GoalDto' - lib\models\home_dashboard.dart:87:27 - undefined_identifier
+   info - Use 'whereType' to select elements of a given type - lib\models\home_dashboard.dart:91:17 - prefer_iterable_wheretype
+  error - Undefined name 'CreditCardModel' - lib\models\home_dashboard.dart:92:27 - undefined_identifier
+   info - Use 'whereType' to select elements of a given type - lib\models\home_dashboard.dart:294:17 - prefer_iterable_wheretype
+   info - Dangling library doc comment - lib\models\onboarding_models.dart:1:1 - dangling_library_doc_comments
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\services\dtos\goal_dto.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\state\budget_coordinator_notifier.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\events\data_events.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\instrumentation\funnel_tracker.dart:4:11 - annotate_overrides
+  error - Target of URI doesn't exist: 'amplitude_service.dart' - lib\zeyro_core\instrumentation\instrumentation.dart:2:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'interaction_event.dart' - lib\zeyro_core\instrumentation\instrumentation.dart:3:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'zeyro_tap_detector.dart' - lib\zeyro_core\instrumentation\instrumentation.dart:5:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'zeyro_icon_button.dart' - lib\zeyro_core\instrumentation\instrumentation.dart:6:8 - uri_does_not_exist
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\instrumentation\widgets\visibility_tracker.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\instrumentation\zeyro_button.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\network\api.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\network\error_handler.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\routes\app_routes.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\theme\app_theme.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\widgets\noise_cache.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\widgets\noise_texture.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\zeyro_models\bank_account.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\zeyro_models\budget_models.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\zeyro_models\budget_setup_session.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_core\zeyro_models\category_avg.dart:4:11 - annotate_overrides
+   info - The imported package 'characters' isn't a dependency of the importing package - lib\zeyro_services\analytics_service.dart:2:8 - depend_on_referenced_packages
+   info - The imported package 'firebase_analytics' isn't a dependency of the importing package - lib\zeyro_services\analytics_service.dart:3:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:firebase_analytics/firebase_analytics.dart' - lib\zeyro_services\analytics_service.dart:3:8 - uri_does_not_exist
+  error - Undefined class 'FirebaseAnalytics' - lib\zeyro_services\analytics_service.dart:9:9 - undefined_class
+  error - Undefined name 'FirebaseAnalytics' - lib\zeyro_services\analytics_service.dart:9:40 - undefined_identifier
+   info - Use interpolation to compose strings and values - lib\zeyro_services\analytics_service.dart:24:11 - prefer_interpolation_to_compose_strings
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_services\dtos\goal_dto.dart:4:11 - annotate_overrides
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_services\finance_repository.dart:4:11 - annotate_overrides
+   info - The imported package 'amplitude_flutter' isn't a dependency of the importing package - lib\zeyro_services\instrumentation_service.dart:4:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:amplitude_flutter/amplitude.dart' - lib\zeyro_services\instrumentation_service.dart:4:8 - uri_does_not_exist
+   info - The imported package 'amplitude_flutter' isn't a dependency of the importing package - lib\zeyro_services\instrumentation_service.dart:5:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:amplitude_flutter/configuration.dart' - lib\zeyro_services\instrumentation_service.dart:5:8 - uri_does_not_exist
+   info - The imported package 'amplitude_flutter' isn't a dependency of the importing package - lib\zeyro_services\instrumentation_service.dart:6:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:amplitude_flutter/events/identify.dart' - lib\zeyro_services\instrumentation_service.dart:6:8 - uri_does_not_exist
+   info - The imported package 'amplitude_flutter' isn't a dependency of the importing package - lib\zeyro_services\instrumentation_service.dart:7:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:amplitude_flutter/events/base_event.dart' - lib\zeyro_services\instrumentation_service.dart:7:8 - uri_does_not_exist
+   info - The imported package 'flutter_dotenv' isn't a dependency of the importing package - lib\zeyro_services\instrumentation_service.dart:10:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:flutter_dotenv/flutter_dotenv.dart' - lib\zeyro_services\instrumentation_service.dart:10:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: '../core/instrumentation/instrumentation_constants.dart' - lib\zeyro_services\instrumentation_service.dart:11:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: '../core/instrumentation/event_payloads.dart' - lib\zeyro_services\instrumentation_service.dart:12:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: '../core/session/session_store.dart' - lib\zeyro_services\instrumentation_service.dart:13:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: '../core/responsive/size_config.dart' - lib\zeyro_services\instrumentation_service.dart:14:8 - uri_does_not_exist
+   info - The imported package 'package_info_plus' isn't a dependency of the importing package - lib\zeyro_services\instrumentation_service.dart:15:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:package_info_plus/package_info_plus.dart' - lib\zeyro_services\instrumentation_service.dart:15:8 - uri_does_not_exist
+   info - The imported package 'device_info_plus' isn't a dependency of the importing package - lib\zeyro_services\instrumentation_service.dart:16:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:device_info_plus/device_info_plus.dart' - lib\zeyro_services\instrumentation_service.dart:16:8 - uri_does_not_exist
+   info - The imported package 'firebase_crashlytics' isn't a dependency of the importing package - lib\zeyro_services\instrumentation_service.dart:18:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:firebase_crashlytics/firebase_crashlytics.dart' - lib\zeyro_services\instrumentation_service.dart:18:8 - uri_does_not_exist
+   info - The imported package 'shared_preferences' isn't a dependency of the importing package - lib\zeyro_services\instrumentation_service.dart:19:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:shared_preferences/shared_preferences.dart' - lib\zeyro_services\instrumentation_service.dart:19:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: '../core/instrumentation/funnel_tracker.dart' - lib\zeyro_services\instrumentation_service.dart:20:8 - uri_does_not_exist
+  error - Undefined class 'Amplitude' - lib\zeyro_services\instrumentation_service.dart:39:14 - undefined_class
+  error - Undefined name 'PackageInfo' - lib\zeyro_services\instrumentation_service.dart:68:35 - undefined_identifier
+  error - The method 'DeviceInfoPlugin' isn't defined for the type 'InstrumentationService' - lib\zeyro_services\instrumentation_service.dart:70:28 - undefined_method
+  error - Undefined name 'dotenv' - lib\zeyro_services\instrumentation_service.dart:82:22 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:91:15 - undefined_identifier
+  error - The method 'Amplitude' isn't defined for the type 'InstrumentationService' - lib\zeyro_services\instrumentation_service.dart:95:20 - undefined_method
+  error - The method 'Configuration' isn't defined for the type 'InstrumentationService' - lib\zeyro_services\instrumentation_service.dart:95:30 - undefined_method
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:114:34 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:116:24 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:118:65 - undefined_identifier
+  error - The method 'Identify' isn't defined for the type 'InstrumentationService' - lib\zeyro_services\instrumentation_service.dart:123:31 - undefined_method
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:130:13 - undefined_identifier
+  error - Undefined name 'FunnelTracker' - lib\zeyro_services\instrumentation_service.dart:133:13 - undefined_identifier
+  error - Undefined class 'UserStatus' - lib\zeyro_services\instrumentation_service.dart:175:5 - undefined_class
+  error - Undefined class 'KycStatus' - lib\zeyro_services\instrumentation_service.dart:176:5 - undefined_class
+  error - Undefined class 'UserSegment' - lib\zeyro_services\instrumentation_service.dart:177:5 - undefined_class
+  error - Undefined class 'FinancialGoalType' - lib\zeyro_services\instrumentation_service.dart:187:5 - undefined_class
+  error - Undefined class 'PrimaryPaymentMethod' - lib\zeyro_services\instrumentation_service.dart:189:5 - undefined_class
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:206:25 - undefined_identifier
+  error - Undefined name 'FirebaseCrashlytics' - lib\zeyro_services\instrumentation_service.dart:218:7 - undefined_identifier
+  error - The method 'Identify' isn't defined for the type 'InstrumentationService' - lib\zeyro_services\instrumentation_service.dart:221:24 - undefined_method
+  error - Undefined name 'UserStatus' - lib\zeyro_services\instrumentation_service.dart:224:63 - undefined_identifier
+  error - Undefined name 'UserStatus' - lib\zeyro_services\instrumentation_service.dart:225:56 - undefined_identifier
+  error - Undefined name 'FunnelTracker' - lib\zeyro_services\instrumentation_service.dart:266:7 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:310:32 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:312:55 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:345:12 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:351:32 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:359:27 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:360:22 - undefined_identifier
+  error - Undefined name 'UserStatus' - lib\zeyro_services\instrumentation_service.dart:394:23 - undefined_identifier
+  error - Undefined class 'BehavioralContext' - lib\zeyro_services\instrumentation_service.dart:408:5 - undefined_class
+  error - Undefined class 'TechnicalContext' - lib\zeyro_services\instrumentation_service.dart:409:5 - undefined_class
+  error - The method 'BaseEvent' isn't defined for the type 'InstrumentationService' - lib\zeyro_services\instrumentation_service.dart:456:19 - undefined_method
+  error - Undefined name 'SharedPreferences' - lib\zeyro_services\instrumentation_service.dart:516:27 - undefined_identifier
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\zeyro_services\instrumentation_service.dart:526:7 - use_null_aware_elements
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:543:30 - undefined_identifier
+  error - Undefined name 'SessionStore' - lib\zeyro_services\instrumentation_service.dart:544:35 - undefined_identifier
+  error - Undefined name 'KycStatus' - lib\zeyro_services\instrumentation_service.dart:590:82 - undefined_identifier
+  error - Undefined name 'KycStatus' - lib\zeyro_services\instrumentation_service.dart:592:45 - undefined_identifier
+  error - Undefined name 'UserStatus' - lib\zeyro_services\instrumentation_service.dart:894:35 - undefined_identifier
+  error - Undefined name 'UserStatus' - lib\zeyro_services\instrumentation_service.dart:894:63 - undefined_identifier
+  error - Undefined name 'KycStatus' - lib\zeyro_services\instrumentation_service.dart:898:56 - undefined_identifier
+  error - Undefined name 'SizeConfig' - lib\zeyro_services\instrumentation_service.dart:910:9 - undefined_identifier
+  error - Undefined name 'SizeConfig' - lib\zeyro_services\instrumentation_service.dart:911:38 - undefined_identifier
+  error - Undefined name 'SizeConfig' - lib\zeyro_services\instrumentation_service.dart:911:72 - undefined_identifier
+   info - The member 'noSuchMethod' overrides an inherited member but isn't annotated with '@override' - lib\zeyro_services\service_providers.dart:4:11 - annotate_overrides
+   info - Don't invoke 'print' in production code - scratch_update.dart:11:9 - avoid_print
+   info - Don't invoke 'print' in production code - scratch_update.dart:24:3 - avoid_print
+   info - Don't invoke 'print' in production code - scratch_update.dart:35:5 - avoid_print
+

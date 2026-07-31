@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/models/fund_profile_data.dart';
+import '../../../../../core/models/fund_asset_allocation_data.dart';
 
 class MfMockFundData {
   static final List<double> _baseChartData = [
@@ -11,6 +12,56 @@ class MfMockFundData {
     20, 21, 22, 22, 23, 24, 25, 26, 27, 27, 28, 29, 30, 31, 31, 32, 33, 34, 35,
     36, 37, 38, 38, 39, 40, 41, 42, 43, 44, 45, 46
   ];
+  
+  static AssetAllocationData get mockAssetAllocation => _mockAssetAllocation;
+  static final AssetAllocationData _mockAssetAllocation = AssetAllocationData(
+    equity: EquityAllocationData(
+      totalPercentage: 98.29,
+      largeCapPercentage: 45.16,
+      midCapPercentage: 17.40,
+      smallCapPercentage: 35.73,
+      sectors: [
+        DistributionItem(title: 'Financial Services', percentage: 36.65),
+        DistributionItem(title: 'Consumer Cyclical', percentage: 15.25),
+        DistributionItem(title: 'Basic Materials', percentage: 11.52),
+        DistributionItem(title: 'Industrials', percentage: 10.62),
+        DistributionItem(title: 'Consumer Defensive', percentage: 7.00),
+      ],
+      holdings: [
+        DistributionItem(title: 'HDFC Bank Ltd', percentage: 4.85),
+        DistributionItem(title: 'ICICI Bank Ltd', percentage: 4.11),
+        DistributionItem(title: 'The Federal Bank Ltd', percentage: 3.23),
+        DistributionItem(title: 'State Bank of India', percentage: 3.18),
+        DistributionItem(title: 'Karur Vysya Bank Ltd', percentage: 3.15),
+      ],
+    ),
+    debt: DebtAllocationData(
+      totalPercentage: 0.58,
+      creditQuality: [
+        DistributionItem(title: 'AAA', percentage: 100.00),
+      ],
+      sectors: [
+        DistributionItem(title: 'Corporate', percentage: 3.49),
+        DistributionItem(title: 'Government', percentage: 0.99),
+      ],
+      holdings: [
+        DistributionItem(title: 'Tbill', percentage: 0.24, icon: Icons.domain),
+        DistributionItem(title: 'Indian Bank', percentage: 0.21, icon: Icons.domain),
+        DistributionItem(title: 'Small Industries Development Bank of India', subtitle: '- NCD & Bonds', percentage: 0.21, icon: Icons.domain),
+        DistributionItem(title: 'Tbill', percentage: 0.14, icon: Icons.domain),
+      ],
+    ),
+    others: OtherAllocationData(
+      totalPercentage: 1.13,
+      otherAllocation: [
+        DistributionItem(title: 'Cash', percentage: 100.00),
+      ],
+      holdings: [
+        DistributionItem(title: 'Treps', percentage: 2.04, icon: Icons.domain),
+        DistributionItem(title: 'Net Current Assets (Including Cash & Bank Balances)', percentage: 0.33, icon: Icons.domain),
+      ],
+    ),
+  );
 
   static FundProfileData getFundData(String fundId) {
     switch (fundId) {
@@ -93,6 +144,7 @@ class MfMockFundData {
           sipFinalAmount: '₹5,17,681',
           sipReturnPercentage: '(43.8%)',
           overviewText: 'Know about distribution of holdings by market capitalisation, sectors, and individual holdings.',
+          assetAllocation: _mockAssetAllocation,
         );
       case 'Axis Value Fund':
         return FundProfileData(
@@ -154,6 +206,7 @@ class MfMockFundData {
           sipFinalAmount: '₹4,12,000',
           sipReturnPercentage: '(18.5%)',
           overviewText: 'Invests primarily in highly rated corporate bonds for steady income and low volatility.',
+          assetAllocation: _mockAssetAllocation,
         );
       case 'SBI Debt Fund':
       case 'Debt Funds':
@@ -440,6 +493,7 @@ class MfMockFundData {
           sipFinalAmount: '₹4,50,000',
           sipReturnPercentage: '(32.5%)',
           overviewText: 'A dynamically managed portfolio tailored to your specific risk profile.',
+          assetAllocation: _mockAssetAllocation,
         );
     }
   }

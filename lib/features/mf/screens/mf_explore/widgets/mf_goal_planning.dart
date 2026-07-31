@@ -139,7 +139,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
           margin: const EdgeInsets.symmetric(horizontal: 16.0),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(4),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.03),
@@ -330,7 +330,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
                         color: Colors.black,
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -432,7 +432,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: const Color(0xFFE2E8F0)),
           ),
           child: Icon(icon, size: 14, color: const Color(0xFF64748B)),

@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../../core/models/fund_profile_data.dart';
 import '../mf_explore/data/mf_mock_fund_data.dart';
 import 'widgets/mf_fund_chart_widget.dart';
+import 'widgets/mf_fund_overview_card.dart';
+import 'widgets/mf_fund_fees_taxes.dart';
+import 'widgets/mf_fund_return_ratios.dart';
+import 'widgets/mf_fund_asset_allocation.dart';
+import 'widgets/mf_fund_details_house.dart';
 
 class MfFundProfileScreen extends StatefulWidget {
   final String fundId;
@@ -79,7 +84,12 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                         const SizedBox(height: 16),
                         
                         // Fund Overview
-                        _buildFundOverview(processedData),
+                        MfFundOverviewCard(data: processedData),
+                        
+                        const MfFundFeesTaxes(),
+                        const MfFundReturnRatios(),
+                        MfFundAssetAllocation(data: processedData.assetAllocation ?? MfMockFundData.mockAssetAllocation),
+                        const MfFundDetailsHouse(),
                         
                         // Padding to ensure we can scroll past the bottom bar
                         const SizedBox(height: 80),
@@ -193,11 +203,6 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
             onTap: () => Navigator.of(context).pop(),
             child: Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFF1F5F9)),
-                color: Colors.white,
-              ),
               child: const Icon(Icons.chevron_left, size: 28, color: Color(0xFF0F172A)),
             ),
           ),
@@ -243,8 +248,8 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                 Text(
                   data.name,
                   style: const TextStyle(
-                    fontFamily: 'SpaceGrotesk',
-                    fontSize: 18,
+                    fontFamily: 'DMsans',
+                    fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF0F172A),
                     height: 1.2,
@@ -255,7 +260,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                   data.tags,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF94A3B8),
                   ),
@@ -265,7 +270,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: data.riskColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -309,7 +314,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
               child: Text(
                 data.logoText.toUpperCase(),
                 style: const TextStyle(
-                  fontFamily: 'SpaceGrotesk',
+                  fontFamily: 'DMSans',
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
@@ -335,8 +340,8 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
               Text(
                 data.returnPercentage,
                 style: TextStyle(
-                  fontFamily: 'SpaceGrotesk',
-                  fontSize: 24,
+                  fontFamily: 'DMSans',
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: data.chartColor,
                   letterSpacing: -1.0,
@@ -347,7 +352,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                 data.returnDuration,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF94A3B8),
                 ),
@@ -361,7 +366,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                 data.comparisonText,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF64748B),
                 ),
@@ -389,7 +394,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                     'SIP ₹10K / ${data.sipDurationText} would have become',
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 11,
+                      fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF475569),
                     ),
@@ -400,8 +405,8 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                       Text(
                         data.sipFinalAmount,
                         style: const TextStyle(
-                          fontFamily: 'SpaceGrotesk',
-                          fontSize: 14,
+                          fontFamily: 'DMSans',
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF0F172A),
                         ),
@@ -411,7 +416,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                         data.sipReturnPercentage,
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 11,
+                          fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: data.chartColor,
                         ),
@@ -469,7 +474,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(color: isSelected ? const Color(0xFFE2E8F0) : Colors.transparent),
         ),
         child: Text(
@@ -481,70 +486,6 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
             color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildFundOverview(FundProfileData data) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Fund overview',
-            style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.warning_amber_rounded, size: 14, color: data.riskColor),
-                    const SizedBox(width: 8),
-                    Text(
-                      data.riskLabel,
-                      style: const TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF0F172A),
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8),
-                  child: Divider(color: Color(0xFFE2E8F0), height: 1),
-                ),
-                Text(
-                  data.overviewText,
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF64748B),
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -577,7 +518,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: const Color(0xFF0F172A)),
               ),
               child: const Center(
@@ -599,7 +540,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFF0F172A),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: const Center(
                 child: Text(

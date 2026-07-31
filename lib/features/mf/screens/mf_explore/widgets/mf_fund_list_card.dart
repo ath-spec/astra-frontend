@@ -7,6 +7,9 @@ class MfFundListCard extends StatelessWidget {
   final String cardSubtitle;
   final Widget cardGraphic; // E.g., an icon or custom drawn widget
   final List<MfFundItemData> funds;
+  final EdgeInsetsGeometry? margin;
+  final Color? borderColor;
+  final VoidCallback? onViewCollection;
 
   const MfFundListCard({
     super.key,
@@ -15,6 +18,9 @@ class MfFundListCard extends StatelessWidget {
     required this.cardSubtitle,
     required this.cardGraphic,
     required this.funds,
+    this.margin,
+    this.borderColor,
+    this.onViewCollection,
   });
 
   @override
@@ -38,10 +44,10 @@ class MfFundListCard extends StatelessWidget {
           ),
         const SizedBox(height: 16),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16.0),
+          margin: margin ?? const EdgeInsets.symmetric(horizontal: 16.0),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(4),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.03),
@@ -50,7 +56,7 @@ class MfFundListCard extends StatelessWidget {
               ),
             ],
             border: Border.all(
-              color: const Color(0xFFF1F5F9), // Slate 100
+              color: borderColor ?? const Color(0xFFF1F5F9), // Default Slate 100
             ),
           ),
           child: Column(
@@ -102,26 +108,29 @@ class MfFundListCard extends StatelessWidget {
               // List of funds
               ...funds.map((fund) => _buildFundRow(context, fund)).toList(),
               // Footer
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    Text(
-                      'View collection',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
+              InkWell(
+                onTap: onViewCollection,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'View collection',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        size: 16,
                         color: Color.fromARGB(255, 0, 0, 0),
                       ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      size: 16,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],

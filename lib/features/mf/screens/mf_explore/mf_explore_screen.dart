@@ -57,106 +57,31 @@ class MfExploreScreen extends ConsumerWidget {
                 const SizedBox(height: 48),
                 const MfNewTrendingThemes(),
                 const SizedBox(height: 48),
+
+                // Section 5: INVESTMENT IDEAS
+                const MfNewInvestmentIdeas(),
+                const SizedBox(height: 48),
+                // Section 6: GOAL PLANNING
+                const MfGoalPlanning(),
+                const SizedBox(height: 48),
                 // Section 2: ALTERNATIVE ASSETS
                 const MfNewAlternativeAssets(),
                 const SizedBox(height: 48),
-                const MfTrendingFunds(),
-                const SizedBox(height: 48),
-                MfFundListCard(
-                  sectionTitle: 'Investment Ideas',
-                  cardTitle: 'High Potential Value Funds',
-                  cardSubtitle: 'Targeting hidden gems in the stock market',
-                  cardGraphic: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: const RadialGradient(
-                        colors: [Color(0xFF6EE7B7), Color(0xFF10B981)],
-                      ),
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    child: const Icon(Icons.pie_chart, color: Colors.white, size: 32),
-                  ),
-                  funds: const [
-                    MfFundItemData(
-                      name: 'Quant Value Fund',
-                      category: 'Equity • Value',
-                      returns: '22.56%',
-                      logoIcon: Icons.change_history,
-                      logoColor: Colors.purple,
-                    ),
-                    MfFundItemData(
-                      name: 'Axis Value Fund',
-                      category: 'Equity • Value',
-                      returns: '18.73%',
-                      logoIcon: Icons.details,
-                      logoColor: Colors.red,
-                    ),
-                    MfFundItemData(
-                      name: 'HSBC Value Fund',
-                      category: 'Equity • Value',
-                      returns: '18.4%',
-                      logoIcon: Icons.account_balance,
-                      logoColor: Colors.redAccent,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 48),
-                const MfPopularPills(),
-                const SizedBox(height: 48),
                 const MfAlternativeFunds(),
-                const SizedBox(height: 48),
-                MfFundListCard(
-                  sectionTitle: 'Ride the Nifty',
-                  cardTitle: 'Passive funds that track Nifty 50 for peaceful investments',
-                  cardSubtitle: '',
-                  cardGraphic: const SizedBox.shrink(), // No graphic for this one
-                  funds: const [
-                    MfFundItemData(
-                      name: 'Motilal Oswal Nifty 50 Index Fund',
-                      category: 'Equity • Index Funds',
-                      returns: '8.38%',
-                      logoIcon: Icons.show_chart,
-                      logoColor: Colors.orange,
-                    ),
-                    MfFundItemData(
-                      name: 'Navi Nifty 50 Index Fund',
-                      category: 'Equity • Index Funds',
-                      returns: '8.36%',
-                      logoIcon: Icons.trending_up,
-                      logoColor: Colors.green,
-                    ),
-                    MfFundItemData(
-                      name: 'Franklin India Nse Nifty 50 Index Fund',
-                      category: 'Equity • Index Funds',
-                      returns: '8.34%',
-                      logoIcon: Icons.account_balance,
-                      logoColor: Colors.blueGrey,
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 48),
                 
                 // Section 3: AI PICKS (HERO)
                 const MfNewAiPicksHero(),
                 const SizedBox(height: 48),
 
-                // Section 5: INVESTMENT IDEAS
-                const MfNewInvestmentIdeas(),
-                const SizedBox(height: 48),
+                
 
-                // Section 6: GOAL PLANNING
-                const MfGoalPlanning(),
-                const SizedBox(height: 48),
+                
 
                 // Section 6: GLOBAL INVESTING
                 const MfGlobalInvesting(),
                 const SizedBox(height: 48),
 
-                
-
-                // Section 8: INCOME & SAFETY
-                const MfIncomeSafety(),
-                const SizedBox(height: 48),
 
                 // Section 9: EXPLORE BY RISK
                 const MfExploreByRisk(),
@@ -164,13 +89,6 @@ class MfExploreScreen extends ConsumerWidget {
 
                 // Section 10: AI PICKS (DYNAMIC BENTO)
                 const MfAiPicksBento(),
-                const SizedBox(height: 48),
-
-                // Section 11: LEARN & GROW
-                const MfLearnAndGrow(),
-
-                const SizedBox(height: 48),
-                const MfExploreGrid(),
                 
                 const SizedBox(height: 120), // Bottom padding for nav bar
               ],

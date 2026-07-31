@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'fund_asset_allocation_data.dart';
 
 class FundProfileData {
   final String id;
@@ -22,6 +23,8 @@ class FundProfileData {
   final String sipReturnPercentage; // '(43.8%)'
   
   final String overviewText;
+  
+  final AssetAllocationData? assetAllocation;
 
   const FundProfileData({
     required this.id,
@@ -40,5 +43,6 @@ class FundProfileData {
     required this.sipFinalAmount,
     required this.sipReturnPercentage,
     required this.overviewText,
+    this.assetAllocation,
   });
 }
