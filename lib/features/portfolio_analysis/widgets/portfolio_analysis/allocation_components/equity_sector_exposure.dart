@@ -34,7 +34,7 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
     return VisibilityDetector(
       key: const Key('EquitySectorExposureSection'),
       onVisibilityChanged: (info) {
-        if (!_hasAnimated && info.visibleFraction >= 0.3) {
+        if (!_hasAnimated && info.visibleFraction >= 0.15) {
           _hasAnimated = true;
           _controller.forward();
         }

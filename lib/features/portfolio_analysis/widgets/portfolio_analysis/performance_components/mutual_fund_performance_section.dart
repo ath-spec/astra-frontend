@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:visibility_detector/visibility_detector.dart';
+import 'mutual_fund_performance_sheet.dart';
 
 class MutualFundPerformanceSection extends StatefulWidget {
   const MutualFundPerformanceSection({super.key});
@@ -76,7 +77,7 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
         VisibilityDetector(
           key: const Key('MutualFundPerformanceSection_3DChart'),
           onVisibilityChanged: (info) {
-            if (!_hasAnimated && info.visibleFraction >= 0.5) {
+            if (!_hasAnimated && info.visibleFraction >= 0.15) {
               _hasAnimated = true;
               _controller.forward();
             }
@@ -84,13 +85,38 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
           child: SizedBox(
             height: 240,
             width: double.infinity,
-            child: AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                return CustomPaint(
-                  painter: _Performance3DBarPainter(progress: _animation.value),
+            child: GestureDetector(
+              onTapUp: (details) {
+                final width = MediaQuery.of(context).size.width;
+                final dx = details.localPosition.dx;
+                final sectionWidth = width / 4;
+                int tabIndex = 0; // Default to out-performing
+                if (dx < sectionWidth) {
+                  tabIndex = 2; // Under-performing
+                } else if (dx < sectionWidth * 2) {
+                  tabIndex = 1; // In line
+                } else if (dx < sectionWidth * 3) {
+                  tabIndex = 0; // Out-performing
+                } else {
+                  tabIndex = 3; // Unrated
+                }
+                
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                  builder: (context) => MutualFundPerformanceSheet(initialIndex: tabIndex),
                 );
               },
+              behavior: HitTestBehavior.opaque,
+              child: AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return CustomPaint(
+                    painter: _Performance3DBarPainter(progress: _animation.value),
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -103,6 +129,14 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
           title: 'Under-performing funds',
           percentage: '0%',
           amount: '₹0',
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
+              builder: (context) => const MutualFundPerformanceSheet(initialIndex: 2),
+            );
+          },
         ),
         const _DottedDivider(),
         _buildFundListItem(
@@ -110,6 +144,14 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
           title: 'In line performing funds',
           percentage: '31%',
           amount: '₹1,08,587',
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
+              builder: (context) => const MutualFundPerformanceSheet(initialIndex: 1),
+            );
+          },
         ),
         const _DottedDivider(),
         _buildFundListItem(
@@ -117,6 +159,14 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
           title: 'Out-performing funds',
           percentage: '68%',
           amount: '₹2,36,538',
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
+              builder: (context) => const MutualFundPerformanceSheet(initialIndex: 0),
+            );
+          },
         ),
         
         const SizedBox(height: 24),
@@ -179,17 +229,21 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
     required String title,
     required String percentage,
     required String amount,
+    VoidCallback? onTap,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -230,8 +284,9 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
           const Icon(Icons.chevron_right, size: 16, color: Color(0xFF94A3B8)),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _Performance3DBarPainter extends CustomPainter {
@@ -309,8 +364,9 @@ class _Performance3DBarPainter extends CustomPainter {
 
     final textPainter = TextPainter(textDirection: TextDirection.ltr, textAlign: TextAlign.center);
     
-    final barW = 28.0;
-    final depth = 12.0;
+    // Scale bar width dynamically based on total width
+    final barW = math.max(20.0, size.width * 0.08); 
+    final depth = barW * 0.45;
     final maxAvailableHeight = 150.0; // Maximum visual height in pixels for the tallest bar
     
     double maxVal = 0;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePortfolioInsights extends StatelessWidget {
   const HomePortfolioInsights({super.key});
@@ -43,6 +44,8 @@ class HomePortfolioInsights extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             children: [
               _buildInsightCard(
+                context: context,
+                index: 0,
                 title: 'Tax harvesting:\nlock in ₹1.25L tax-\nfree',
                 buttonText: 'KNOW MORE',
                 painter: TaxHarvestingPainter(),
@@ -50,6 +53,8 @@ class HomePortfolioInsights extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               _buildInsightCard(
+                context: context,
+                index: 1,
                 title: 'Steady your\ngrowth with index\nfunds',
                 buttonText: 'KNOW MORE',
                 painter: IndexFundsPainter(),
@@ -63,12 +68,18 @@ class HomePortfolioInsights extends StatelessWidget {
   }
 
   Widget _buildInsightCard({
+    required BuildContext context,
+    required int index,
     required String title,
     required String buttonText,
     required CustomPainter painter,
     required double cardWidth,
   }) {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        context.push('/insights?initial=$index');
+      },
+      child: Container(
       width: cardWidth,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -151,8 +162,9 @@ class HomePortfolioInsights extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class TaxHarvestingPainter extends CustomPainter {

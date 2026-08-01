@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import '../discipline_components/generic_info_sheet.dart';
+import 'expensive_funds_sheet.dart';
 
 class ExpensiveFundsSection extends StatefulWidget {
   const ExpensiveFundsSection({super.key});
@@ -40,8 +42,8 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'Expensive Funds',
                 style: TextStyle(
                   fontFamily: 'DMSans',
@@ -50,8 +52,28 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                   color: Color(0xFF0F172A),
                 ),
               ),
-              SizedBox(width: 8),
-              Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+              const SizedBox(width: 8),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (context) => const GenericInfoSheet(
+                      title: 'What are Expensive Funds?',
+                      paragraphs: [
+                        'Funds with a high expense ratio relative to their category are considered expensive.',
+                        'Expense ratio is the annual fee charged by a fund. Over time, higher costs can meaningfully reduce net returns.',
+                      ],
+                    ),
+                  );
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -111,26 +133,38 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
           ),
           const SizedBox(height: 16),
           
-          Row(
-            children: const [
-              Text(
-                'View funds',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF0F172A),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) => const ExpensiveFundsSheet(initialIndex: 1),
+              );
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Text(
+                  'View funds',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0F172A),
+                  ),
                 ),
-              ),
-              Icon(Icons.chevron_right, size: 16, color: Color(0xFF0F172A)),
-            ],
+                Icon(Icons.chevron_right, size: 16, color: Color(0xFF0F172A)),
+              ],
+            ),
           ),
           const SizedBox(height: 32),
           
           VisibilityDetector(
             key: const Key('ExpensiveFundsSection_InsightsLine'),
             onVisibilityChanged: (info) {
-              if (!_hasAnimated && info.visibleFraction >= 0.5) {
+              if (!_hasAnimated && info.visibleFraction >= 0.15) {
                 _hasAnimated = true;
                 _controller.forward();
               }

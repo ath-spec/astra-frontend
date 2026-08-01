@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../models/portfolio_analysis_models.dart';
+import 'discipline_info_sheet.dart';
 
 class DisciplineGaugeSection extends StatefulWidget {
   final DisciplineLevel level;
@@ -66,12 +67,16 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final gaugeWidth = screenWidth * 0.8;
+    final gaugeHeight = gaugeWidth * 0.5;
+
     return Column(
       children: [
         const SizedBox(height: 40),
         SizedBox(
-          width: 300,
-          height: 160,
+          width: gaugeWidth,
+          height: gaugeHeight + 10,
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
@@ -79,7 +84,7 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
                 animation: _animation,
                 builder: (context, child) {
                   return CustomPaint(
-                    size: const Size(300, 150),
+                    size: Size(gaugeWidth, gaugeHeight),
                     painter: _DisciplineGaugePainter(
                       progress: _animation.value,
                       score: widget.level.score,
@@ -115,28 +120,45 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
           ),
         ),
         const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
-              SizedBox(width: 8),
-              Text(
-                'KNOW MORE',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.0,
-                  color: Color(0xFF0F172A),
+        GestureDetector(
+          onTap: () {
+            // Map the 4-tier DisciplineLevel to the 5-tier info sheet UI
+            int index = 2; // Default to Fair
+            if (widget.level == DisciplineLevel.poor) index = 1; // Low
+            if (widget.level == DisciplineLevel.moderate) index = 2; // Fair
+            if (widget.level == DisciplineLevel.good) index = 3; // Good
+            if (widget.level == DisciplineLevel.excellent) index = 4; // Excellent
+            
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => DisciplineInfoSheet(currentLevelIndex: index),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                SizedBox(width: 8),
+                Text(
+                  'KNOW MORE',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.0,
+                    color: Color(0xFF0F172A),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 32),
@@ -174,52 +196,17 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
       letterSpacing: -1.0,
     );
 
-    if (widget.level.label == 'Moderate') {
-      return ShaderMask(
-        shaderCallback: (bounds) => const LinearGradient(
-          colors: [
-            Color(0xFF90CDF4), // Replaced pure white so it doesn't vanish on white bg
-            Color(0xFF5BA1F7),
-            Color(0xFF031E6B),
-            Color(0xFF241714),
-          ],
-          stops: [0.0, 0.25, 0.7, 1.0],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ).createShader(bounds),
-        child: Text(
-          'Moderate',
-          style: baseStyle.copyWith(color: Colors.white),
-        ),
-      );
-    } else {
-      return RichText(
-        text: TextSpan(
-          style: baseStyle,
-          children: _getSplitLabel(widget.level.label, widget.level.color),
-        ),
-      );
-    }
-  }
-
-  List<InlineSpan> _getSplitLabel(String label, Color color) {
-    if (label == 'Moderate') {
-      return [
-        const TextSpan(text: 'Moder', style: TextStyle(color: Color(0xFF0F172A))),
-        TextSpan(text: 'ate', style: TextStyle(color: color)),
-      ];
-    } else if (label == 'Needs Work') {
-      return [
-        const TextSpan(text: 'Needs ', style: TextStyle(color: Color(0xFF0F172A))),
-        TextSpan(text: 'Work', style: TextStyle(color: color)),
-      ];
-    } else if (label == 'Excellent') {
-      return [
-        const TextSpan(text: 'Excel', style: TextStyle(color: Color(0xFF0F172A))),
-        TextSpan(text: 'lent', style: TextStyle(color: color)),
-      ];
-    }
-    return [TextSpan(text: label, style: TextStyle(color: color))];
+    return ShaderMask(
+      shaderCallback: (bounds) => LinearGradient(
+        colors: widget.level.gradientColors,
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+      ).createShader(bounds),
+      child: Text(
+        widget.level.label,
+        style: baseStyle.copyWith(color: Colors.white),
+      ),
+    );
   }
 }
 

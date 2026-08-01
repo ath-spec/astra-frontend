@@ -10,6 +10,7 @@ class AnalysisResultView extends StatefulWidget {
   final String scoreText;
   final String description;
   final Color gaugeColor;
+  final List<Color>? gradientColors;
   final double fillPercentage;
   final VoidCallback onNext;
 
@@ -20,6 +21,7 @@ class AnalysisResultView extends StatefulWidget {
     required this.scoreText,
     required this.description,
     required this.gaugeColor,
+    this.gradientColors,
     required this.fillPercentage,
     required this.onNext,
   });
@@ -163,17 +165,36 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
                           padding: const EdgeInsets.symmetric(horizontal: 80.0), // Increased from 24 to strictly fit inside the gauge stroke
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
-                            child: Text(
-                              widget.mode,
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 36,
-                                fontWeight: FontWeight.w700,
-                                color: widget.gaugeColor,
-                                height: 1.1,
-                              ),
-                            ),
+                            child: widget.gradientColors != null
+                                ? ShaderMask(
+                                    shaderCallback: (bounds) => LinearGradient(
+                                      colors: widget.gradientColors!,
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                    ).createShader(bounds),
+                                    child: Text(
+                                      widget.mode,
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        fontFamily: 'DMSans',
+                                        fontSize: 36,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white, // Must be white for ShaderMask
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    widget.mode,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontFamily: 'DMSans',
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.w700,
+                                      color: widget.gaugeColor,
+                                      height: 1.1,
+                                    ),
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 16),

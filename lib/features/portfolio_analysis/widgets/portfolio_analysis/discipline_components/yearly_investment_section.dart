@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'generic_info_sheet.dart';
 
 class YearlyInvestmentSection extends StatefulWidget {
   const YearlyInvestmentSection({super.key});
@@ -45,7 +46,7 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
     return VisibilityDetector(
       key: const Key('YearlyInvestmentSection'),
       onVisibilityChanged: (info) {
-        if (!_hasAnimated && info.visibleFraction >= 0.4) {
+        if (!_hasAnimated && info.visibleFraction >= 0.50) {
           _hasAnimated = true;
           _controller.forward();
         }
@@ -56,8 +57,8 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
           Row(
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'Yearly Investment',
                 style: TextStyle(
                   fontFamily: 'DMSans',
@@ -66,8 +67,27 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
                   color: Color(0xFF0F172A),
                 ),
               ),
-              SizedBox(width: 8),
-              Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+              GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => const GenericInfoSheet(
+                      title: 'What is Yearly Investment?',
+                      paragraphs: [
+                        'This tracks your total investment contributions year over year.',
+                        'Consistent yearly growth in your investments indicates strong financial discipline and a commitment to long-term wealth creation.',
+                      ],
+                    ),
+                  );
+                },
+                behavior: HitTestBehavior.opaque,
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),

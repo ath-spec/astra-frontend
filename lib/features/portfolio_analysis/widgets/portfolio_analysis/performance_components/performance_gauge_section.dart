@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../models/portfolio_analysis_models.dart';
+import 'performance_info_sheet.dart';
 
 class PerformanceGaugeSection extends StatefulWidget {
   final PerformanceLevel level;
@@ -62,12 +63,16 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final gaugeWidth = screenWidth * 0.8;
+    final gaugeHeight = gaugeWidth * 0.5;
+
     return Column(
       children: [
         const SizedBox(height: 40),
         SizedBox(
-          width: 300,
-          height: 160,
+          width: gaugeWidth,
+          height: gaugeHeight + 10, // add a bit for text overlap
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
@@ -75,7 +80,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                 animation: _animation,
                 builder: (context, child) {
                   return CustomPaint(
-                    size: const Size(300, 150),
+                    size: Size(gaugeWidth, gaugeHeight),
                     painter: _PerformanceGaugePainter(
                       progress: _animation.value,
                       level: widget.level,
@@ -103,14 +108,21 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    widget.level.label,
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.5,
-                      color: widget.level.activeColor,
+                  ShaderMask(
+                    shaderCallback: (bounds) => LinearGradient(
+                      colors: widget.level.gradientColors,
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ).createShader(bounds),
+                    child: Text(
+                      widget.level.label,
+                      style: const TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -119,28 +131,39 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
           ),
         ),
         const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
-              SizedBox(width: 8),
-              Text(
-                'KNOW MORE',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.0,
-                  color: Color(0xFF0F172A),
+        GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
+              builder: (context) => PerformanceInfoSheet(level: widget.level),
+            );
+          },
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                SizedBox(width: 8),
+                Text(
+                  'KNOW MORE',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.0,
+                    color: Color(0xFF0F172A),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 32),

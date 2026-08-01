@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../widgets/analysis_walk/analysis_intro_view.dart';
 import '../widgets/analysis_walk/analysis_result_view.dart';
 import '../../home/widgets/home_portfolio_analysis.dart';
+import '../models/portfolio_analysis_models.dart';
 
 enum WalkStep {
   disciplineIntro,
@@ -69,8 +70,11 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      body: Stack(
-        children: [
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: Stack(
+            children: [
           // Content (Full screen, no safe area constraints)
           Positioned.fill(
             child: AnimatedSwitcher(
@@ -148,8 +152,10 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
           ),
         ],
       ),
-    );
-  }
+      ),
+    ),
+  );
+}
 
   Widget _buildCurrentView() {
     switch (_currentStep) {
@@ -162,14 +168,16 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
           onNext: _nextStep,
         );
       case WalkStep.disciplineResult:
+        final model = DisciplineLevel.moderate;
         return AnalysisResultView(
           key: const ValueKey('disciplineResult'),
           type: ResultType.discipline,
-          mode: 'Moderate',
+          mode: model.label,
           scoreText: 'You\'re building good habits.',
           description: 'Your monthly contributions are becoming more consistent, though there\'s room to strengthen your SIP adherence.',
-          gaugeColor: const Color(0xFF4299E1),
-          fillPercentage: 0.6,
+          gaugeColor: model.color,
+          gradientColors: model.gradientColors,
+          fillPercentage: model.score,
           onNext: _nextStep,
         );
       case WalkStep.allocationIntro:
@@ -181,14 +189,16 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
           onNext: _nextStep,
         );
       case WalkStep.allocationResult:
+        final model = AllocationLevel.veryAggressive;
         return AnalysisResultView(
           key: const ValueKey('allocationResult'),
           type: ResultType.allocation,
-          mode: 'Very Aggressive',
+          mode: model.label,
           scoreText: 'Your portfolio is highly aggressive.',
           description: 'Heavy concentration in high-risk equity and multiplier assets positions you for sharp swings and high rewards.',
-          gaugeColor: const Color(0xFF9F7AEA),
-          fillPercentage: 0.85,
+          gaugeColor: model.activeColor,
+          gradientColors: model.gradientColors,
+          fillPercentage: model.activeSegments / 5,
           onNext: _nextStep,
         );
       case WalkStep.performanceIntro:
@@ -200,14 +210,16 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
           onNext: _nextStep,
         );
       case WalkStep.performanceResult:
+        final model = PerformanceLevel.veryStrong;
         return AnalysisResultView(
           key: const ValueKey('performanceResult'),
           type: ResultType.performance,
-          mode: 'Very Strong',
+          mode: model.label,
           scoreText: 'Your portfolio is outperforming the market.',
           description: 'Your XIRR is significantly ahead of the benchmark. Excellent fund quality and smart choices are paying off.',
-          gaugeColor: const Color(0xFF48BB78),
-          fillPercentage: 0.9,
+          gaugeColor: model.activeColor,
+          gradientColors: model.gradientColors,
+          fillPercentage: model.activeSegments / 5,
           onNext: _nextStep,
         );
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'generic_info_sheet.dart';
 
 class SipAutomationSection extends StatefulWidget {
   const SipAutomationSection({super.key});
@@ -36,8 +37,8 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'SIP Automation',
                 style: TextStyle(
                   fontFamily: 'DMSans',
@@ -46,8 +47,27 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                   color: Color(0xFF0F172A),
                 ),
               ),
-              SizedBox(width: 8),
-              Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+              GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => const GenericInfoSheet(
+                      title: 'What is SIP Automation?',
+                      paragraphs: [
+                        'SIP Automation shows what share of your monthly investments is made through automated SIPs.',
+                        'A higher automation share reduces missed contributions and limits emotional decision-making.',
+                      ],
+                    ),
+                  );
+                },
+                behavior: HitTestBehavior.opaque,
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),

@@ -57,6 +57,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
             icon: Icons.track_changes,
             valueText: DisciplineLevel.moderate.label,
             valueColor: DisciplineLevel.moderate.color,
+            gradientColors: DisciplineLevel.moderate.gradientColors,
             bottomText: 'VIEW >',
             painter: _MiniDisciplinePainter(level: DisciplineLevel.moderate),
           ),
@@ -70,6 +71,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
             icon: Icons.view_in_ar_outlined,
             valueText: AllocationLevel.veryAggressive.label,
             valueColor: AllocationLevel.veryAggressive.activeColor,
+            gradientColors: AllocationLevel.veryAggressive.gradientColors,
             bottomText: '• 2 INSIGHTS >',
             bottomBgColor: const Color(0xFFFEF3C7),
             bottomTextColor: const Color(0xFF92400E),
@@ -87,6 +89,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
             icon: Icons.change_history,
             valueText: PerformanceLevel.veryStrong.label,
             valueColor: PerformanceLevel.veryStrong.activeColor,
+            gradientColors: PerformanceLevel.veryStrong.gradientColors,
             bottomText: 'VIEW >',
             painter: _MiniPerformancePainter(
               level: PerformanceLevel.veryStrong,
@@ -257,6 +260,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
     required IconData icon,
     required String valueText,
     required Color valueColor,
+    List<Color>? gradientColors,
     required String bottomText,
     Color? bottomBgColor,
     Color? bottomTextColor,
@@ -314,16 +318,34 @@ class HomePortfolioAnalysis extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    valueText,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: valueColor,
-                    ),
-                  ),
+                  gradientColors != null
+                      ? ShaderMask(
+                          shaderCallback: (bounds) => LinearGradient(
+                            colors: gradientColors,
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            valueText,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          valueText,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: valueColor,
+                          ),
+                        ),
                 ],
               ),
             ),

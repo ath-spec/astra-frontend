@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AllocationSuggestionsSection extends StatelessWidget {
   const AllocationSuggestionsSection({super.key});
@@ -50,7 +51,9 @@ class AllocationSuggestionsSection extends StatelessWidget {
 
           // Insight Card 1 (Purple)
           _buildInsightCard(
-            title: 'Low exposure to index funds',
+            context: context,
+            index: 1, // Index Funds is index 1
+            title: 'Consider Index funds to achieve stability',
             painter: _TargetIsometricPainter(),
             bgGradient: const LinearGradient(
               colors: [Color(0xFFF5F3FF), Colors.white],
@@ -62,6 +65,8 @@ class AllocationSuggestionsSection extends StatelessWidget {
 
           // Insight Card 2 (Teal)
           _buildInsightCard(
+            context: context,
+            index: 0, // Tax Harvesting is index 0
             title: 'Save tax on your gains (Tax Harvesting)',
             painter: _HarvestableIsometricPainter(),
             bgGradient: const LinearGradient(
@@ -77,13 +82,19 @@ class AllocationSuggestionsSection extends StatelessWidget {
   }
 
   Widget _buildInsightCard({
+    required BuildContext context,
+    required int index,
     required String title,
     required CustomPainter painter,
     required Gradient bgGradient,
   }) {
-    return Container(
-      width: double.infinity,
-      height: 180,
+    return GestureDetector(
+      onTap: () {
+        context.push('/insights?initial=$index');
+      },
+      child: Container(
+        width: double.infinity,
+        height: 180,
       decoration: BoxDecoration(
         gradient: bgGradient,
         borderRadius: BorderRadius.circular(4),
@@ -160,8 +171,9 @@ class AllocationSuggestionsSection extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 // Draw a stylized Isometric 3D bar for "Target"

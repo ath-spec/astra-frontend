@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'generic_info_sheet.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'dart:async';
@@ -85,8 +86,8 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'Monthly Net Investment',
                 style: TextStyle(
                   fontFamily: 'DMSans',
@@ -95,8 +96,27 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
                   color: Color(0xFF0F172A),
                 ),
               ),
-              SizedBox(width: 8),
-              Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+              GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => const GenericInfoSheet(
+                      title: 'What is Monthly Investment?',
+                      paragraphs: [
+                        'This shows how your net investments have changed month to month over the last 12 months.',
+                        'It helps you see whether your investing habit is steady or irregular. Maintaining a stable base contribution supports long-term compounding.',
+                      ],
+                    ),
+                  );
+                },
+                behavior: HitTestBehavior.opaque,
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),

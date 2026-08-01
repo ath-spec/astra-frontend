@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import '../../../models/portfolio_analysis_models.dart';
+import 'allocation_info_sheet.dart';
+import 'allocation_factor_info_sheet.dart';
 
 class AllocationFactorsCard extends StatefulWidget {
   const AllocationFactorsCard({super.key});
@@ -31,7 +34,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
     return VisibilityDetector(
       key: const Key('AllocationFactorsCard'),
       onVisibilityChanged: (info) {
-        if (!_hasAnimated && info.visibleFraction >= 0.5) {
+        if (!_hasAnimated && info.visibleFraction >= 0.15) {
           _hasAnimated = true;
           _controller.forward();
         }
@@ -58,18 +61,36 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    'ALLOCATION FACTORS',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2.0,
-                      color: Color(0xFF94A3B8),
+                children: [
+                  Row(
+                    children: const [
+                      Text(
+                        'ALLOCATION FACTORS',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 2.0,
+                          color: Color(0xFF94A3B8),
+                        ),
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        builder: (context) => const AllocationInfoSheet(level: AllocationLevel.veryAggressive),
+                      );
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
                     ),
                   ),
-                  Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
                 ],
               ),
             ),
@@ -93,6 +114,8 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
             ),
             
             _buildFactorItem(
+              context: context,
+              index: 0,
               icon: Icons.change_history,
               title: 'Stable assets',
               subtitle: 'Bank Accounts, FDs, Surplus & Liqui...',
@@ -102,6 +125,8 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
             ),
             const _DottedDivider(),
             _buildFactorItem(
+              context: context,
+              index: 1,
               icon: Icons.call_split,
               title: 'Low volatility assets',
               subtitle: 'Mostly steady, small ups and downs',
@@ -111,6 +136,8 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
             ),
             const _DottedDivider(),
             _buildFactorItem(
+              context: context,
+              index: 2,
               icon: Icons.star_border,
               title: 'Medium volatility assets',
               subtitle: 'Moderate swings, growth potential',
@@ -120,6 +147,8 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
             ),
             const _DottedDivider(),
             _buildFactorItem(
+              context: context,
+              index: 3,
               icon: Icons.ac_unit,
               title: 'High volatility assets',
               subtitle: 'High swings, high potential',
@@ -135,6 +164,8 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
   }
 
   Widget _buildFactorItem({
+    required BuildContext context,
+    required int index,
     required IconData icon,
     required String title,
     required String subtitle,
@@ -142,11 +173,21 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
     required String percentage,
     required Color iconColor,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (context) => AllocationFactorInfoSheet(initialIndex: index),
+        );
+      },
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
@@ -185,35 +226,30 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Row(
-                children: [
-                  Text(
-                    amount,
-                    style: const TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF0F172A),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.chevron_right, size: 16, color: Color(0xFF94A3B8)),
-                ],
+              Text(
+                amount,
+                style: const TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF0F172A),
+                ),
               ),
               const SizedBox(height: 4),
               Text(
                 percentage,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF94A3B8),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF64748B),
                 ),
               ),
             ],
           ),
         ],
       ),
+    ),
     );
   }
 }

@@ -32,6 +32,7 @@ import '../../features/profile/screens/user_profile_screen.dart';
 import '../../features/asset_connection/screens/manage_bank_accounts_screen.dart';
 import 'package:astra_frontend/features/portfolio_analysis/screens/analysis_walk_screen.dart';
 import 'package:astra_frontend/features/portfolio_analysis/screens/portfolio_analysis_screen.dart';
+import 'package:astra_frontend/features/portfolio_analysis/screens/insights_screen.dart';
 import '../../features/mf/screens/mf_container_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/corner_fade_reveal_transition.dart';
@@ -203,6 +204,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final tabStr = state.uri.queryParameters['tab'];
           final initialTab = tabStr != null ? int.tryParse(tabStr) ?? 0 : 0;
           return PortfolioAnalysisScreen(initialTab: initialTab);
+        },
+      ),
+      GoRoute(
+        path: '/insights',
+        builder: (context, state) {
+          final initialInsightStr = state.uri.queryParameters['initial'];
+          final initialInsight = initialInsightStr != null ? int.tryParse(initialInsightStr) ?? 0 : 0;
+          return InsightsScreen(initialInsight: initialInsight);
         },
       ),
       StatefulShellRoute.indexedStack(

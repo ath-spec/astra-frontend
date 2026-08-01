@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../models/portfolio_analysis_models.dart';
+import 'allocation_info_sheet.dart';
 
 class AllocationGaugeSection extends StatefulWidget {
   final AllocationLevel level;
@@ -61,12 +62,16 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final gaugeWidth = screenWidth * 0.8;
+    final gaugeHeight = gaugeWidth * 0.5;
+
     return Column(
       children: [
         const SizedBox(height: 40),
         SizedBox(
-          width: 300,
-          height: 160,
+          width: gaugeWidth,
+          height: gaugeHeight + 10,
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
@@ -74,7 +79,7 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
                 animation: _animation,
                 builder: (context, child) {
                   return CustomPaint(
-                    size: const Size(300, 150),
+                    size: Size(gaugeWidth, gaugeHeight),
                     painter: _AllocationGaugePainter(
                       progress: _animation.value,
                       activeSegments: widget.level.activeSegments,
@@ -107,12 +112,7 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
                   ShaderMask(
                     shaderCallback: (bounds) {
                       return LinearGradient(
-                        colors: [
-                          const Color(0xFF0F172A),
-                          const Color(0xFF0F172A),
-                          widget.level.activeColor,
-                        ],
-                        stops: const [0.0, 0.65, 1.0],
+                        colors: widget.level.gradientColors,
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                       ).createShader(bounds);
@@ -134,29 +134,40 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
           ),
         ),
         const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.0),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
-              SizedBox(width: 6),
-              Text(
-                'KNOW MORE',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
-                  color: Color(0xFF0F172A),
+        GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
+              builder: (context) => AllocationInfoSheet(level: widget.level),
+            );
+          },
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFFE2E8F0), width: 1.0),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
+                SizedBox(width: 6),
+                Text(
+                  'KNOW MORE',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                    color: Color(0xFF0F172A),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 32),

@@ -87,9 +87,12 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Top Bar
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Column(
+              children: [
+                // Top Bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
@@ -133,10 +136,25 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
               ),
             ),
             // Custom Tab Bar with Smooth Sliding
-            SizedBox(
-              height: 48,
-              width: screenWidth,
-              child: AnimatedBuilder(
+            GestureDetector(
+              onHorizontalDragEnd: (details) {
+                if (details.primaryVelocity == null) return;
+                if (details.primaryVelocity! < -300) {
+                  // Swipe Left -> go to next tab
+                  if (_tabController.index < 2) {
+                    _tabController.animateTo(_tabController.index + 1);
+                  }
+                } else if (details.primaryVelocity! > 300) {
+                  // Swipe Right -> go to previous tab
+                  if (_tabController.index > 0) {
+                    _tabController.animateTo(_tabController.index - 1);
+                  }
+                }
+              },
+              child: SizedBox(
+                height: 48,
+                width: screenWidth,
+                child: AnimatedBuilder(
                 animation: _tabController.animation!,
                 builder: (context, child) {
                   final value = _tabController.animation!.value;
@@ -164,6 +182,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
                 },
               ),
             ),
+            ),
             // Divider
             Container(
               height: 1,
@@ -183,6 +202,8 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
           ],
         ),
       ),
+      ),
+    ),
     );
   }
 }
