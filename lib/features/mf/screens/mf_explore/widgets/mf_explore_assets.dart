@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../mf_fd/mf_fd_screen.dart';
 import '../../mf_bonds/mf_bonds_screen.dart';
+import '../../mf_collection/mf_mutual_funds_screen.dart';
 class MfExploreAssets extends StatelessWidget {
   const MfExploreAssets({super.key});
 
@@ -79,7 +80,11 @@ class MfExploreAssets extends StatelessWidget {
               final item = items[index];
               return InkWell(
                 onTap: () {
-                  if (item['title'] == 'FDs') {
+                  if (item['title'] == 'Mutual\nFunds') {
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(builder: (_) => const MfMutualFundsScreen()),
+                    );
+                  } else if (item['title'] == 'FDs') {
                     Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute(builder: (_) => const MfFdScreen()),
                     );

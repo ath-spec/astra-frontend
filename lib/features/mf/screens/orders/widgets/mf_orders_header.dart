@@ -17,8 +17,8 @@ class MfOrdersHeader extends ConsumerWidget {
             'Orders',
             style: TextStyle(
               fontFamily: 'SpaceGrotesk',
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
               letterSpacing: -1.0,
             ),

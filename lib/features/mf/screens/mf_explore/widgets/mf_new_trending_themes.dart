@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../mf_theme_collection/mf_theme_collection_screen.dart';
 
 class MfNewTrendingThemes extends StatefulWidget {
   const MfNewTrendingThemes({super.key});
@@ -10,6 +11,71 @@ class MfNewTrendingThemes extends StatefulWidget {
 class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
   final ScrollController _scrollController = ScrollController();
   double _scrollProgress = 0.3; // Initial approximate width factor
+
+  final List<Map<String, dynamic>> _renewableFunds = [
+    {
+      'name': 'Tata Green Energy Fund',
+      'category': 'Equity • Thematic',
+      'returns': {'1Y': '42.10%', '3Y': '24.50%', '5Y': '19.80%'},
+    },
+    {
+      'name': 'Nippon India Power & Infra',
+      'category': 'Equity • Sectoral',
+      'returns': {'1Y': '38.40%', '3Y': '21.20%', '5Y': '17.50%'},
+    },
+  ];
+
+  final List<Map<String, dynamic>> _semiConductorFunds = [
+    {
+      'name': 'Semi-Conductor',
+      'category': 'Equity • Thematic • Global',
+      'returns': {'1Y': '54.20%', '3Y': '42.10%', '5Y': '28.50%'},
+    },
+    {
+      'name': 'Global Tech Fund',
+      'category': 'Equity • Sectoral',
+      'returns': {'1Y': '48.10%', '3Y': '36.50%', '5Y': '25.20%'},
+    },
+  ];
+
+  final List<Map<String, dynamic>> _aiFunds = [
+    {
+      'name': 'AI Revolution',
+      'category': 'Equity • Sectoral • Technology',
+      'returns': {'1Y': '48.50%', '3Y': '34.20%', '5Y': '26.80%'},
+    },
+    {
+      'name': 'Tech & AI Opportunities',
+      'category': 'Equity • Thematic',
+      'returns': {'1Y': '45.20%', '3Y': '31.50%', '5Y': '24.10%'},
+    },
+  ];
+
+  final List<Map<String, dynamic>> _indiaMfgFunds = [
+    {
+      'name': 'India Manufacturing',
+      'category': 'Equity • Thematic • Manufacturing',
+      'returns': {'1Y': '36.80%', '3Y': '28.40%', '5Y': '22.50%'},
+    },
+    {
+      'name': 'ICICI Pru Manufacturing Fund',
+      'category': 'Equity • Thematic',
+      'returns': {'1Y': '34.50%', '3Y': '26.80%', '5Y': '21.20%'},
+    },
+  ];
+
+  final List<Map<String, dynamic>> _evFunds = [
+    {
+      'name': 'EV Mobility Fund',
+      'category': 'Equity • Thematic',
+      'returns': {'1Y': '32.40%', '3Y': '25.60%', '5Y': '18.90%'},
+    },
+    {
+      'name': 'Auto & Ancillary Fund',
+      'category': 'Equity • Sectoral',
+      'returns': {'1Y': '28.90%', '3Y': '22.40%', '5Y': '16.50%'},
+    },
+  ];
 
   @override
   void initState() {
@@ -97,18 +163,40 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                 imageScaleFraction: 0.8,
                 imageRightFraction: -0.05,
                 imageBottomFraction: -0.1,
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => MfThemeCollectionScreen(
+                        title: 'Renewable Energy',
+                        subtitle: 'Powering the future of energy.',
+                        funds: _renewableFunds,
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 12),
 
               _buildThemeCard(
                 context,
-                title: 'Semiconductor',
+                title: 'Semi\u200Bconductor',
                 subtitle: 'Powering the digital future.',
                 imageAsset: 'lib/core/images/semi.webp',
                 bgColor: const Color.fromARGB(255, 255, 255, 255),
                 imageScaleFraction: 0.8,
                 imageRightFraction: 0.0,
                 imageBottomFraction: -0.1,
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => MfThemeCollectionScreen(
+                        title: 'Semiconductor',
+                        subtitle: 'Powering the digital future.',
+                        funds: _semiConductorFunds,
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 12),
               _buildThemeCard(
@@ -120,6 +208,17 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                 imageScaleFraction: 1,
                 imageRightFraction: -0.05,
                 imageBottomFraction: -0.05,
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => MfThemeCollectionScreen(
+                        title: 'AI Revolution',
+                        subtitle: 'Invest in companies building AI.',
+                        funds: _aiFunds,
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 12),
               _buildThemeCard(
@@ -131,6 +230,17 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                 imageScaleFraction: 1,
                 imageRightFraction: 0.0,
                 imageBottomFraction: -0.05,
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => MfThemeCollectionScreen(
+                        title: 'India Manufacturing',
+                        subtitle: "Back India's next growth engine.",
+                        funds: _indiaMfgFunds,
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 12),
               _buildThemeCard(
@@ -142,6 +252,17 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                 imageScaleFraction: 0.8,
                 imageRightFraction: 0.0,
                 imageBottomFraction: -0.1,
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => MfThemeCollectionScreen(
+                        title: 'EV Mobility',
+                        subtitle: 'The future of electric mobility.',
+                        funds: _evFunds,
+                      ),
+                    ),
+                  );
+                },
               ), 
             ],
           ),
@@ -159,13 +280,22 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
     required double imageScaleFraction,
     required double imageRightFraction,
     required double imageBottomFraction,
+    VoidCallback? onTap,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = screenWidth * 0.35;
+    
+    // Fixed sizes for consistency across all screen sizes (industry standard)
+    final titleFontSize = 14.0;
+    final subtitleFontSize = 10.0;
+    final padding = 14.0;
+    final iconSize = 16.0;
 
-    return SizedBox(
-      width: cardWidth,
-      child: AspectRatio(
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: cardWidth,
+        child: AspectRatio(
         aspectRatio: 0.72,
         child: Container(
           decoration: BoxDecoration(
@@ -218,32 +348,32 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                 ),
                 // Text Content
                 Positioned(
-                  top: 16,
-                  left: 16,
-                  right: 16,
+                  top: padding,
+                  left: padding,
+                  right: padding,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14,
+                          fontSize: titleFontSize,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF0F172A),
+                          color: const Color(0xFF0F172A),
                           height: 1.2,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: padding * 0.5),
                       Text(
                         subtitle,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10,
+                          fontSize: subtitleFontSize,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF64748B),
+                          color: const Color(0xFF64748B),
                           height: 1.3,
                         ),
                         maxLines: 3,
@@ -254,12 +384,12 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                 ),
                 // Explore Button
                 Positioned(
-                  bottom: 8,
-                  left: 16,
+                  bottom: padding * 0.5,
+                  left: padding,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: padding * 0.5,
+                      vertical: padding * 0.125,
                     ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF0F172A),
@@ -267,11 +397,11 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(
                           Icons.arrow_forward_rounded,
                           color: Colors.white,
-                          size: 16,
+                          size: iconSize,
                         ),
                       ],
                     ),
@@ -281,6 +411,7 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

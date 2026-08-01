@@ -1,4 +1,4 @@
-import 'dart:ui' show lerpDouble;
+import 'dart:ui' show lerpDouble, ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -169,24 +169,45 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
 
-          // Frosted-look overlay — pure gradient, zero GPU layer cost
+          // Frosted glass blur overlay
           Positioned.fill(
-            child: Opacity(
-              opacity: easedRatio.clamp(0.0, 1.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
+            child: Stack(
+              children: [
+                // Progressive blur
+                ShaderMask(
+                  blendMode: BlendMode.dstIn,
+                  shaderCallback: (bounds) => const LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      const Color(0xFFF9FAFB),
-                      const Color(0xFFF9FAFB).withOpacity(0.95),
-                      const Color(0xFFF9FAFB).withOpacity(0.0),
-                    ],
-                    stops: const [0.0, 0.7, 1.0],
+                    colors: [Colors.black, Colors.black, Colors.transparent],
+                    stops: [0.0, 0.7, 1.0],
+                  ).createShader(bounds),
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: lerpDouble(0.0, 16.0, easedRatio)!,
+                        sigmaY: lerpDouble(0.0, 16.0, easedRatio)!,
+                      ),
+                      child: const SizedBox.expand(),
+                    ),
                   ),
                 ),
-              ),
+                // Progressive tint
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        const Color(0xFFF9FAFB).withOpacity(lerpDouble(0.0, 0.85, easedRatio)!),
+                        const Color(0xFFF9FAFB).withOpacity(lerpDouble(0.0, 0.4, easedRatio)!),
+                        const Color(0xFFF9FAFB).withOpacity(0.0),
+                      ],
+                      stops: const [0.0, 0.7, 1.0],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 

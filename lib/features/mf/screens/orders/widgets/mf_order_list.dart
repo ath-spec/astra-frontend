@@ -73,9 +73,9 @@ class MfOrderList extends StatelessWidget {
       child: Text(
         date,
         style: const TextStyle(
-          fontFamily: 'SpaceGrotesk',
+          fontFamily: 'DMSans',
           fontSize: 12,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w600,
           color: Color(0xFF0F172A),
           letterSpacing: 1.0,
         ),

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -134,6 +135,51 @@ class _AppShellState extends ConsumerState<AppShell> {
         body: Stack(
           children: [
             widget.navigationShell,
+
+            // Global bottom blur behind the floating nav pill
+            if (_navVisible)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 120 + MediaQuery.of(context).padding.bottom,
+                child: IgnorePointer(
+                  child: Stack(
+                    children: [
+                      // Progressive blur (fading out upwards)
+                      ShaderMask(
+                        blendMode: BlendMode.dstIn,
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [Colors.black, Colors.black, Colors.transparent],
+                          stops: [0.0, 0.4, 1.0], // Solid blur at the very bottom edge, fading out
+                        ).createShader(bounds),
+                        child: ClipRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
+                            child: const SizedBox.expand(),
+                          ),
+                        ),
+                      ),
+                      // Progressive white frosted tint (fading out upwards)
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              const Color(0xFFF9FAFB).withOpacity(0.85), // Frosted white at bottom edge
+                              const Color(0xFFF9FAFB).withOpacity(0.0),  // Transparent above
+                            ],
+                            stops: const [0.0, 1.0],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
             // Pre-warm all nav pill variants offscreen so the first tap into MF
             // or Explore has zero cold-build cost. Offstage keeps them in the

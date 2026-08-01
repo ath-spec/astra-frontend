@@ -76,7 +76,7 @@ class MfFundListCard extends StatelessWidget {
                             cardTitle,
                             style: const TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Color.fromARGB(255, 0, 0, 0),
                             ),
@@ -87,7 +87,7 @@ class MfFundListCard extends StatelessWidget {
                             style: const TextStyle(
                               fontFamily: 'DMSans',
                               fontSize: 10,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               color: Color(0xFF9CA3AF),
                               height: 1.4,
                             ),
@@ -172,9 +172,11 @@ class MfFundListCard extends StatelessWidget {
                 children: [
                   Text(
                     fund.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),
@@ -182,6 +184,8 @@ class MfFundListCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     fund.category,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,
@@ -199,7 +203,7 @@ class MfFundListCard extends StatelessWidget {
                   '3Y Returns',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
+                    fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF94A3B8),
                   ),
@@ -209,7 +213,7 @@ class MfFundListCard extends StatelessWidget {
                   fund.returns,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF10B981),
                   ),

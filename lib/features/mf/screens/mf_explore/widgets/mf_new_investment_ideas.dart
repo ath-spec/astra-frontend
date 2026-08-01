@@ -46,8 +46,7 @@ class MfNewInvestmentIdeas extends StatelessWidget {
                     child: const Icon(Icons.rocket_launch_rounded, color: Color(0xFF3B82F6), size: 32),
                   ),
                   onViewCollection: () {
-                    Navigator.push(
-                      context,
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute(
                         builder: (_) => const MfCollectionScreen(
                           title: 'High Growth',
@@ -98,8 +97,7 @@ class MfNewInvestmentIdeas extends StatelessWidget {
                     child: const Icon(Icons.shield_rounded, color: Color(0xFF64748B), size: 32),
                   ),
                   onViewCollection: () {
-                    Navigator.push(
-                      context,
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute(
                         builder: (_) => const MfCollectionScreen(
                           title: 'Safe Investing',

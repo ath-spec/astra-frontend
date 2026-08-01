@@ -469,6 +469,346 @@ class MfMockFundData {
           sipReturnPercentage: '(-19.8%)',
           overviewText: 'Invests in robust European businesses with global revenue streams.',
         );
+      // Large Cap Funds
+      case 'Mirae Asset Large Cap Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'Mirae Asset Large Cap Fund',
+          tags: 'Equity • Large Cap',
+          logoText: 'mi',
+          riskLabel: 'MODERATE VOLATILITY',
+          riskColor: const Color(0xFFF59E0B),
+          returnPercentage: '16.80%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 13.2% in Nifty 100 >',
+          chartDataPoints: _baseChartData.map((e) => e * 0.75).toList(),
+          chartColor: const Color(0xFF3B82F6),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹4,80,000',
+          sipReturnPercentage: '(38.5%)',
+          overviewText: 'One of India\'s most consistent large cap funds, investing in market leaders across sectors.',
+          assetAllocation: _mockAssetAllocation,
+        );
+      case 'HDFC Top 100 Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'HDFC Top 100 Fund',
+          tags: 'Equity • Large Cap',
+          logoText: 'hd',
+          riskLabel: 'MODERATE VOLATILITY',
+          riskColor: const Color(0xFFF59E0B),
+          returnPercentage: '15.90%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 13.2% in Nifty 100 >',
+          chartDataPoints: _baseChartData.map((e) => e * 0.7).toList(),
+          chartColor: const Color(0xFF3B82F6),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹4,70,000',
+          sipReturnPercentage: '(36.5%)',
+          overviewText: 'Invests in top 100 companies by market cap listed on BSE for long term wealth creation.',
+        );
+      case 'ICICI Pru Bluechip Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'ICICI Pru Bluechip Fund',
+          tags: 'Equity • Large Cap',
+          logoText: 'ic',
+          riskLabel: 'MODERATE VOLATILITY',
+          riskColor: const Color(0xFFF59E0B),
+          returnPercentage: '15.20%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 13.2% in Nifty 100 >',
+          chartDataPoints: _baseChartData.map((e) => e * 0.68).toList(),
+          chartColor: const Color(0xFF3B82F6),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹4,60,000',
+          sipReturnPercentage: '(34.2%)',
+          overviewText: 'A bluechip fund targeting stable and well-established companies for consistent returns.',
+        );
+      case 'SBI Bluechip Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'SBI Bluechip Fund',
+          tags: 'Equity • Large Cap',
+          logoText: 'sb',
+          riskLabel: 'MODERATE VOLATILITY',
+          riskColor: const Color(0xFFF59E0B),
+          returnPercentage: '14.70%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 13.2% in Nifty 100 >',
+          chartDataPoints: _baseChartData.map((e) => e * 0.65).toList(),
+          chartColor: const Color(0xFF3B82F6),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹4,55,000',
+          sipReturnPercentage: '(33.5%)',
+          overviewText: 'Backed by India\'s largest public bank, invests in top-quality large cap equities.',
+        );
+      case 'Axis Bluechip Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'Axis Bluechip Fund',
+          tags: 'Equity • Large Cap',
+          logoText: 'ax',
+          riskLabel: 'MODERATE VOLATILITY',
+          riskColor: const Color(0xFFF59E0B),
+          returnPercentage: '13.50%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 13.2% in Nifty 100 >',
+          chartDataPoints: _baseChartData.map((e) => e * 0.6).toList(),
+          chartColor: const Color(0xFF3B82F6),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹4,45,000',
+          sipReturnPercentage: '(31.8%)',
+          overviewText: 'Focuses on high quality large cap companies with strong earnings growth and moats.',
+        );
+
+      // Mid Cap Funds
+      case 'Quant Mid Cap Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'Quant Mid Cap Fund',
+          tags: 'Equity • Mid Cap',
+          logoText: 'qm',
+          riskLabel: 'HIGH VOLATILITY',
+          riskColor: const Color(0xFFF97316),
+          returnPercentage: '32.40%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 22.1% in Nifty Midcap 150 >',
+          chartDataPoints: _baseChartData.map((e) => e * 1.35).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹6,20,000',
+          sipReturnPercentage: '(54.2%)',
+          overviewText: 'Uses a quantitative model to pick high-momentum mid cap stocks for superior returns.',
+        );
+      case 'Nippon India Growth Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'Nippon India Growth Fund',
+          tags: 'Equity • Mid Cap',
+          logoText: 'ni',
+          riskLabel: 'HIGH VOLATILITY',
+          riskColor: const Color(0xFFF97316),
+          returnPercentage: '28.60%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 22.1% in Nifty Midcap 150 >',
+          chartDataPoints: _baseChartData.map((e) => e * 1.2).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹5,80,000',
+          sipReturnPercentage: '(48.5%)',
+          overviewText: 'Invests in growing mid-sized Indian companies with strong earnings potential.',
+        );
+      case 'HDFC Mid-Cap Opportunities':
+        return FundProfileData(
+          id: fundId,
+          name: 'HDFC Mid-Cap Opportunities',
+          tags: 'Equity • Mid Cap',
+          logoText: 'hm',
+          riskLabel: 'HIGH VOLATILITY',
+          riskColor: const Color(0xFFF97316),
+          returnPercentage: '26.90%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 22.1% in Nifty Midcap 150 >',
+          chartDataPoints: _baseChartData.map((e) => e * 1.15).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹5,65,000',
+          sipReturnPercentage: '(46.0%)',
+          overviewText: 'Long running mid cap fund with a diversified portfolio of emerging Indian businesses.',
+        );
+      case 'Motilal Oswal Midcap Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'Motilal Oswal Midcap Fund',
+          tags: 'Equity • Mid Cap',
+          logoText: 'mo',
+          riskLabel: 'HIGH VOLATILITY',
+          riskColor: const Color(0xFFF97316),
+          returnPercentage: '25.30%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 22.1% in Nifty Midcap 150 >',
+          chartDataPoints: _baseChartData.map((e) => e * 1.1).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹5,50,000',
+          sipReturnPercentage: '(45.5%)',
+          overviewText: 'Concentrated portfolio of conviction mid cap picks with a buy-and-hold philosophy.',
+        );
+      case 'Edelweiss Mid Cap Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'Edelweiss Mid Cap Fund',
+          tags: 'Equity • Mid Cap',
+          logoText: 'ed',
+          riskLabel: 'HIGH VOLATILITY',
+          riskColor: const Color(0xFFF97316),
+          returnPercentage: '23.80%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 22.1% in Nifty Midcap 150 >',
+          chartDataPoints: _baseChartData.map((e) => e * 1.05).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹5,30,000',
+          sipReturnPercentage: '(42.1%)',
+          overviewText: 'Diversified mid cap fund seeking growth through a well-researched bottom-up approach.',
+        );
+
+      // Small Cap Funds
+      case 'Nippon India Small Cap Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'Nippon India Small Cap Fund',
+          tags: 'Equity • Small Cap',
+          logoText: 'ns',
+          riskLabel: 'VERY HIGH VOLATILITY',
+          riskColor: const Color(0xFFEF4444),
+          returnPercentage: '38.60%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 28.4% in Nifty Smallcap 250 >',
+          chartDataPoints: _baseChartData.map((e) => e * 1.6).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹6,80,000',
+          sipReturnPercentage: '(62.4%)',
+          overviewText: 'One of India\'s largest small cap funds by AUM, capturing high-growth emerging companies.',
+        );
+      case 'SBI Small Cap Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'SBI Small Cap Fund',
+          tags: 'Equity • Small Cap',
+          logoText: 'ss',
+          riskLabel: 'VERY HIGH VOLATILITY',
+          riskColor: const Color(0xFFEF4444),
+          returnPercentage: '34.20%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 28.4% in Nifty Smallcap 250 >',
+          chartDataPoints: _baseChartData.map((e) => e * 1.45).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹6,40,000',
+          sipReturnPercentage: '(58.0%)',
+          overviewText: 'Seeks long term capital appreciation by investing in small cap companies with strong fundamentals.',
+        );
+      case 'Axis Small Cap Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'Axis Small Cap Fund',
+          tags: 'Equity • Small Cap',
+          logoText: 'as',
+          riskLabel: 'VERY HIGH VOLATILITY',
+          riskColor: const Color(0xFFEF4444),
+          returnPercentage: '29.80%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 28.4% in Nifty Smallcap 250 >',
+          chartDataPoints: _baseChartData.map((e) => e * 1.3).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹5,90,000',
+          sipReturnPercentage: '(51.2%)',
+          overviewText: 'Quality-focused small cap fund targeting companies with robust business models.',
+        );
+      case 'DSP Small Cap Fund':
+        return FundProfileData(
+          id: fundId,
+          name: 'DSP Small Cap Fund',
+          tags: 'Equity • Small Cap',
+          logoText: 'ds',
+          riskLabel: 'VERY HIGH VOLATILITY',
+          riskColor: const Color(0xFFEF4444),
+          returnPercentage: '27.50%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 28.4% in Nifty Smallcap 250 >',
+          chartDataPoints: _baseChartData.map((e) => e * 1.2).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹5,65,000',
+          sipReturnPercentage: '(45.8%)',
+          overviewText: 'Research-driven small cap portfolio targeting emerging companies across sectors.',
+        );
+
+      // Bonds
+      case 'Adani Airport':
+        return FundProfileData(
+          id: fundId,
+          name: 'Adani Airport Holdings Ltd',
+          tags: 'Debt • Corporate Bond',
+          logoText: 'adani',
+          riskLabel: 'MODERATE RISK',
+          riskColor: const Color(0xFFF59E0B),
+          returnPercentage: '8.5%',
+          returnDuration: 'Annual Interest',
+          comparisonText: 'vs. 6.5% in FD >',
+          chartDataPoints: _conservativeChartData,
+          chartColor: const Color(0xFF3B82F6),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹4,30,000',
+          sipReturnPercentage: '(25.2%)',
+          overviewText: 'Invests in Adani Airport Holdings for steady interest income.',
+        );
+      case 'Akme Fintrade':
+      case 'Monedo Oct\' 27':
+      case 'DAR Credit':
+      case 'Capri Global':
+      case 'Navi Finserv Ltd':
+        return FundProfileData(
+          id: fundId,
+          name: '$fundId Bond',
+          tags: 'Debt • Corporate Bond',
+          logoText: fundId.substring(0, 3).toLowerCase(),
+          riskLabel: 'MODERATE TO HIGH RISK',
+          riskColor: const Color(0xFFF97316),
+          returnPercentage: fundId == 'Akme Fintrade' ? '12.0%' : fundId.contains('Navi') ? '10.85%' : fundId.contains('Capri') ? '9.0%' : '13.5%',
+          returnDuration: 'Annual Interest',
+          comparisonText: 'High yield corporate bond >',
+          chartDataPoints: _conservativeChartData.map((e) => e * 1.1).toList(),
+          chartColor: const Color(0xFF3B82F6),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹4,50,000',
+          sipReturnPercentage: '(32.1%)',
+          overviewText: 'High yield corporate bond providing superior returns with commensurate credit risk.',
+        );
+
+      // Collection Screens Mock Funds
+      case 'DSP Value Fund':
+      case 'LIC MF Value Fund':
+      case 'HDFC Value Fund':
+      case 'Aditya Birla Sun Life Value Fund':
+        return FundProfileData(
+          id: fundId,
+          name: fundId,
+          tags: 'Equity • Value',
+          logoText: fundId.substring(0, 3).toLowerCase(),
+          riskLabel: 'HIGH VOLATILITY',
+          riskColor: const Color(0xFFF97316),
+          returnPercentage: '17.50%',
+          returnDuration: '3Y Annualised Return',
+          comparisonText: 'vs. 7.26% in Nifty 50 >',
+          chartDataPoints: _baseChartData.map((e) => e * 0.8).toList(),
+          chartColor: const Color(0xFF10B981),
+          sipAmount: 10000,
+          sipDurationText: '3 years',
+          sipFinalAmount: '₹4,70,000',
+          sipReturnPercentage: '(36.5%)',
+          overviewText: 'Aims to provide long term capital growth by investing in a diversified portfolio of value stocks.',
+        );
 
       case 'Explore By Risk':
       case 'Aggressive':

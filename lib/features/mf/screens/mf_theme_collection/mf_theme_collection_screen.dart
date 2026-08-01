@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfCollectionScreen extends StatefulWidget {
+class MfThemeCollectionScreen extends StatefulWidget {
   final String title;
   final String subtitle;
+  final List<Map<String, dynamic>>? funds;
 
-  const MfCollectionScreen({
+  const MfThemeCollectionScreen({
     super.key,
     required this.title,
     required this.subtitle,
+    this.funds,
   });
 
   @override
-  State<MfCollectionScreen> createState() => _MfCollectionScreenState();
+  State<MfThemeCollectionScreen> createState() => _MfThemeCollectionScreenState();
 }
 
-class _MfCollectionScreenState extends State<MfCollectionScreen> {
+class _MfThemeCollectionScreenState extends State<MfThemeCollectionScreen> {
   String _returnPeriod = '3Y'; // '1Y', '3Y', '5Y'
 
   final List<Map<String, dynamic>> _mockFunds = [
@@ -146,7 +148,7 @@ class _MfCollectionScreenState extends State<MfCollectionScreen> {
                   ),
                   const SizedBox(height: 32),
                   // Fund List
-                  ..._mockFunds.map((fund) => _buildFundRow(fund)).toList(),
+                  ...(widget.funds ?? _mockFunds).map((fund) => _buildFundRow(fund)).toList(),
                   const SizedBox(height: 32),
                 ],
               ),

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/models/fund_profile_data.dart';
+import '../../providers/watchlist_provider.dart';
 import '../mf_explore/data/mf_mock_fund_data.dart';
 import 'widgets/mf_fund_chart_widget.dart';
 import 'widgets/mf_fund_overview_card.dart';
 import 'widgets/mf_fund_fees_taxes.dart';
 import 'widgets/mf_fund_return_ratios.dart';
 import 'widgets/mf_fund_asset_allocation.dart';
+import 'dart:math' as math;
+import 'package:intl/intl.dart';
 import 'widgets/mf_fund_details_house.dart';
+import 'widgets/mf_amount_scroller.dart';
+
 
 class MfFundProfileScreen extends StatefulWidget {
   final String fundId;
@@ -26,7 +32,10 @@ class MfFundProfileScreen extends StatefulWidget {
 }
 
 class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
-  String _selectedPeriod = '3Y';
+  String _selectedPeriod = '6M';
+  double _selectedAmount = 1000.0;
+  bool _isSip = true;
+  bool _isScrollerOpen = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,26 +69,30 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                         
                         const SizedBox(height: 12),
                         
-                        // Returns Section
-                        _buildReturnsSection(processedData),
-                        
-                        const SizedBox(height: 8),
-                        
-                        // Chart Section
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          child: MfFundChartWidget(
-                            key: ValueKey(_selectedPeriod),
-                            dataPoints: processedData.chartDataPoints,
-                            lineColor: processedData.chartColor,
-                            height: chartHeight, // Responsive height
-                          ),
+                        // Top Collapsible: Returns + Chart
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.easeOutCubic,
+                          alignment: Alignment.topCenter,
+                          child: _isScrollerOpen
+                              ? const SizedBox(width: double.infinity, height: 0)
+                              : Column(
+                                  children: [
+                                    _buildReturnsSection(processedData),
+                                    const SizedBox(height: 8),
+                                    MfFundChartWidget(
+                                      key: ValueKey(_selectedPeriod),
+                                      dataPoints: processedData.chartDataPoints,
+                                      lineColor: processedData.chartColor,
+                                      height: chartHeight,
+                                    ),
+                                    const SizedBox(height: 12),
+                                  ],
+                                ),
                         ),
                         
-                        const SizedBox(height: 12),
-                        
-                        // SIP Calculator Preview
-                        _buildSipPreview(processedData),
+                        // Interactive Calculator Anchor & Scroller
+                        _buildInteractiveCalculatorArea(processedData),
                         
                         const SizedBox(height: 16),
                         
@@ -219,14 +232,30 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                 child: const Icon(Icons.shopping_cart_outlined, size: 20, color: Color(0xFF0F172A)),
               ),
               const SizedBox(width: 12),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFF1F5F9)),
-                  color: Colors.white,
-                ),
-                child: const Icon(Icons.bookmark_border_rounded, size: 20, color: Color(0xFF0F172A)),
+              Consumer(
+                builder: (context, ref, child) {
+                  final watchlist = ref.watch(watchlistProvider);
+                  final isBookmarked = watchlist.contains(widget.fundId);
+                  
+                  return GestureDetector(
+                    onTap: () {
+                      ref.read(watchlistProvider.notifier).toggleFund(widget.fundId);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: const Color(0xFFF1F5F9)),
+                        color: isBookmarked ? const Color(0xFFE2E8F0) : Colors.white,
+                      ),
+                      child: Icon(
+                        isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, 
+                        size: 20, 
+                        color: const Color(0xFF0F172A),
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -378,83 +407,248 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
     );
   }
 
-  Widget _buildSipPreview(FundProfileData data) {
+  String _formatAmount(double amount) {
+    final format = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+    return format.format(amount);
+  }
+
+  (String, String) _calculateFutureValue(double amount, bool isSip, String period) {
+    int months = 36;
+    switch (period) {
+      case '1M': months = 1; break;
+      case '6M': months = 6; break;
+      case '1Y': months = 12; break;
+      case '3Y': months = 36; break;
+    }
+    
+    double absoluteReturnPct = 0.0;
+    if (period == '6M') {
+      absoluteReturnPct = isSip ? 1.71 : 5.82;
+    } else if (period == '1Y') {
+      absoluteReturnPct = isSip ? 8.5 : 12.4;
+    } else if (period == '3Y') {
+      absoluteReturnPct = isSip ? 24.5 : 38.2;
+    } else {
+      absoluteReturnPct = isSip ? 0.2 : 0.5;
+    }
+    
+    double investedAmount = isSip ? amount * months : amount;
+    double futureValue = investedAmount * (1 + (absoluteReturnPct / 100.0));
+    
+    String returnPctStr = absoluteReturnPct >= 0 
+        ? '(${absoluteReturnPct.toStringAsFixed(2)}%)'
+        : '(${absoluteReturnPct.toStringAsFixed(2)}%)';
+        
+    return (_formatAmount(futureValue), returnPctStr);
+  }
+
+  Widget _buildInteractiveCalculatorArea(FundProfileData data) {
+    final format = NumberFormat.currency(locale: 'en_IN', symbol: '₹ ', decimalDigits: 0);
+    final (finalAmount, returnPct) = _calculateFutureValue(_selectedAmount, _isSip, _selectedPeriod);
+    final monthsText = _selectedPeriod == '1M' ? '1 month' : (_selectedPeriod == '6M' ? '6 months' : (_selectedPeriod == '1Y' ? '1 year' : '3 years'));
+    final typeText = _isSip ? 'SIP' : 'LUMPSUM';
+    final amountText = format.format(_selectedAmount).replaceAll('.00', '');
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         children: [
+          // Anchor: "SIP would have become" text and Edit/Down Button
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'SIP ₹10K / ${data.sipDurationText} would have become',
-                    style: const TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF475569),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$typeText $amountText for $monthsText would have become',
+                      style: const TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF475569),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          finalAmount,
+                          style: const TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF0F172A),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          returnPct,
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: data.chartColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isScrollerOpen = !_isScrollerOpen;
+                  });
+                },
+                behavior: HitTestBehavior.opaque, // Ensures the entire padding area is clickable
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0), // Huge invisible touch target
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: Icon(
+                      _isScrollerOpen ? Icons.keyboard_arrow_down_rounded : Icons.edit_outlined, 
+                      size: 16, 
+                      color: const Color(0xFF475569)
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        data.sipFinalAmount,
-                        style: const TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF0F172A),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        data.sipReturnPercentage,
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: data.chartColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
                 ),
-                child: const Icon(Icons.edit_outlined, size: 16, color: Color(0xFF475569)),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          // Timeframe toggles
+          
+          // Expandable: MONTHLY SIP / ONE-TIME toggles (Slides in when open)
+          AnimatedSize(
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: !_isScrollerOpen
+                ? const SizedBox(width: double.infinity, height: 0)
+                : Padding(
+                    padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () => setState(() => _isSip = true),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: _isSip ? const Color(0xFF0F172A) : Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: Text(
+                              'MONTHLY SIP',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: _isSip ? Colors.white : const Color(0xFF64748B),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => setState(() => _isSip = false),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: !_isSip ? const Color(0xFF0F172A) : Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: Text(
+                              'ONE-TIME',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: !_isSip ? Colors.white : const Color(0xFF64748B),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+          
+          if (!_isScrollerOpen) const SizedBox(height: 16),
+          
+          // Faint divider acting as a subtle line below toggles / preview
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            decoration: const BoxDecoration(
-              border: Border.symmetric(
-                horizontal: BorderSide(color: Color(0xFFF1F5F9), style: BorderStyle.solid), // Actually flutter only supports uniform dashes easily, we'll use solid light line for now
-              ),
-            ),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                _buildTimeframeToggle('1M'),
-                _buildTimeframeToggle('6M'),
-                _buildTimeframeToggle('1Y'),
-                _buildTimeframeToggle('3Y'),
-              ],
-            ),
+            height: 1,
+            color: const Color(0xFFF1F5F9), // Subtle dashed-like separation
+          ),
+          
+          // Expandable: The Scroller
+          AnimatedSize(
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: !_isScrollerOpen
+                ? const SizedBox(width: double.infinity, height: 0)
+                : Column(
+                    children: [
+                      const SizedBox(height: 24),
+                      // Large Amount Text
+                      Text(
+                        amountText,
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 32,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0F172A),
+                          letterSpacing: -1,
+                        ),
+                      ),
+                      Text(
+                        _isSip ? 'SIP' : 'LUMPSUM',
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF94A3B8),
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // The Scroller
+                      MfAmountScrollerWidget(
+                        initialAmount: _selectedAmount,
+                        onAmountChanged: (val) {
+                          setState(() {
+                            _selectedAmount = val;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Timeframe toggles
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              _buildTimeframeToggle('1M'),
+              _buildTimeframeToggle('6M'),
+              _buildTimeframeToggle('1Y'),
+              _buildTimeframeToggle('3Y'),
+            ],
           ),
         ],
       ),

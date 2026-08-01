@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:astra_frontend/services/service_providers.dart';
-import 'package:astra_frontend/features/budget/presentation/screens/budget_control_screen.dart';
 import 'package:astra_frontend/features/budget/data/budget_mock_providers.dart';
 import 'package:astra_frontend/features/budget/presentation/widgets/category_item_model.dart';
 
@@ -154,8 +153,8 @@ class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     color: BudgetColors.foreground,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
                   ),
                 ),

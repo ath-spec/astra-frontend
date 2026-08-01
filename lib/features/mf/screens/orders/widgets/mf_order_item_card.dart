@@ -38,9 +38,9 @@ class MfOrderItemCard extends StatelessWidget {
             child: const Text(
               'EXTERNAL',
               style: TextStyle(
-                fontFamily: 'DMMono',
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
+                fontFamily: 'DMSANS',
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
                 color: Color(0xFF94A3B8),
                 letterSpacing: 0.5,
               ),
@@ -70,9 +70,9 @@ class MfOrderItemCard extends StatelessWidget {
                 child: Text(
                   logoText,
                   style: TextStyle(
-                    fontFamily: 'SpaceGrotesk',
+                    fontFamily: 'DMSans',
                     fontSize: 8,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w600,
                     color: logoColor,
                     height: 1.0,
                   ),
@@ -89,7 +89,7 @@ class MfOrderItemCard extends StatelessWidget {
                       fundName,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF334155),
                       ),
@@ -114,22 +114,22 @@ class MfOrderItemCard extends StatelessWidget {
                   Text(
                     amount,
                     style: const TextStyle(
-                      fontFamily: 'SpaceGrotesk',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
+                      fontFamily: 'DMSans',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
-                      letterSpacing: -0.5,
+                      letterSpacing: -0.1,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     status,
                     style: const TextStyle(
-                      fontFamily: 'DMMono',
+                      fontFamily: 'DMSans',
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF10B981), // Emerald 500 for COMPLETED
-                      letterSpacing: 0.5,
+                      letterSpacing: -0.5,
                     ),
                   ),
                 ],

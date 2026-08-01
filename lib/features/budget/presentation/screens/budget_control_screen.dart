@@ -162,7 +162,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                             "Category budgets",
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: getProportionateScreenWidth(15),
+                              fontSize: getProportionateScreenWidth(14),
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF133026).withOpacity(0.54),
                             ),
@@ -421,17 +421,21 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
 
   IconData _getIconForName(String name) {
     final n = name.toLowerCase();
-    if (n.contains('grocer') || n.contains('food'))
+    if (n.contains('grocer') || n.contains('food')) {
       return Icons.shopping_basket_rounded;
-    if (n.contains('trans') || n.contains('travel') || n.contains('cab'))
+    }
+    if (n.contains('trans') || n.contains('travel') || n.contains('cab')) {
       return Icons.directions_car_rounded;
+    }
     if (n.contains('utilit') || n.contains('bill')) return Icons.bolt_rounded;
     if (n.contains('house') || n.contains('rent')) return Icons.home_rounded;
     if (n.contains('shop')) return Icons.shopping_bag_rounded;
-    if (n.contains('health') || n.contains('medic'))
+    if (n.contains('health') || n.contains('medic')) {
       return Icons.medical_services_rounded;
-    if (n.contains('dine') || n.contains('restaurant') || n.contains('dining'))
+    }
+    if (n.contains('dine') || n.contains('restaurant') || n.contains('dining')) {
       return Icons.restaurant_rounded;
+    }
     return Icons.category_rounded;
   }
 }

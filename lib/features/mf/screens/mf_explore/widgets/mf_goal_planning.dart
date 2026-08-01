@@ -78,33 +78,66 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
   @override
   Widget build(BuildContext context) {
     final selectedGoal = _goals[_selectedIndex];
+    
+    // Compute responsive scale for the massive target graphic
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final imageScale = screenWidth < 420 ? screenWidth / 420 : 1.0;
+    final imageSize = 230.0 * imageScale;
+    final rightOffset = -60.0 * imageScale;
+    final topOffset = -150.0 * imageScale;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            'Goal Planning',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -1.0,
-              color: Color.fromARGB(255, 0, 0, 0),
-            ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              const Text(
+                'Goal Planning',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -1.0,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              Row(
+                children: const [
+                  Text(
+                    'View all',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  SizedBox(width: 2),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 16,
+                    color: Color(0xFF0F172A),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),
         // Goal image chips
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             children: List.generate(_goals.length, (index) {
               final goal = _goals[index];
               return Padding(
-                padding: const EdgeInsets.only(right: 20.0),
+                padding: const EdgeInsets.only(right: 4.0),
                 child: _buildGoalIcon(
                   index: index,
                   imagePath: goal['image'] as String,
@@ -117,203 +150,198 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
         ),
         const SizedBox(height: 24),
         // Plan card
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+        GestureDetector(
+          onHorizontalDragEnd: (details) {
+            final velocity = details.primaryVelocity ?? 0;
+            if (velocity < -300) {
+              // Swipe left -> Next goal
+              if (_selectedIndex < _goals.length - 1) {
+                setState(() => _selectedIndex++);
+              }
+            } else if (velocity > 300) {
+              // Swipe right -> Previous goal
+              if (_selectedIndex > 0) {
+                setState(() => _selectedIndex--);
+              }
+            }
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(
+                color: const Color.fromARGB(255, 218, 219, 220), // Slate 100
               ),
-            ],
-            border: Border.all(
-              color: const Color(0xFFF1F5F9), // Slate 100
             ),
-          ),
-          child: AnimatedSize(
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeOutCubic,
-            alignment: Alignment.topCenter,
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topCenter,
             child: Column(
               children: [
               // Header & Graphic
               Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Row(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeIn,
-                        layoutBuilder: (currentChild, previousChildren) {
-                          return Stack(
-                            alignment: Alignment.topLeft,
-                            children: [
-                              ...previousChildren,
-                              if (currentChild != null) currentChild,
-                            ],
-                          );
-                        },
-                        child: Column(
-                          key: ValueKey(selectedGoal['title']),
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              selectedGoal['planTitle'] as String,
-                              style: const TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF0F172A),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              selectedGoal['planSubtitle'] as String,
-                              style: const TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF94A3B8),
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            ...(selectedGoal['items'] as List<Map<String, dynamic>>).map((item) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: _buildPlanItem(
-                                  icon: item['icon'] as IconData,
-                                  title: item['title'] as String,
-                                  subtitle: item['subtitle'] as String,
-                                ),
-                              );
-                            }).toList(),
-                          ],
+                    // Titles
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          selectedGoal['planTitle'] as String,
+                          style: const TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF0F172A),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 4),
+                        Text(
+                          selectedGoal['planSubtitle'] as String,
+                          style: const TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
+                      ],
                     ),
-                    // Target graphic — image version
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 400),
-                      transitionBuilder: (child, animation) {
-                        return ScaleTransition(
-                          scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
-                          child: child,
-                        );
-                      },
-                      child: Container(
-                        key: ValueKey(selectedGoal['image']),
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF8FAFC),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
-                        ),
-                        child: ClipOval(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Image.asset(
-                              selectedGoal['image'] as String,
-                              fit: BoxFit.contain,
+                    const SizedBox(height: 40), // Space for image to overlap upwards
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFF1F5F9)),
+                          ),
+                          child: Column(
+                            children: List.generate(
+                              (selectedGoal['items'] as List).length,
+                              (index) {
+                                final item = (selectedGoal['items'] as List)[index];
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: _buildPlanItem(
+                                        icon: item['icon'] as IconData,
+                                        title: item['title'] as String,
+                                        subtitle: item['subtitle'] as String,
+                                      ),
+                                    ),
+                                    if (index < (selectedGoal['items'] as List).length - 1)
+                                      const Divider(color: Color(0xFFF1F5F9), height: 1, thickness: 1),
+                                  ],
+                                );
+                              },
                             ),
                           ),
                         ),
-                      ),
+                        // Target graphic — image version floating over border
+                        Positioned(
+                          right: rightOffset,
+                          top: topOffset,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 400),
+                            transitionBuilder: (child, animation) {
+                              return ScaleTransition(
+                                scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+                                child: child,
+                              );
+                            },
+                            child: Container(
+                              key: ValueKey(selectedGoal['image']),
+                              width: imageSize,
+                              height: imageSize,
+                              child: ClipOval(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(0),
+                                  child: Image.asset(
+                                    selectedGoal['image'] as String,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
               // Footer
               Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: Color(0xFFF1F5F9)),
-                  ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                child: Wrap(
-                  alignment: WrapAlignment.spaceBetween,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 16,
-                  runSpacing: 16,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Expected Value',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF94A3B8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Expected Value',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF94A3B8),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          switchInCurve: Curves.easeOutCubic,
-                          layoutBuilder: (currentChild, previousChildren) => Stack(
-                            alignment: Alignment.centerLeft,
-                            children: [...previousChildren, if (currentChild != null) currentChild],
-                          ),
-                          child: Text(
+                          const SizedBox(height: 4),
+                          Text(
                             selectedGoal['expectedValue'] as String,
-                            key: ValueKey(selectedGoal['expectedValue']),
                             style: const TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Color.fromARGB(255, 0, 0, 0),
+                              color: Color(0xFF0F172A),
+                              letterSpacing: -0.5,
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Probability',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF94A3B8),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          switchInCurve: Curves.easeOutCubic,
-                          layoutBuilder: (currentChild, previousChildren) => Stack(
-                            alignment: Alignment.centerLeft,
-                            children: [...previousChildren, if (currentChild != null) currentChild],
-                          ),
-                          child: Text(
-                            selectedGoal['probability'] as String,
-                            key: ValueKey(selectedGoal['probability']),
-                            style: const TextStyle(
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Probability',
+                            style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 16,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: Color.fromARGB(255, 0, 0, 0),
+                              color: Color(0xFF94A3B8),
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            selectedGoal['probability'] as String,
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF0F172A),
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: const Color(0xFF0F172A),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
@@ -340,6 +368,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
           ),
          ),
         ),
+       ),
       ],
     );
   }
@@ -360,20 +389,25 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
       },
       child: Column(
         children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-            width: isActive ? 84 : 68,
-            height: isActive ? 84 : 68,
-            child: Opacity(
-              opacity: isActive ? 1.0 : 0.6,
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.contain,
+          SizedBox(
+            height: 100,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                width: isActive ? 100 : 80,
+                height: isActive ? 100 : 80,
+                child: Opacity(
+                  opacity: isActive ? 1.0 : 0.6,
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 8),
           AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
@@ -381,7 +415,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
               fontFamily: 'DMSans',
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: isActive ? const Color(0xFF7C3AED) : const Color(0xFF64748B),
+              color: isActive ? const Color(0xFF5BA1F7) : const Color(0xFF64748B),
             ),
             child: Text(title),
           ),
@@ -398,38 +432,43 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(6),
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
             color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            shape: BoxShape.circle,
+            border: Border.all(color: const Color(0xFFF1F5F9)),
           ),
-          child: Icon(icon, size: 14, color: const Color(0xFF64748B)),
+          child: Center(
+            child: Icon(icon, size: 20, color: const Color(0xFF64748B)),
+          ),
         ),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Text(
               title,
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: Color.fromARGB(255, 0, 0, 0),
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               subtitle,
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF94A3B8),
               ),
             ),
           ],
+        ),
         ),
       ],
     );

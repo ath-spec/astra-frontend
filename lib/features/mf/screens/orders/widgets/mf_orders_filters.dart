@@ -40,8 +40,8 @@ class MfOrdersFilters extends StatelessWidget {
             text,
             style: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
-              fontWeight: FontWeight.w800, // Match screenshot (bold)
+              fontSize: 10,
+              fontWeight: FontWeight.w600, // Match screenshot (bold)
               letterSpacing: 1.0,
               color: Color(0xFF0F172A),
             ),
