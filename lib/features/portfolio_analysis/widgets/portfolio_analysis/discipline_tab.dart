@@ -7,11 +7,20 @@ import 'discipline_components/sip_discipline_grid.dart';
 import 'discipline_components/sip_automation_section.dart';
 import 'discipline_components/yearly_investment_section.dart';
 
-class DisciplineTab extends StatelessWidget {
+class DisciplineTab extends StatefulWidget {
   const DisciplineTab({super.key});
 
   @override
+  State<DisciplineTab> createState() => _DisciplineTabState();
+}
+
+class _DisciplineTabState extends State<DisciplineTab> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(

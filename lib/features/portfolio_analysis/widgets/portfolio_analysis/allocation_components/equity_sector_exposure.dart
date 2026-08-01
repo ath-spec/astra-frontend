@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class EquitySectorExposureSection extends StatefulWidget {
   const EquitySectorExposureSection({super.key});
@@ -10,6 +11,7 @@ class EquitySectorExposureSection extends StatefulWidget {
 class _EquitySectorExposureSectionState extends State<EquitySectorExposureSection> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  bool _hasAnimated = false;
 
   @override
   void initState() {
@@ -19,10 +21,6 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
       duration: const Duration(milliseconds: 1000),
     );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
-    
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) _controller.forward();
-    });
   }
 
   @override
@@ -33,46 +31,55 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const _DottedDivider(),
-          const SizedBox(height: 32),
-          const Text(
-            'Equity Sector Exposure',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
+    return VisibilityDetector(
+      key: const Key('EquitySectorExposureSection'),
+      onVisibilityChanged: (info) {
+        if (!_hasAnimated && info.visibleFraction >= 0.3) {
+          _hasAnimated = true;
+          _controller.forward();
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const _DottedDivider(),
+            const SizedBox(height: 32),
+            const Text(
+              'Equity Sector Exposure',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF0F172A),
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          
-          _buildSectorBar('Financial Services', 34, '₹1,12,756'),
-          const SizedBox(height: 24),
-          _buildSectorBar('Consumer Cyclical', 13, '₹42,835'),
-          const SizedBox(height: 24),
-          _buildSectorBar('Industrials', 9, '₹30,140'),
-          const SizedBox(height: 24),
-          _buildSectorBar('Technology', 8, '₹26,533'),
-          const SizedBox(height: 24),
-          _buildSectorBar('Others', 34, '₹1,13,471'),
-          
-          const SizedBox(height: 48),
-          const Text(
-            'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 11,
-              height: 1.5,
-              color: Color(0xFF94A3B8),
+            const SizedBox(height: 24),
+            
+            _buildSectorBar('Financial Services', 34, '₹1,12,756'),
+            const SizedBox(height: 24),
+            _buildSectorBar('Consumer Cyclical', 13, '₹42,835'),
+            const SizedBox(height: 24),
+            _buildSectorBar('Industrials', 9, '₹30,140'),
+            const SizedBox(height: 24),
+            _buildSectorBar('Technology', 8, '₹26,533'),
+            const SizedBox(height: 24),
+            _buildSectorBar('Others', 34, '₹1,13,471'),
+            
+            const SizedBox(height: 48),
+            const Text(
+              'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 11,
+                height: 1.5,
+                color: Color(0xFF94A3B8),
+              ),
             ),
-          ),
-          const SizedBox(height: 48),
-        ],
+            const SizedBox(height: 48),
+          ],
+        ),
       ),
     );
   }

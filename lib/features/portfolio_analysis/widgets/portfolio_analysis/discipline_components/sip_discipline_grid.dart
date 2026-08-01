@@ -15,7 +15,7 @@ class SipDisciplineGrid extends StatelessWidget {
               Text(
                 'SIP Discipline',
                 style: TextStyle(
-                  fontFamily: 'SpaceGrotesk',
+                  fontFamily: 'DMSans',
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
@@ -263,7 +263,7 @@ class SipDisciplineGrid extends StatelessWidget {
                         const Text(
                           '0',
                           style: TextStyle(
-                            fontFamily: 'SpaceGrotesk',
+                            fontFamily: 'DMSans',
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0F172A),
@@ -456,7 +456,7 @@ class SipDisciplineGrid extends StatelessWidget {
                             const Text(
                               'No transactions found',
                               style: TextStyle(
-                                fontFamily: 'SpaceGrotesk',
+                                fontFamily: 'DMSans',
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF0F172A),

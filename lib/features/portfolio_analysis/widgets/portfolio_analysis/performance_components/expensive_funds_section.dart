@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class ExpensiveFundsSection extends StatefulWidget {
   const ExpensiveFundsSection({super.key});
@@ -10,19 +11,19 @@ class ExpensiveFundsSection extends StatefulWidget {
 class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  bool _hasAnimated = false;
+  
+  // Example value: 0%. In reality this would come from your real data source.
+  final double _expenseRatioPercentage = 0.0; 
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1500),
     );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
-    
-    Future.delayed(const Duration(milliseconds: 800), () {
-      if (mounted) _controller.forward();
-    });
   }
 
   @override
@@ -38,74 +39,58 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Expensive funds drag you down',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Keep an eye on what you\'re paying.',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 13,
-              color: Color(0xFF64748B),
-            ),
-          ),
-          const SizedBox(height: 32),
-          
           Row(
             children: const [
               Text(
-                'YOUR EXPENSE RATIO (TER)',
+                'Expensive Funds',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 11,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
-                  color: Color(0xFF94A3B8),
+                  color: Color(0xFF0F172A),
                 ),
               ),
               SizedBox(width: 8),
-              Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+              Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
             ],
           ),
-          const SizedBox(height: 24),
-          
-          const Text(
-            '0.96%',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-              color: Color(0xFF0F172A),
+          const SizedBox(height: 16),
+          RichText(
+            text: const TextSpan(
+              children: [
+                TextSpan(
+                  text: '₹0 ',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0F172A),
+                    letterSpacing: -1.0,
+                  ),
+                ),
+                TextSpan(
+                  text: 'invested in funds with higher expense ratios',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF64748B),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
-          const Text(
-            'Average for your portfolio is okay',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 13,
-              color: Color(0xFF64748B),
-            ),
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
           
-          // Slider
+          // Progress Bar
           Stack(
             children: [
               Container(
                 height: 12,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(4),
+                  color: const Color(0xFFE2E8F0),
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
               AnimatedBuilder(
@@ -113,95 +98,103 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                 builder: (context, child) {
                   return Container(
                     height: 12,
+                    // Hardcoded to 0.6 for demo purposes so you can see the bar fill up animation
                     width: MediaQuery.of(context).size.width * 0.6 * _animation.value,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFCBD5E1),
-                      borderRadius: BorderRadius.circular(4),
+                      color: const Color(0xFFE53E3E), // Red to highlight expensive funds
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   );
                 },
               ),
-              // Pointer
-              Positioned(
-                left: MediaQuery.of(context).size.width * 0.6 - 30, // Offset for pointer
-                top: -6,
-                child: Container(
-                  width: 4,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF94A3B8),
-                    borderRadius: BorderRadius.circular(2),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          Row(
+            children: const [
+              Text(
+                'View funds',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF0F172A),
+                ),
+              ),
+              Icon(Icons.chevron_right, size: 16, color: Color(0xFF0F172A)),
+            ],
+          ),
+          const SizedBox(height: 32),
+          
+          VisibilityDetector(
+            key: const Key('ExpensiveFundsSection_InsightsLine'),
+            onVisibilityChanged: (info) {
+              if (!_hasAnimated && info.visibleFraction >= 0.5) {
+                _hasAnimated = true;
+                _controller.forward();
+              }
+            },
+            child: Row(
+              children: const [
+                Text(
+                  'INSIGHTS',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 2.0,
+                    color: Color(0xFF94A3B8),
                   ),
                 ),
-              )
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text('0%', style: TextStyle(fontFamily: 'DMSans', fontSize: 11, color: Color(0xFF94A3B8))),
-              Text('2.5%', style: TextStyle(fontFamily: 'DMSans', fontSize: 11, color: Color(0xFF94A3B8))),
-            ],
-          ),
-          const SizedBox(height: 40),
-          
-          // Costly funds Insight
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
+                SizedBox(width: 8),
+                Expanded(child: _DottedDivider()),
               ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Costly funds',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF0F172A),
-                  ),
+          ),
+          const SizedBox(height: 16),
+          
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: RichText(
+              text: const TextSpan(
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 13,
+                  height: 1.5,
+                  color: Color(0xFF64748B),
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  '₹45,342 could have been saved if you switched to cheaper alternatives.',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 13,
-                    color: Color(0xFF64748B),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'VIEW',
+                children: [
+                  TextSpan(
+                    text: 'Fees aren\'t eating into your gains ',
                     style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      letterSpacing: 1.0,
                       color: Color(0xFF0F172A),
                     ),
                   ),
-                ),
-              ],
+                  TextSpan(
+                    text: 'every rupee is compounding efficiently for you.',
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 64),
+          
+          // Disclaimer
+          const Text(
+            'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 12,
+              height: 1.5,
+              color: Color(0xFF94A3B8),
             ),
           ),
           const SizedBox(height: 48),
@@ -209,4 +202,37 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
       ),
     );
   }
+}
+
+class _DottedDivider extends StatelessWidget {
+  const _DottedDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: const Size(double.infinity, 1),
+      painter: _DottedLinePainter(),
+    );
+  }
+}
+
+class _DottedLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFE2E8F0)
+      ..strokeWidth = 1
+      ..strokeCap = StrokeCap.round;
+    
+    double dashWidth = 3;
+    double dashSpace = 4;
+    double startX = 0;
+    while (startX < size.width) {
+      canvas.drawLine(Offset(startX, 0), Offset(startX + dashWidth, 0), paint);
+      startX += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

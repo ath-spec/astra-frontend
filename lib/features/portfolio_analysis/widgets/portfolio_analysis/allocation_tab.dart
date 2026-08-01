@@ -6,11 +6,20 @@ import 'allocation_components/allocation_suggestions_section.dart';
 import 'allocation_components/index_fund_exposure_section.dart';
 import 'allocation_components/equity_sector_exposure.dart';
 
-class AllocationTab extends StatelessWidget {
+class AllocationTab extends StatefulWidget {
   const AllocationTab({super.key});
 
   @override
+  State<AllocationTab> createState() => _AllocationTabState();
+}
+
+class _AllocationTabState extends State<AllocationTab> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(

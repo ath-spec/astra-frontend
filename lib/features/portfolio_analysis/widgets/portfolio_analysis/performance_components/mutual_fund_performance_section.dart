@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:visibility_detector/visibility_detector.dart';
 
 class MutualFundPerformanceSection extends StatefulWidget {
   const MutualFundPerformanceSection({super.key});
@@ -11,19 +12,16 @@ class MutualFundPerformanceSection extends StatefulWidget {
 class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSection> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  bool _hasAnimated = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1500),
     );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
-    
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) _controller.forward();
-    });
   }
 
   @override
@@ -75,16 +73,25 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
         const SizedBox(height: 48),
         
         // 3D Chart
-        SizedBox(
-          height: 240,
-          width: double.infinity,
-          child: AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return CustomPaint(
-                painter: _Performance3DBarPainter(progress: _animation.value),
-              );
-            },
+        VisibilityDetector(
+          key: const Key('MutualFundPerformanceSection_3DChart'),
+          onVisibilityChanged: (info) {
+            if (!_hasAnimated && info.visibleFraction >= 0.5) {
+              _hasAnimated = true;
+              _controller.forward();
+            }
+          },
+          child: SizedBox(
+            height: 240,
+            width: double.infinity,
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return CustomPaint(
+                  painter: _Performance3DBarPainter(progress: _animation.value),
+                );
+              },
+            ),
           ),
         ),
         const SizedBox(height: 40),
@@ -236,9 +243,21 @@ class _Performance3DBarPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final y0 = size.height - 40;
 
-    // Grid lines (Vertical dotted lines)
+    // Grid lines (Vertical dotted lines) fading towards top and bottom
+    final shader = const LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Color(0x00E2E8F0),
+        Color(0xFFE2E8F0),
+        Color(0xFFE2E8F0),
+        Color(0x00E2E8F0),
+      ],
+      stops: [0.0, 0.25, 0.75, 1.0], // Transparent at ends, solid in the middle
+    ).createShader(Rect.fromLTRB(0, -20, size.width, size.height));
+
     final gridPaint = Paint()
-      ..color = const Color(0xFFE2E8F0)
+      ..shader = shader
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     
@@ -246,7 +265,8 @@ class _Performance3DBarPainter extends CustomPainter {
     final stepX = size.width / numCols;
     for (int i = 0; i <= numCols; i++) {
       final x = i * stepX;
-      _drawDashedLine(canvas, Offset(x, 20), Offset(x, y0 + 10), gridPaint);
+      // Start higher and end lower to go past both the top text and bottom x-axis labels
+      _drawDashedLine(canvas, Offset(x, -20), Offset(x, size.height), gridPaint);
     }
     
     // Bottom solid line
@@ -291,10 +311,19 @@ class _Performance3DBarPainter extends CustomPainter {
     
     final barW = 28.0;
     final depth = 12.0;
+    final maxAvailableHeight = 150.0; // Maximum visual height in pixels for the tallest bar
+    
+    double maxVal = 0;
+    for (var bar in bars) {
+      final v = bar['val'] as double;
+      if (v > maxVal) maxVal = v;
+    }
+    if (maxVal == 0) maxVal = 1; // Prevent division by zero
 
     for (int i = 0; i < bars.length; i++) {
       final x = (i * stepX) + (stepX / 2);
-      final targetH = bars[i]['val'] as double;
+      final rawVal = bars[i]['val'] as double;
+      final targetH = (rawVal / maxVal) * maxAvailableHeight;
       final currentH = targetH * progress;
       
       // Draw 3D Bar
@@ -305,36 +334,64 @@ class _Performance3DBarPainter extends CustomPainter {
       final sideColor = bars[i]['colorSide'] as Color;
       final topColor = bars[i]['colorTop'] as Color;
 
-      // 1. Right Side
+      // 3D Projection offsets (Up and Right)
+      final dx = depth * 0.8;
+      final dy = -depth * 0.6; // Negative means UP
+
+      // 1. Right Side Face
       final sidePath = Path()
-        ..moveTo(bx + barW, by)
-        ..lineTo(bx + barW + depth, by - depth)
-        ..lineTo(bx + barW + depth, by - currentH - depth)
-        ..lineTo(bx + barW, by - currentH)
+        ..moveTo(bx + barW, by) // Bottom-left of side face
+        ..lineTo(bx + barW + dx, by + dy) // Bottom-right of side face
+        ..lineTo(bx + barW + dx, by - currentH + dy) // Top-right of side face
+        ..lineTo(bx + barW, by - currentH) // Top-left of side face
         ..close();
       canvas.drawPath(sidePath, Paint()..color = sideColor);
-      
-      // 2. Top
+
+      // 2. Top Face
       final topPath = Path()
-        ..moveTo(bx, by - currentH)
-        ..lineTo(bx + depth, by - currentH - depth)
-        ..lineTo(bx + barW + depth, by - currentH - depth)
-        ..lineTo(bx + barW, by - currentH)
+        ..moveTo(bx, by - currentH) // Bottom-left of top face
+        ..lineTo(bx + barW, by - currentH) // Bottom-right of top face
+        ..lineTo(bx + barW + dx, by - currentH + dy) // Top-right of top face
+        ..lineTo(bx + dx, by - currentH + dy) // Top-left of top face
         ..close();
       canvas.drawPath(topPath, Paint()..color = topColor);
 
-      // 3. Front
+      // 3. Front Face
       final frontRect = Rect.fromLTRB(bx, by - currentH, bx + barW, by);
       canvas.drawRect(frontRect, Paint()..color = frontColor);
 
+      // 4. Wavy Texture on Front Face
+      if (currentH > 0 && bars[i]['label'] != '') {
+        canvas.save();
+        canvas.clipRect(frontRect);
+        
+        final texturePaint = Paint()
+          ..color = sideColor.withOpacity(0.35)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
+
+        final spacing = 6.0;
+        for (double offset = -currentH; offset < barW + currentH; offset += spacing) {
+          final path = Path();
+          path.moveTo(bx + offset, by);
+          for (double stepY = 0; stepY <= currentH; stepY += 5) {
+             // Shift left as we go up for diagonal effect, add sine wave for texture
+             double wave = math.sin((stepY + offset) * 0.15) * 1.5;
+             path.lineTo(bx + offset - (stepY * 0.3) + wave, by - stepY);
+          }
+          canvas.drawPath(path, texturePaint);
+        }
+        canvas.restore();
+      }
+
       // Value label on top
-      if (progress > 0.8) {
+      if (progress > 0.8 && bars[i]['label'] != '') {
         textPainter.text = TextSpan(
           text: bars[i]['amt'] as String,
           style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
         );
         textPainter.layout();
-        textPainter.paint(canvas, Offset(x - textPainter.width / 2 + depth / 2, by - currentH - depth - 16));
+        textPainter.paint(canvas, Offset(x - textPainter.width / 2, by - currentH - 20));
       }
 
       // X Axis label

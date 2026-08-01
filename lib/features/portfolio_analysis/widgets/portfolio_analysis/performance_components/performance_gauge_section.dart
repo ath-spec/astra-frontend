@@ -172,11 +172,11 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Container(
-            decoration: BoxDecoration(
+            margin: const EdgeInsets.only(top: 8),
+            decoration: ShapeDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-              boxShadow: [
+              shape: const _NotchBorder(side: BorderSide(color: Color(0xFFE2E8F0))),
+              shadows: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.03),
                   blurRadius: 10,
@@ -232,7 +232,17 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                                     alignment: Alignment.centerLeft,
                                     child: Container(
                                       width: MediaQuery.of(context).size.width * 0.7 * _animation.value,
-                                      color: const Color(0xFF48BB78), // Green
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Color(0xFFBBE5B3),
+                                            Color(0xFF86EFAC),
+                                            Color(0xFF4ADE80),
+                                            Color(0xFF22C55E),
+                                            Color(0xFF16A34A),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 );
@@ -424,3 +434,54 @@ class _DottedLinePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+class _NotchBorder extends OutlinedBorder {
+  const _NotchBorder({super.side});
+
+  @override
+  OutlinedBorder copyWith({BorderSide? side}) => _NotchBorder(side: side ?? this.side);
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) => _getPath(rect);
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) => _getPath(rect);
+
+  Path _getPath(Rect rect) {
+    final path = Path();
+    final notchCenter = rect.center.dx;
+    const notchWidth = 16.0;
+    const notchHeight = 8.0;
+    const radius = 4.0;
+    
+    path.moveTo(rect.left + radius, rect.top);
+    
+    path.lineTo(notchCenter - notchWidth / 2, rect.top);
+    path.lineTo(notchCenter, rect.top - notchHeight);
+    path.lineTo(notchCenter + notchWidth / 2, rect.top);
+    
+    path.lineTo(rect.right - radius, rect.top);
+    path.arcToPoint(Offset(rect.right, rect.top + radius), radius: const Radius.circular(radius));
+    
+    path.lineTo(rect.right, rect.bottom - radius);
+    path.arcToPoint(Offset(rect.right - radius, rect.bottom), radius: const Radius.circular(radius));
+    
+    path.lineTo(rect.left + radius, rect.bottom);
+    path.arcToPoint(Offset(rect.left, rect.bottom - radius), radius: const Radius.circular(radius));
+    
+    path.lineTo(rect.left, rect.top + radius);
+    path.arcToPoint(Offset(rect.left + radius, rect.top), radius: const Radius.circular(radius));
+    
+    path.close();
+    return path;
+  }
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
+    canvas.drawPath(_getPath(rect), side.toPaint());
+  }
+  
+  @override
+  ShapeBorder scale(double t) => _NotchBorder(side: side.scale(t));
+}
+

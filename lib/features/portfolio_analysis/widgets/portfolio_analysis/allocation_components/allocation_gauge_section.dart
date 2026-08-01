@@ -34,10 +34,9 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     )..addListener(() {
-        int currentSegment = (_animation.value * widget.level.activeSegments).ceil();
-        if (currentSegment > hapticCount) {
+        if (_animation.value > 0.3 && hapticCount == 0) {
           HapticFeedback.selectionClick();
-          hapticCount = currentSegment;
+          hapticCount = 1;
         }
       });
   }
@@ -96,7 +95,7 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
                         'Allocation',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF64748B),
                         ),
@@ -104,14 +103,29 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    widget.level.label,
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.5,
-                      color: widget.level.activeColor,
+                  const SizedBox(height: 4),
+                  ShaderMask(
+                    shaderCallback: (bounds) {
+                      return LinearGradient(
+                        colors: [
+                          const Color(0xFF0F172A),
+                          const Color(0xFF0F172A),
+                          widget.level.activeColor,
+                        ],
+                        stops: const [0.0, 0.65, 1.0],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ).createShader(bounds);
+                    },
+                    child: Text(
+                      widget.level.label,
+                      style: const TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -123,21 +137,22 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.0),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: const [
-              Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
-              SizedBox(width: 8),
+              Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
+              SizedBox(width: 6),
               Text(
                 'KNOW MORE',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
+                  fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.0,
+                  letterSpacing: 1.5,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -174,7 +189,7 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
 
 class _AllocationGaugePainter extends CustomPainter {
   final double progress;
-  final int activeSegments;
+  final int activeSegments; // 1 to 5
   final Color activeColor;
 
   _AllocationGaugePainter({
@@ -191,67 +206,103 @@ class _AllocationGaugePainter extends CustomPainter {
     const startAngle = math.pi;
     const sweepAngle = math.pi;
 
-    // 1. Draw outer dotted line
+    // 1. Draw outer dotted line (sparse)
     final outerRect = Rect.fromCircle(center: center, radius: radius);
     final outerPaint = Paint()
       ..color = const Color(0xFFCBD5E1)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
+      ..strokeWidth = 1.5
       ..strokeCap = StrokeCap.round;
 
-    _drawDashedArc(canvas, outerRect, startAngle, sweepAngle, outerPaint, dashWidth: 2, dashSpace: 8);
+    _drawDashedArc(canvas, outerRect, startAngle, sweepAngle, outerPaint, dashWidth: 1.5, dashSpace: 12);
 
     // 2. Draw segments
     final innerRadius = radius - 16;
     final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
     
     const numSegments = 5;
-    final gapAngle = 0.05; // Gap between segments
-    final segmentSweep = (sweepAngle - (gapAngle * (numSegments - 1))) / numSegments;
+    final activeIndex = activeSegments - 1; // 0 to 4
+    final segmentSweep = sweepAngle / numSegments;
 
-    // 1. Draw Background Tracks
-    for (int i = 0; i < numSegments; i++) {
-      final segmentStart = startAngle + (i * (segmentSweep + gapAngle));
-      final bgPaint = Paint()
-        ..color = const Color(0xFFE2E8F0)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 20
-        ..strokeCap = StrokeCap.butt;
-      canvas.drawArc(innerRect, segmentStart, segmentSweep, false, bgPaint);
+    // Background Arc (Gray, round ends)
+    final bgPaint = Paint()
+      ..color = const Color(0xFFE2E8F0)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 16
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(innerRect, startAngle, sweepAngle, false, bgPaint);
+
+    // Draw active segment (Fades in)
+    final activeStart = startAngle + (activeIndex * segmentSweep);
+    
+    final activePaint = Paint()
+      ..color = activeColor.withOpacity(progress)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 16
+      ..strokeCap = StrokeCap.butt; // Flat edges by default
+      
+    canvas.drawArc(innerRect, activeStart, segmentSweep, false, activePaint);
+    
+    // Add round caps manually if it's the first or last segment
+    if (progress > 0) {
+      if (activeIndex == 0) {
+        // Left cap is round
+        final dx = math.cos(activeStart);
+        final dy = math.sin(activeStart);
+        canvas.drawCircle(center + Offset(dx * innerRadius, dy * innerRadius), 8, Paint()..color = activeColor.withOpacity(progress));
+      }
+      if (activeIndex == numSegments - 1) {
+        // Right cap is round
+        final endAngle = activeStart + segmentSweep;
+        final dx = math.cos(endAngle);
+        final dy = math.sin(endAngle);
+        canvas.drawCircle(center + Offset(dx * innerRadius, dy * innerRadius), 8, Paint()..color = activeColor.withOpacity(progress));
+      }
     }
 
-    // 2. Draw segmented colored progress smoothly
-    if (activeSegments > 0) {
-      final targetAngle = (activeSegments * segmentSweep) + ((activeSegments - 1) * gapAngle);
-      final currentAngle = targetAngle * progress;
+    // Draw white gaps to cut the arc perfectly
+    final gapPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.butt;
+      
+    for (int i = 1; i < numSegments; i++) {
+      final angle = startAngle + (i * segmentSweep);
+      final dx = math.cos(angle);
+      final dy = math.sin(angle);
+      
+      final p1 = center + Offset(dx * (innerRadius - 10), dy * (innerRadius - 10));
+      final p2 = center + Offset(dx * (innerRadius + 10), dy * (innerRadius + 10));
+      
+      canvas.drawLine(p1, p2, gapPaint);
+    }
+    
+    // Draw the glowing pie slice
+    if (progress > 0) {
+      final glowPath = Path();
+      glowPath.moveTo(center.dx, center.dy);
+      glowPath.arcTo(
+        innerRect,
+        activeStart,
+        segmentSweep,
+        false,
+      );
+      glowPath.close();
 
-      for (int i = 0; i < activeSegments; i++) {
-        final segmentStart = startAngle + (i * (segmentSweep + gapAngle));
-        final segmentStartAngle = i * (segmentSweep + gapAngle);
-        
-        if (currentAngle > segmentStartAngle) {
-          final sweep = math.min(segmentSweep, currentAngle - segmentStartAngle);
-          final paint = Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 20
-            ..strokeCap = StrokeCap.butt;
-            
-          if (i == activeSegments - 1 && activeSegments == 5) {
-            // If it's the last segment of Very Aggressive, give it a sweep gradient
-            final gradient = SweepGradient(
-              colors: [const Color(0xFF9F7AEA), activeColor],
-              stops: const [0.0, 1.0],
-              startAngle: segmentStart,
-              endAngle: segmentStart + segmentSweep,
-            );
-            paint.shader = gradient.createShader(innerRect);
-          } else {
-            paint.color = activeColor.withOpacity(0.4 + (0.6 * (i + 1) / activeSegments));
-          }
+      final midAngle = activeStart + (segmentSweep / 2);
+      final glowCenter = center + Offset(math.cos(midAngle) * innerRadius, math.sin(midAngle) * innerRadius);
 
-          canvas.drawArc(innerRect, segmentStart, sweep, false, paint);
-        }
-      }
+      final glowPaint = Paint()
+        ..shader = RadialGradient(
+          colors: [
+            activeColor.withOpacity(0.3 * progress),
+            activeColor.withOpacity(0.0),
+          ],
+          stops: const [0.0, 0.7],
+        ).createShader(Rect.fromCircle(center: glowCenter, radius: innerRadius * 0.9));
+
+      canvas.drawPath(glowPath, glowPaint);
     }
   }
 

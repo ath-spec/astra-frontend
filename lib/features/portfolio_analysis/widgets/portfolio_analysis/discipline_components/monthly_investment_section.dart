@@ -89,7 +89,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
               Text(
                 'Monthly Net Investment',
                 style: TextStyle(
-                  fontFamily: 'SpaceGrotesk',
+                  fontFamily: 'DMSans',
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),

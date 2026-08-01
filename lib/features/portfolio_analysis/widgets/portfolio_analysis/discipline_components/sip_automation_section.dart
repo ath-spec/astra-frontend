@@ -40,7 +40,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
               Text(
                 'SIP Automation',
                 style: TextStyle(
-                  fontFamily: 'SpaceGrotesk',
+                  fontFamily: 'DMSans',
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
@@ -57,7 +57,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                 TextSpan(
                   text: '0% ',
                   style: TextStyle(
-                    fontFamily: 'SpaceGrotesk',
+                    fontFamily: 'DMSans',
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF0F172A),
@@ -107,7 +107,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
               const Text(
                 '0%',
                 style: TextStyle(
-                  fontFamily: 'SpaceGrotesk',
+                  fontFamily: 'DMSans',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
@@ -156,7 +156,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
               const Text(
                 'NA',
                 style: TextStyle(
-                  fontFamily: 'SpaceGrotesk',
+                  fontFamily: 'DMSans',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
@@ -168,75 +168,83 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
           const SizedBox(height: 32),
           
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               setState(() {
                 _isExpanded = !_isExpanded;
                 if (_isExpanded) {
                   _controller.forward(from: 0);
-                } else {
-                  _controller.reverse();
                 }
               });
             },
-            child: Row(
-              children: [
-                Text(
-                  _isExpanded ? 'Hide your SIP trend' : 'View your SIP trend',
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF3182CE),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                children: [
+                  Text(
+                    _isExpanded ? 'Hide your SIP trend' : 'View your SIP trend',
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF3182CE),
+                    ),
                   ),
-                ),
-                if (!_isExpanded) ...[
                   const SizedBox(width: 4),
-                  const Icon(
-                    Icons.keyboard_arrow_down,
+                  Icon(
+                    _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                     size: 16,
-                    color: Color(0xFF3182CE),
+                    color: const Color(0xFF3182CE),
                   ),
                 ],
-              ],
+              ),
             ),
           ),
           
-          if (_isExpanded) ...[
-            const SizedBox(height: 24),
-            CustomPaint(
-              size: const Size(double.infinity, 1),
-              painter: _DottedLinePainter(),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: const [
-                Icon(Icons.bar_chart, size: 14, color: Color(0xFF94A3B8)),
-                SizedBox(width: 6),
-                Text(
-                  'Past 12M trend',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF94A3B8),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: !_isExpanded ? const SizedBox(width: double.infinity, height: 0) : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                CustomPaint(
+                  size: const Size(double.infinity, 1),
+                  painter: _DottedLinePainter(),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: const [
+                    Icon(Icons.bar_chart, size: 14, color: Color(0xFF94A3B8)),
+                    SizedBox(width: 6),
+                    Text(
+                      'Past 12M trend',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 200,
+                  width: double.infinity,
+                  child: AnimatedBuilder(
+                    animation: _animation,
+                    builder: (context, child) {
+                      return CustomPaint(
+                        painter: _SipTrendPainter(progress: _animation.value),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              width: double.infinity,
-              child: AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  return CustomPaint(
-                    painter: _SipTrendPainter(progress: _animation.value),
-                  );
-                },
-              ),
-            ),
-          ],
+          ),
         ],
       ),
     );
@@ -279,7 +287,7 @@ class _SipTrendPainter extends CustomPainter {
     void drawLabel(String text, double y) {
       textPainter.text = TextSpan(
         text: text,
-        style: const TextStyle(fontFamily: 'SpaceGrotesk', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF94A3B8)),
+        style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF94A3B8)),
       );
       textPainter.layout();
       textPainter.paint(canvas, Offset(0, y - textPainter.height / 2));
@@ -341,7 +349,7 @@ class _SipTrendPainter extends CustomPainter {
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
     textPainter.text = TextSpan(
       text: text,
-      style: const TextStyle(fontFamily: 'SpaceGrotesk', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+      style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
     );
     textPainter.layout();
     

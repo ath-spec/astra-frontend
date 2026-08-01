@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class YearlyInvestmentSection extends StatefulWidget {
   const YearlyInvestmentSection({super.key});
@@ -11,8 +11,8 @@ class YearlyInvestmentSection extends StatefulWidget {
 class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  int? _tappedIndex = 5; // Default show 2025 tooltip
-  Timer? _visibilityTimer;
+  int? _tappedIndex; // Starts null so no tooltip during animation
+  bool _hasAnimated = false;
 
   @override
   void initState() {
@@ -23,22 +23,12 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
     );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
     
-    _visibilityTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      final renderObject = context.findRenderObject();
-      if (renderObject is RenderBox) {
-        final position = renderObject.localToGlobal(Offset.zero).dy;
-        final screenHeight = MediaQuery.of(context).size.height;
-        // Trigger animation when the widget is partially visible
-        final widgetHeight = renderObject.size.height;
-        if (position + (widgetHeight * 0.4) < screenHeight) {
-          if (_controller.status == AnimationStatus.dismissed) {
-            _controller.forward();
-          }
-          timer.cancel();
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        if (mounted) {
+          setState(() {
+            _tappedIndex ??= 5; // Select 2025 by default after animation finishes
+          });
         }
       }
     });
@@ -46,24 +36,31 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
 
   @override
   void dispose() {
-    _visibilityTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return VisibilityDetector(
+      key: const Key('YearlyInvestmentSection'),
+      onVisibilityChanged: (info) {
+        if (!_hasAnimated && info.visibleFraction >= 0.4) {
+          _hasAnimated = true;
+          _controller.forward();
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Row(
             children: const [
               Text(
                 'Yearly Investment',
                 style: TextStyle(
-                  fontFamily: 'SpaceGrotesk',
+                  fontFamily: 'DMSans',
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
@@ -209,7 +206,7 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
           const SizedBox(height: 48),
         ],
       ),
-    );
+    ));
   }
 }
 
