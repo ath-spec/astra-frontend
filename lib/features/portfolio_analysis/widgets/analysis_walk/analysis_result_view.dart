@@ -156,7 +156,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 14,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: Color(0xFF64748B),
                         ),
                       ),
@@ -177,8 +177,8 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
                                       maxLines: 1,
                                       style: const TextStyle(
                                         fontFamily: 'DMSans',
-                                        fontSize: 36,
-                                        fontWeight: FontWeight.w700,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
                                         color: Colors.white, // Must be white for ShaderMask
                                         height: 1.1,
                                       ),
@@ -189,8 +189,8 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
                                     maxLines: 1,
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
-                                      fontSize: 36,
-                                      fontWeight: FontWeight.w700,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
                                       color: widget.gaugeColor,
                                       height: 1.1,
                                     ),
@@ -218,8 +218,8 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                   height: 1.2,
                 ),
@@ -230,7 +230,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w400,
                   height: 1.5,
                   color: Color(0xFF64748B),

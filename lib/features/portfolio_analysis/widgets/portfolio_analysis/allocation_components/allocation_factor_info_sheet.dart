@@ -160,7 +160,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
               TextSpan(
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 13,
+                  fontSize: 11,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),

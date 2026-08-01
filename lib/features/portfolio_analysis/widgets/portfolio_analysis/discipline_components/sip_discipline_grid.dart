@@ -18,8 +18,8 @@ class SipDisciplineGrid extends StatelessWidget {
                 'SIP Discipline',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -41,7 +41,7 @@ class SipDisciplineGrid extends StatelessWidget {
                 behavior: HitTestBehavior.opaque,
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                  child: Icon(Icons.info_outline, size: 12, color: Color(0xFF64748B)),
                 ),
               ),
             ],
@@ -54,8 +54,8 @@ class SipDisciplineGrid extends StatelessWidget {
                   text: '0 of 0',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                     letterSpacing: -1.0,
                   ),
@@ -64,7 +64,7 @@ class SipDisciplineGrid extends StatelessWidget {
                   text: ' SIP instalments completed',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF64748B),
                   ),
@@ -77,7 +77,7 @@ class SipDisciplineGrid extends StatelessWidget {
             'Measures how reliably you complete your\nscheduled SIP instalments.',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 13,
+              fontSize: 10,
               color: Color(0xFF64748B),
               height: 1.5,
             ),
@@ -88,7 +88,7 @@ class SipDisciplineGrid extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: Row(
@@ -101,9 +101,8 @@ class SipDisciplineGrid extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 10,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFFF56565),
-                    letterSpacing: 1.0,
                   ),
                 ),
               ],
@@ -124,15 +123,15 @@ class SipDisciplineGrid extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 24,
-                  height: 24,
+                  width: 20,
+                  height: 20,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                     border: Border.all(color: const Color(0xFF0F172A)),
                   ),
                   child: const Center(
-                    child: Icon(Icons.bolt, size: 14, color: Color(0xFFD69E2E)),
+                    child: Icon(Icons.bolt, size: 12, color: Color(0xFFD69E2E)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -141,14 +140,13 @@ class SipDisciplineGrid extends StatelessWidget {
                     'Some SIPs placed through other apps may not be\nvisible here.',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
               ],
             ),
           ),
@@ -159,38 +157,46 @@ class SipDisciplineGrid extends StatelessWidget {
   }
 
   Widget _buildMonthGrid(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildMonthCircle(context, 'SEP', false, false),
-            _buildMonthCircle(context, 'OCT', false, false),
-            _buildMonthCircle(context, 'NOV', false, false),
-            _buildMonthCircle(context, 'DEC', false, false),
-            _buildMonthCircle(context, 'JAN', false, false),
-            _buildMonthCircle(context, 'FEB', false, false),
-          ],
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              _buildMonthCircle(context, 'SEP', false, false),
+              _buildMonthCircle(context, 'OCT', false, false),
+              _buildMonthCircle(context, 'NOV', false, false),
+              _buildMonthCircle(context, 'DEC', false, false),
+              _buildMonthCircle(context, 'JAN', false, false),
+              _buildMonthCircle(context, 'FEB', false, false),
+            ],
+          ),
         ),
         const SizedBox(height: 32),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildMonthCircle(context, 'MAR', false, false),
-            _buildMonthCircle(context, 'APR', false, false),
-            _buildMonthCircle(context, 'MAY', false, false),
-            _buildMonthCircle(context, 'JUN', false, false),
-            _buildMonthCircle(context, 'JUL', false, false),
-            _buildMonthCircle(context, 'AUG', true, true),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              _buildMonthCircle(context, 'MAR', false, false),
+              _buildMonthCircle(context, 'APR', false, false),
+              _buildMonthCircle(context, 'MAY', false, false),
+              _buildMonthCircle(context, 'JUN', false, false),
+              _buildMonthCircle(context, 'JUL', false, false),
+              _buildMonthCircle(context, 'AUG', true, true),
+            ],
+          ),
         ),
       ],
+      ),
     );
   }
 
   Widget _buildMonthCircle(BuildContext context, String month, bool isActive, bool isCheck) {
-    return GestureDetector(
-      onTap: () {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.transparent,
@@ -209,7 +215,7 @@ class SipDisciplineGrid extends StatelessWidget {
             decoration: isActive 
                 ? BoxDecoration(
                     color: const Color(0xFF1E293B),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   )
                 : null,
             child: Text(
@@ -217,7 +223,7 @@ class SipDisciplineGrid extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 10,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
                 color: isActive ? Colors.white : const Color(0xFF94A3B8),
               ),
@@ -225,22 +231,23 @@ class SipDisciplineGrid extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Container(
-            width: 26,
-            height: 26,
+            width: 20,
+            height: 20,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white,
-              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1),
             ),
             child: Center(
               child: Icon(
                 isActive || isCheck ? Icons.check : Icons.close,
-                size: 14,
+                size: 12,
                 color: const Color(0xFFCBD5E1),
               ),
             ),
           ),
         ],
+      ),
       ),
     );
   }

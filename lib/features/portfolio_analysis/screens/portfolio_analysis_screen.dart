@@ -65,7 +65,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
                       title,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: fontWeight,
                         color: color,
                       ),

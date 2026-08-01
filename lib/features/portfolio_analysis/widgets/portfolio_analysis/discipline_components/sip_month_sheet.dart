@@ -50,7 +50,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
       padding: const EdgeInsets.only(top: 12),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,9 +78,8 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                   'SIP IN ${month == 'AUG' ? 'AUGUST' : month}', 
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2.0,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF94A3B8),
                   ),
                 ),
@@ -88,7 +87,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     border: Border.all(color: const Color(0xFFE2E8F0)),
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Row(
                     children: [
@@ -99,7 +98,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                           padding: const EdgeInsets.all(12.0),
                           child: Icon(
                             Icons.chevron_left, 
-                            size: 14, 
+                            size: 12, 
                             color: isFirst ? const Color(0xFF94A3B8) : const Color(0xFF0F172A),
                           ),
                         ),
@@ -109,7 +108,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                         '${month[0].toUpperCase()}${month.substring(1).toLowerCase()} \'2026',
                         style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 11,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF0F172A),
                         ),
@@ -122,7 +121,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                           padding: const EdgeInsets.all(12.0),
                           child: Icon(
                             Icons.chevron_right, 
-                            size: 14, 
+                            size: 12, 
                             color: isLast ? const Color(0xFF94A3B8) : const Color(0xFF0F172A),
                           ),
                         ),
@@ -149,15 +148,15 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                     color: Colors.white,
                     border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
                   ),
-                  child: const Icon(Icons.check, size: 14, color: Color(0xFFCBD5E1)),
+                  child: const Icon(Icons.check, size: 12, color: Color(0xFFCBD5E1)),
                 ),
                 const SizedBox(width: 12),
                 const Text(
                   '0',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                     height: 1.0,
                   ),
@@ -167,7 +166,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                   'SIPs paid',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF64748B),
                   ),
@@ -194,7 +193,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                     'Streak will close once the current month ends',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12,
+                      fontSize: 10,
                       color: Color(0xFF475569),
                     ),
                   ),
@@ -229,9 +228,8 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                   'TOTAL AMOUNT PAID:',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2.0,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF64748B),
                   ),
                 ),
@@ -239,8 +237,8 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                   '₹0',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
                 ),
@@ -349,8 +347,8 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                       'No transactions found',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
                     ),
@@ -360,7 +358,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 13,
+                        fontSize: 10,
                         height: 1.5,
                         color: Color(0xFF64748B),
                       ),

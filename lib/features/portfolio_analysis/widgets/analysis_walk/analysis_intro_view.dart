@@ -99,8 +99,8 @@ class _AnalysisIntroViewState extends State<AnalysisIntroView> with SingleTicker
                 widget.title,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -110,8 +110,8 @@ class _AnalysisIntroViewState extends State<AnalysisIntroView> with SingleTicker
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),

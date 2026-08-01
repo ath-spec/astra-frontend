@@ -99,7 +99,7 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
-                      Icon(Icons.adjust, size: 16, color: Color(0xFF94A3B8)),
+                      Icon(Icons.adjust, size: 12, color: Color(0xFF94A3B8)),
                       SizedBox(width: 6),
                       Text(
                         'Discipline',
@@ -145,14 +145,14 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: const [
-                Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                Icon(Icons.info_outline, size: 10, color: Color(0xFF64748B)),
                 SizedBox(width: 8),
                 Text(
                   'KNOW MORE',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1.0,
                     color: Color(0xFF0F172A),
                   ),
@@ -168,7 +168,7 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
             TextSpan(
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 15,
+                fontSize: 10,
                 height: 1.5,
                 color: Color(0xFF64748B),
               ),
@@ -191,7 +191,7 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
   Widget _buildLabelText() {
     final baseStyle = const TextStyle(
       fontFamily: 'DMSans',
-      fontSize: 32,
+      fontSize: 24,
       fontWeight: FontWeight.w700,
       letterSpacing: -1.0,
     );

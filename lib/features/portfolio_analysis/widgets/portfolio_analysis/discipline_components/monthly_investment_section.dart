@@ -91,8 +91,8 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
                 'Monthly Net Investment',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -114,7 +114,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
                 behavior: HitTestBehavior.opaque,
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                  child: Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
                 ),
               ),
             ],
@@ -128,8 +128,8 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
                 '₹4,001',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -138,7 +138,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
                 'average invested per month',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
+                  fontSize: 10,
                   color: Color(0xFF64748B),
                 ),
               ),
@@ -149,7 +149,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
             'Steady investing reduces the impact of\nmarket swings over time.',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 13,
+              fontSize: 10,
               height: 1.5,
               color: Color(0xFF64748B),
             ),
@@ -203,8 +203,8 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
                       'PRO TIP',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 2.0,
                         color: Color(0xFF94A3B8),
                       ),
@@ -223,7 +223,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
                   text: const TextSpan(
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 13,
+                      fontSize: 12,
                       height: 1.5,
                       color: Color(0xFF64748B),
                     ),
@@ -364,7 +364,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
 
       textPainter.text = TextSpan(
         text: '₹4K AVG',
-        style: TextStyle(fontFamily: 'DMSans', fontSize: 10 * scale, fontWeight: FontWeight.w700, color: const Color(0xFF38A169)),
+        style: TextStyle(fontFamily: 'DMSans', fontSize: 10 * scale, fontWeight: FontWeight.w600, color: const Color(0xFF38A169)),
       );
       textPainter.layout();
       textPainter.paint(canvas, Offset((paddingX + 4 * stepX) - textPainter.width / 2, y0 - (2 * scale) - textPainter.height / 2));

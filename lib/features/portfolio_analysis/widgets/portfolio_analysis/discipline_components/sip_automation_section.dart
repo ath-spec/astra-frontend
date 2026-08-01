@@ -42,8 +42,8 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                 'SIP Automation',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -65,7 +65,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                 behavior: HitTestBehavior.opaque,
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                  child: Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
                 ),
               ),
             ],
@@ -78,8 +78,8 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                   text: '0% ',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
                 ),
@@ -87,7 +87,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                   text: 'of your monthly investments are automated via SIP',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 10,
                     color: Color(0xFF64748B),
                   ),
                 ),
@@ -99,7 +99,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
             'Higher SIP contributions reduces missed\ncontributions and emotional decisions.',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 12,
+              fontSize: 10,
               height: 1.5,
               color: Color(0xFF94A3B8),
             ),
@@ -128,7 +128,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                 '0%',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
                 ),
@@ -165,7 +165,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                     'Investors like you',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12,
+                      fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF64748B),
                     ),
@@ -177,8 +177,8 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                 'NA',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -205,15 +205,15 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                     _isExpanded ? 'Hide your SIP trend' : 'View your SIP trend',
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF3182CE),
                     ),
                   ),
                   const SizedBox(width: 4),
                   Icon(
                     _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                    size: 16,
+                    size: 14,
                     color: const Color(0xFF3182CE),
                   ),
                 ],
@@ -243,7 +243,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection> with Single
                       style: TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: 12,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: Color(0xFF94A3B8),
                       ),
                     ),

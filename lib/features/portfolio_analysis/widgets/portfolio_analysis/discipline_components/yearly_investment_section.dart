@@ -62,8 +62,8 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
                 'Yearly Investment',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -98,8 +98,8 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
                   text: '₹-33,265 ',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                     letterSpacing: -1.0,
                   ),
@@ -108,7 +108,7 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
                   text: 'in 2026 so far',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF64748B),
                   ),
@@ -121,7 +121,7 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
             'Your annual investment pace compared\nacross recent years.',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 13,
+              fontSize: 10,
               color: Color(0xFF64748B),
               height: 1.5,
             ),
@@ -185,8 +185,8 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
                       'PRO TIP',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 2.0,
                         color: Color(0xFF94A3B8),
                       ),

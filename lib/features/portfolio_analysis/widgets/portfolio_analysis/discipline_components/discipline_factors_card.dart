@@ -47,8 +47,8 @@ class DisciplineFactorsCard extends StatelessWidget {
                           'DISCIPLINE FACTORS',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 2.0,
                             color: Color(0xFF94A3B8),
                           ),
@@ -134,7 +134,10 @@ class DisciplineFactorsCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: const Color(0xFF64748B)),
+          Padding(
+            padding: const EdgeInsets.only(top: 2.0),
+            child: Icon(icon, size: 14, color: const Color(0xFF64748B)),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -144,7 +147,7 @@ class DisciplineFactorsCard extends StatelessWidget {
                   title,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF334155),
                   ),
@@ -154,7 +157,7 @@ class DisciplineFactorsCard extends StatelessWidget {
                   subtitle,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 10,
                     color: Color(0xFF94A3B8),
                     height: 1.4,
                   ),
@@ -167,7 +170,7 @@ class DisciplineFactorsCard extends StatelessWidget {
             status,
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: statusColor,
             ),

@@ -42,7 +42,7 @@ class _DisciplineTabState extends State<DisciplineTab> with AutomaticKeepAliveCl
                   'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 11,
+                    fontSize: 10,
                     color: Color(0xFF94A3B8),
                     height: 1.5,
                   ),
