@@ -1,149 +1,100 @@
 import 'package:flutter/material.dart';
 
 class MfHoldingsEmptyState extends StatelessWidget {
-  const MfHoldingsEmptyState({super.key});
+  final String title;
+  final String subtitle;
+  final String ctaText;
+  final String imagePath;
+  final VoidCallback? onCtaTapped;
+
+  const MfHoldingsEmptyState({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.ctaText,
+    required this.imagePath,
+    this.onCtaTapped,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.sizeOf(context).width;
+    final double scale = screenWidth < 420 ? screenWidth / 420 : 1.0;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0 * scale),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
-            ),
-          ],
+          color: const Color(0xFFF9FAFB),
+          borderRadius: BorderRadius.circular(4 * scale),
+          border: Border.all(color: const Color.fromARGB(255, 224, 224, 224)),
         ),
-        child: Column(
+        clipBehavior: Clip.hardEdge,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Simulated 3D Graphic (Concentric rings + Pie chart)
             SizedBox(
-              height: 160,
-              child: Stack(
-                alignment: Alignment.center,
+              width: 210 * scale, // Increased size, touching edge directly
+              height: 210 * scale,
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(16.0 * scale),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Outer ring
-                  Container(
-                    width: 240,
-                    height: 120, // Oval shape for perspective
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFF1F5F9), // Slate 100
-                        width: 1,
-                      ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 18 * scale,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.5,
+                      color: const Color(0xFF0F172A),
                     ),
+                    textAlign: TextAlign.left,
                   ),
-                  // Middle ring
-                  Container(
-                    width: 180,
-                    height: 90,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFE2E8F0), // Slate 200
-                        width: 1,
-                      ),
+                  SizedBox(height: 6 * scale),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10 * scale,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF9CA3AF),
+                      height: 1.3,
                     ),
+                    textAlign: TextAlign.left,
                   ),
-                  // Center pie chart simulation
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFF8FAFC),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 16,
-                          offset: const Offset(0, 8),
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFFFFFFFF),
-                          Color(0xFFE2E8F0), // Slate 200
-                          Color(0xFFCBD5E1), // Slate 300
-                        ],
+                  SizedBox(height: 12 * scale),
+                  GestureDetector(
+                    onTap: onCtaTapped,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 4 * scale, vertical: 8 * scale),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        borderRadius: BorderRadius.circular(4 * scale),
                       ),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.pie_chart_rounded,
-                        size: 64,
-                        color: Color(0xFF94A3B8), // Slate 400
+                      child: Text(
+                        ctaText.toUpperCase(),
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 8 * scale,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.8,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
-            const Text(
-              'New to mutual funds?',
-              style: TextStyle(
-                fontFamily: 'SpaceGrotesk',
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -1.0,
-                color: Color.fromARGB(255, 0, 0, 0),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Browse and invest in mutual funds curated\nfor your goals',
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF9CA3AF),
-                height: 1.4,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: const Color(0xFFE2E8F0),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.02),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Text(
-                  'EXPLORE ALL FUNDS',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.8,
-                    color: Color(0xFF1E293B),
-                  ),
-                ),
             ),
           ],
         ),

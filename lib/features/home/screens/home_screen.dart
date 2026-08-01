@@ -11,6 +11,7 @@ import '../widgets/home_astra_intelligence.dart';
 import '../widgets/home_grow_wealth.dart';
 import '../widgets/home_explore_more.dart';
 import '../widgets/home_order_cards.dart';
+import '../widgets/home_portfolio_analysis.dart';
 import 'package:astra_frontend/features/home/widgets/home_portfolio_growth.dart';
 import 'package:astra_frontend/features/home/widgets/budget_section.dart';
 import 'package:astra_frontend/features/home/widgets/recurring_section.dart';
@@ -112,6 +113,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 
                 const SizedBox(height: 40),
                 const HomePortfolioInsights(),
+                
+                const SizedBox(height: 48),
+                const HomePortfolioAnalysis(),
                 
                 const SizedBox(height: 48),
                 const HomeQuickActions(),

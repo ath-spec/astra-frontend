@@ -19,7 +19,7 @@ class MfOrderList extends StatelessWidget {
           status: 'COMPLETED',
         ),
         
-        const SizedBox(height: 16),
+        
         _buildDateHeader('9 FEB'),
         const MfOrderItemCard(
           logoText: 'Nippon',
@@ -30,7 +30,6 @@ class MfOrderList extends StatelessWidget {
           status: 'COMPLETED',
         ),
 
-        const SizedBox(height: 16),
         _buildDateHeader('2 FEB'),
         const MfOrderItemCard(
           logoText: 'CANARA\nROBECO',
@@ -41,7 +40,6 @@ class MfOrderList extends StatelessWidget {
           status: 'COMPLETED',
         ),
 
-        const SizedBox(height: 16),
         _buildDateHeader('27 JAN'),
         const MfOrderItemCard(
           logoText: 'CANARA\nROBECO',
@@ -52,7 +50,6 @@ class MfOrderList extends StatelessWidget {
           status: 'COMPLETED',
         ),
 
-        const SizedBox(height: 16),
         _buildDateHeader('23 JAN'),
         const MfOrderItemCard(
           logoText: 'Nippon',

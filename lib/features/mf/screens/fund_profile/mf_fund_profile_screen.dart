@@ -12,6 +12,7 @@ import 'dart:math' as math;
 import 'package:intl/intl.dart';
 import 'widgets/mf_fund_details_house.dart';
 import 'widgets/mf_amount_scroller.dart';
+import 'widgets/mf_bookmark_button.dart';
 
 
 class MfFundProfileScreen extends StatefulWidget {
@@ -232,31 +233,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                 child: const Icon(Icons.shopping_cart_outlined, size: 20, color: Color(0xFF0F172A)),
               ),
               const SizedBox(width: 12),
-              Consumer(
-                builder: (context, ref, child) {
-                  final watchlist = ref.watch(watchlistProvider);
-                  final isBookmarked = watchlist.contains(widget.fundId);
-                  
-                  return GestureDetector(
-                    onTap: () {
-                      ref.read(watchlistProvider.notifier).toggleFund(widget.fundId);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFF1F5F9)),
-                        color: isBookmarked ? const Color(0xFFE2E8F0) : Colors.white,
-                      ),
-                      child: Icon(
-                        isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, 
-                        size: 20, 
-                        color: const Color(0xFF0F172A),
-                      ),
-                    ),
-                  );
-                },
-              ),
+              MfBookmarkButton(fundId: widget.fundId),
             ],
           ),
         ],

@@ -15,7 +15,7 @@ class HomeQuickActions extends StatelessWidget {
             fontSize: 18,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.5,
-            color: Color.fromARGB(255, 0, 0, 0),
+            color: Color(0xFF0F172A),
           ),
         ),
         const SizedBox(height: 16),

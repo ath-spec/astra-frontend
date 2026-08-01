@@ -30,6 +30,8 @@ import '../../features/recurring/presentation/screens/recurring_control_screen.d
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
 import '../../features/asset_connection/screens/manage_bank_accounts_screen.dart';
+import 'package:astra_frontend/features/portfolio_analysis/screens/analysis_walk_screen.dart';
+import 'package:astra_frontend/features/portfolio_analysis/screens/portfolio_analysis_screen.dart';
 import '../../features/mf/screens/mf_container_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/corner_fade_reveal_transition.dart';
@@ -190,6 +192,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/user-profile',
         builder: (context, state) => const UserProfileScreen(),
+      ),
+      GoRoute(
+        path: '/analysis-walkthrough',
+        builder: (context, state) => const AnalysisWalkScreen(),
+      ),
+      GoRoute(
+        path: '/portfolio-analysis',
+        builder: (context, state) => const PortfolioAnalysisScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

@@ -1,47 +1,49 @@
 import 'package:flutter/material.dart';
+import 'widgets/mf_sip_empty_state.dart';
 
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  const _PlaceholderScreen({required this.title, required this.icon});
+class SipScreen extends StatelessWidget {
+  const SipScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Replace with actual state check when data is connected
+    final bool isEmpty = true;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      body: Center(
+      body: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 48, color: const Color(0xFFCBD5E1)),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: const TextStyle(
-                fontFamily: 'SpaceGrotesk',
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF0F172A),
+            const Padding(
+              padding: EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 24),
+              child: Text(
+                'SIPs',
+                style: TextStyle(
+                  fontFamily: 'SpaceGrotesk',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF0F172A),
+                  letterSpacing: -1.0,
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Coming soon',
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 14,
-                color: Colors.grey.shade400,
-              ),
+            Expanded(
+              child: isEmpty ? _buildEmptyState() : _buildContent(),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-class SipScreen extends StatelessWidget {
-  const SipScreen({super.key});
-  @override
-  Widget build(BuildContext context) => const _PlaceholderScreen(title: 'SIP', icon: Icons.autorenew_rounded);
+  Widget _buildEmptyState() {
+    return const MfSipEmptyState();
+  }
+
+  Widget _buildContent() {
+    return const Center(
+      child: Text('SIP Content Goes Here'),
+    );
+  }
 }

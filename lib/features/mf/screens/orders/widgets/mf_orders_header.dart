@@ -9,7 +9,7 @@ class MfOrdersHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 24),
+      padding: const EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
