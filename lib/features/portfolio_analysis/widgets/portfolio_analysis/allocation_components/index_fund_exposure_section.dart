@@ -66,8 +66,8 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       'Index Fund Exposure',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
                     ),
@@ -91,7 +91,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                        child: Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
                       ),
                     ),
                   ],
@@ -105,8 +105,8 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       '25% less',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
                     ),
@@ -115,7 +115,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       'than your peers',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12,
+                        fontSize: 10,
                         color: Color(0xFF64748B),
                       ),
                     ),
@@ -126,13 +126,13 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                 // Peer Comparison
                 Row(
                   children: [
-                    const Icon(Icons.person, size: 16, color: Color(0xFF64748B)),
+                    const Icon(Icons.person, size: 12, color: Color(0xFF64748B)),
                     const SizedBox(width: 8),
-                    const Text('You', style: TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF64748B))),
+                    const Text('You', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF64748B))),
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Text('0%', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                const Text('0%', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
                 const SizedBox(height: 24),
                 
                 Row(
@@ -144,10 +144,10 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                         color: Color(0xFF9AE6B4),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.people, size: 16, color: Color(0xFF22543D)),
+                      child: const Icon(Icons.people, size: 12, color: Color(0xFF22543D)),
                     ),
                     const SizedBox(width: 8),
-                    const Text('Investors like you', style: TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF64748B))),
+                    const Text('Investors like you', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF64748B),fontWeight: FontWeight.w600)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -165,7 +165,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Text('25%', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                        const Text('25%', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
                       ],
                     );
                   }
@@ -185,8 +185,8 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       'Equity Market cap split',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
                     ),
@@ -210,7 +210,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                        child: Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
                       ),
                     ),
                   ],
@@ -224,8 +224,8 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       '₹2,30,102',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
                     ),
@@ -234,7 +234,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       'total equity exposure',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12,
+                        fontSize: 10,
                         color: Color(0xFF64748B),
                       ),
                     ),
@@ -245,7 +245,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                   'Breakdown of your equity exposure by\ncompany size and sector - including\nunderlying stocks within your mutual funds.',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 13,
+                    fontSize: 10,
                     height: 1.5,
                     color: Color(0xFF94A3B8),
                   ),
@@ -316,7 +316,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
           label,
           style: const TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 14,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             color: Color(0xFF0F172A),
           ),
@@ -326,12 +326,12 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
           percentage,
           style: const TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 13,
+            fontSize: 10,
             color: Color(0xFF64748B),
           ),
         ),
         const SizedBox(width: 8),
-        const Icon(Icons.chevron_right, size: 16, color: Color(0xFF94A3B8)),
+        const Icon(Icons.chevron_right, size: 12, color: Color(0xFF94A3B8)),
       ],
     );
   }

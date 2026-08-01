@@ -15,8 +15,8 @@ class AllocationSuggestionsSection extends StatelessWidget {
             'Allocation Suggestions',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
             ),
           ),
@@ -25,7 +25,7 @@ class AllocationSuggestionsSection extends StatelessWidget {
             'Insights based on your current portfolio mix.',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 13,
+              fontSize: 10,
               color: Color(0xFF64748B),
             ),
           ),
@@ -37,8 +37,8 @@ class AllocationSuggestionsSection extends StatelessWidget {
                 'INSIGHTS',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 2.0,
                   color: Color(0xFF94A3B8),
                 ),
@@ -131,7 +131,7 @@ class AllocationSuggestionsSection extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                       height: 1.3,
                     ),
@@ -146,7 +146,7 @@ class AllocationSuggestionsSection extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
@@ -159,8 +159,8 @@ class AllocationSuggestionsSection extends StatelessWidget {
                     'KNOW MORE',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1.0,
                       color: Colors.white,
                     ),
@@ -209,7 +209,7 @@ class _TargetIsometricPainter extends CustomPainter {
     final tp = TextPainter(
       text: const TextSpan(
         text: 'YOUR\nTARGET\n20.0%-30.0%',
-        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF6B46C1)),
+        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF6B46C1)),
       ),
       textDirection: TextDirection.ltr,
       textAlign: TextAlign.center,
@@ -255,7 +255,7 @@ class _TargetIsometricPainter extends CustomPainter {
     final pointerTp = TextPainter(
       text: const TextSpan(
         text: 'CURRENT',
-        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Colors.black),
+        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Colors.black),
       ),
       textDirection: TextDirection.ltr,
     );
@@ -344,7 +344,7 @@ class _HarvestableIsometricPainter extends CustomPainter {
     final pointerTp = TextPainter(
       text: const TextSpan(
         text: 'HARVESTABLE',
-        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF319795)),
+        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF319795)),
       ),
       textDirection: TextDirection.ltr,
     );

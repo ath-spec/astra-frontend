@@ -41,8 +41,8 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
           'Mutual Fund Performance',
           style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
             color: Color(0xFF0F172A),
           ),
         ),
@@ -51,8 +51,8 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
           '₹3,45,126',
           style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 32,
-            fontWeight: FontWeight.w700,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
             letterSpacing: -0.5,
             color: Color(0xFF0F172A),
           ),
@@ -65,7 +65,7 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 13,
+              fontSize: 10,
               height: 1.5,
               color: Color(0xFF94A3B8),
             ),
@@ -181,8 +181,8 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
                 'INSIGHTS',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 2.0,
                   color: Color(0xFF94A3B8),
                 ),
@@ -200,14 +200,14 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
                   text: const TextSpan(
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 13,
+                      fontSize: 10,
                       height: 1.5,
                       color: Color(0xFF64748B),
                     ),
                     children: [
                       TextSpan(
                         text: 'Winning streak ',
-                        style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w700),
+                        style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w600),
                       ),
                       TextSpan(
                         text: 'most of your funds are ahead of the benchmark. momentum is strong.',
@@ -253,7 +253,7 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
                   title,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
@@ -263,7 +263,7 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
                   '$percentage of MF portfolio',
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 10,
                     color: Color(0xFF94A3B8),
                   ),
                 ),
@@ -275,13 +275,13 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
             amount,
             style: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
             ),
           ),
           const SizedBox(width: 8),
-          const Icon(Icons.chevron_right, size: 16, color: Color(0xFF94A3B8)),
+          const Icon(Icons.chevron_right, size: 12, color: Color(0xFF94A3B8)),
         ],
       ),
     ),
@@ -444,7 +444,7 @@ class _Performance3DBarPainter extends CustomPainter {
       if (progress > 0.8 && bars[i]['label'] != '') {
         textPainter.text = TextSpan(
           text: bars[i]['amt'] as String,
-          style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+          style: const TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
         );
         textPainter.layout();
         textPainter.paint(canvas, Offset(x - textPainter.width / 2, by - currentH - 20));
@@ -455,7 +455,7 @@ class _Performance3DBarPainter extends CustomPainter {
       if (label.isNotEmpty) {
         textPainter.text = TextSpan(
           text: label,
-          style: const TextStyle(fontFamily: 'DMSans', fontSize: 9, fontWeight: FontWeight.w600, color: Color(0xFF94A3B8)),
+          style: const TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF94A3B8)),
         );
         textPainter.layout();
         textPainter.paint(canvas, Offset(x - textPainter.width / 2, y0 + 16));

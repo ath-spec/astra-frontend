@@ -62,13 +62,13 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             labelStyle: const TextStyle(
               fontFamily: 'DMSans',
               fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
             ),
             unselectedLabelStyle: const TextStyle(
               fontFamily: 'DMSans',
               fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: Color(0xFF94A3B8),
             ),
             unselectedLabelColor: const Color(0xFF94A3B8),
@@ -114,8 +114,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             'OUT-PERFORMING FUNDS',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
               letterSpacing: 2.0,
               color: Color(0xFF94A3B8),
             ),
@@ -129,8 +129,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 '₹2,36,538',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -139,8 +139,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 '(68.54)% of mutual fund portfolio',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF64748B),
                 ),
               ),
@@ -153,14 +153,14 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: const Text.rich(
               TextSpan(
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 13,
+                  fontSize: 10,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),
@@ -168,7 +168,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                   TextSpan(
                     text: 'Out-performing funds ',
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
@@ -192,7 +192,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -202,7 +202,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -237,8 +237,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             'IN LINE PERFORMING FUNDS',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
               letterSpacing: 2.0,
               color: Color(0xFF94A3B8),
             ),
@@ -252,8 +252,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 '₹1,08,587',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -262,8 +262,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 '(31.46)% of mutual fund portfolio',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF64748B),
                 ),
               ),
@@ -276,14 +276,14 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: const Text.rich(
               TextSpan(
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 13,
+                  fontSize: 10,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),
@@ -291,7 +291,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                   TextSpan(
                     text: 'In line performing funds ',
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
@@ -315,7 +315,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -325,7 +325,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -371,8 +371,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             title,
             style: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
               letterSpacing: 2.0,
               color: Color(0xFF94A3B8),
             ),
@@ -386,8 +386,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 '₹0',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -396,8 +396,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 '(0.0)% of mutual fund portfolio',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF64748B),
                 ),
               ),
@@ -410,14 +410,14 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: Text.rich(
               TextSpan(
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 13,
+                  fontSize: 10,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),
@@ -425,7 +425,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                   TextSpan(
                     text: '$infoText ',
                     style: const TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
@@ -449,8 +449,8 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                   'No holdings found',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
                 ),
@@ -507,7 +507,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                   name[0],
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 18,
+                    fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: color,
                   ),
@@ -523,7 +523,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                     name,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 13,
+                      fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFF0F172A),
                     ),
@@ -533,7 +533,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                     subtitle,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 11,
+                      fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: subtitleColor,
                     ),
@@ -546,7 +546,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
               style: const TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 14,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
               ),
             ),

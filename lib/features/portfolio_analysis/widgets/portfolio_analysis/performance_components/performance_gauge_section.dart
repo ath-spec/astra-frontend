@@ -94,7 +94,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
-                      Icon(Icons.change_history, size: 16, color: Color(0xFF94A3B8)),
+                      Icon(Icons.change_history, size: 12, color: Color(0xFF94A3B8)),
                       SizedBox(width: 6),
                       Text(
                         'Performance',
@@ -118,7 +118,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                       widget.level.label,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 28,
+                        fontSize: 24,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
                         color: Colors.white,
@@ -144,20 +144,20 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: const [
-                Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                Icon(Icons.info_outline, size: 12, color: Color(0xFF64748B)),
                 SizedBox(width: 8),
                 Text(
                   'KNOW MORE',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1.0,
                     color: Color(0xFF0F172A),
                   ),
@@ -173,7 +173,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
             TextSpan(
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 15,
+                fontSize: 10,
                 height: 1.5,
                 color: Color(0xFF94A3B8),
               ),
@@ -216,8 +216,8 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                     'What drives your performance',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1.5,
                       color: Color(0xFF94A3B8),
                     ),
@@ -233,11 +233,11 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                         children: const [
                           Text(
                             'Your Lifetime MF XIRR ',
-                            style: TextStyle(fontFamily: 'DMSans', fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                            style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
                           ),
                           Text(
                             '4.06% higher',
-                            style: TextStyle(fontFamily: 'DMSans', fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF38A169)),
+                            style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF38A169)),
                           ),
                         ],
                       ),
@@ -275,7 +275,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                           const SizedBox(width: 12),
                           const Text(
                             '9.48%',
-                            style: TextStyle(fontFamily: 'DMSans', fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                            style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
                           ),
                         ],
                       ),
@@ -290,7 +290,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                     children: [
                       const Text(
                         'Benchmark',
-                        style: TextStyle(fontFamily: 'DMSans', fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -316,7 +316,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                           const SizedBox(width: 12),
                           const Text(
                             '5.42%',
-                            style: TextStyle(fontFamily: 'DMSans', fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                            style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
                           ),
                         ],
                       ),

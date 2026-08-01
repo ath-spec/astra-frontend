@@ -47,8 +47,8 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                 'Expensive Funds',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -71,7 +71,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                  child: Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
                 ),
               ),
             ],
@@ -84,8 +84,8 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                   text: '₹0 ',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                     letterSpacing: -1.0,
                   ),
@@ -94,7 +94,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                   text: 'invested in funds with higher expense ratios',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF64748B),
                   ),
@@ -150,12 +150,12 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                   'View funds',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
                 ),
-                Icon(Icons.chevron_right, size: 16, color: Color(0xFF0F172A)),
+                Icon(Icons.chevron_right, size: 12, color: Color(0xFF0F172A)),
               ],
             ),
           ),
@@ -175,8 +175,8 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                   'INSIGHTS',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 2.0,
                     color: Color(0xFF94A3B8),
                   ),
@@ -200,7 +200,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
               text: const TextSpan(
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 13,
+                  fontSize: 10,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),
@@ -208,7 +208,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                   TextSpan(
                     text: 'Fees aren\'t eating into your gains ',
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
@@ -226,7 +226,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
             'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 12,
+              fontSize: 10,
               height: 1.5,
               color: Color(0xFF94A3B8),
             ),

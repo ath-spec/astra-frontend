@@ -68,8 +68,8 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
                         'ALLOCATION FACTORS',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.0,
                           color: Color(0xFF94A3B8),
                         ),
@@ -194,7 +194,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
               shape: BoxShape.circle,
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            child: Icon(icon, size: 14, color: iconColor),
+            child: Icon(icon, size: 12, color: iconColor),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -205,7 +205,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
                   title,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
@@ -215,7 +215,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
                   subtitle,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 11,
+                    fontSize: 10,
                     color: Color(0xFF94A3B8),
                   ),
                 ),
@@ -230,8 +230,8 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
                 amount,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),

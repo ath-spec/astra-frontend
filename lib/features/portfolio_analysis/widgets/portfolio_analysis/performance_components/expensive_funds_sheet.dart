@@ -62,13 +62,13 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
             labelStyle: const TextStyle(
               fontFamily: 'DMSans',
               fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
             ),
             unselectedLabelStyle: const TextStyle(
               fontFamily: 'DMSans',
               fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: Color(0xFF94A3B8),
             ),
             unselectedLabelColor: const Color(0xFF94A3B8),
@@ -106,8 +106,8 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
             'LOW COST FUNDS',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
               letterSpacing: 2.0,
               color: Color(0xFF94A3B8),
             ),
@@ -121,8 +121,8 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                 '₹3,45,126',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -131,8 +131,8 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                 '(100.0)% of mutual fund portfolio',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF64748B),
                 ),
               ),
@@ -145,14 +145,14 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: const Text.rich(
               TextSpan(
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 13,
+                  fontSize: 10,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),
@@ -160,7 +160,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                   TextSpan(
                     text: 'Low cost funds ',
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
@@ -184,7 +184,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -194,7 +194,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -240,8 +240,8 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
             title,
             style: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
               letterSpacing: 2.0,
               color: Color(0xFF94A3B8),
             ),
@@ -255,8 +255,8 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                 '₹0',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -265,8 +265,8 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                 '(0.0)% of mutual fund portfolio',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF64748B),
                 ),
               ),
@@ -279,14 +279,14 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: Text.rich(
               TextSpan(
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 13,
+                  fontSize: 10,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),
@@ -294,7 +294,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                   TextSpan(
                     text: '$infoText ',
                     style: const TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
@@ -318,8 +318,8 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                   'No holdings found',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
                 ),
@@ -329,7 +329,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14,
+                    fontSize: 12,
                     height: 1.5,
                     color: Color(0xFF64748B),
                   ),
@@ -376,8 +376,8 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                   name[0],
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
                     color: color,
                   ),
                 ),
@@ -392,7 +392,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                     name,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 13,
+                      fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFF0F172A),
                     ),
@@ -402,7 +402,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                     subtitle,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 11,
+                      fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: subtitleColor,
                     ),
@@ -415,7 +415,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
               style: const TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 14,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
               ),
             ),

@@ -78,7 +78,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                           shape: BoxShape.circle,
                           border: Border.all(color: const Color(0xFFE2E8F0)),
                         ),
-                        child: const Icon(Icons.change_history, size: 14, color: Color(0xFF64748B)),
+                        child: const Icon(Icons.change_history, size: 12, color: Color(0xFF64748B)),
                       ),
                       const SizedBox(width: 8),
                       const Text(
@@ -151,8 +151,8 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                     'What is Performance?',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
@@ -165,7 +165,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 13,
+                        fontSize: 10,
                         height: 1.6,
                         color: Color(0xFF64748B),
                       ),
@@ -193,7 +193,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                           style: TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: Color(0xFF0F172A),
                           ),
                         ),
@@ -254,7 +254,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
                 ),
@@ -263,7 +263,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                   description,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 13,
+                    fontSize: 10,
                     height: 1.5,
                     color: Color(0xFF64748B),
                   ),
@@ -332,7 +332,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                             style: const TextStyle(
                               fontFamily: 'DMSans',
                               fontSize: 8,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               height: 1.3,
                               letterSpacing: 0.5,
                               color: Color(0xFF64748B),
@@ -411,7 +411,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
                                       fontSize: 9,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w600,
                                       letterSpacing: 1.0,
                                       color: Color(0xFF38A169),
                                     ),

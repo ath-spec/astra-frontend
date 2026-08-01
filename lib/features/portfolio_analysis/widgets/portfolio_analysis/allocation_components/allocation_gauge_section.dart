@@ -94,13 +94,13 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
-                      Icon(Icons.view_in_ar_outlined, size: 16, color: Color(0xFF94A3B8)),
+                      Icon(Icons.view_in_ar_outlined, size: 12, color: Color(0xFF94A3B8)),
                       SizedBox(width: 6),
                       Text(
                         'Allocation',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 13,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF64748B),
                         ),
@@ -121,8 +121,8 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
                       widget.level.label,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
                         color: Colors.white,
                       ),
@@ -148,20 +148,20 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0), width: 1.0),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: const [
-                Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
+                Icon(Icons.info_outline, size: 12, color: Color(0xFF64748B)),
                 SizedBox(width: 6),
                 Text(
                   'KNOW MORE',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1.5,
                     color: Color(0xFF0F172A),
                   ),
@@ -177,12 +177,13 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
             TextSpan(
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 15,
+                fontSize: 10,
                 height: 1.5,
                 color: Color(0xFF64748B),
               ),
               children: [
-                TextSpan(text: 'You have almost no stable, low-risk assets in your portfolio. '),
+                TextSpan(text: 'You have almost no stable, low-risk assets in your portfolio. ',
+                 style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),),
                 TextSpan(
                   text: 'You\'re fully riding market momentum, with all your wealth geared towards growth.',
                   style: TextStyle(color: Color(0xFF94A3B8)),

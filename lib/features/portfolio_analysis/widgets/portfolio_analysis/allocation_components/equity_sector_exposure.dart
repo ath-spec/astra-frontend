@@ -50,8 +50,8 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               'Equity Sector Exposure',
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
               ),
             ),
@@ -72,7 +72,7 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 11,
+                fontSize: 10,
                 height: 1.5,
                 color: Color(0xFF94A3B8),
               ),
@@ -95,8 +95,8 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               '$name ($percentage%)',
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
               ),
             ),
@@ -104,8 +104,8 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               amount,
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
               ),
             ),

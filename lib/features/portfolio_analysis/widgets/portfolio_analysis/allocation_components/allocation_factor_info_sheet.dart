@@ -71,7 +71,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
             labelStyle: const TextStyle(
               fontFamily: 'DMSans',
               fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
             ),
             unselectedLabelStyle: const TextStyle(
               fontFamily: 'DMSans',
@@ -114,8 +114,8 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
             'STABLE ASSETS',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
               letterSpacing: 2.0,
               color: Color(0xFF94A3B8),
             ),
@@ -129,8 +129,8 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 '₹3,058',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -139,7 +139,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 '1.0% of total holdings',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF64748B),
                 ),
@@ -153,14 +153,14 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: const Text.rich(
               TextSpan(
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 11,
+                  fontSize: 10,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),
@@ -168,7 +168,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                   TextSpan(
                     text: 'Stable assets: ',
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
@@ -190,7 +190,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -200,7 +200,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -233,7 +233,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                     'i',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFFE53E3E), // ICICI red-ish
                       fontStyle: FontStyle.italic,
@@ -260,7 +260,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                       '.. 5705',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12,
+                        fontSize: 10,
                         color: Color(0xFF64748B),
                       ),
                     ),
@@ -272,7 +272,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -295,14 +295,14 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 'HIGH VOLATILITY',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 2.0,
                   color: Color(0xFF94A3B8),
                 ),
               ),
               SizedBox(width: 8),
-              Icon(Icons.warning_amber_rounded, size: 14, color: Color(0xFFE53E3E)),
+              Icon(Icons.warning_amber_rounded, size: 12, color: Color(0xFFE53E3E)),
             ],
           ),
           const SizedBox(height: 16),
@@ -314,8 +314,8 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 '₹3,45,126',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
@@ -324,7 +324,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 '99.0% of total holdings',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF64748B),
                 ),
@@ -338,14 +338,14 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: const Text.rich(
               TextSpan(
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 13,
+                  fontSize: 10,
                   height: 1.5,
                   color: Color(0xFF64748B),
                 ),
@@ -353,7 +353,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                   TextSpan(
                     text: 'High volatility assets ',
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
@@ -377,7 +377,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -387,7 +387,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                   color: Color(0xFF94A3B8),
                 ),
@@ -455,7 +455,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                   name[0],
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 18,
+                    fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: color,
                   ),
@@ -468,7 +468,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 name,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 13,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF0F172A),
                 ),
@@ -479,7 +479,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
               style: const TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 14,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
               ),
             ),
