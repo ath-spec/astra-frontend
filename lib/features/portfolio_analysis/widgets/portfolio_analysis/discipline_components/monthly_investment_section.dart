@@ -177,15 +177,26 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection> wit
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'PRO TIP',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2.0,
-                    color: Color(0xFF94A3B8),
-                  ),
+                Row(
+                  children: [
+                    const Text(
+                      'PRO TIP',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2.0,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: const Color(0xFFE2E8F0),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 RichText(

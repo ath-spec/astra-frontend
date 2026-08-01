@@ -53,6 +53,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
           child: _buildAnalysisCard(
             context: context,
             title: 'Discipline',
+            tabIndex: 0,
             icon: Icons.track_changes,
             valueText: DisciplineLevel.moderate.label,
             valueColor: DisciplineLevel.moderate.color,
@@ -65,6 +66,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
           child: _buildAnalysisCard(
             context: context,
             title: 'Allocation',
+            tabIndex: 1,
             icon: Icons.view_in_ar_outlined,
             valueText: AllocationLevel.veryAggressive.label,
             valueColor: AllocationLevel.veryAggressive.activeColor,
@@ -81,6 +83,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
           child: _buildAnalysisCard(
             context: context,
             title: 'Performance',
+            tabIndex: 2,
             icon: Icons.change_history,
             valueText: PerformanceLevel.veryStrong.label,
             valueColor: PerformanceLevel.veryStrong.activeColor,
@@ -250,6 +253,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
   Widget _buildAnalysisCard({
     required BuildContext context,
     required String title,
+    required int tabIndex,
     required IconData icon,
     required String valueText,
     required Color valueColor,
@@ -260,7 +264,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: () {
-        context.push('/portfolio-analysis');
+        context.push('/portfolio-analysis?tab=$tabIndex');
       },
       child: Container(
         decoration: BoxDecoration(

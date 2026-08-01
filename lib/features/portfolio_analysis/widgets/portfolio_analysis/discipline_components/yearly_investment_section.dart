@@ -115,14 +115,24 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
           AspectRatio(
             aspectRatio: 360 / 250,
             child: GestureDetector(
-              onTapUp: (details) {
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragDown: (details) {
                 final numBars = 7;
-                final availableWidth = context.size!.width;
-                final stepX = availableWidth / numBars;
+                final stepX = context.size!.width / numBars;
                 final index = (details.localPosition.dx / stepX).floor().clamp(0, numBars - 1);
-                setState(() {
-                  _tappedIndex = index;
-                });
+                setState(() => _tappedIndex = index);
+              },
+              onHorizontalDragUpdate: (details) {
+                final numBars = 7;
+                final stepX = context.size!.width / numBars;
+                final index = (details.localPosition.dx / stepX).floor().clamp(0, numBars - 1);
+                setState(() => _tappedIndex = index);
+              },
+              onTapDown: (details) {
+                final numBars = 7;
+                final stepX = context.size!.width / numBars;
+                final index = (details.localPosition.dx / stepX).floor().clamp(0, numBars - 1);
+                setState(() => _tappedIndex = index);
               },
               child: AnimatedBuilder(
                 animation: _animation,
@@ -152,15 +162,26 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection> with 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'PRO TIP',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2.0,
-                    color: Color(0xFF94A3B8),
-                  ),
+                Row(
+                  children: [
+                    const Text(
+                      'PRO TIP',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2.0,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: const Color(0xFFE2E8F0),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 RichText(

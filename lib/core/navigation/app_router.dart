@@ -199,7 +199,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/portfolio-analysis',
-        builder: (context, state) => const PortfolioAnalysisScreen(),
+        builder: (context, state) {
+          final tabStr = state.uri.queryParameters['tab'];
+          final initialTab = tabStr != null ? int.tryParse(tabStr) ?? 0 : 0;
+          return PortfolioAnalysisScreen(initialTab: initialTab);
+        },
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
