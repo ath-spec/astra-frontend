@@ -1,4 +1,4 @@
-import 'dart:ui' show lerpDouble;
+import 'dart:ui' show lerpDouble, ImageFilter;
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/arch_background.dart';
 
@@ -15,6 +15,7 @@ class HoldingsScreen extends StatelessWidget {
             pinned: true,
             delegate: _HoldingsHeaderDelegate(
               safeAreaTop: MediaQuery.of(context).padding.top,
+              screenHeight: MediaQuery.of(context).size.height,
             ),
           ),
           SliverFillRemaining(
@@ -163,35 +164,43 @@ class _MfHoldingsEmptyStateInline extends StatelessWidget {
 
 class _HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
+  final double screenHeight;
 
-  _HoldingsHeaderDelegate({required this.safeAreaTop});
+  _HoldingsHeaderDelegate({
+    required this.safeAreaTop,
+    required this.screenHeight,
+  });
 
   @override
   double get minExtent => safeAreaTop + 84.0;
 
   @override
-  double get maxExtent => safeAreaTop + 220.0;
+  double get maxExtent => safeAreaTop + (screenHeight * 0.4);
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    // 0.0 when fully expanded, 1.0 when fully collapsed
     final shrinkRatio = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+    // Use an ease-in-out curve for the transition to make it feel organic (Emil style)
     final curve = Curves.easeInOutCubic;
     final double easedRatio = curve.transform(shrinkRatio);
 
-    // Layout interpolations — same maths as Home
-    final double startTop = maxExtent - 84.0;
-    final double endTop = safeAreaTop + 18.0;
+    // Layout Interpolations
+    final double startTop = maxExtent * 0.3;
+    final double endTop = safeAreaTop + 18.0; // Vertically centered with 44px buttons
     final double currentTop = lerpDouble(startTop, endTop, easedRatio)!;
 
     final double startSubtitleTop = startTop - 26.0;
     final double endSubtitleTop = endTop - 40.0;
     final double currentSubtitleTop = lerpDouble(startSubtitleTop, endSubtitleTop, easedRatio)!;
 
-    final double currentFontSize = lerpDouble(36.0, 14.0, easedRatio)!;
+    // Style Interpolations
+    final double currentFontSize = lerpDouble(26.0, 14.0, easedRatio)!;
     final double currentBorderRadius = lerpDouble(0.0, 20.0, easedRatio)!;
     final double currentHPad = lerpDouble(0.0, 16.0, easedRatio)!;
     final double currentVPad = lerpDouble(0.0, 6.0, easedRatio)!;
-
+    
+    // Fade the background in slower so it looks like text first, then pill
     final double pillBgRatio = (easedRatio * 1.5).clamp(0.0, 1.0);
     final double currentBorderOpacity = lerpDouble(0.0, 1.0, pillBgRatio)!;
     final double currentShadowOpacity = lerpDouble(0.0, 0.05, pillBgRatio)!;
@@ -201,59 +210,92 @@ class _HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Same ArchBackground as Home — fades out on scroll
+          // Background Image
           Positioned(
-            top: -shrinkOffset * 0.5,
+            top: (-shrinkOffset * 0.1),
             left: 0,
             right: 0,
+            bottom: screenHeight * 0.035, // Responsive bottom spacing
             child: Opacity(
               opacity: 1.0 - shrinkRatio,
-              child: const ArchBackground(height: 250),
-            ),
-          ),
-
-          // Frosted overlay — pure gradient (no BackdropFilter, zero jank)
-          Positioned.fill(
-            child: Opacity(
-              opacity: easedRatio.clamp(0.0, 1.0),
               child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      const Color(0xFFF9FAFB).withOpacity(0.98),
-                      const Color(0xFFF9FAFB).withOpacity(0.92),
-                    ],
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF9FAFB),
+                  image: DecorationImage(
+                    image: AssetImage('lib/core/images/net_value_bg.webp'),
+                    fit: BoxFit.fitWidth,
+                    alignment: Alignment(0.0, 0.3),
                   ),
                 ),
               ),
             ),
           ),
 
-          // Subtitle label — fades out quickly on scroll
+          // Frosted glass blur overlay
+          Positioned.fill(
+            child: Stack(
+              children: [
+                // Progressive blur
+                ShaderMask(
+                  blendMode: BlendMode.dstIn,
+                  shaderCallback: (bounds) => const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.black, Colors.black, Colors.transparent],
+                    stops: [0.0, 0.7, 1.0],
+                  ).createShader(bounds),
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: lerpDouble(0.0, 16.0, easedRatio)!,
+                        sigmaY: lerpDouble(0.0, 16.0, easedRatio)!,
+                      ),
+                      child: const SizedBox.expand(),
+                    ),
+                  ),
+                ),
+                // Progressive tint
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        const Color(0xFFF9FAFB).withOpacity(lerpDouble(0.0, 0.85, easedRatio)!),
+                        const Color(0xFFF9FAFB).withOpacity(lerpDouble(0.0, 0.4, easedRatio)!),
+                        const Color(0xFFF9FAFB).withOpacity(0.0),
+                      ],
+                      stops: const [0.0, 0.7, 1.0],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Subtitle
           Positioned(
             top: currentSubtitleTop,
             left: 0,
             right: 0,
             child: Opacity(
-              opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0),
+              opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0), // Fades out quickly
               child: const Center(
                 child: Text(
-                  'MUTUAL FUNDS VALUE',
+                  "MUTUAL FUNDS VALUE",
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    color: Color(0xFF64748B),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.5,
+                    color: Color(0xFF9CA3AF),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.8,
                   ),
                 ),
               ),
             ),
           ),
 
-          // Transforming value number → pill (same pattern as Home)
+          // The Transforming Wealth Number -> Pill
           Positioned(
             top: currentTop,
             left: 0,
@@ -276,39 +318,63 @@ class _HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                     ),
                   ],
                 ),
-                child: Row(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '₹0',
+                      '₹ 3,43,158',
                       style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
+                        fontFamily: 'DMSans',
                         color: const Color(0xFF0F172A),
                         fontSize: currentFontSize,
                         fontWeight: FontWeight.w800,
-                        letterSpacing: lerpDouble(-1.0, 0.0, easedRatio)!,
+                        letterSpacing: lerpDouble(-1.5, 0.0, easedRatio)!,
                         height: 1.1,
                       ),
                     ),
-                    if (shrinkRatio < 1.0) ...[
-                      SizedBox(width: lerpDouble(12.0, 0.0, easedRatio)!),
+                    // Shrinking subtitle text (1D Change)
+                    if (shrinkRatio < 1.0)
                       Opacity(
                         opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
-                        child: Container(
-                          width: lerpDouble(28.0, 0.0, easedRatio)!,
-                          height: lerpDouble(28.0, 0.0, easedRatio)!,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.2),
-                          ),
-                          child: Icon(
-                            Icons.refresh_rounded,
-                            size: lerpDouble(16.0, 0.0, easedRatio)!,
-                            color: const Color(0xFF64748B),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: lerpDouble(8.0, 0.0, easedRatio)!),
+                          child: Container(
+                            height: lerpDouble(16.0, 0.0, easedRatio)!,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.arrow_upward_rounded,
+                                  size: lerpDouble(14.0, 0.0, easedRatio)!,
+                                  color: const Color.fromARGB(255, 5, 134, 91), // Emerald 500
+                                ),
+                                SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
+                                Text(
+                                  '₹2,491 (0.73%)',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: lerpDouble(10.0, 0.0, easedRatio)!,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color.fromARGB(255, 5, 134, 91),
+                                    letterSpacing: 0.8,
+                                  ),
+                                ),
+                                SizedBox(width: lerpDouble(6.0, 0.0, easedRatio)!),
+                                Text(
+                                  '1D change',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: lerpDouble(10.0, 0.0, easedRatio)!,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF9CA3AF),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ],
                   ],
                 ),
               ),
@@ -321,6 +387,6 @@ class _HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _HoldingsHeaderDelegate oldDelegate) {
-    return safeAreaTop != oldDelegate.safeAreaTop;
+    return safeAreaTop != oldDelegate.safeAreaTop || screenHeight != oldDelegate.screenHeight;
   }
 }

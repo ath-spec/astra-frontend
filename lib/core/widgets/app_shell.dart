@@ -169,7 +169,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
                             colors: [
-                              const Color(0xFFF9FAFB).withOpacity(0.85), // Frosted white at bottom edge
+                              const Color(0xFFF9FAFB).withOpacity(0.95), // Frosted white at bottom edge
                               const Color(0xFFF9FAFB).withOpacity(0.0),  // Transparent above
                             ],
                             stops: const [0.0, 1.0],

@@ -251,10 +251,22 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
                           top: topOffset,
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 400),
+                            reverseDuration: const Duration(milliseconds: 150),
                             transitionBuilder: (child, animation) {
-                              return ScaleTransition(
-                                scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
-                                child: child,
+                              return FadeTransition(
+                                opacity: CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeOutCubic,
+                                  reverseCurve: Curves.easeOutCubic,
+                                ),
+                                child: ScaleTransition(
+                                  scale: CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeOutBack, // Keep the bounce for enter
+                                    reverseCurve: Curves.easeOutCubic, // Snappy exit, NO bounce (prevents overlap swell)
+                                  ),
+                                  child: child,
+                                ),
                               );
                             },
                             child: Container(
