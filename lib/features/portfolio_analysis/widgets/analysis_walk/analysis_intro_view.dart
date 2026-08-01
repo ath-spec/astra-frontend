@@ -127,7 +127,6 @@ class _AnalysisIntroViewState extends State<AnalysisIntroView> with SingleTicker
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
           child: GestureDetector(
             onTap: () {
-              HapticFeedback.lightImpact();
               widget.onNext();
             },
             child: Container(

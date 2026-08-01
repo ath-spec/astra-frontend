@@ -44,7 +44,7 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
           break;
         case WalkStep.performanceResult:
           // Complete! Navigate to portfolio analysis dashboard.
-          hasSeenAnalysisWalkthrough = true;
+          hasSeenAnalysisWalkthrough.value = true;
           context.pushReplacement('/portfolio-analysis');
           break;
       }
@@ -69,78 +69,84 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.close, color: Colors.black, size: 20),
-                    ),
+      body: Stack(
+        children: [
+          // Content (Full screen, no safe area constraints)
+          Positioned.fill(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0.05, 0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
                   ),
-                  Expanded(
-                    child: Center(
+                );
+              },
+              child: _buildCurrentView(),
+            ),
+          ),
+          
+          // Top Bar (Overlaid, keeping its own SafeArea for system UI)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pop(),
                       child: Container(
-                        height: 2,
-                        width: 120,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE2E8F0),
-                          borderRadius: BorderRadius.circular(2),
+                        width: 40,
+                        height: 40,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
                         ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            height: 2,
-                            width: 120 * ((_progressIndex + 1) / 3),
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(2),
+                        child: const Icon(Icons.close, color: Colors.black, size: 20),
+                      ),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: Container(
+                          height: 2,
+                          width: 120,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE2E8F0),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              height: 2,
+                              width: 120 * ((_progressIndex + 1) / 3),
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 40), // Balance the close button
-                ],
+                    const SizedBox(width: 40), // Balance the close button
+                  ],
+                ),
               ),
             ),
-            
-            // Content
-            Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 400),
-                switchInCurve: Curves.easeOut,
-                switchOutCurve: Curves.easeIn,
-                transitionBuilder: (child, animation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0.05, 0),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: child,
-                    ),
-                  );
-                },
-                child: _buildCurrentView(),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
