@@ -21,24 +21,28 @@ class DisciplineFactorsCard extends StatelessWidget {
                     const DisciplineInfoSheet(currentLevelIndex: 2),
               );
             },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  'DISCIPLINE FACTORS',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 2.0,
-                    color: Color(0xFF94A3B8),
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text(
+                    'DISCIPLINE FACTORS',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2.0,
+                      color: Color(0xFF94A3B8),
+                    ),
                   ),
-                ),
-                Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
-              ],
+                  Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 4),
           const Divider(color: Color(0xFFE2E8F0), thickness: 1, height: 1),
           const SizedBox(height: 24),
           Stack(

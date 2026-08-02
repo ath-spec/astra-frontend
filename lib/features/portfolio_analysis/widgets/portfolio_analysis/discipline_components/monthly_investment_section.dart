@@ -464,7 +464,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       // Hover View
       final pt = points[hoverIndex];
 
-      final tooltipBaseY = isExpanded ? 110.0 * scale : 40.0 * scale;
+      final tooltipBaseY = 40.0 * scale;
       final tooltipPoint = Offset(pt.dx, tooltipBaseY);
 
       // Vertical line

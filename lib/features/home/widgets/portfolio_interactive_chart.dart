@@ -110,27 +110,35 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
             onPanUpdate: (details) => _handleTouch(details.localPosition, Size(width, chartHeight)),
             onPanEnd: (_) => _handleTouchEnd(),
             onPanCancel: () => _handleTouchEnd(),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                // The Chart
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: chartHeight,
-                  child: CustomPaint(
-                    painter: _InteractiveChartPainter(
-                      data: widget.data.map((e) => e.value).toList(),
-                      lineColor: widget.lineColor,
-                      selectedIndex: _selectedIndex,
-                      isExpanded: _isExpanded,
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(
+                begin: 145.0,
+                end: _isExpanded ? 160.0 : 145.0,
+              ),
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
+              builder: (context, dynamicTooltipWidth, child) {
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // The Chart
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: chartHeight,
+                      child: CustomPaint(
+                        painter: _InteractiveChartPainter(
+                          data: widget.data.map((e) => e.value).toList(),
+                          lineColor: widget.lineColor,
+                          selectedIndex: _selectedIndex,
+                          tooltipWidth: dynamicTooltipWidth,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
 
-                // Tooltip
-                if (_selectedIndex != null)
+                    // Tooltip
+                    if (_selectedIndex != null)
                   Builder(
                     builder: (context) {
                       final point = widget.data[_selectedIndex!];
@@ -149,27 +157,22 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                       final y = chartHeight - (normalizedY * chartHeight);
 
                       // Determine tooltip position dynamically
-                      final tooltipWidth = _isExpanded ? 160.0 : 145.0;
                       const arrowHeight = 6.0;
                       
-                      double left = x - (tooltipWidth / 2);
+                      double left = x - (dynamicTooltipWidth / 2);
                       if (left < 16) left = 16;
-                      if (left + tooltipWidth > width - 16) left = width - tooltipWidth - 16;
+                      if (left + dynamicTooltipWidth > width - 16) left = width - dynamicTooltipWidth - 16;
                       
-                      final arrowOffset = x - (left + tooltipWidth / 2);
+                      final arrowOffset = x - (left + dynamicTooltipWidth / 2);
                       
                       // Fixed height: tooltip bottom is always anchored 20px down from the top of the chart space
-                      double bottom = chartHeight - 20;
+                      double bottom = chartHeight + 20;
 
-                      return AnimatedPositioned(
-                        duration: const Duration(milliseconds: 150),
-                        curve: Curves.easeOutCubic,
+                      return Positioned(
                         left: left,
                         bottom: bottom,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeOutCubic,
-                          width: tooltipWidth,
+                        child: Container(
+                          width: dynamicTooltipWidth,
                           decoration: ShapeDecoration(
                             color: Colors.white,
                             shape: _TooltipShapeBorder(
@@ -321,11 +324,13 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                   ),
                 ),
               ],
-            ),
-          );
-        },
-      ),
-    );
+            );
+          },
+        ),
+      );
+    },
+  ),
+);
   }
 }
 
@@ -333,13 +338,13 @@ class _InteractiveChartPainter extends CustomPainter {
   final List<double> data;
   final Color lineColor;
   final int? selectedIndex;
-  final bool isExpanded;
+  final double tooltipWidth;
 
   _InteractiveChartPainter({
     required this.data,
     required this.lineColor,
     this.selectedIndex,
-    this.isExpanded = false,
+    required this.tooltipWidth,
   });
 
   @override
@@ -421,7 +426,6 @@ class _InteractiveChartPainter extends CustomPainter {
       final Paint shadowPaint = Paint()..color = Colors.black.withOpacity(0.1)..style = PaintingStyle.fill..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
 
       // Calculate the true global X of the clamped tooltip arrow
-      final tooltipWidth = isExpanded ? 160.0 : 145.0;
       double left = x - (tooltipWidth / 2);
       if (left < 16) left = 16;
       if (left + tooltipWidth > size.width - 16) left = size.width - tooltipWidth - 16;
@@ -471,7 +475,7 @@ class _InteractiveChartPainter extends CustomPainter {
     return oldDelegate.data != data || 
            oldDelegate.lineColor != lineColor || 
            oldDelegate.selectedIndex != selectedIndex ||
-           oldDelegate.isExpanded != isExpanded;
+           oldDelegate.tooltipWidth != tooltipWidth;
   }
 }
 

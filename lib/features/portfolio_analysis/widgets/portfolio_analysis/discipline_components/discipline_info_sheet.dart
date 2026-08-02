@@ -18,7 +18,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 800), // Snappier duration
     );
 
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -242,10 +242,14 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
       const Color(0xFFBCE3FF), // Very Low
       const Color(0xFF65B4FF), // Low
       const Color(0xFF2796FF), // Fair
-      const Color(0xFFE2E8F0), // Good
-      const Color(0xFFE2E8F0), // Excellent
+      const Color(0xFF1E56D0), // Good
+      const Color(0xFF0F172A), // Excellent
     ];
     final emptyColor = const Color(0xFFE2E8F0);
+    
+    // Custom easing curve from Emil's framework (ease-out)
+    final easeOut = const Cubic(0.23, 1, 0.32, 1);
+    final curvedAnimation = CurvedAnimation(parent: _controller, curve: easeOut);
 
     return AnimatedBuilder(
       animation: _controller,
@@ -253,39 +257,57 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            Row(
-              children: List.generate(5, (index) {
-                // Calculate continuous fill
-                final targetFraction = (widget.currentLevelIndex + 1) / 5.0;
-                final currentFraction = _controller.value * targetFraction;
-                final segmentStart = index / 5.0;
-                final segmentEnd = (index + 1) / 5.0;
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final totalWidth = constraints.maxWidth;
+                    final targetFraction = (widget.currentLevelIndex + 1) / 5.0;
+                    final currentFraction = curvedAnimation.value * targetFraction;
+                    final currentWidth = totalWidth * currentFraction;
 
-                double fillFraction = 0.0;
-                if (currentFraction >= segmentEnd) {
-                  fillFraction = 1.0;
-                } else if (currentFraction <= segmentStart) {
-                  fillFraction = 0.0;
-                } else {
-                  fillFraction = (currentFraction - segmentStart) / (segmentEnd - segmentStart);
-                }
-
-                return Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 1),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 8,
-                          decoration: BoxDecoration(color: emptyColor),
-                          child: FractionallySizedBox(
-                            alignment: Alignment.centerLeft,
-                            widthFactor: fillFraction,
-                            child: Container(color: colors[index]),
+                    return Container(
+                      height: 8,
+                      width: totalWidth,
+                      decoration: BoxDecoration(
+                        color: emptyColor,
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: currentWidth,
+                            child: ClipRRect(
+                              child: OverflowBox(
+                                alignment: Alignment.centerLeft,
+                                minWidth: totalWidth,
+                                maxWidth: totalWidth,
+                                child: Row(
+                                  children: List.generate(5, (index) {
+                                    return Expanded(
+                                      child: Container(
+                                        color: colors[index],
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: List.generate(5, (index) {
+                    return Expanded(
+                      child: Center(
+                        child: Text(
                           labels[index],
                           style: const TextStyle(
                             fontFamily: 'DMSans',
@@ -295,11 +317,11 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                             color: Color(0xFF64748B),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
+                      ),
+                    );
+                  }),
+                ),
+              ],
             ),
 
             // Dotted Separators
@@ -338,16 +360,13 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                     final leftOffset =
                         (widget.currentLevelIndex * segmentWidth);
 
-                    // Trigger label after the last active bar is fully lit
-                    final labelStart = (widget.currentLevelIndex * 0.15) + 0.1;
-                    final labelAnim = Curves.easeOutBack.transform(
-                      ((_controller.value - labelStart) / 0.3).clamp(0.0, 1.0),
-                    );
-                    final labelOpacity =
-                        ((_controller.value - labelStart) / 0.2).clamp(
-                          0.0,
-                          1.0,
-                        );
+                    // Trigger label beautifully near the end of the fill
+                    final labelStart = 0.6;
+                    final labelAnimProgress = ((curvedAnimation.value - labelStart) / (1.0 - labelStart)).clamp(0.0, 1.0);
+                    
+                    // Spring-like bounce for the label
+                    final labelAnim = Curves.easeOutBack.transform(labelAnimProgress);
+                    final labelOpacity = ((curvedAnimation.value - labelStart) / 0.2).clamp(0.0, 1.0);
 
                     return Align(
                       alignment: Alignment.centerLeft,
