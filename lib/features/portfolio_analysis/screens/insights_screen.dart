@@ -983,16 +983,20 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                   SizedBox(height: 6 * s),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start, // Align to top if text wraps
                     children: [
-                      Text(
-                        'Amount to book ₹1,96,333',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12 * s,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF94A3B8),
+                      Expanded(
+                        child: Text(
+                          'Amount to book ₹1,96,333',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 12 * s,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF94A3B8),
+                          ),
                         ),
                       ),
+                      SizedBox(width: 8 * s),
                       Text(
                         'Tax-Free Gain (LTCG)',
                         style: TextStyle(
@@ -1001,6 +1005,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                           fontWeight: FontWeight.w500,
                           color: const Color(0xFF94A3B8),
                         ),
+                        textAlign: TextAlign.right,
                       ),
                     ],
                   ),
@@ -1251,70 +1256,31 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                     ),
                     SizedBox(height: 32 * s),
 
-                    // Gradient Title
+                    // Actionable Insight Title
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         style: TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 14 * s,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          height: 1.2,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF64748B), // Sleek grey
+                          height: 1.5,
                         ),
                         children: [
                           const TextSpan(text: 'Add '),
-                          WidgetSpan(
-                            child: ShaderMask(
-                              shaderCallback: (bounds) => const LinearGradient(
-                                colors: [Color(0xFF6B46C1), Color(0xFF3B82F6)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ).createShader(bounds),
-                              child: Text(
-                                'passive funds',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 14 * s,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
+                          TextSpan(
+                            text: '₹86,281',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF10B981), // Crisp green
                             ),
                           ),
-                          const TextSpan(text: ' for\nefficient, '),
-                          WidgetSpan(
-                            child: ShaderMask(
-                              shaderCallback: (bounds) => const LinearGradient(
-                                colors: [Color(0xFF6B46C1), Color(0xFF3B82F6)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ).createShader(bounds),
-                              child: Text(
-                                'low-cost growth',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 14 * s,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
+                          const TextSpan(text: ' to increase your index exposure to\n20%'),
                         ],
                       ),
                     ),
-                    SizedBox(height: 16 * s),
-
-                    Text(
-                      'Your portfolio has low exposure to index funds',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 14 * s,
-                        color: const Color(0xFF64748B),
-                      ),
-                    ),
+                    SizedBox(height: 32 * s),
                     SizedBox(height: 32 * s),
 
                     // Sleek 3D Animated Vertical Bar Graph
@@ -1763,15 +1729,26 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            'Investing ₹86.28K in index will get you to a healthy index allocation of 20%',
+                          RichText(
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 12 * s,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                              height: 1.3,
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 12 * s,
+                                fontWeight: FontWeight.w600,
+                                color: const Color.fromARGB(255, 169, 169, 169),
+                                height: 1.3,
+                              ),
+                              children: [
+                                const TextSpan(text: 'Add '),
+                                TextSpan(
+                                  text: '₹86.28K',
+                                  style: TextStyle(
+                                    color: const Color(0xFF10B981), // Crisp green
+                                  ),
+                                ),
+                                const TextSpan(text: ' to increase exposure to 20%.'),
+                              ],
                             ),
                           ),
                           SizedBox(height: 12 * s),
@@ -1846,15 +1823,26 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Investing ₹86.28K in index will get you to a healthy index allocation of 20%',
+                      RichText(
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12 * s,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          height: 1.3,
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 12 * s,
+                            fontWeight: FontWeight.w600,
+                            color: const Color.fromARGB(255, 169, 169, 169),
+                            height: 1.3,
+                          ),
+                          children: [
+                            const TextSpan(text: 'Investing '),
+                            TextSpan(
+                              text: '₹86.28K',
+                              style: TextStyle(
+                                color: const Color(0xFF10B981), // Crisp green
+                              ),
+                            ),
+                            const TextSpan(text: ' in index will get you to a healthy index allocation of 20%'),
+                          ],
                         ),
                       ),
                       SizedBox(height: 12 * s),

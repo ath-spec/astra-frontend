@@ -60,6 +60,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet>
             controller: _tabController,
             isScrollable: true,
             tabAlignment: TabAlignment.start,
+            dividerColor: Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             labelPadding: const EdgeInsets.symmetric(horizontal: 12),
             indicatorColor: const Color(0xFF0F172A),
@@ -67,13 +68,13 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet>
             indicatorWeight: 2,
             labelStyle: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
             ),
             unselectedLabelStyle: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: Color(0xFF94A3B8),
             ),

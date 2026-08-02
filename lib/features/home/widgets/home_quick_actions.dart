@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../mf/screens/sip/sip_screen.dart';
-import '../../mf/screens/orders/orders_screen.dart';
-import '../../mf/screens/watchlist/watchlist_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/providers/nav_context_provider.dart';
 
-class HomeQuickActions extends StatelessWidget {
+class HomeQuickActions extends ConsumerWidget {
   const HomeQuickActions({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -29,13 +29,19 @@ class HomeQuickActions extends StatelessWidget {
             runSpacing: 16,
             children: [
               _buildAction(Icons.bar_chart_rounded, 'SIP\'s', onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const SipScreen()));
+                ref.read(navContextProvider.notifier).state = NavContext.mf;
+                ref.read(mfTabIndexProvider.notifier).state = 2;
+                context.go('/mf');
               }),
               _buildAction(Icons.receipt_long_outlined, 'Orders', onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const OrdersScreen()));
+                ref.read(navContextProvider.notifier).state = NavContext.mf;
+                ref.read(mfTabIndexProvider.notifier).state = 3;
+                context.go('/mf');
               }),
               _buildAction(Icons.bookmark_outline_rounded, 'Watchlist', onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const WatchlistScreen()));
+                ref.read(navContextProvider.notifier).state = NavContext.mf;
+                ref.read(mfTabIndexProvider.notifier).state = 4;
+                context.go('/mf');
               }),
               _buildAction(Icons.shopping_cart_outlined, 'Cart'),
             ],
