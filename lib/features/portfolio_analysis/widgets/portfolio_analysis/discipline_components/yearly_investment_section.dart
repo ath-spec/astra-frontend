@@ -431,9 +431,12 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
               ..strokeWidth = 1.5 * scale,
           );
         } else {
-          final color = isTapped
-              ? const Color(0xFF1E56D0)
-              : const Color(0xFFE2E8F0);
+          Color color;
+          if (isTapped) {
+            color = isNegative ? const Color(0xFFEF4444) : const Color(0xFF1E56D0);
+          } else {
+            color = const Color(0xFFE2E8F0);
+          }
           canvas.drawRect(
             rect,
             Paint()

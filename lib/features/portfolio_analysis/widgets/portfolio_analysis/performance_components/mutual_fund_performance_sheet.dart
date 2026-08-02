@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../fund_profile/screens/your_fund_profile_screen.dart';
 
 class MutualFundPerformanceSheet extends StatefulWidget {
   final int initialIndex;
@@ -36,7 +37,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,6 +61,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             controller: _tabController,
             isScrollable: true,
             tabAlignment: TabAlignment.start,
+            dividerColor: Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             labelPadding: const EdgeInsets.symmetric(horizontal: 12),
             indicatorColor: const Color(0xFF0F172A),
@@ -67,13 +69,13 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             indicatorWeight: 2,
             labelStyle: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
             ),
             unselectedLabelStyle: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: Color(0xFF94A3B8),
             ),
@@ -497,8 +499,18 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
   }) {
     return Column(
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const YourFundProfileScreen(),
+              ),
+            );
+          },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 40,
@@ -563,6 +575,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
               ),
             ),
           ],
+        ),
         ),
         if (!isLast) ...[
           const SizedBox(height: 20),

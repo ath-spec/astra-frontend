@@ -884,55 +884,125 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
         padding: EdgeInsets.all(16 * s),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12 * s),
+          borderRadius: BorderRadius.circular(16 * s),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 10 * s,
-              offset: Offset(0, 4 * s),
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 16 * s,
+              offset: Offset(0, 8 * s),
             ),
           ],
         ),
         child: Row(
           children: [
-            Container(
-              width: 40 * s,
-              height: 40 * s,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFF1F5F9),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.account_balance,
-                  color: const Color(0xFF64748B),
-                  size: 20 * s,
+            // Logo
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 52 * s,
+                  height: 52 * s,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    border: Border.all(color: const Color(0xFFF1F5F9), width: 2 * s),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('CANARA', style: TextStyle(fontFamily: 'DMSans', fontSize: 7 * s, fontWeight: FontWeight.w800, color: const Color(0xFF06B6D4), letterSpacing: 0.5)),
+                        Text('ROBECO', style: TextStyle(fontFamily: 'DMSans', fontSize: 7 * s, fontWeight: FontWeight.w800, color: const Color(0xFF0F172A), letterSpacing: 0.5)),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                  right: -2 * s,
+                  bottom: -2 * s,
+                  child: Container(
+                    width: 22 * s,
+                    height: 22 * s,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5 * s),
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 2 * s),
+                        child: Text(
+                          '✱',
+                          style: TextStyle(
+                            fontSize: 16 * s,
+                            color: const Color(0xFFEF4444),
+                            height: 1.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(width: 12 * s),
+            SizedBox(width: 16 * s),
+            // Text Content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Canara Robeco Large Cap Fund...',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 14 * s,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1E293B),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Canara Robeco Large Cap Fund',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 14 * s,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF475569),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(width: 8 * s),
+                      Text(
+                        '₹11,984',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 15 * s,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF0F172A),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 4 * s),
-                  Text(
-                    'Harvestable gain: ₹11,984',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 12 * s,
-                      color: const Color(0xFF059669), // Green
-                      fontWeight: FontWeight.w600,
-                    ),
+                  SizedBox(height: 6 * s),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Amount to book ₹1,96,333',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12 * s,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF94A3B8),
+                        ),
+                      ),
+                      Text(
+                        'Tax-Free Gain (LTCG)',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12 * s,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF94A3B8),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

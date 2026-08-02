@@ -61,24 +61,17 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
     if (_hoverIndex != index) {
       setState(() {
         _hoverIndex = index;
+        _isExpanded = true;
       });
-    }
-
-    // Start a 1 second hold timer to show expanded tooltip if not moving
-    _holdTimer?.cancel();
-    if (!_isExpanded) {
-      _holdTimer = Timer(const Duration(seconds: 1), () {
-        if (mounted) {
-          setState(() {
-            _isExpanded = true;
-          });
-        }
+    } else if (!_isExpanded) {
+      setState(() {
+        _isExpanded = true;
       });
     }
   }
 
   void _handleTouchEnd() {
-    _holdTimer?.cancel();
+    _holdTimer?.cancel(); // In case any exist from older code
     setState(() {
       _isExpanded = false;
     });

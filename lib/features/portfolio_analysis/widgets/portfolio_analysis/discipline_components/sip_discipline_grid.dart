@@ -154,7 +154,31 @@ class SipDisciplineGrid extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => const GenericInfoSheet(
+                        title: 'Missing SIPs?',
+                        paragraphs: [
+                          'SIPs placed through other platforms, offline channels, or directly with the AMC may not appear here.',
+                          'To get a complete view of your SIP discipline, ensure all your investment accounts and folios are connected and updated.',
+                        ],
+                      ),
+                    );
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.info_outline,
+                      size: 14,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

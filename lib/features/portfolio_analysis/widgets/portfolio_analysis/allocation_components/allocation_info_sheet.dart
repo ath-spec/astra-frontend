@@ -44,7 +44,7 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
       ),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -353,7 +353,6 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
               height: 6,
               decoration: BoxDecoration(
                 color: const Color(0xFFE2E8F0),
-                borderRadius: BorderRadius.circular(3),
               ),
             ),
             
@@ -374,7 +373,6 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
                     width: currentWidth,
                     decoration: BoxDecoration(
                       color: activeColor,
-                      borderRadius: BorderRadius.circular(3),
                     ),
                   ),
                 );

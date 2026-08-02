@@ -124,6 +124,7 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                       data: widget.data.map((e) => e.value).toList(),
                       lineColor: widget.lineColor,
                       selectedIndex: _selectedIndex,
+                      isExpanded: _isExpanded,
                     ),
                   ),
                 ),
@@ -141,7 +142,8 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                       final maxVal = widget.data.map((e) => e.value).reduce((a, b) => a > b ? a : b);
                       final range = (maxVal - minVal) == 0 ? 1 : (maxVal - minVal);
                       final paddedMin = minVal - (range * 0.1);
-                      final paddedMax = maxVal + (range * 0.1);
+                      final paddedMax = maxVal + (range * 0.35); // 35% padding at top to leave room for the fixed tooltip
+
                       final paddedRange = paddedMax - paddedMin;
                       final normalizedY = (point.value - paddedMin) / paddedRange;
                       final y = chartHeight - (normalizedY * chartHeight);
@@ -156,8 +158,8 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                       
                       final arrowOffset = x - (left + tooltipWidth / 2);
                       
-                      // Anchor to the bottom so it expands upwards naturally
-                      double bottom = (chartHeight - y) + 8;
+                      // Fixed height: tooltip bottom is always anchored 20px down from the top of the chart space
+                      double bottom = chartHeight - 20;
 
                       return AnimatedPositioned(
                         duration: const Duration(milliseconds: 150),
@@ -331,11 +333,13 @@ class _InteractiveChartPainter extends CustomPainter {
   final List<double> data;
   final Color lineColor;
   final int? selectedIndex;
+  final bool isExpanded;
 
   _InteractiveChartPainter({
     required this.data,
     required this.lineColor,
     this.selectedIndex,
+    this.isExpanded = false,
   });
 
   @override
@@ -346,7 +350,7 @@ class _InteractiveChartPainter extends CustomPainter {
     final double maxVal = data.reduce((a, b) => a > b ? a : b);
     final double range = (maxVal - minVal) == 0 ? 1 : (maxVal - minVal);
     final double paddedMin = minVal - (range * 0.1);
-    final double paddedMax = maxVal + (range * 0.1);
+    final double paddedMax = maxVal + (range * 0.35); // 35% padding at top
     final double paddedRange = paddedMax - paddedMin;
     final double stepX = size.width / (data.length - 1);
 
@@ -416,6 +420,35 @@ class _InteractiveChartPainter extends CustomPainter {
       final Paint innerNodePaint = Paint()..color = lineColor..style = PaintingStyle.fill;
       final Paint shadowPaint = Paint()..color = Colors.black.withOpacity(0.1)..style = PaintingStyle.fill..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
 
+      // Calculate the true global X of the clamped tooltip arrow
+      final tooltipWidth = isExpanded ? 160.0 : 145.0;
+      double left = x - (tooltipWidth / 2);
+      if (left < 16) left = 16;
+      if (left + tooltipWidth > size.width - 16) left = size.width - tooltipWidth - 16;
+      
+      double arrowCenter = x - left;
+      // Clamping logic from _TooltipShapeBorder (radius = 4, arrowWidth = 10)
+      final minArrowCenter = 4.0 + 5.0;
+      final maxArrowCenter = tooltipWidth - 4.0 - 5.0;
+      arrowCenter = arrowCenter.clamp(minArrowCenter, maxArrowCenter);
+      final globalArrowX = left + arrowCenter;
+
+      // Draw solid black stem line connecting the true clamped arrow tip to the data point
+      final Paint stemPaint = Paint()
+        ..color = Colors.black
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+      
+      // The tip of the tooltip is at y = 20
+      if (y > 20) {
+        final path = Path()
+          ..moveTo(globalArrowX, 20)
+          ..lineTo(globalArrowX, 28) // Straight down from the arrow
+          ..lineTo(x, 38)            // Angled kink to the vertical line
+          ..lineTo(x, y);            // Straight down to the node
+        canvas.drawPath(path, stemPaint);
+      }
+
       canvas.drawCircle(Offset(x, y), 6, shadowPaint);
       canvas.drawCircle(Offset(x, y), 6, outerNodePaint);
       canvas.drawCircle(Offset(x, y), 3, innerNodePaint);
@@ -437,7 +470,8 @@ class _InteractiveChartPainter extends CustomPainter {
   bool shouldRepaint(covariant _InteractiveChartPainter oldDelegate) {
     return oldDelegate.data != data || 
            oldDelegate.lineColor != lineColor || 
-           oldDelegate.selectedIndex != selectedIndex;
+           oldDelegate.selectedIndex != selectedIndex ||
+           oldDelegate.isExpanded != isExpanded;
   }
 }
 

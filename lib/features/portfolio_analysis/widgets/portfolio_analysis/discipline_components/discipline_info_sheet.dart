@@ -41,7 +41,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
       ),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -81,19 +81,23 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'What does Discipline mean?',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF0F172A),
+                  _buildTargetIcon(),
+                  const SizedBox(height: 32),
+                  const Center(
+                    child: Text(
+                      'What does Discipline mean?',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0F172A),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
                   const Text(
                     'Discipline measures how consistently you invest and how rarely you interrupt that habit. It does not judge your returns or fund choices. It focuses only on your investing behaviour.',
-                    textAlign: TextAlign.left,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 12,
@@ -101,7 +105,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                       color: Color(0xFF64748B),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 48),
 
                   // Bar Chart Area
                   _buildAnimatedChart(),
@@ -141,6 +145,57 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTargetIcon() {
+    return Center(
+      child: Container(
+        width: 160,
+        height: 160,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              Colors.black.withOpacity(0.04),
+              Colors.black.withOpacity(0.01),
+              Colors.transparent,
+            ],
+            stops: const [0.2, 0.6, 1.0],
+          ),
+        ),
+        child: Center(
+          child: Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 16,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.white,
+                  blurRadius: 4,
+                  spreadRadius: 2,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.track_changes_outlined,
+                size: 32,
+                color: Color(0xFF334155),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -200,15 +255,19 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
           children: [
             Row(
               children: List.generate(5, (index) {
-                // Determine color state based on animation progress
-                final animationThreshold = index * 0.15; // 0, 0.15, 0.3
-                Color barColor = emptyColor;
+                // Calculate continuous fill
+                final targetFraction = (widget.currentLevelIndex + 1) / 5.0;
+                final currentFraction = _controller.value * targetFraction;
+                final segmentStart = index / 5.0;
+                final segmentEnd = (index + 1) / 5.0;
 
-                if (index <= widget.currentLevelIndex) {
-                  // Only color up to the current level
-                  if (_controller.value >= animationThreshold) {
-                    barColor = colors[index];
-                  }
+                double fillFraction = 0.0;
+                if (currentFraction >= segmentEnd) {
+                  fillFraction = 1.0;
+                } else if (currentFraction <= segmentStart) {
+                  fillFraction = 0.0;
+                } else {
+                  fillFraction = (currentFraction - segmentStart) / (segmentEnd - segmentStart);
                 }
 
                 return Expanded(
@@ -218,7 +277,12 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                       children: [
                         Container(
                           height: 8,
-                          decoration: BoxDecoration(color: barColor),
+                          decoration: BoxDecoration(color: emptyColor),
+                          child: FractionallySizedBox(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: fillFraction,
+                            child: Container(color: colors[index]),
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Text(

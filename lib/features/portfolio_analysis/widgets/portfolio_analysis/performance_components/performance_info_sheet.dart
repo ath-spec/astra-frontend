@@ -44,7 +44,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
       ),
       child: Column(
         children: [
@@ -372,17 +372,8 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                       // Segment Bar Base (Gray)
                       Container(
                         height: 8,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE2E8F0),
-                          borderRadius: index == 0
-                              ? const BorderRadius.horizontal(
-                                  left: Radius.circular(4),
-                                )
-                              : (index == levels.length - 1
-                                    ? const BorderRadius.horizontal(
-                                        right: Radius.circular(4),
-                                      )
-                                    : BorderRadius.zero),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFE2E8F0),
                         ),
                       ),
 
@@ -399,15 +390,6 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                                 width: segmentWidth * fillAnimation.value,
                                 decoration: BoxDecoration(
                                   color: levels[index].activeColor,
-                                  borderRadius: index == 0
-                                      ? const BorderRadius.horizontal(
-                                          left: Radius.circular(4),
-                                        )
-                                      : (index == levels.length - 1
-                                            ? const BorderRadius.horizontal(
-                                                right: Radius.circular(4),
-                                              )
-                                            : BorderRadius.zero),
                                 ),
                               ),
                             );

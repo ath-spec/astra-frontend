@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../fund_profile/screens/your_fund_profile_screen.dart';
 
 class ExpensiveFundsSheet extends StatefulWidget {
   final int initialIndex;
@@ -35,7 +36,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet>
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,8 +364,18 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet>
   }) {
     return Column(
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const YourFundProfileScreen(),
+              ),
+            );
+          },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 40,
@@ -429,6 +440,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet>
               ),
             ),
           ],
+        ),
         ),
         if (!isLast) ...[
           const SizedBox(height: 20),

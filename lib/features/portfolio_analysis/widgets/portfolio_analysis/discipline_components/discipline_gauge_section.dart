@@ -268,7 +268,7 @@ class _DisciplineGaugePainter extends CustomPainter {
     final innerRadius = radius - 16;
     final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
 
-    const numSegments = 3;
+    const numSegments = 5;
     final segmentSweep = sweepAngle / numSegments;
 
     // 1. Draw solid continuous background track
@@ -281,33 +281,19 @@ class _DisciplineGaugePainter extends CustomPainter {
 
     // Determine target segments based on score
     int targetSegments = 1;
-    if (score >= 0.5 && score < 0.8) targetSegments = 2;
-    if (score >= 0.8) targetSegments = 3;
+    if (score > 0.3) targetSegments = 2;
+    if (score >= 0.7) targetSegments = 3; // Moderate is 3rd
+    if (score >= 0.85) targetSegments = 4; // Good is 4th
+    if (score >= 1.0) targetSegments = 5; // Excellent is 5th
 
-    // Pick active colors based on the final activeColor
-    List<Color> activeColors;
-    if (activeColor.value == const Color(0xFF38A169).value ||
-        activeColor.value == const Color(0xFF16A34A).value) {
-      activeColors = [
-        const Color(0xFF86EFAC),
-        const Color(0xFF4ADE80),
-        const Color(0xFF22C55E),
-      ];
-    } else if (activeColor.value == const Color(0xFFE53E3E).value ||
-        activeColor.value == const Color(0xFFDC2626).value ||
-        activeColor.value == const Color(0xFFF56565).value) {
-      activeColors = [
-        const Color(0xFFFCA5A5),
-        const Color(0xFFF87171),
-        const Color(0xFFEF4444),
-      ];
-    } else {
-      activeColors = [
-        const Color(0xFF7DD3FC),
-        const Color(0xFF38BDF8),
-        const Color(0xFF0EA5E9),
-      ];
-    }
+    // Static multi-color track using different shades of blue for different values
+    final activeColors = [
+      const Color(0xFFBCE3FF), // 1. Very Low (Lightest Blue)
+      const Color(0xFF65B4FF), // 2. Low (Light Blue)
+      const Color(0xFF2796FF), // 3. Fair / Moderate (Blue)
+      const Color(0xFF0278D9), // 4. Good (Dark Blue)
+      const Color(0xFF015294), // 5. Excellent (Darkest Blue)
+    ];
 
     final targetAngle = targetSegments * segmentSweep;
     final currentAngle = targetAngle * progress;

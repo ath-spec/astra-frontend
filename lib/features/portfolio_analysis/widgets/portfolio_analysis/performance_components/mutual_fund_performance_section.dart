@@ -13,30 +13,17 @@ class MutualFundPerformanceSection extends StatefulWidget {
 }
 
 class _MutualFundPerformanceSectionState
-    extends State<MutualFundPerformanceSection>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-  bool _hasAnimated = false;
+    extends State<MutualFundPerformanceSection> {
+  final GlobalKey _chartKey = GlobalKey();
+  ScrollPosition? _scrollPosition;
 
   @override
-  void initState() {
-    super.initState();
-    VisibilityDetectorController.instance.updateInterval = Duration.zero;
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final scrollable = Scrollable.maybeOf(context);
+    if (_scrollPosition != scrollable?.position) {
+      _scrollPosition = scrollable?.position;
+    }
   }
 
   @override
@@ -81,65 +68,70 @@ class _MutualFundPerformanceSectionState
         ),
         const SizedBox(height: 48),
 
-        // 3D Chart
-        VisibilityDetector(
-          key: const Key('MutualFundPerformanceSection_3DChart'),
-          onVisibilityChanged: (info) {
-            if (mounted) {
-              // Start significantly later (50% visibility) and end at 100% visibility
-              double target = (info.visibleFraction - 0.5) / 0.5;
-              target = target.clamp(0.0, 1.0);
-              
-              // Use a physics-based spring simulation to smoothly track the scroll.
-              // This completely eliminates the "choppy steps" of VisibilityDetector and the "floaty" feel of standard easing,
-              // providing a physical, perfectly fluid sync that preserves velocity between ticks.
-              final spring = const SpringDescription(
-                mass: 1.0,
-                stiffness: 150.0,
-                damping: 25.0, // Critically damped to prevent overshoot bounds errors
+        // 3D Chart with True Scrollytelling
+        SizedBox(
+          key: _chartKey,
+          height: 240,
+          width: double.infinity,
+          child: GestureDetector(
+            onTapUp: (details) {
+              final width = MediaQuery.of(context).size.width;
+              final dx = details.localPosition.dx;
+              final sectionWidth = width / 4;
+              int tabIndex = 0; // Default to out-performing
+              if (dx < sectionWidth) {
+                tabIndex = 2; // Under-performing
+              } else if (dx < sectionWidth * 2) {
+                tabIndex = 1; // In line
+              } else if (dx < sectionWidth * 3) {
+                tabIndex = 0; // Out-performing
+              } else {
+                tabIndex = 3; // Unrated
+              }
+
+              showModalBottomSheet(
+                context: context,
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                builder: (context) =>
+                    MutualFundPerformanceSheet(initialIndex: tabIndex),
               );
-              final simulation = SpringSimulation(spring, _controller.value, target, _controller.velocity);
-              _controller.animateWith(simulation);
-            }
-          },
-          child: SizedBox(
-            height: 240,
-            width: double.infinity,
-            child: GestureDetector(
-              onTapUp: (details) {
-                final width = MediaQuery.of(context).size.width;
-                final dx = details.localPosition.dx;
-                final sectionWidth = width / 4;
-                int tabIndex = 0; // Default to out-performing
-                if (dx < sectionWidth) {
-                  tabIndex = 2; // Under-performing
-                } else if (dx < sectionWidth * 2) {
-                  tabIndex = 1; // In line
-                } else if (dx < sectionWidth * 3) {
-                  tabIndex = 0; // Out-performing
-                } else {
-                  tabIndex = 3; // Unrated
+            },
+            behavior: HitTestBehavior.opaque,
+            child: AnimatedBuilder(
+              animation: _scrollPosition ?? const AlwaysStoppedAnimation(0.0),
+              builder: (context, child) {
+                double progress = 1.0;
+                
+                if (_chartKey.currentContext != null && _scrollPosition != null) {
+                  try {
+                    final RenderBox renderBox = _chartKey.currentContext!.findRenderObject() as RenderBox;
+                    final position = renderBox.localToGlobal(Offset.zero).dy;
+                    final screenHeight = MediaQuery.of(context).size.height;
+                    
+                    // Scrollytelling mapping:
+                    // Start animating when the top of the chart reaches 80% down the screen
+                    // Finish animating when the top of the chart reaches 40% down the screen
+                    final startY = screenHeight * 0.8;
+                    final endY = screenHeight * 0.4;
+                    
+                    progress = (startY - position) / (startY - endY);
+                    
+                    // Add a tiny bit of non-linear easing for polish (Framer Motion feel)
+                    progress = progress.clamp(0.0, 1.0);
+                    progress = Curves.easeOutCubic.transform(progress);
+                  } catch (e) {
+                    // Fallback during initial layout phase
+                    progress = 0.0;
+                  }
                 }
 
-                showModalBottomSheet(
-                  context: context,
-                  backgroundColor: Colors.transparent,
-                  isScrollControlled: true,
-                  builder: (context) =>
-                      MutualFundPerformanceSheet(initialIndex: tabIndex),
+                return CustomPaint(
+                  painter: _Performance3DBarPainter(
+                    progress: progress,
+                  ),
                 );
               },
-              behavior: HitTestBehavior.opaque,
-              child: AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  return CustomPaint(
-                    painter: _Performance3DBarPainter(
-                      progress: _animation.value,
-                    ),
-                  );
-                },
-              ),
             ),
           ),
         ),
@@ -526,7 +518,7 @@ class _Performance3DBarPainter extends CustomPainter {
           text: label,
           style: const TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 12,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             color: Color(0xFF94A3B8),
           ),
