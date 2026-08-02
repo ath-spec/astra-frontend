@@ -9,13 +9,18 @@ class ExpensiveFundsSheet extends StatefulWidget {
   State<ExpensiveFundsSheet> createState() => _ExpensiveFundsSheetState();
 }
 
-class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTickerProviderStateMixin {
+class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this, initialIndex: widget.initialIndex);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialIndex,
+    );
   }
 
   @override
@@ -48,7 +53,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // TabBar
           TabBar(
             controller: _tabController,
@@ -77,7 +82,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
               Tab(text: 'Expensive Funds'),
             ],
           ),
-          
+
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -86,7 +91,8 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                 _buildEmptyStateTab(
                   title: 'EXPENSIVE FUNDS',
                   infoText: 'Expensive funds',
-                  infoDesc: ' have a relatively high expense ratio. Higher fees can reduce the returns you keep over time.',
+                  infoDesc:
+                      ' have a relatively high expense ratio. Higher fees can reduce the returns you keep over time.',
                 ),
               ],
             ),
@@ -138,9 +144,9 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -165,17 +171,18 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                     ),
                   ),
                   TextSpan(
-                    text: 'have a relatively low expense ratio. Lower fees help maximize the returns you keep over time.',
+                    text:
+                        'have a relatively low expense ratio. Lower fees help maximize the returns you keep over time.',
                   ),
                 ],
               ),
             ),
           ),
-          
+
           const SizedBox(height: 32),
           const Divider(height: 1, color: Color(0xFFF1F5F9)),
           const SizedBox(height: 24),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
@@ -201,9 +208,9 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           _buildFundItem(
             name: 'Canara Robeco Large Cap Fund',
             value: '₹2,36,538',
@@ -219,7 +226,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
             subtitleColor: const Color(0xFF64748B),
             isLast: true,
           ),
-          
+
           const SizedBox(height: 48),
         ],
       ),
@@ -272,9 +279,9 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -298,21 +305,23 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
                       color: Color(0xFF0F172A),
                     ),
                   ),
-                  TextSpan(
-                    text: infoDesc,
-                  ),
+                  TextSpan(text: infoDesc),
                 ],
               ),
             ),
           ),
-          
+
           const SizedBox(height: 64),
-          
+
           // Empty State
           Center(
             child: Column(
               children: const [
-                Icon(Icons.dashboard_customize_outlined, size: 64, color: Color(0xFFCBD5E1)),
+                Icon(
+                  Icons.dashboard_customize_outlined,
+                  size: 64,
+                  color: Color(0xFFCBD5E1),
+                ),
                 SizedBox(height: 24),
                 Text(
                   'No holdings found',
@@ -337,7 +346,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
               ],
             ),
           ),
-          
+
           const SizedBox(height: 48),
         ],
       ),
@@ -428,7 +437,7 @@ class _ExpensiveFundsSheetState extends State<ExpensiveFundsSheet> with SingleTi
             painter: _DottedLinePainter(),
           ),
           const SizedBox(height: 20),
-        ]
+        ],
       ],
     );
   }
@@ -441,7 +450,7 @@ class _DottedLinePainter extends CustomPainter {
       ..color = const Color(0xFFE2E8F0)
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.round;
-    
+
     double dashWidth = 3;
     double dashSpace = 4;
     double startX = 0;

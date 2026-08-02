@@ -6,16 +6,22 @@ class MutualFundPerformanceSheet extends StatefulWidget {
   const MutualFundPerformanceSheet({super.key, this.initialIndex = 0});
 
   @override
-  State<MutualFundPerformanceSheet> createState() => _MutualFundPerformanceSheetState();
+  State<MutualFundPerformanceSheet> createState() =>
+      _MutualFundPerformanceSheetState();
 }
 
-class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet> with SingleTickerProviderStateMixin {
+class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this, initialIndex: widget.initialIndex);
+    _tabController = TabController(
+      length: 4,
+      vsync: this,
+      initialIndex: widget.initialIndex,
+    );
   }
 
   @override
@@ -48,7 +54,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // TabBar
           TabBar(
             controller: _tabController,
@@ -79,7 +85,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
               Tab(text: 'Unrated'),
             ],
           ),
-          
+
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -89,12 +95,14 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                 _buildEmptyStateTab(
                   title: 'UNDER-PERFORMING FUNDS',
                   infoText: 'Under-performing funds',
-                  infoDesc: ' have delivered lower returns than their benchmark.We simulate your investments in the benchmark to estimate the shortfall.',
+                  infoDesc:
+                      ' have delivered lower returns than their benchmark.We simulate your investments in the benchmark to estimate the shortfall.',
                 ),
                 _buildEmptyStateTab(
                   title: 'UNRATED FUNDS',
                   infoText: 'Unrated funds',
-                  infoDesc: ' cannot yet be evaluated against a benchmark.This may happen while a benchmark is being mapped or if there isn\'t enough history.',
+                  infoDesc:
+                      ' cannot yet be evaluated against a benchmark.This may happen while a benchmark is being mapped or if there isn\'t enough history.',
                 ),
               ],
             ),
@@ -146,9 +154,9 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -173,17 +181,18 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                     ),
                   ),
                   TextSpan(
-                    text: 'have delivered higher returns than their benchmark.We simulate your investments in the benchmark to estimate excess gains.',
+                    text:
+                        'have delivered higher returns than their benchmark.We simulate your investments in the benchmark to estimate excess gains.',
                   ),
                 ],
               ),
             ),
           ),
-          
+
           const SizedBox(height: 32),
           const Divider(height: 1, color: Color(0xFFF1F5F9)),
           const SizedBox(height: 24),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
@@ -209,9 +218,9 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           _buildFundItem(
             name: 'Canara Robeco Large Cap Fund',
             value: '₹2,36,538',
@@ -220,7 +229,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             subtitleColor: const Color(0xFF38A169),
             isLast: true,
           ),
-          
+
           const SizedBox(height: 48),
         ],
       ),
@@ -269,9 +278,9 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -296,17 +305,18 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                     ),
                   ),
                   TextSpan(
-                    text: 'have delivered returns closely matching their benchmark.',
+                    text:
+                        'have delivered returns closely matching their benchmark.',
                   ),
                 ],
               ),
             ),
           ),
-          
+
           const SizedBox(height: 32),
           const Divider(height: 1, color: Color(0xFFF1F5F9)),
           const SizedBox(height: 24),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
@@ -332,9 +342,9 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           _buildFundItem(
             name: 'Quantum Gold ETF FoF',
             value: '₹99,025',
@@ -350,7 +360,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             subtitleColor: const Color(0xFF64748B),
             isLast: true,
           ),
-          
+
           const SizedBox(height: 48),
         ],
       ),
@@ -403,9 +413,9 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -429,21 +439,23 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
                       color: Color(0xFF0F172A),
                     ),
                   ),
-                  TextSpan(
-                    text: infoDesc,
-                  ),
+                  TextSpan(text: infoDesc),
                 ],
               ),
             ),
           ),
-          
+
           const SizedBox(height: 64),
-          
+
           // Empty State
           Center(
             child: Column(
               children: const [
-                Icon(Icons.dashboard_customize_outlined, size: 64, color: Color(0xFFCBD5E1)), // Placeholder for the graphic
+                Icon(
+                  Icons.dashboard_customize_outlined,
+                  size: 64,
+                  color: Color(0xFFCBD5E1),
+                ), // Placeholder for the graphic
                 SizedBox(height: 24),
                 Text(
                   'No holdings found',
@@ -468,7 +480,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 48),
         ],
       ),
@@ -559,7 +571,7 @@ class _MutualFundPerformanceSheetState extends State<MutualFundPerformanceSheet>
             painter: _DottedLinePainter(),
           ),
           const SizedBox(height: 20),
-        ]
+        ],
       ],
     );
   }
@@ -572,7 +584,7 @@ class _DottedLinePainter extends CustomPainter {
       ..color = const Color(0xFFE2E8F0)
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.round;
-    
+
     double dashWidth = 3;
     double dashSpace = 4;
     double startX = 0;

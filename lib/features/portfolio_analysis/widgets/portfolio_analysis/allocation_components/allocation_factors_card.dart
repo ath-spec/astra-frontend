@@ -247,6 +247,12 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
               ),
             ],
           ),
+          const SizedBox(width: 12),
+          const Icon(
+            Icons.chevron_right,
+            size: 16,
+            color: Color(0xFFCBD5E1),
+          ),
         ],
       ),
     ),

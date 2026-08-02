@@ -50,18 +50,20 @@ class GenericInfoSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ...paragraphs.map((p) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Text(
-                          p,
-                          style: const TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10,
-                            height: 1.6,
-                            color: Color(0xFF64748B),
-                          ),
+                  ...paragraphs.map(
+                    (p) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        p,
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 10,
+                          height: 1.6,
+                          color: Color(0xFF64748B),
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

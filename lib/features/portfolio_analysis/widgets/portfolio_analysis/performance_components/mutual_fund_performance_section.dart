@@ -7,10 +7,13 @@ class MutualFundPerformanceSection extends StatefulWidget {
   const MutualFundPerformanceSection({super.key});
 
   @override
-  State<MutualFundPerformanceSection> createState() => _MutualFundPerformanceSectionState();
+  State<MutualFundPerformanceSection> createState() =>
+      _MutualFundPerformanceSectionState();
 }
 
-class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSection> with SingleTickerProviderStateMixin {
+class _MutualFundPerformanceSectionState
+    extends State<MutualFundPerformanceSection>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _hasAnimated = false;
@@ -22,7 +25,10 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
   }
 
   @override
@@ -72,7 +78,7 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
           ),
         ),
         const SizedBox(height: 48),
-        
+
         // 3D Chart
         VisibilityDetector(
           key: const Key('MutualFundPerformanceSection_3DChart'),
@@ -100,12 +106,13 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
                 } else {
                   tabIndex = 3; // Unrated
                 }
-                
+
                 showModalBottomSheet(
                   context: context,
                   backgroundColor: Colors.transparent,
                   isScrollControlled: true,
-                  builder: (context) => MutualFundPerformanceSheet(initialIndex: tabIndex),
+                  builder: (context) =>
+                      MutualFundPerformanceSheet(initialIndex: tabIndex),
                 );
               },
               behavior: HitTestBehavior.opaque,
@@ -113,7 +120,9 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
                 animation: _animation,
                 builder: (context, child) {
                   return CustomPaint(
-                    painter: _Performance3DBarPainter(progress: _animation.value),
+                    painter: _Performance3DBarPainter(
+                      progress: _animation.value,
+                    ),
                   );
                 },
               ),
@@ -121,7 +130,7 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
           ),
         ),
         const SizedBox(height: 40),
-        
+
         // List
         const _DottedDivider(),
         _buildFundListItem(
@@ -134,7 +143,8 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
               context: context,
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
-              builder: (context) => const MutualFundPerformanceSheet(initialIndex: 2),
+              builder: (context) =>
+                  const MutualFundPerformanceSheet(initialIndex: 2),
             );
           },
         ),
@@ -149,7 +159,8 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
               context: context,
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
-              builder: (context) => const MutualFundPerformanceSheet(initialIndex: 1),
+              builder: (context) =>
+                  const MutualFundPerformanceSheet(initialIndex: 1),
             );
           },
         ),
@@ -164,28 +175,41 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
               context: context,
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
-              builder: (context) => const MutualFundPerformanceSheet(initialIndex: 0),
+              builder: (context) =>
+                  const MutualFundPerformanceSheet(initialIndex: 0),
             );
           },
         ),
-        
+
         const SizedBox(height: 24),
-        
+
         // Insights Card
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'INSIGHTS',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2.0,
-                  color: Color(0xFF94A3B8),
-                ),
+              Row(
+                children: const [
+                  Text(
+                    'INSIGHTS',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2.0,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Divider(
+                      color: Color(0xFFE2E8F0),
+                      thickness: 1,
+                      height: 1,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
               Container(
@@ -207,10 +231,14 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
                     children: [
                       TextSpan(
                         text: 'Winning streak ',
-                        style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       TextSpan(
-                        text: 'most of your funds are ahead of the benchmark. momentum is strong.',
+                        text:
+                            'most of your funds are ahead of the benchmark. momentum is strong.',
                       ),
                     ],
                   ),
@@ -244,49 +272,49 @@ class _MutualFundPerformanceSectionState extends State<MutualFundPerformanceSect
               height: 8,
               decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0F172A),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '$percentage of MF portfolio',
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    color: Color(0xFF94A3B8),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$percentage of MF portfolio',
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      color: Color(0xFF94A3B8),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            amount,
-            style: const TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF0F172A),
+            const SizedBox(width: 8),
+            Text(
+              amount,
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF0F172A),
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          const Icon(Icons.chevron_right, size: 12, color: Color(0xFF94A3B8)),
-        ],
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right, size: 12, color: Color(0xFF94A3B8)),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class _Performance3DBarPainter extends CustomPainter {
@@ -315,17 +343,28 @@ class _Performance3DBarPainter extends CustomPainter {
       ..shader = shader
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
-    
+
     final numCols = 4;
     final stepX = size.width / numCols;
     for (int i = 0; i <= numCols; i++) {
       final x = i * stepX;
       // Start higher and end lower to go past both the top text and bottom x-axis labels
-      _drawDashedLine(canvas, Offset(x, -20), Offset(x, size.height), gridPaint);
+      _drawDashedLine(
+        canvas,
+        Offset(x, -20),
+        Offset(x, size.height),
+        gridPaint,
+      );
     }
-    
+
     // Bottom solid line
-    canvas.drawLine(Offset(0, y0), Offset(size.width, y0), Paint()..color = const Color(0xFFE2E8F0)..strokeWidth = 1);
+    canvas.drawLine(
+      Offset(0, y0),
+      Offset(size.width, y0),
+      Paint()
+        ..color = const Color(0xFFE2E8F0)
+        ..strokeWidth = 1,
+    );
 
     final bars = [
       {
@@ -359,16 +398,20 @@ class _Performance3DBarPainter extends CustomPainter {
         'colorFront': const Color(0xFFE2E8F0),
         'colorSide': const Color(0xFFCBD5E1),
         'colorTop': const Color(0xFFF1F5F9),
-      }
+      },
     ];
 
-    final textPainter = TextPainter(textDirection: TextDirection.ltr, textAlign: TextAlign.center);
-    
+    final textPainter = TextPainter(
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+    );
+
     // Scale bar width dynamically based on total width
-    final barW = math.max(20.0, size.width * 0.08); 
+    final barW = math.max(20.0, size.width * 0.08);
     final depth = barW * 0.45;
-    final maxAvailableHeight = 150.0; // Maximum visual height in pixels for the tallest bar
-    
+    final maxAvailableHeight =
+        150.0; // Maximum visual height in pixels for the tallest bar
+
     double maxVal = 0;
     for (var bar in bars) {
       final v = bar['val'] as double;
@@ -381,11 +424,11 @@ class _Performance3DBarPainter extends CustomPainter {
       final rawVal = bars[i]['val'] as double;
       final targetH = (rawVal / maxVal) * maxAvailableHeight;
       final currentH = targetH * progress;
-      
+
       // Draw 3D Bar
       final bx = x - (barW / 2);
       final by = y0;
-      
+
       final frontColor = bars[i]['colorFront'] as Color;
       final sideColor = bars[i]['colorSide'] as Color;
       final topColor = bars[i]['colorTop'] as Color;
@@ -420,20 +463,24 @@ class _Performance3DBarPainter extends CustomPainter {
       if (currentH > 0 && bars[i]['label'] != '') {
         canvas.save();
         canvas.clipRect(frontRect);
-        
+
         final texturePaint = Paint()
           ..color = sideColor.withOpacity(0.35)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.5;
 
         final spacing = 6.0;
-        for (double offset = -currentH; offset < barW + currentH; offset += spacing) {
+        for (
+          double offset = -currentH;
+          offset < barW + currentH;
+          offset += spacing
+        ) {
           final path = Path();
           path.moveTo(bx + offset, by);
           for (double stepY = 0; stepY <= currentH; stepY += 5) {
-             // Shift left as we go up for diagonal effect, add sine wave for texture
-             double wave = math.sin((stepY + offset) * 0.15) * 1.5;
-             path.lineTo(bx + offset - (stepY * 0.3) + wave, by - stepY);
+            // Shift left as we go up for diagonal effect, add sine wave for texture
+            double wave = math.sin((stepY + offset) * 0.15) * 1.5;
+            path.lineTo(bx + offset - (stepY * 0.3) + wave, by - stepY);
           }
           canvas.drawPath(path, texturePaint);
         }
@@ -444,10 +491,18 @@ class _Performance3DBarPainter extends CustomPainter {
       if (progress > 0.8 && bars[i]['label'] != '') {
         textPainter.text = TextSpan(
           text: bars[i]['amt'] as String,
-          style: const TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
+          style: const TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF0F172A),
+          ),
         );
         textPainter.layout();
-        textPainter.paint(canvas, Offset(x - textPainter.width / 2, by - currentH - 20));
+        textPainter.paint(
+          canvas,
+          Offset(x - textPainter.width / 2, by - currentH - 28),
+        );
       }
 
       // X Axis label
@@ -455,23 +510,32 @@ class _Performance3DBarPainter extends CustomPainter {
       if (label.isNotEmpty) {
         textPainter.text = TextSpan(
           text: label,
-          style: const TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF94A3B8)),
+          style: const TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF94A3B8),
+          ),
         );
         textPainter.layout();
         textPainter.paint(canvas, Offset(x - textPainter.width / 2, y0 + 16));
       }
     }
   }
-  
+
   void _drawDashedLine(Canvas canvas, Offset p1, Offset p2, Paint paint) {
     final distance = (p2 - p1).distance;
     final direction = (p2 - p1) / distance;
     double dashWidth = 4;
     double dashSpace = 4;
     double start = 0;
-    
+
     while (start < distance) {
-      canvas.drawLine(p1 + direction * start, p1 + direction * math.min(start + dashWidth, distance), paint);
+      canvas.drawLine(
+        p1 + direction * start,
+        p1 + direction * math.min(start + dashWidth, distance),
+        paint,
+      );
       start += dashWidth + dashSpace;
     }
   }
@@ -501,7 +565,7 @@ class _DottedLinePainter2 extends CustomPainter {
       ..color = const Color(0xFFE2E8F0)
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.round;
-    
+
     double dashWidth = 3;
     double dashSpace = 4;
     double startX = 0;

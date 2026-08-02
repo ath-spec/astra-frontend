@@ -161,7 +161,6 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                           width: 100 * _barAnimation.value,
                           decoration: BoxDecoration(
                             color: const Color(0xFFE2E8F0),
-                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -280,8 +279,8 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       ),
                       // Doughnut Chart
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        height: MediaQuery.of(context).size.width * 0.35,
+                        width: MediaQuery.of(context).size.width * 0.22,
+                        height: MediaQuery.of(context).size.width * 0.22,
                         child: AnimatedBuilder(
                           animation: _doughnutAnimation,
                           builder: (context, child) {
@@ -349,7 +348,7 @@ class _MarketCapPiePainter extends CustomPainter {
     
     final paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 24
+      ..strokeWidth = 14
       ..strokeCap = StrokeCap.butt;
     
     final rect = Rect.fromCircle(center: center, radius: radius - 12);

@@ -3,16 +3,14 @@ import 'package:flutter/material.dart';
 class DisciplineInfoSheet extends StatefulWidget {
   final int currentLevelIndex; // 0 to 4 (e.g., Fair is 2)
 
-  const DisciplineInfoSheet({
-    super.key,
-    this.currentLevelIndex = 2,
-  });
+  const DisciplineInfoSheet({super.key, this.currentLevelIndex = 2});
 
   @override
   State<DisciplineInfoSheet> createState() => _DisciplineInfoSheetState();
 }
 
-class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTickerProviderStateMixin {
+class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -22,7 +20,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTi
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
-    
+
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _controller.forward();
     });
@@ -76,7 +74,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTi
           ),
           const SizedBox(height: 16),
           const Divider(height: 1, color: Color(0xFFF1F5F9)),
-          
+
           Flexible(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -104,10 +102,10 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTi
                     ),
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // Bar Chart Area
                   _buildAnimatedChart(),
-                  
+
                   const SizedBox(height: 48),
                   const Text(
                     'How your discipline is calculated',
@@ -119,7 +117,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTi
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   _buildSection(
                     'Monthly Consistency',
                     'How steady your investing habit is from month to month.',
@@ -205,7 +203,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTi
                 // Determine color state based on animation progress
                 final animationThreshold = index * 0.15; // 0, 0.15, 0.3
                 Color barColor = emptyColor;
-                
+
                 if (index <= widget.currentLevelIndex) {
                   // Only color up to the current level
                   if (_controller.value >= animationThreshold) {
@@ -220,9 +218,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTi
                       children: [
                         Container(
                           height: 8,
-                          decoration: BoxDecoration(
-                            color: barColor,
-                          ),
+                          decoration: BoxDecoration(color: barColor),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -241,29 +237,31 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTi
                 );
               }),
             ),
-            
+
             // Dotted Separators
             Positioned.fill(
               child: Row(
-                children: List.generate(4, (index) {
-                  return Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
-                        width: 1,
-                        height: 30, // extends down
-                        color: Colors.transparent,
-                        child: CustomPaint(
-                          painter: _VerticalDottedLinePainter(),
+                children:
+                    List.generate(4, (index) {
+                      return Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            width: 1,
+                            height: 30, // extends down
+                            color: Colors.transparent,
+                            child: CustomPaint(
+                              painter: _VerticalDottedLinePainter(),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                })
-                ..add(const Expanded(child: SizedBox())), // Empty for the last item
+                      );
+                    })..add(
+                      const Expanded(child: SizedBox()),
+                    ), // Empty for the last item
               ),
             ),
-            
+
             // "CURRENT" Label
             if (widget.currentLevelIndex >= 0)
               Positioned(
@@ -273,26 +271,39 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTi
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final segmentWidth = constraints.maxWidth / 5;
-                    final leftOffset = (widget.currentLevelIndex * segmentWidth);
-                    
+                    final leftOffset =
+                        (widget.currentLevelIndex * segmentWidth);
+
                     // Trigger label after the last active bar is fully lit
                     final labelStart = (widget.currentLevelIndex * 0.15) + 0.1;
                     final labelAnim = Curves.easeOutBack.transform(
                       ((_controller.value - labelStart) / 0.3).clamp(0.0, 1.0),
                     );
-                    final labelOpacity = ((_controller.value - labelStart) / 0.2).clamp(0.0, 1.0);
+                    final labelOpacity =
+                        ((_controller.value - labelStart) / 0.2).clamp(
+                          0.0,
+                          1.0,
+                        );
 
                     return Align(
                       alignment: Alignment.centerLeft,
                       child: Transform.translate(
-                        offset: Offset(leftOffset + (segmentWidth / 2) - 36, 10 * (1 - labelAnim)),
+                        offset: Offset(
+                          leftOffset + (segmentWidth / 2) - 36,
+                          10 * (1 - labelAnim),
+                        ),
                         child: Opacity(
                           opacity: labelOpacity,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: const Color(0xFF14B8A6)),
+                              border: Border.all(
+                                color: const Color(0xFF14B8A6),
+                              ),
                               borderRadius: BorderRadius.circular(2),
                             ),
                             child: const Text(
@@ -309,7 +320,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet> with SingleTi
                         ),
                       ),
                     );
-                  }
+                  },
                 ),
               ),
           ],
@@ -326,11 +337,11 @@ class _VerticalDottedLinePainter extends CustomPainter {
       ..color = const Color(0xFFCBD5E1)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
-      
+
     final dashHeight = 3.0;
     final dashSpace = 3.0;
     double startY = -15.0; // Start slightly above
-    
+
     while (startY < 45.0) {
       canvas.drawLine(Offset(0, startY), Offset(0, startY + dashHeight), paint);
       startY += dashHeight + dashSpace;

@@ -10,13 +10,14 @@ class ExpensiveFundsSection extends StatefulWidget {
   State<ExpensiveFundsSection> createState() => _ExpensiveFundsSectionState();
 }
 
-class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with SingleTickerProviderStateMixin {
+class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _hasAnimated = false;
-  
+
   // Example value: 0%. In reality this would come from your real data source.
-  final double _expenseRatioPercentage = 0.0; 
+  final double _expenseRatioPercentage = 0.0;
 
   @override
   void initState() {
@@ -25,7 +26,10 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
   }
 
   @override
@@ -71,7 +75,11 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: Color(0xFF64748B),
+                  ),
                 ),
               ),
             ],
@@ -103,7 +111,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
             ),
           ),
           const SizedBox(height: 12),
-          
+
           // Progress Bar
           Stack(
             children: [
@@ -121,9 +129,14 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                   return Container(
                     height: 12,
                     // Hardcoded to 0.6 for demo purposes so you can see the bar fill up animation
-                    width: MediaQuery.of(context).size.width * 0.6 * _animation.value,
+                    width:
+                        MediaQuery.of(context).size.width *
+                        0.6 *
+                        _animation.value,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE53E3E), // Red to highlight expensive funds
+                      color: const Color(
+                        0xFFE53E3E,
+                      ), // Red to highlight expensive funds
                       borderRadius: BorderRadius.circular(2),
                     ),
                   );
@@ -132,7 +145,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
             ],
           ),
           const SizedBox(height: 16),
-          
+
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
@@ -140,7 +153,8 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                 context: context,
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,
-                builder: (context) => const ExpensiveFundsSheet(initialIndex: 1),
+                builder: (context) =>
+                    const ExpensiveFundsSheet(initialIndex: 1),
               );
             },
             child: Row(
@@ -160,7 +174,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
             ),
           ),
           const SizedBox(height: 32),
-          
+
           VisibilityDetector(
             key: const Key('ExpensiveFundsSection_InsightsLine'),
             onVisibilityChanged: (info) {
@@ -182,12 +196,18 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
                   ),
                 ),
                 SizedBox(width: 8),
-                Expanded(child: _DottedDivider()),
+                Expanded(
+                  child: Divider(
+                    color: Color(0xFFE2E8F0),
+                    thickness: 1,
+                    height: 1,
+                  ),
+                ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          
+
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -220,7 +240,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection> with Sing
             ),
           ),
           const SizedBox(height: 64),
-          
+
           // Disclaimer
           const Text(
             'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
@@ -257,7 +277,7 @@ class _DottedLinePainter extends CustomPainter {
       ..color = const Color(0xFFE2E8F0)
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.round;
-    
+
     double dashWidth = 3;
     double dashSpace = 4;
     double startX = 0;

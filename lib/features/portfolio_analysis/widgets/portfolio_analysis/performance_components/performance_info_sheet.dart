@@ -10,7 +10,8 @@ class PerformanceInfoSheet extends StatefulWidget {
   State<PerformanceInfoSheet> createState() => _PerformanceInfoSheetState();
 }
 
-class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with SingleTickerProviderStateMixin {
+class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -59,7 +60,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
               ),
             ),
           ),
-          
+
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.only(bottom: 48.0),
@@ -67,7 +68,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 24),
-                  
+
                   // Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -78,7 +79,11 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                           shape: BoxShape.circle,
                           border: Border.all(color: const Color(0xFFE2E8F0)),
                         ),
-                        child: const Icon(Icons.change_history, size: 12, color: Color(0xFF64748B)),
+                        child: const Icon(
+                          Icons.change_history,
+                          size: 12,
+                          color: Color(0xFF64748B),
+                        ),
                       ),
                       const SizedBox(width: 8),
                       const Text(
@@ -92,9 +97,9 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Circular Graphic
                   SizedBox(
                     height: 120,
@@ -108,7 +113,10 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.transparent,
-                            border: Border.all(color: const Color(0xFFF1F5F9), width: 2),
+                            border: Border.all(
+                              color: const Color(0xFFF1F5F9),
+                              width: 2,
+                            ),
                           ),
                         ),
                         // Inner circle
@@ -118,7 +126,10 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.transparent,
-                            border: Border.all(color: const Color(0xFFF1F5F9), width: 2),
+                            border: Border.all(
+                              color: const Color(0xFFF1F5F9),
+                              width: 2,
+                            ),
                           ),
                         ),
                         // Core Icon with gradient and shadow
@@ -137,15 +148,19 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                             ],
                           ),
                           child: const Center(
-                            child: Icon(Icons.change_history, size: 24, color: Color(0xFF0F172A)),
+                            child: Icon(
+                              Icons.change_history,
+                              size: 24,
+                              color: Color(0xFF0F172A),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 48),
-                  
+
                   // What is Performance
                   const Text(
                     'What is Performance?',
@@ -157,7 +172,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32.0),
                     child: const Text(
@@ -171,17 +186,17 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 48),
-                  
+
                   // Spectrum Bar
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: _buildSpectrumBar(context),
                   ),
-                  
+
                   const SizedBox(height: 48),
-                  
+
                   // Factors that contribute
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -202,13 +217,15 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                           icon: Icons.pie_chart_outline,
                           iconColor: const Color(0xFF38A169),
                           title: 'Asset Allocation',
-                          description: 'The primary driver of returns is the mix of assets (equity, debt, gold) you hold.',
+                          description:
+                              'The primary driver of returns is the mix of assets (equity, debt, gold) you hold.',
                         ),
                         _buildInfoItem(
                           icon: Icons.stars,
                           iconColor: const Color(0xFF38A169),
                           title: 'Fund Selection',
-                          description: 'How well the specific mutual funds in your portfolio have performed against their categories.',
+                          description:
+                              'How well the specific mutual funds in your portfolio have performed against their categories.',
                           isLast: true,
                         ),
                       ],
@@ -292,16 +309,20 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
               children: List.generate(levels.length, (index) {
                 final isActive = index < activeCount;
                 final isCurrent = index == (activeCount - 1);
-                
+
                 // Calculate interval for this segment
                 final startTime = isActive ? (index / activeCount) : 0.0;
                 final endTime = isActive ? ((index + 1) / activeCount) : 0.0;
-                
+
                 final fillAnimation = isActive
                     ? Tween<double>(begin: 0, end: 1).animate(
                         CurvedAnimation(
                           parent: _controller,
-                          curve: Interval(startTime, endTime, curve: Curves.easeOut),
+                          curve: Interval(
+                            startTime,
+                            endTime,
+                            curve: Curves.easeOut,
+                          ),
                         ),
                       )
                     : const AlwaysStoppedAnimation<double>(0.0);
@@ -323,11 +344,18 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                     children: [
                       // Label
                       Padding(
-                        padding: const EdgeInsets.only(top: 16.0, left: 2.0, right: 2.0),
+                        padding: const EdgeInsets.only(
+                          top: 16.0,
+                          left: 2.0,
+                          right: 2.0,
+                        ),
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text(
-                            levels[index].label.toUpperCase().replaceAll(' ', '\n'),
+                            levels[index].label.toUpperCase().replaceAll(
+                              ' ',
+                              '\n',
+                            ),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontFamily: 'DMSans',
@@ -340,20 +368,24 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                           ),
                         ),
                       ),
-                      
+
                       // Segment Bar Base (Gray)
                       Container(
                         height: 8,
                         decoration: BoxDecoration(
                           color: const Color(0xFFE2E8F0),
                           borderRadius: index == 0
-                              ? const BorderRadius.horizontal(left: Radius.circular(4))
+                              ? const BorderRadius.horizontal(
+                                  left: Radius.circular(4),
+                                )
                               : (index == levels.length - 1
-                                  ? const BorderRadius.horizontal(right: Radius.circular(4))
-                                  : BorderRadius.zero),
+                                    ? const BorderRadius.horizontal(
+                                        right: Radius.circular(4),
+                                      )
+                                    : BorderRadius.zero),
                         ),
                       ),
-                      
+
                       // Segment Bar Fill (Animated)
                       if (isActive)
                         AnimatedBuilder(
@@ -368,16 +400,20 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                                 decoration: BoxDecoration(
                                   color: levels[index].activeColor,
                                   borderRadius: index == 0
-                                      ? const BorderRadius.horizontal(left: Radius.circular(4))
+                                      ? const BorderRadius.horizontal(
+                                          left: Radius.circular(4),
+                                        )
                                       : (index == levels.length - 1
-                                          ? const BorderRadius.horizontal(right: Radius.circular(4))
-                                          : BorderRadius.zero),
+                                            ? const BorderRadius.horizontal(
+                                                right: Radius.circular(4),
+                                              )
+                                            : BorderRadius.zero),
                                 ),
                               ),
                             );
-                          }
+                          },
                         ),
-                        
+
                       // Divider line (skip on first)
                       if (index != 0)
                         Positioned(
@@ -389,7 +425,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                             painter: _DashedLinePainter(),
                           ),
                         ),
-                        
+
                       // CURRENT Pill
                       if (isCurrent)
                         AnimatedBuilder(
@@ -400,10 +436,15 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                               child: Opacity(
                                 opacity: pillOpacityAnimation.value,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    border: Border.all(color: const Color(0xFF38A169)),
+                                    border: Border.all(
+                                      color: const Color(0xFF38A169),
+                                    ),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: const Text(
@@ -419,7 +460,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet> with Single
                                 ),
                               ),
                             );
-                          }
+                          },
                         ),
                     ],
                   ),
@@ -440,7 +481,7 @@ class _DashedLinePainter extends CustomPainter {
       ..color = const Color(0xFFCBD5E1)
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.square;
-    
+
     double dashHeight = 3;
     double dashSpace = 3;
     double startY = 0;

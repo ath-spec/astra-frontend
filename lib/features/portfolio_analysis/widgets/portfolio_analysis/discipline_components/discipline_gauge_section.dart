@@ -16,7 +16,8 @@ class DisciplineGaugeSection extends StatefulWidget {
   State<DisciplineGaugeSection> createState() => _DisciplineGaugeSectionState();
 }
 
-class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with SingleTickerProviderStateMixin {
+class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   double _lastHapticValue = 0;
@@ -31,20 +32,22 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
       duration: const Duration(milliseconds: 1500),
     );
     int targetSegments = 1;
-    if (widget.level.score >= 0.5 && widget.level.score < 0.8) targetSegments = 2;
+    if (widget.level.score >= 0.5 && widget.level.score < 0.8)
+      targetSegments = 2;
     if (widget.level.score >= 0.8) targetSegments = 3;
-    
+
     int hapticCount = 0;
-    
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    )..addListener(() {
-        int currentSegment = (_animation.value * targetSegments).ceil();
-        if (currentSegment > hapticCount) {
-          HapticFeedback.selectionClick();
-          hapticCount = currentSegment;
-        }
-      });
+
+    _animation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+        )..addListener(() {
+          int currentSegment = (_animation.value * targetSegments).ceil();
+          if (currentSegment > hapticCount) {
+            HapticFeedback.selectionClick();
+            hapticCount = currentSegment;
+          }
+        });
   }
 
   @override
@@ -127,13 +130,15 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
             if (widget.level == DisciplineLevel.poor) index = 1; // Low
             if (widget.level == DisciplineLevel.moderate) index = 2; // Fair
             if (widget.level == DisciplineLevel.good) index = 3; // Good
-            if (widget.level == DisciplineLevel.excellent) index = 4; // Excellent
-            
+            if (widget.level == DisciplineLevel.excellent)
+              index = 4; // Excellent
+
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
-              builder: (context) => DisciplineInfoSheet(currentLevelIndex: index),
+              builder: (context) =>
+                  DisciplineInfoSheet(currentLevelIndex: index),
             );
           },
           child: Container(
@@ -173,10 +178,16 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
                 color: Color(0xFF64748B),
               ),
               children: [
-                TextSpan(text: 'Small withdrawals and some active months, but '),
                 TextSpan(
-                  text: 'but the habit needs to show up more consistently to move the score higher.',
-                  style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w600),
+                  text: 'Small withdrawals and some active months, but ',
+                ),
+                TextSpan(
+                  text:
+                      'but the habit needs to show up more consistently to move the score higher.',
+                  style: TextStyle(
+                    color: Color(0xFF0F172A),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -197,10 +208,16 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection> with Si
     );
 
     return ShaderMask(
-      shaderCallback: (bounds) => LinearGradient(
-        colors: widget.level.gradientColors,
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
+      shaderCallback: (bounds) => const LinearGradient(
+        colors: [
+          Color(0xFFFFFFFF),
+          Color(0xFF5BA1F7),
+          Color(0xFF031E6B),
+          Color(0xFF241714),
+        ],
+        stops: [0.0, 0.25, 0.7, 1.0],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
       ).createShader(bounds),
       child: Text(
         widget.level.label,
@@ -229,7 +246,7 @@ class _DisciplineGaugePainter extends CustomPainter {
     // Outer dotted track
     final startAngle = math.pi;
     final sweepAngle = math.pi;
-    
+
     final outerRect = Rect.fromCircle(center: center, radius: radius);
     final outerPaint = Paint()
       ..color = const Color(0xFF94A3B8)
@@ -237,15 +254,23 @@ class _DisciplineGaugePainter extends CustomPainter {
       ..strokeWidth = 1.5
       ..strokeCap = StrokeCap.round;
 
-    _drawDashedArc(canvas, outerRect, startAngle, sweepAngle, outerPaint, dashWidth: 2, dashSpace: 6);
+    _drawDashedArc(
+      canvas,
+      outerRect,
+      startAngle,
+      sweepAngle,
+      outerPaint,
+      dashWidth: 2,
+      dashSpace: 6,
+    );
 
     // Inner arc segments
     final innerRadius = radius - 16;
     final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
-    
+
     const numSegments = 3;
     final segmentSweep = sweepAngle / numSegments;
-    
+
     // 1. Draw solid continuous background track
     final bgPaint = Paint()
       ..color = const Color(0xFFE2E8F0)
@@ -253,25 +278,40 @@ class _DisciplineGaugePainter extends CustomPainter {
       ..strokeWidth = 16
       ..strokeCap = StrokeCap.round;
     canvas.drawArc(innerRect, startAngle, sweepAngle, false, bgPaint);
-    
+
     // Determine target segments based on score
     int targetSegments = 1;
     if (score >= 0.5 && score < 0.8) targetSegments = 2;
     if (score >= 0.8) targetSegments = 3;
-    
+
     // Pick active colors based on the final activeColor
     List<Color> activeColors;
-    if (activeColor.value == const Color(0xFF38A169).value || activeColor.value == const Color(0xFF16A34A).value) {
-      activeColors = [const Color(0xFF86EFAC), const Color(0xFF4ADE80), const Color(0xFF22C55E)];
-    } else if (activeColor.value == const Color(0xFFE53E3E).value || activeColor.value == const Color(0xFFDC2626).value || activeColor.value == const Color(0xFFF56565).value) {
-      activeColors = [const Color(0xFFFCA5A5), const Color(0xFFF87171), const Color(0xFFEF4444)];
+    if (activeColor.value == const Color(0xFF38A169).value ||
+        activeColor.value == const Color(0xFF16A34A).value) {
+      activeColors = [
+        const Color(0xFF86EFAC),
+        const Color(0xFF4ADE80),
+        const Color(0xFF22C55E),
+      ];
+    } else if (activeColor.value == const Color(0xFFE53E3E).value ||
+        activeColor.value == const Color(0xFFDC2626).value ||
+        activeColor.value == const Color(0xFFF56565).value) {
+      activeColors = [
+        const Color(0xFFFCA5A5),
+        const Color(0xFFF87171),
+        const Color(0xFFEF4444),
+      ];
     } else {
-      activeColors = [const Color(0xFF7DD3FC), const Color(0xFF38BDF8), const Color(0xFF0EA5E9)];
+      activeColors = [
+        const Color(0xFF7DD3FC),
+        const Color(0xFF38BDF8),
+        const Color(0xFF0EA5E9),
+      ];
     }
-    
+
     final targetAngle = targetSegments * segmentSweep;
     final currentAngle = targetAngle * progress;
-    
+
     // 2. Draw from right to left so left segments' right caps sit on top
     for (int i = targetSegments - 1; i >= 0; i--) {
       final start = startAngle + (i * segmentSweep);
@@ -282,24 +322,33 @@ class _DisciplineGaugePainter extends CustomPainter {
           ..style = PaintingStyle.stroke
           ..strokeWidth = 16
           ..strokeCap = StrokeCap.round; // All caps are round!
-          
+
         canvas.drawArc(innerRect, start, sweep, false, paint);
       }
     }
   }
 
-  void _drawDashedArc(Canvas canvas, Rect rect, double startAngle, double sweepAngle, Paint paint, {required double dashWidth, required double dashSpace}) {
+  void _drawDashedArc(
+    Canvas canvas,
+    Rect rect,
+    double startAngle,
+    double sweepAngle,
+    Paint paint, {
+    required double dashWidth,
+    required double dashSpace,
+  }) {
     double radius = rect.width / 2;
     double circumference = 2 * math.pi * radius;
     double totalArcLength = (sweepAngle / (2 * math.pi)) * circumference;
-    
+
     double currentLength = 0;
     while (currentLength < totalArcLength) {
       double dashAngle = (dashWidth / circumference) * 2 * math.pi;
       double spaceAngle = (dashSpace / circumference) * 2 * math.pi;
-      
-      double currentStartAngle = startAngle + (currentLength / totalArcLength) * sweepAngle;
-      
+
+      double currentStartAngle =
+          startAngle + (currentLength / totalArcLength) * sweepAngle;
+
       if (currentLength + dashWidth <= totalArcLength) {
         canvas.drawArc(rect, currentStartAngle, dashAngle, false, paint);
       }
@@ -309,6 +358,8 @@ class _DisciplineGaugePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _DisciplineGaugePainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.score != score || oldDelegate.activeColor != activeColor;
+    return oldDelegate.progress != progress ||
+        oldDelegate.score != score ||
+        oldDelegate.activeColor != activeColor;
   }
 }

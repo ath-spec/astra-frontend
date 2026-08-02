@@ -13,10 +13,12 @@ class PerformanceGaugeSection extends StatefulWidget {
   });
 
   @override
-  State<PerformanceGaugeSection> createState() => _PerformanceGaugeSectionState();
+  State<PerformanceGaugeSection> createState() =>
+      _PerformanceGaugeSectionState();
 }
 
-class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with SingleTickerProviderStateMixin {
+class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   double _lastHapticValue = 0;
@@ -31,16 +33,18 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
       duration: const Duration(milliseconds: 1500),
     );
     int hapticCount = 0;
-    
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    )..addListener(() {
-        int currentSegment = (_animation.value * widget.level.activeSegments).ceil();
-        if (currentSegment > hapticCount) {
-          HapticFeedback.selectionClick();
-          hapticCount = currentSegment;
-        }
-      });
+
+    _animation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+        )..addListener(() {
+          int currentSegment = (_animation.value * widget.level.activeSegments)
+              .ceil();
+          if (currentSegment > hapticCount) {
+            HapticFeedback.selectionClick();
+            hapticCount = currentSegment;
+          }
+        });
   }
 
   @override
@@ -94,7 +98,11 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
-                      Icon(Icons.change_history, size: 12, color: Color(0xFF94A3B8)),
+                      Icon(
+                        Icons.change_history,
+                        size: 12,
+                        color: Color(0xFF94A3B8),
+                      ),
                       SizedBox(width: 6),
                       Text(
                         'Performance',
@@ -181,16 +189,21 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                 TextSpan(text: 'Your portfolio is earning '),
                 TextSpan(
                   text: 'well above what most Very Aggressive investors see. ',
-                  style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    color: Color(0xFF0F172A),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                TextSpan(text: 'Your investment decisions are clearly paying off.'),
+                TextSpan(
+                  text: 'Your investment decisions are clearly paying off.',
+                ),
               ],
             ),
             textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 40),
-        
+
         // Drivers Card
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -198,7 +211,9 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
             margin: const EdgeInsets.only(top: 8),
             decoration: ShapeDecoration(
               color: Colors.white,
-              shape: const _NotchBorder(side: BorderSide(color: Color(0xFFE2E8F0))),
+              shape: const _NotchBorder(
+                side: BorderSide(color: Color(0xFFE2E8F0)),
+              ),
               shadows: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.03),
@@ -233,11 +248,21 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                         children: const [
                           Text(
                             'Your Lifetime MF XIRR ',
-                            style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF64748B),
+                            ),
                           ),
                           Text(
                             '4.06% higher',
-                            style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF38A169)),
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF38A169),
+                            ),
                           ),
                         ],
                       ),
@@ -250,11 +275,16 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                               builder: (context, child) {
                                 return Container(
                                   height: 8,
-                                  decoration: const BoxDecoration(color: Color(0xFFF1F5F9)),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF1F5F9),
+                                  ),
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Container(
-                                      width: MediaQuery.of(context).size.width * 0.7 * _animation.value,
+                                      width:
+                                          MediaQuery.of(context).size.width *
+                                          0.7 *
+                                          _animation.value,
                                       decoration: const BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
@@ -275,7 +305,12 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                           const SizedBox(width: 12),
                           const Text(
                             '9.48%',
-                            style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF0F172A),
+                            ),
                           ),
                         ],
                       ),
@@ -290,7 +325,12 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                     children: [
                       const Text(
                         'Benchmark',
-                        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF64748B),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -301,11 +341,16 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                               builder: (context, child) {
                                 return Container(
                                   height: 8,
-                                  decoration: const BoxDecoration(color: Color(0xFFF1F5F9)),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF1F5F9),
+                                  ),
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Container(
-                                      width: MediaQuery.of(context).size.width * 0.4 * _animation.value,
+                                      width:
+                                          MediaQuery.of(context).size.width *
+                                          0.4 *
+                                          _animation.value,
                                       color: const Color(0xFFCBD5E1), // Grey
                                     ),
                                   ),
@@ -316,7 +361,12 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection> with 
                           const SizedBox(width: 12),
                           const Text(
                             '5.42%',
-                            style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF0F172A),
+                            ),
                           ),
                         ],
                       ),
@@ -336,16 +386,13 @@ class _PerformanceGaugePainter extends CustomPainter {
   final double progress;
   final PerformanceLevel level;
 
-  _PerformanceGaugePainter({
-    required this.progress,
-    required this.level,
-  });
+  _PerformanceGaugePainter({required this.progress, required this.level});
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height);
     final radius = size.width / 2;
-    
+
     const startAngle = math.pi;
     const sweepAngle = math.pi;
 
@@ -357,12 +404,20 @@ class _PerformanceGaugePainter extends CustomPainter {
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 
-    _drawDashedArc(canvas, outerRect, startAngle, sweepAngle, outerPaint, dashWidth: 2, dashSpace: 8);
+    _drawDashedArc(
+      canvas,
+      outerRect,
+      startAngle,
+      sweepAngle,
+      outerPaint,
+      dashWidth: 2,
+      dashSpace: 8,
+    );
 
     // 2. Draw segments
     final innerRadius = radius - 16;
     final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
-    
+
     final numSegments = 5;
     final segmentSweep = sweepAngle / numSegments;
 
@@ -374,7 +429,7 @@ class _PerformanceGaugePainter extends CustomPainter {
       const Color(0xFF22C55E),
       const Color(0xFF16A34A),
     ];
-    
+
     // 1. Draw solid continuous background track
     final bgPaint = Paint()
       ..color = const Color(0xFFE2E8F0)
@@ -391,9 +446,12 @@ class _PerformanceGaugePainter extends CustomPainter {
 
       for (int i = targetSegments - 1; i >= 0; i--) {
         final start = startAngle + (i * segmentSweep);
-        
+
         if (currentAngle > i * segmentSweep) {
-          final sweep = math.min(segmentSweep, currentAngle - (i * segmentSweep));
+          final sweep = math.min(
+            segmentSweep,
+            currentAngle - (i * segmentSweep),
+          );
           final paint = Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = 20
@@ -406,7 +464,15 @@ class _PerformanceGaugePainter extends CustomPainter {
     }
   }
 
-  void _drawDashedArc(Canvas canvas, Rect rect, double startAngle, double sweepAngle, Paint paint, {required double dashWidth, required double dashSpace}) {
+  void _drawDashedArc(
+    Canvas canvas,
+    Rect rect,
+    double startAngle,
+    double sweepAngle,
+    Paint paint, {
+    required double dashWidth,
+    required double dashSpace,
+  }) {
     final circumference = rect.width * math.pi;
     final arcLength = (sweepAngle / (math.pi * 2)) * circumference;
     final dashCount = (arcLength / (dashWidth + dashSpace)).floor();
@@ -444,7 +510,7 @@ class _DottedLinePainter extends CustomPainter {
       ..color = const Color(0xFFE2E8F0)
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.round;
-    
+
     double dashWidth = 3;
     double dashSpace = 4;
     double startX = 0;
@@ -462,13 +528,16 @@ class _NotchBorder extends OutlinedBorder {
   const _NotchBorder({super.side});
 
   @override
-  OutlinedBorder copyWith({BorderSide? side}) => _NotchBorder(side: side ?? this.side);
+  OutlinedBorder copyWith({BorderSide? side}) =>
+      _NotchBorder(side: side ?? this.side);
 
   @override
-  Path getInnerPath(Rect rect, {TextDirection? textDirection}) => _getPath(rect);
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) =>
+      _getPath(rect);
 
   @override
-  Path getOuterPath(Rect rect, {TextDirection? textDirection}) => _getPath(rect);
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) =>
+      _getPath(rect);
 
   Path _getPath(Rect rect) {
     final path = Path();
@@ -476,25 +545,37 @@ class _NotchBorder extends OutlinedBorder {
     const notchWidth = 16.0;
     const notchHeight = 8.0;
     const radius = 4.0;
-    
+
     path.moveTo(rect.left + radius, rect.top);
-    
+
     path.lineTo(notchCenter - notchWidth / 2, rect.top);
     path.lineTo(notchCenter, rect.top - notchHeight);
     path.lineTo(notchCenter + notchWidth / 2, rect.top);
-    
+
     path.lineTo(rect.right - radius, rect.top);
-    path.arcToPoint(Offset(rect.right, rect.top + radius), radius: const Radius.circular(radius));
-    
+    path.arcToPoint(
+      Offset(rect.right, rect.top + radius),
+      radius: const Radius.circular(radius),
+    );
+
     path.lineTo(rect.right, rect.bottom - radius);
-    path.arcToPoint(Offset(rect.right - radius, rect.bottom), radius: const Radius.circular(radius));
-    
+    path.arcToPoint(
+      Offset(rect.right - radius, rect.bottom),
+      radius: const Radius.circular(radius),
+    );
+
     path.lineTo(rect.left + radius, rect.bottom);
-    path.arcToPoint(Offset(rect.left, rect.bottom - radius), radius: const Radius.circular(radius));
-    
+    path.arcToPoint(
+      Offset(rect.left, rect.bottom - radius),
+      radius: const Radius.circular(radius),
+    );
+
     path.lineTo(rect.left, rect.top + radius);
-    path.arcToPoint(Offset(rect.left + radius, rect.top), radius: const Radius.circular(radius));
-    
+    path.arcToPoint(
+      Offset(rect.left + radius, rect.top),
+      radius: const Radius.circular(radius),
+    );
+
     path.close();
     return path;
   }
@@ -503,8 +584,7 @@ class _NotchBorder extends OutlinedBorder {
   void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
     canvas.drawPath(_getPath(rect), side.toPaint());
   }
-  
+
   @override
   ShapeBorder scale(double t) => _NotchBorder(side: side.scale(t));
 }
-

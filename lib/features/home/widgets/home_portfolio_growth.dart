@@ -59,7 +59,17 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
       final date = now.subtract(step * (count - 1 - i));
       final dateStr = _formatDate(date);
       
-      data.add(ChartDataPoint(value: currentVal, dateStr: dateStr));
+      final mfValue = currentVal * 0.706;
+      final stocksValue = currentVal * 0.294;
+      final surplusValue = 0.0;
+      
+      data.add(ChartDataPoint(
+        value: currentVal, 
+        mfValue: mfValue,
+        stocksValue: stocksValue,
+        surplusValue: surplusValue,
+        dateStr: dateStr,
+      ));
     }
 
     return data;

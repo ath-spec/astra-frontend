@@ -41,7 +41,11 @@ class SipDisciplineGrid extends StatelessWidget {
                 behavior: HitTestBehavior.opaque,
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.info_outline, size: 12, color: Color(0xFF64748B)),
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 12,
+                    color: Color(0xFF64748B),
+                  ),
                 ),
               ),
             ],
@@ -94,7 +98,11 @@ class SipDisciplineGrid extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: const [
-                Icon(Icons.local_fire_department, size: 16, color: Color(0xFF3182CE)),
+                Icon(
+                  Icons.local_fire_department,
+                  size: 16,
+                  color: Color(0xFF3182CE),
+                ),
                 SizedBox(width: 8),
                 Text(
                   '0 MONTH STREAK',
@@ -161,93 +169,98 @@ class SipDisciplineGrid extends StatelessWidget {
       width: double.infinity,
       child: Column(
         children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              _buildMonthCircle(context, 'SEP', false, false),
-              _buildMonthCircle(context, 'OCT', false, false),
-              _buildMonthCircle(context, 'NOV', false, false),
-              _buildMonthCircle(context, 'DEC', false, false),
-              _buildMonthCircle(context, 'JAN', false, false),
-              _buildMonthCircle(context, 'FEB', false, false),
-            ],
-          ),
-        ),
-        const SizedBox(height: 32),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              _buildMonthCircle(context, 'MAR', false, false),
-              _buildMonthCircle(context, 'APR', false, false),
-              _buildMonthCircle(context, 'MAY', false, false),
-              _buildMonthCircle(context, 'JUN', false, false),
-              _buildMonthCircle(context, 'JUL', false, false),
-              _buildMonthCircle(context, 'AUG', true, true),
-            ],
-          ),
-        ),
-      ],
-      ),
-    );
-  }
-
-  Widget _buildMonthCircle(BuildContext context, String month, bool isActive, bool isCheck) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.transparent,
-          isScrollControlled: true,
-          builder: (context) => SipMonthSheet(initialMonth: month),
-        );
-      },
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: isActive 
-                ? const EdgeInsets.symmetric(horizontal: 10, vertical: 4)
-                : const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-            decoration: isActive 
-                ? BoxDecoration(
-                    color: const Color(0xFF1E293B),
-                    borderRadius: BorderRadius.circular(4),
-                  )
-                : null,
-            child: Text(
-              month,
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-                color: isActive ? Colors.white : const Color(0xFF94A3B8),
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                _buildMonthCircle(context, 'SEP', false, false),
+                _buildMonthCircle(context, 'OCT', false, false),
+                _buildMonthCircle(context, 'NOV', false, false),
+                _buildMonthCircle(context, 'DEC', false, false),
+                _buildMonthCircle(context, 'JAN', false, false),
+                _buildMonthCircle(context, 'FEB', false, false),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              border: Border.all(color: const Color(0xFFCBD5E1), width: 1),
-            ),
-            child: Center(
-              child: Icon(
-                isActive || isCheck ? Icons.check : Icons.close,
-                size: 12,
-                color: const Color(0xFFCBD5E1),
-              ),
+          const SizedBox(height: 32),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                _buildMonthCircle(context, 'MAR', false, false),
+                _buildMonthCircle(context, 'APR', false, false),
+                _buildMonthCircle(context, 'MAY', false, false),
+                _buildMonthCircle(context, 'JUN', false, false),
+                _buildMonthCircle(context, 'JUL', false, false),
+                _buildMonthCircle(context, 'AUG', true, true),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMonthCircle(
+    BuildContext context,
+    String month,
+    bool isActive,
+    bool isCheck,
+  ) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.transparent,
+            isScrollControlled: true,
+            builder: (context) => SipMonthSheet(initialMonth: month),
+          );
+        },
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: isActive
+                  ? const EdgeInsets.symmetric(horizontal: 10, vertical: 4)
+                  : const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+              decoration: isActive
+                  ? BoxDecoration(
+                      color: const Color(0xFF1E293B),
+                      borderRadius: BorderRadius.circular(4),
+                    )
+                  : null,
+              child: Text(
+                month,
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
+                  color: isActive ? Colors.white : const Color(0xFF94A3B8),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFFCBD5E1), width: 1),
+              ),
+              child: Center(
+                child: Icon(
+                  isActive || isCheck ? Icons.check : Icons.close,
+                  size: 12,
+                  color: const Color(0xFFCBD5E1),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

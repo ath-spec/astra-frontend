@@ -68,7 +68,12 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                         // Title Section
                         _buildTitleSection(processedData),
                         
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
+                        
+                        // Holdings Card (Optional, shown if user has holdings)
+                        _buildHoldingsCard(widget.fundId),
+
+                        const SizedBox(height: 16),
                         
                         // Top Collapsible: Returns + Chart
                         AnimatedSize(
@@ -380,6 +385,69 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHoldingsCard(String fundId) {
+    // This is optional and shows if user has holdings.
+    // For the mockup, we assume they have holdings if the fundId is '1' (which is passed from the Tax Harvesting insight)
+    final bool hasHoldings = fundId == '1';
+
+    if (!hasHoldings) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Your holding',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 12,
+                color: Color(0xFF64748B),
+              ),
+            ),
+            Row(
+              children: [
+                const Text(
+                  '₹2,36,538',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const Text(
+                  '(5.11%)',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF10B981),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

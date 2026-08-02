@@ -3,9 +3,18 @@ import 'package:flutter/gestures.dart';
 
 class ChartDataPoint {
   final double value;
+  final double mfValue;
+  final double stocksValue;
+  final double surplusValue;
   final String dateStr;
 
-  const ChartDataPoint({required this.value, required this.dateStr});
+  const ChartDataPoint({
+    required this.value, 
+    this.mfValue = 0,
+    this.stocksValue = 0,
+    this.surplusValue = 0,
+    required this.dateStr,
+  });
 }
 
 class PortfolioInteractiveChart extends StatefulWidget {
@@ -29,33 +38,13 @@ class PortfolioInteractiveChart extends StatefulWidget {
 }
 
 class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> with SingleTickerProviderStateMixin {
-  Offset? _touchPosition;
   int? _selectedIndex;
-
-  late AnimationController _tooltipAnimController;
-  late Animation<double> _tooltipScale;
-  late Animation<double> _tooltipOpacity;
+  bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
-    _tooltipAnimController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 150),
-    );
-    // Emil design pattern: animate from 0.95 scale instead of 0
-    _tooltipScale = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(parent: _tooltipAnimController, curve: Curves.easeOutCubic),
-    );
-    _tooltipOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _tooltipAnimController, curve: Curves.easeOutCubic),
-    );
-  }
-
-  @override
-  void dispose() {
-    _tooltipAnimController.dispose();
-    super.dispose();
+    _selectedIndex = widget.data.isNotEmpty ? widget.data.length - 1 : null;
   }
 
   void _handleTouch(Offset localPosition, Size size) {
@@ -64,28 +53,46 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
     final stepX = size.width / (widget.data.length - 1);
     int closestIndex = (localPosition.dx / stepX).round().clamp(0, widget.data.length - 1);
 
-    if (_selectedIndex != closestIndex) {
-      setState(() {
-        _selectedIndex = closestIndex;
-        _touchPosition = localPosition;
-      });
-      _tooltipAnimController.forward();
-    } else {
-      setState(() {
-        _touchPosition = localPosition;
-      });
-    }
+    setState(() {
+      _selectedIndex = closestIndex;
+      _isExpanded = true;
+    });
   }
 
   void _handleTouchEnd() {
-    _tooltipAnimController.reverse().then((_) {
-      if (mounted) {
-        setState(() {
-          _selectedIndex = null;
-          _touchPosition = null;
-        });
-      }
+    setState(() {
+      _isExpanded = false;
     });
+  }
+
+  String _formatCurrency(double value) {
+    return '₹${value.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}';
+  }
+
+  Widget _buildBreakdownRow(String label, double value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: 'SpaceGrotesk',
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF0F172A),
+          ),
+        ),
+        Text(
+          _formatCurrency(value),
+          style: const TextStyle(
+            fontFamily: 'SpaceGrotesk',
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF0F172A),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -122,10 +129,9 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                 ),
 
                 // Tooltip
-                if (_selectedIndex != null && _touchPosition != null)
-                  AnimatedBuilder(
-                    animation: _tooltipAnimController,
-                    builder: (context, child) {
+                if (_selectedIndex != null)
+                  Builder(
+                    builder: (context) {
                       final point = widget.data[_selectedIndex!];
                       final stepX = width / (widget.data.length - 1);
                       final x = _selectedIndex! * stepX;
@@ -140,9 +146,8 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                       final normalizedY = (point.value - paddedMin) / paddedRange;
                       final y = chartHeight - (normalizedY * chartHeight);
 
-                      // Determine tooltip position
-                      const tooltipWidth = 145.0;
-                      const tooltipHeight = 36.0;
+                      // Determine tooltip position dynamically
+                      final tooltipWidth = _isExpanded ? 160.0 : 145.0;
                       const arrowHeight = 6.0;
                       
                       double left = x - (tooltipWidth / 2);
@@ -150,34 +155,43 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                       if (left + tooltipWidth > width - 16) left = width - tooltipWidth - 16;
                       
                       final arrowOffset = x - (left + tooltipWidth / 2);
-                      double top = y - tooltipHeight - arrowHeight - 8;
+                      
+                      // Anchor to the bottom so it expands upwards naturally
+                      double bottom = (chartHeight - y) + 8;
 
-                      return Positioned(
+                      return AnimatedPositioned(
+                        duration: const Duration(milliseconds: 150),
+                        curve: Curves.easeOutCubic,
                         left: left,
-                        top: top,
-                        child: Transform.scale(
-                          scale: _tooltipScale.value,
-                          alignment: Alignment.bottomCenter,
-                          child: Opacity(
-                            opacity: _tooltipOpacity.value,
-                            child: Container(
-                              width: tooltipWidth,
-                              height: tooltipHeight + arrowHeight,
-                              padding: EdgeInsets.only(left: 12, right: 12, top: 0, bottom: arrowHeight),
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: _TooltipShapeBorder(
-                                  arrowOffset: arrowOffset,
-                                  arrowHeight: arrowHeight,
-                                ),
-                                shadows: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.08),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
+                        bottom: bottom,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeOutCubic,
+                          width: tooltipWidth,
+                          decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: _TooltipShapeBorder(
+                              arrowOffset: arrowOffset,
+                              arrowHeight: arrowHeight,
+                            ),
+                            shadows: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
                               ),
+                            ],
+                          ),
+                          // Always apply padding to the bottom for the arrow
+                          padding: const EdgeInsets.only(bottom: arrowHeight, top: 0),
+                          child: AnimatedCrossFade(
+                            alignment: Alignment.bottomCenter,
+                            duration: const Duration(milliseconds: 250),
+                            crossFadeState: _isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                            // View 1 (Simple)
+                            firstChild: Container(
+                              height: 36,
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -192,7 +206,7 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                                     ),
                                   ),
                                   Text(
-                                    '₹${point.value.round().toString().replaceAllMapped(RegExp(r'(\\d{1,3})(?=(\\d{3})+(?!\\d))'), (Match m) => '${m[1]},')}', // Basic formatting
+                                    _formatCurrency(point.value),
                                     style: const TextStyle(
                                       fontFamily: 'SpaceGrotesk',
                                       fontSize: 13,
@@ -203,6 +217,54 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                                   ),
                                 ],
                               ),
+                            ),
+                            // View 2 (Detailed Breakdown)
+                            secondChild: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        point.dateStr.toUpperCase(),
+                                        style: const TextStyle(
+                                          fontFamily: 'DMMono',
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF94A3B8),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  child: Column(
+                                    children: [
+                                      _buildBreakdownRow('MF:', point.mfValue),
+                                      const SizedBox(height: 4),
+                                      _buildBreakdownRow('STOCKS:', point.stocksValue),
+                                      const SizedBox(height: 4),
+                                      _buildBreakdownRow('SURPLUS:', point.surplusValue),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF1F5F9), // Slate 100
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(4),
+                                      bottomRight: Radius.circular(4),
+                                    ),
+                                  ),
+                                  child: _buildBreakdownRow('TOTAL:', point.value),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -409,23 +471,22 @@ class _TooltipShapeBorder extends ShapeBorder {
     double arrowCenter = rect.center.dx + arrowOffset;
     arrowCenter = arrowCenter.clamp(rect.left + radius + arrowWidth / 2, rect.right - radius - arrowWidth / 2);
 
-    return Path()
+    final path = Path();
+    path
       ..moveTo(rect.left + radius, rect.top)
       ..lineTo(rect.right - radius, rect.top)
       ..arcToPoint(Offset(rect.right, rect.top + radius), radius: Radius.circular(radius))
       ..lineTo(rect.right, rect.bottom - radius)
       ..arcToPoint(Offset(rect.right - radius, rect.bottom), radius: Radius.circular(radius))
-      
-      // Arrow
       ..lineTo(arrowCenter + arrowWidth / 2, rect.bottom)
       ..lineTo(arrowCenter, rect.bottom + arrowHeight)
       ..lineTo(arrowCenter - arrowWidth / 2, rect.bottom)
-      
       ..lineTo(rect.left + radius, rect.bottom)
       ..arcToPoint(Offset(rect.left, rect.bottom - radius), radius: Radius.circular(radius))
       ..lineTo(rect.left, rect.top + radius)
       ..arcToPoint(Offset(rect.left + radius, rect.top), radius: Radius.circular(radius))
       ..close();
+    return path;
   }
 
   @override

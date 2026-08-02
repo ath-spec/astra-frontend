@@ -11,8 +11,18 @@ class SipMonthSheet extends StatefulWidget {
 
 class _SipMonthSheetState extends State<SipMonthSheet> {
   static const List<String> _months = [
-    'SEP', 'OCT', 'NOV', 'DEC', 'JAN', 'FEB', 
-    'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG'
+    'SEP',
+    'OCT',
+    'NOV',
+    'DEC',
+    'JAN',
+    'FEB',
+    'MAR',
+    'APR',
+    'MAY',
+    'JUN',
+    'JUL',
+    'AUG',
   ];
   late int _currentIndex;
 
@@ -67,7 +77,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Header Row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -75,7 +85,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'SIP IN ${month == 'AUG' ? 'AUGUST' : month}', 
+                  'SIP IN ${month == 'AUG' ? 'AUGUST' : month}',
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 10,
@@ -84,7 +94,10 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     border: Border.all(color: const Color(0xFFE2E8F0)),
                     borderRadius: BorderRadius.circular(4),
@@ -97,9 +110,11 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Icon(
-                            Icons.chevron_left, 
-                            size: 12, 
-                            color: isFirst ? const Color(0xFF94A3B8) : const Color(0xFF0F172A),
+                            Icons.chevron_left,
+                            size: 12,
+                            color: isFirst
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF0F172A),
                           ),
                         ),
                       ),
@@ -120,9 +135,11 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Icon(
-                            Icons.chevron_right, 
-                            size: 12, 
-                            color: isLast ? const Color(0xFF94A3B8) : const Color(0xFF0F172A),
+                            Icons.chevron_right,
+                            size: 12,
+                            color: isLast
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF0F172A),
                           ),
                         ),
                       ),
@@ -133,7 +150,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // SIPs Paid Row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -146,9 +163,16 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
-                    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
+                    border: Border.all(
+                      color: const Color(0xFFCBD5E1),
+                      width: 1.5,
+                    ),
                   ),
-                  child: const Icon(Icons.check, size: 12, color: Color(0xFFCBD5E1)),
+                  child: const Icon(
+                    Icons.check,
+                    size: 12,
+                    color: Color(0xFFCBD5E1),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 const Text(
@@ -174,9 +198,9 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Speech Bubble Tip
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -184,7 +208,10 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF1F5F9),
                     borderRadius: BorderRadius.circular(4),
@@ -213,11 +240,11 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
           const Divider(color: Color(0xFFF1F5F9), thickness: 1, height: 1),
           const SizedBox(height: 16),
-          
+
           // Total amount paid
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -245,10 +272,10 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
           const Divider(color: Color(0xFFF1F5F9), thickness: 1, height: 1),
-          
+
           // Empty State
           Expanded(
             child: Center(
@@ -272,7 +299,10 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                               height: 60,
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF8FAFC),
-                                border: Border.all(color: const Color(0xFF0F172A), width: 1.5),
+                                border: Border.all(
+                                  color: const Color(0xFF0F172A),
+                                  width: 1.5,
+                                ),
                                 borderRadius: BorderRadius.circular(4),
                                 boxShadow: const [
                                   BoxShadow(
@@ -285,8 +315,24 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const SizedBox(height: 12),
-                                  Container(margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), height: 4, width: 24, color: const Color(0xFFE2E8F0)),
-                                  Container(margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), height: 4, width: 16, color: const Color(0xFFE2E8F0)),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
+                                    height: 4,
+                                    width: 24,
+                                    color: const Color(0xFFE2E8F0),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
+                                    height: 4,
+                                    width: 16,
+                                    color: const Color(0xFFE2E8F0),
+                                  ),
                                 ],
                               ),
                             ),
@@ -304,7 +350,19 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                                   bottom: -8,
                                   child: Transform.rotate(
                                     angle: 0.78, // 45 deg
-                                    child: Container(width: 8, height: 20, color: Colors.white, child: Container(decoration: BoxDecoration(border: Border.all(color: const Color(0xFF0F172A), width: 1.5)))),
+                                    child: Container(
+                                      width: 8,
+                                      height: 20,
+                                      color: Colors.white,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: const Color(0xFF0F172A),
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 // Lens
@@ -314,7 +372,10 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFF1F5F9),
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: const Color(0xFF0F172A), width: 1.5),
+                                    border: Border.all(
+                                      color: const Color(0xFF0F172A),
+                                      width: 1.5,
+                                    ),
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Color(0xFF0F172A),
@@ -327,10 +388,16 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                                       width: 16,
                                       height: 16,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFFE53E3E), // Red cross background
+                                        color: Color(
+                                          0xFFE53E3E,
+                                        ), // Red cross background
                                         shape: BoxShape.circle,
                                       ),
-                                      child: const Icon(Icons.close, size: 12, color: Colors.white),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 12,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -340,9 +407,9 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                         ],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     const Text(
                       'No transactions found',
                       style: TextStyle(
