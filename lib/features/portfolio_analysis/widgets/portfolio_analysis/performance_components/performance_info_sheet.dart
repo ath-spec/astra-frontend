@@ -207,26 +207,38 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                           'Factors that contribute to performance',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF0F172A),
                           ),
                         ),
                         const SizedBox(height: 24),
                         _buildInfoItem(
-                          icon: Icons.pie_chart_outline,
-                          iconColor: const Color(0xFF38A169),
-                          title: 'Asset Allocation',
+                          title: 'Portfolio XIRR',
                           description:
-                              'The primary driver of returns is the mix of assets (equity, debt, gold) you hold.',
+                              'If compounding rate of return of your portfolio is beating blended benchmark your performance get’s stronger, if not it’s weaker.',
                         ),
-                        _buildInfoItem(
-                          icon: Icons.stars,
-                          iconColor: const Color(0xFF38A169),
-                          title: 'Fund Selection',
-                          description:
-                              'How well the specific mutual funds in your portfolio have performed against their categories.',
-                          isLast: true,
+                        RichText(
+                          text: const TextSpan(
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              height: 1.5,
+                              color: Color(0xFF64748B),
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'Benchmark: ',
+                                style: TextStyle(
+                                  color: Color(0xFF0F172A),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Your benchmark is composite of Nifty and gsec indices as per your allocation.',
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -241,8 +253,6 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
   }
 
   Widget _buildInfoItem({
-    required IconData icon,
-    required Color iconColor,
     required String title,
     required String description,
     bool isLast = false,
@@ -252,16 +262,6 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: Icon(icon, size: 12, color: iconColor),
-          ),
-          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +270,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                   title,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),

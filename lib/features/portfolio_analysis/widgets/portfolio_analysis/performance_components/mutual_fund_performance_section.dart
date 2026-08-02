@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'dart:math' as math;
 import 'package:visibility_detector/visibility_detector.dart';
 import 'mutual_fund_performance_sheet.dart';
@@ -21,6 +22,7 @@ class _MutualFundPerformanceSectionState
   @override
   void initState() {
     super.initState();
+    VisibilityDetectorController.instance.updateInterval = Duration.zero;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -83,9 +85,21 @@ class _MutualFundPerformanceSectionState
         VisibilityDetector(
           key: const Key('MutualFundPerformanceSection_3DChart'),
           onVisibilityChanged: (info) {
-            if (!_hasAnimated && info.visibleFraction >= 0.15) {
-              _hasAnimated = true;
-              _controller.forward();
+            if (mounted) {
+              // Start significantly later (50% visibility) and end at 100% visibility
+              double target = (info.visibleFraction - 0.5) / 0.5;
+              target = target.clamp(0.0, 1.0);
+              
+              // Use a physics-based spring simulation to smoothly track the scroll.
+              // This completely eliminates the "choppy steps" of VisibilityDetector and the "floaty" feel of standard easing,
+              // providing a physical, perfectly fluid sync that preserves velocity between ticks.
+              final spring = const SpringDescription(
+                mass: 1.0,
+                stiffness: 150.0,
+                damping: 25.0, // Critically damped to prevent overshoot bounds errors
+              );
+              final simulation = SpringSimulation(spring, _controller.value, target, _controller.velocity);
+              _controller.animateWith(simulation);
             }
           },
           child: SizedBox(

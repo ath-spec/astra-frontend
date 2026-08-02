@@ -31,7 +31,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
               'See your portfolio through a new lens',
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF64748B),
               ),

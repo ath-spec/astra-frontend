@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import 'package:visibility_detector/visibility_detector.dart';
 import '../../../models/portfolio_analysis_models.dart';
 import 'performance_info_sheet.dart';
 
@@ -50,13 +51,6 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Only animate when the tab actually becomes active/visible
-    if (TickerMode.of(context) && !_hasAnimated) {
-      _hasAnimated = true;
-      Future.delayed(const Duration(milliseconds: 300), () {
-        if (mounted) _controller.forward();
-      });
-    }
   }
 
   @override
@@ -71,10 +65,18 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
     final gaugeWidth = screenWidth * 0.8;
     final gaugeHeight = gaugeWidth * 0.5;
 
-    return Column(
-      children: [
-        const SizedBox(height: 40),
-        SizedBox(
+    return VisibilityDetector(
+      key: const Key('PerformanceGaugeSection'),
+      onVisibilityChanged: (info) {
+        if (info.visibleFraction > 0.2 && !_hasAnimated) {
+          _hasAnimated = true;
+          if (mounted) _controller.forward();
+        }
+      },
+      child: Column(
+        children: [
+          const SizedBox(height: 40),
+          SizedBox(
           width: gaugeWidth,
           height: gaugeHeight + 10, // add a bit for text overlap
           child: Stack(
@@ -275,12 +277,10 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                               builder: (context, child) {
                                 return Container(
                                   height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFF1F5F9),
-                                  ),
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Container(
+                                      height: 8,
                                       width:
                                           MediaQuery.of(context).size.width *
                                           0.7 *
@@ -341,12 +341,10 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                               builder: (context, child) {
                                 return Container(
                                   height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFF1F5F9),
-                                  ),
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Container(
+                                      height: 8,
                                       width:
                                           MediaQuery.of(context).size.width *
                                           0.4 *
@@ -378,6 +376,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
           ),
         ),
       ],
+      ),
     );
   }
 }

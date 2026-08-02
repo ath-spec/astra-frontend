@@ -760,9 +760,9 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
               opacity: _isCTAVisible ? 0.0 : 1.0,
               child: IgnorePointer(
                 ignoring: _isCTAVisible,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.fromLTRB(24 * s, 16 * s, 24 * s, 24 * s),
+                child: Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.fromLTRB(24 * s, 16 * s, 24 * s, 24 * s),
                 child: SafeArea(
                   top: false,
                   child: Column(
@@ -1679,42 +1679,6 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                         color: const Color(0xFF6B46C1),
                       ),
                     ),
-                    SizedBox(height: 12 * s),
-                    Text(
-                      'Investing ₹86.28K in index will get you to a healthy index allocation of 20%',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 12 * s,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                        height: 1.3,
-                      ),
-                    ),
-                    SizedBox(height: 8 * s),
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12 * s,
-                          color: const Color(0xFF64748B),
-                        ),
-                        children: [
-                          const TextSpan(text: 'Add '),
-                          TextSpan(
-                            text: '₹86,281',
-                            style: TextStyle(
-                              color: const Color(0xFF059669),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const TextSpan(
-                            text: ' to increase your index exposure to 20%',
-                          ),
-                        ],
-                      ),
-                    ),
                     SizedBox(height: 32 * s),
 
                     // Inline CTA at end of scroll
@@ -1729,28 +1693,15 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          RichText(
+                          Text(
+                            'Investing ₹86.28K in index will get you to a healthy index allocation of 20%',
                             textAlign: TextAlign.center,
-                            text: TextSpan(
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 12 * s,
-                                color: const Color(0xFF64748B),
-                              ),
-                              children: [
-                                const TextSpan(text: 'Invest '),
-                                TextSpan(
-                                  text: '₹86,281',
-                                  style: TextStyle(
-                                    color: const Color(0xFF059669),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const TextSpan(
-                                  text:
-                                      ' in index funds to move towards the 20%-30% range',
-                                ),
-                              ],
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 12 * s,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                              height: 1.3,
                             ),
                           ),
                           SizedBox(height: 12 * s),
@@ -1817,14 +1768,26 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
               opacity: _isCTAVisible ? 0.0 : 1.0,
               child: IgnorePointer(
                 ignoring: _isCTAVisible,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.fromLTRB(24 * s, 16 * s, 24 * s, 24 * s),
+                child: Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.fromLTRB(24 * s, 16 * s, 24 * s, 24 * s),
                 child: SafeArea(
                   top: false,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      Text(
+                        'Investing ₹86.28K in index will get you to a healthy index allocation of 20%',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12 * s,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          height: 1.3,
+                        ),
+                      ),
+                      SizedBox(height: 12 * s),
                       SizedBox(
                         width: double.infinity,
                         height: 56 * s,
