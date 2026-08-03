@@ -45,7 +45,7 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
         padding: const EdgeInsets.only(bottom: 4),
         decoration: BoxDecoration(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,7 +249,7 @@ class DuePaymentCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: backgroundColor ?? (isDark ? const Color(0xFF2C2C2C) : Colors.white),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,7 +318,7 @@ class DuePaymentCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
             decoration: BoxDecoration(
               color: const Color(0xFFE5803E),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               'due in $dueInDays days',
@@ -347,7 +347,7 @@ class DuePaymentCard extends StatelessWidget {
             height: 35,
             decoration: BoxDecoration(
               color: isDark ? Colors.white : Colors.black,
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -57,7 +57,7 @@ class _PanOtpVerificationScreenState extends ConsumerState<PanOtpVerificationScr
 
   void _submit() {
     if (_otpController.text.length == 6) {
-      context.go('/aa-stocks-otp');
+      context.go('/mf-status');
     }
   }
 

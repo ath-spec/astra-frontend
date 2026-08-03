@@ -11,6 +11,12 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_screen.dart';
 import '../../features/auth/screens/pan_screen.dart';
 import '../../features/auth/screens/pan_otp_screen.dart';
+import '../../features/auth/screens/verify_pan_screen.dart';
+import '../../features/auth/screens/mf_fetch_confirm_screen.dart';
+import '../../features/auth/screens/mf_central_otp_screen.dart';
+import '../../features/auth/screens/mf_central_cas_screen.dart';
+import '../../features/auth/screens/mf_fetch_loading_screen.dart';
+import '../../features/auth/screens/mf_edit_phone_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/intro_screen.dart';
 import '../../features/auth/screens/notification_permission_screen.dart';
@@ -117,6 +123,30 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/pan-otp',
         builder: (context, state) => const PanOtpVerificationScreen(),
+      ),
+      GoRoute(
+        path: '/verify-pan',
+        builder: (context, state) => const VerifyPanScreen(),
+      ),
+      GoRoute(
+        path: '/mf-fetch-confirm',
+        builder: (context, state) => const MfFetchConfirmScreen(),
+      ),
+      GoRoute(
+        path: '/mf-central-otp',
+        builder: (context, state) => const MfCentralOtpScreen(),
+      ),
+      GoRoute(
+        path: '/mf-central-cas',
+        builder: (context, state) => const MfCentralCasScreen(),
+      ),
+      GoRoute(
+        path: '/mf-fetch-loading',
+        builder: (context, state) => const MfFetchLoadingScreen(),
+      ),
+      GoRoute(
+        path: '/mf-edit-phone',
+        builder: (context, state) => const MfEditPhoneScreen(),
       ),
       GoRoute(
         path: '/notification-permission',

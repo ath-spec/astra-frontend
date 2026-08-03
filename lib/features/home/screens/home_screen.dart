@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/arch_background.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
-import '../widgets/home_surplus_banner.dart';
+import '../../../core/providers/nav_context_provider.dart';
+
 import '../widgets/home_portfolio_insights.dart';
 import '../widgets/home_quick_actions.dart';
 import '../widgets/home_astra_intelligence.dart';
@@ -87,20 +88,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                const HomeSurplusBanner(),
-                const SizedBox(height: 32),
+
                 
                 // Asset List
                 
-                _buildAssetRow(
-                  icon: Icons.bar_chart_rounded,
-                  title: 'Mutual Funds',
-                  buttonText: 'Import',
-                  onPressed: () => context.push('/mf-status'),
-                ),
+                if (assetState.mfConnected)
+                  _buildConnectedMfRow()
+                else
+                  _buildAssetRow(
+                    icon: Icons.bar_chart_rounded,
+                    title: 'Mutual Funds',
+                    buttonText: 'Import',
+                    onPressed: () => context.push('/mf-fetch-confirm'),
+                  ),
                 _buildDottedDivider(),
                 
-                _buildSurplusRow(),
+                _buildBankAccountsRow(
+                  isLinked: assetState.banksConnected,
+                  isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
+                ),
                 _buildDottedDivider(),
                 
                 _buildAssetRow(
@@ -121,49 +127,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 const HomeQuickActions(),
                 
                 const SizedBox(height: 48),
-                const HomeAstraIntelligence(),
-                
-                const SizedBox(height: 48),
-                const HomeGrowWealth(),
-                
-                const SizedBox(height: 48),
-                const HomeExploreMore(),
-                
-                const SizedBox(height: 48),
               ]),
             ),
           ),
 
-          // 2. "Your Orders" Header
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                'Your Orders',
-                style: TextStyle(
-                  fontFamily: 'SpaceGrotesk',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0F172A),
-                  letterSpacing: -0.5,
-                ),
-              ),
-            ),
-          ),
-          
           const SliverToBoxAdapter(
             child: SizedBox(height: 16),
           ),
-
-          // 3. Edge-to-edge Portfolio Cards
-          const SliverToBoxAdapter(
-            child: HomePortfolioCards(),
-          ),
-          
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 48),
-          ),
-
           // 4. Edge-to-edge Portfolio Growth Graph
           const SliverToBoxAdapter(
             child: HomePortfolioGrowth(),
@@ -186,6 +156,82 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ],
       ),
     ),
+      ),
+    );
+  }
+
+  Widget _buildConnectedMfRow() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14.0),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          ref.read(navContextProvider.notifier).state = NavContext.mf;
+          context.go('/mf');
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.bar_chart_rounded, color: Color(0xFF0F172A), size: 24),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    'Mutual Funds',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    '98.8%',
+                    style: TextStyle(
+                      fontFamily: 'DMMono',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Row(
+                  children: const [
+                    Text(
+                      '₹3,42,631',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(Icons.chevron_right, size: 16, color: Color(0xFF64748B)),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                const Text(
+                  '↑ ₹3,644 (1.07%) 1D',
+                  style: TextStyle(
+                    fontFamily: 'DMMono',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF22C55E),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -224,7 +270,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
                 side: isLinked
                     ? const BorderSide(color: Color(0xFFCBD5E1))
                     : BorderSide.none,
@@ -353,7 +399,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: const Color(0xFFCBD5E1)),
                 ),
                 child: const Text(
@@ -406,7 +452,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: const Color(0xFFE2E8F0)),
                 ),
                 child: const Text(

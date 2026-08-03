@@ -4,7 +4,7 @@ import '../models/chat_message.dart';
 
 part 'chat_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ChatNotifier extends _$ChatNotifier {
   final _uuid = const Uuid();
 

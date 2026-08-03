@@ -22,7 +22,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     final double screenWidth = MediaQuery.sizeOf(context).width;
-    final double scale = screenWidth < 420 ? screenWidth / 420 : 1.0;
+    final double scale = 1.0; // Handled globally via Transform.scale
 
     // 0.0 when fully expanded, 1.0 when fully collapsed
     final shrinkRatio = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
@@ -147,26 +147,26 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
             right: 0,
             child: Align(
               alignment: Alignment.topCenter,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: currentHPad, vertical: currentVPad),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(pillBgRatio),
-                  borderRadius: BorderRadius.circular(currentBorderRadius),
-                  border: Border.all(
-                    color: const Color(0xFFE2E8F0).withOpacity(currentBorderOpacity),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(currentShadowOpacity),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: currentHPad, vertical: currentVPad),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(pillBgRatio),
+                      borderRadius: BorderRadius.circular(currentBorderRadius),
+                      border: Border.all(
+                        color: const Color(0xFFE2E8F0).withOpacity(currentBorderOpacity),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(currentShadowOpacity),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _OdometerText(
+                    child: _OdometerText(
                       targetValue: hasImportedPortfolio ? 343158 : 0,
                       style: TextStyle(
                         fontFamily: 'DMSans',
@@ -177,70 +177,76 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                         height: 1.1,
                       ),
                     ),
-                    // Shrinking subtitle text (1D Change)
-                    if (shrinkRatio < 1.0)
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 400),
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeIn,
-                        transitionBuilder: (child, animation) => FadeTransition(
-                          opacity: animation,
-                          child: SizeTransition(
-                            sizeFactor: animation, 
-                            axisAlignment: -1.0, 
-                            child: Align(
-                              alignment: Alignment.topCenter, 
-                              child: child,
-                            ),
+                  ),
+                  // Shrinking subtitle text (1D Change)
+                  if (shrinkRatio < 1.0)
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeIn,
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: SizeTransition(
+                          sizeFactor: animation, 
+                          axisAlignment: -1.0, 
+                          child: Align(
+                            alignment: Alignment.topCenter, 
+                            child: child,
                           ),
                         ),
-                        child: !hasImportedPortfolio
-                          ? const SizedBox.shrink(key: ValueKey('empty'))
-                          : Opacity(
-                              key: const ValueKey('content'),
-                              opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
-                              child: Padding(
-                                padding: EdgeInsets.only(top: lerpDouble(8.0, 0.0, easedRatio)!),
-                                child: Container(
-                                  height: lerpDouble(16.0, 0.0, easedRatio)!,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.arrow_upward_rounded,
-                                        size: lerpDouble(14.0 * scale, 0.0, easedRatio)!,
-                                        color: const Color.fromARGB(255, 5, 134, 91), // Emerald 500
-                                      ),
-                                      SizedBox(width: lerpDouble(4.0 * scale, 0.0, easedRatio)!),
-                                      Text(
-                                        '₹2,491 (0.73%)',
-                                        style: TextStyle(
-                                          fontFamily: 'DMSans',
-                                          fontSize: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color.fromARGB(255, 5, 134, 91),
-                                          letterSpacing: 0.8,
+                      ),
+                      child: !hasImportedPortfolio
+                        ? const SizedBox.shrink(key: ValueKey('empty'))
+                        : Opacity(
+                            key: const ValueKey('content'),
+                            opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
+                            child: Padding(
+                              padding: EdgeInsets.only(top: lerpDouble(8.0, 0.0, easedRatio)!),
+                              child: Container(
+                                height: lerpDouble(16.0, 0.0, easedRatio)!,
+                                child: ClipRect(
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    widthFactor: lerpDouble(1.0, 0.0, easedRatio)!,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.arrow_upward_rounded,
+                                          size: lerpDouble(14.0 * scale, 0.0, easedRatio)!,
+                                          color: const Color.fromARGB(255, 5, 134, 91), // Emerald 500
                                         ),
-                                      ),
-                                      SizedBox(width: lerpDouble(6.0 * scale, 0.0, easedRatio)!),
-                                      Text(
-                                        '1D change',
-                                        style: TextStyle(
-                                          fontFamily: 'DMSans',
-                                          fontSize: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF9CA3AF),
+                                        SizedBox(width: lerpDouble(4.0 * scale, 0.0, easedRatio)!),
+                                        Text(
+                                          '₹2,491 (0.73%)',
+                                          style: TextStyle(
+                                            fontFamily: 'DMSans',
+                                            fontSize: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color.fromARGB(255, 5, 134, 91),
+                                            letterSpacing: 0.8,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                        SizedBox(width: lerpDouble(6.0 * scale, 0.0, easedRatio)!),
+                                        Text(
+                                          '1D change',
+                                          style: TextStyle(
+                                            fontFamily: 'DMSans',
+                                            fontSize: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF9CA3AF),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                      ),
-                  ],
-                ),
+                          ),
+                    ),
+                ],
               ),
             ),
           ),

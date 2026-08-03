@@ -178,8 +178,12 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
     final pan = _panController.text.trim();
     if (pan.length == 10 && _isConsented) {
       final authNotifier = ref.read(authProvider.notifier);
-      authNotifier.verifyPan(pan, phone: authNotifier.pendingPhone);
-      context.push('/pan-otp');
+      authNotifier.setPendingPan(pan);
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.push('/mf-fetch-confirm');
+      }
     }
   }
 

@@ -173,6 +173,14 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     });
   }
 
+  void connectMutualFunds() {
+    _timer?.cancel();
+    state = state.copyWith(
+      mfConnected: true,
+      mfStatusMessage: 'Successfully Linked',
+    );
+  }
+
   void proceedToStocks() {
     _timer?.cancel();
     state = state.copyWith(

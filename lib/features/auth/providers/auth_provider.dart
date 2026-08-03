@@ -53,11 +53,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  String pendingPhone = '000000000';
+  String pendingPhone = '';
   String pendingName = 'Investor';
+  String pendingPan = '';
 
   void setPendingPhone(String phone) {
     pendingPhone = phone;
+  }
+
+  void setPendingPan(String pan) {
+    pendingPan = pan;
   }
 
   void setPendingName(String name) {
