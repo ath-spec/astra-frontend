@@ -85,7 +85,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: BudgetColors.white,
+        backgroundColor: const Color(0xFFF9FAFB),
         body: Stack(
           children: [
             SingleChildScrollView(
@@ -106,9 +106,9 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                           "Budget",
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: getProportionateScreenWidth(36),
+                            fontSize: getProportionateScreenWidth(18),
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF133026),
+                            color: const Color(0xFF0F172A),
                           ),
                         ),
                       ],
@@ -164,7 +164,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                               fontFamily: 'DMSans',
                               fontSize: getProportionateScreenWidth(14),
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF133026).withOpacity(0.54),
+                              color: const Color.fromARGB(255, 0, 0, 0),
                             ),
                           ),
                         ],
@@ -185,7 +185,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                 eventName: 'budget_control_screen_back_tapped',
                 icon: const Icon(
                   Icons.arrow_back_ios_new_rounded,
-                  color: Color(0xFF133026),
+                  color: const Color(0xFF0F172A),
                   size: 20,
                 ),
                 onPressed: () {
@@ -299,7 +299,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                   ),
                 );
               },
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               child: Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: getProportionateScreenWidth(16),
@@ -307,9 +307,9 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                 ),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: const Color(0xFF133026).withOpacity(0.15),
+                    color: const Color(0xFFE2E8F0),
                   ),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -320,13 +320,13 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                         fontFamily: 'DMSans',
                         fontSize: getProportionateScreenWidth(12),
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF133026),
+                        color: const Color(0xFF0F172A),
                       ),
                     ),
                     const SizedBox(width: 6),
                     const Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: Color(0xFF133026),
+                      color: const Color(0xFF0F172A),
                       size: 10,
                     ),
                   ],
@@ -351,60 +351,53 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
       daysRemaining: daysRemaining,
       icon: _getIconForName(budget.categoryName),
       isMini: true,
-      backgroundColor: _parseColor(
-        budget.categoryColor,
-        fallback: _getCategoryColor(budget.status),
-      ),
-      textColor: _parseColor(
-        budget.categoryTextColor,
-        fallback: _getCategoryTextColor(budget.status),
-      ),
+      backgroundColor: _parseColor(budget.categoryColor, fallback: _getCategoryColor(budget.status)).withOpacity(0.15),
+      textColor: _parseColor(budget.categoryTextColor, fallback: _getCategoryTextColor(budget.status)),
+      borderColor: const Color(0xFFE2E8F0),
     );
   }
 
   Color _getHealthColor(String? status) {
     switch (status) {
       case 'warning':
-        return const Color(0xFF8EC8B3); // Use requested Teal for warning too
+        return const Color(0xFFFEF3C7);
       case 'critical':
-        return BudgetColors.errorBg;
+        return const Color(0xFFFEE2E2);
       default:
-        return const Color(0xFF8EC8B3); // Requested Teal
+        return const Color.fromARGB(255, 5, 134, 91).withOpacity(0.1);
     }
   }
 
   Color _getHealthTextColor(String? status) {
     switch (status) {
       case 'warning':
-        return const Color(
-          0xFF133026,
-        ); // Use requested Dark Green for warning too
+        return const Color(0xFFB45309);
       case 'critical':
-        return const Color(0xFFC62828);
+        return const Color(0xFF991B1B);
       default:
-        return const Color(0xFF133026); // Requested Dark Green
+        return const Color(0xFF0F172A);
     }
   }
 
   Color _getCategoryColor(String status) {
     switch (status) {
       case 'warning':
-        return const Color(0xFFFFF3E0);
+        return const Color(0xFFFEF3C7);
       case 'critical':
-        return BudgetColors.errorBg;
+        return const Color(0xFFFEE2E2);
       default:
-        return BudgetColors.successBg;
+        return const Color(0xFFECFDF5);
     }
   }
 
   Color _getCategoryTextColor(String status) {
     switch (status) {
       case 'warning':
-        return const Color(0xFFE65100);
+        return const Color(0xFFB45309);
       case 'critical':
-        return const Color(0xFFC62828);
+        return const Color(0xFF991B1B);
       default:
-        return BudgetColors.darkGreen;
+        return const Color.fromARGB(255, 5, 134, 91);
     }
   }
 

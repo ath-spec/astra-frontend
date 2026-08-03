@@ -1,6 +1,7 @@
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
@@ -190,7 +191,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                             children: [
                               Text(
                                 (widget.payment['name'] as String)
-                                    .toLowerCase(),
+                                    .toCapitalized(),
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
                                   fontSize: getProportionateScreenWidth(14),
@@ -203,7 +204,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                               ),
                               Text(
                                 "total: ₹${(widget.payment['amount'] * (widget.payment['name']?.toString().toLowerCase() == 'canva' || widget.payment['isYearly'] == true ? 3.0 : 8.5)).toInt()}"
-                                    .toLowerCase(),
+                                    .toCapitalized(),
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
                                   fontSize: getProportionateScreenWidth(10),
@@ -250,7 +251,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(
-              getProportionateScreenWidth(24),
+              getProportionateScreenWidth(4),
             ),
             boxShadow: [
               BoxShadow(
@@ -274,7 +275,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(
-                            getProportionateScreenWidth(10),
+                            getProportionateScreenWidth(4),
                           ),
                         ),
                         child:
@@ -309,7 +310,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            (widget.payment['name'] as String).toLowerCase(),
+                            (widget.payment['name'] as String).toCapitalized(),
                             style: TextStyle(
                               fontFamily: 'DMSans',
                               fontSize: getProportionateScreenWidth(16),
@@ -358,7 +359,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      (isYearly ? "3 payments" : "9 payments").toLowerCase(),
+                      (isYearly ? "3 payments" : "9 payments").toCapitalized(),
                       style: TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: getProportionateScreenWidth(9),
@@ -369,7 +370,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    (isYearly ? "since 2023" : "since last year").toLowerCase(),
+                    (isYearly ? "since 2023" : "since last year").toCapitalized(),
                     style: TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: getProportionateScreenWidth(10),
@@ -398,7 +399,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
       padding: EdgeInsets.all(getProportionateScreenWidth(16)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(20)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         border: Border.all(color: Colors.black.withOpacity(0.04)),
         boxShadow: [
           BoxShadow(
@@ -415,7 +416,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
             decoration: BoxDecoration(
               color: bgColor.withOpacity(0.2),
               borderRadius: BorderRadius.circular(
-                getProportionateScreenWidth(14),
+                getProportionateScreenWidth(4),
               ),
             ),
             child: Icon(

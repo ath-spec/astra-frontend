@@ -22,8 +22,8 @@ class BudgetConflictBottomSheet extends StatelessWidget {
       decoration: const BoxDecoration(
         color: BudgetColors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
+          topLeft: Radius.circular(4),
+          topRight: Radius.circular(4),
         ),
       ),
       child: SafeArea(
@@ -84,7 +84,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFAF5EA),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(color: const Color(0xFF133026).withOpacity(0.1)),
                   ),
                   child: Column(
@@ -138,7 +138,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                   foregroundColor: BudgetColors.white,
                   minimumSize: const Size(double.infinity, 56),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   elevation: 0,
                 ),

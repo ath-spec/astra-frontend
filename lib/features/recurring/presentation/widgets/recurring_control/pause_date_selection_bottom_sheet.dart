@@ -3,6 +3,7 @@ import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 
 class PauseDateSelectionBottomSheet extends StatefulWidget {
@@ -57,8 +58,8 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
         decoration: BoxDecoration(
           color: const Color(0xFFFBF8E7),
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(getProportionateScreenWidth(28)),
-            topRight: Radius.circular(getProportionateScreenWidth(28)),
+            topLeft: Radius.circular(getProportionateScreenWidth(4)),
+            topRight: Radius.circular(getProportionateScreenWidth(4)),
           ),
         ),
         child: Column(
@@ -124,7 +125,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
           height: getProportionateScreenHeight(4),
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(getProportionateScreenWidth(2)),
+            borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
           ),
         ),
       ),
@@ -140,7 +141,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
           height: getProportionateScreenWidth(48),
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+            borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
           ),
           child: Center(
             child: widget.payment['name'] == 'Netflix' 
@@ -165,7 +166,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                (widget.payment['name'] as String).toLowerCase(),
+                (widget.payment['name'] as String).toCapitalized(),
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(15),
                   fontWeight: FontWeight.w600,
@@ -194,7 +195,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
       height: getProportionateScreenHeight(180),
       decoration: BoxDecoration(
         color: const Color(0xFFFFFDF1),
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         border: Border.all(color: const Color(0xFFECEBDB)),
       ),
       child: CupertinoTheme(
@@ -227,7 +228,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+          borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         ),
         child: Text(
           "Confirm pause",
@@ -275,7 +276,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
         ),
         SizedBox(height: getProportionateScreenHeight(12)),
         Text(
-          "We've disabled autopay for ${widget.payment['name'].tolowercase()}",
+          "We've disabled autopay for ${widget.payment['name'].toCapitalized()}",
           textAlign: TextAlign.center,
           style: TextStyle(fontFamily: 'DMSans', 
             fontSize: getProportionateScreenWidth(13),

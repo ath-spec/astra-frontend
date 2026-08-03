@@ -2,6 +2,7 @@ import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/pause_autopay_bottom_sheet.dart';
@@ -139,7 +140,7 @@ class _UpcomingTabStateNew extends State<UpcomingTab> {
       padding: EdgeInsets.all(getProportionateScreenWidth(16)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         border: Border.all(color: Colors.black.withOpacity(0.04)),
       ),
       child: Row(
@@ -202,7 +203,7 @@ class _UpcomingTabStateNew extends State<UpcomingTab> {
                     color: isEnabled 
                         ? const Color(0xFFE2F0D9) // Light green for active
                         : const Color(0xFFFFF2CD), // Light yellow for canceled/paused
-                    borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+                    borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                   ),
                   child: Text(
                     isEnabled ? "active" : "cancelled",
@@ -234,7 +235,7 @@ class _UpcomingTabStateNew extends State<UpcomingTab> {
                 (item['name']?.toString().toLowerCase() == 'canva' || item['isYearly'] == true
                         ? "per year"
                         : "per month")
-                    .toLowerCase(),
+                    .toCapitalized(),
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(10),
                   color: Colors.black.withOpacity(0.4),

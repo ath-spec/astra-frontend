@@ -162,8 +162,8 @@ class _SetCategoryBottomSheetState
       decoration: const BoxDecoration(
         color: Color(0xFFfaf5ea),
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(4),
+          topRight: Radius.circular(4),
         ),
       ),
       child: Column(
@@ -177,7 +177,7 @@ class _SetCategoryBottomSheetState
               height: 5,
               decoration: BoxDecoration(
                 color: BudgetColors.black.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),
@@ -369,7 +369,7 @@ class _SetCategoryBottomSheetState
                       disabledForegroundColor: Colors.black38,
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       elevation: _anyCategorySet ? 4 : 0,
                     ),
@@ -446,7 +446,7 @@ class _SetCategoryBottomSheetState
                       side: BorderSide.none,
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                     child: Text(

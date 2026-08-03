@@ -17,7 +17,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFfaf5ea),
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -43,7 +43,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
               width: getProportionateScreenWidth(280),
               height: getProportionateScreenWidth(280),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(4),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -53,7 +53,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(4),
                 child: Image.asset(
                   'lib/core/images/recurring_firsttime.webp',
                   fit: BoxFit.cover,
@@ -67,10 +67,10 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
                 horizontal: getProportionateScreenWidth(28),
               ),
               child: Text(
-                "manage subscriptions without the chaos",
+                "Manage subscriptions without the chaos",
                 textAlign: TextAlign.left,
                 style: TextStyle(fontFamily: 'DMSans', 
-                  fontSize: getProportionateScreenWidth(24),
+                  fontSize: getProportionateScreenWidth(18),
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
                   height: 1.1,
@@ -84,10 +84,10 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
                 horizontal: getProportionateScreenWidth(24),
               ),
               child: Text(
-                "one view for all your dues. take control of your recurring payments with ease.",
+                "One view for all your dues. take control of your recurring payments with ease.",
                 textAlign: TextAlign.left,
                 style: TextStyle(fontFamily: 'DMSans', 
-                  fontSize: getProportionateScreenWidth(11),
+                  fontSize: getProportionateScreenWidth(12),
                   fontWeight: FontWeight.w400,
                   color: Colors.black54,
                   height: 1.4,
@@ -113,7 +113,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 56),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   elevation: 0,
                 ),

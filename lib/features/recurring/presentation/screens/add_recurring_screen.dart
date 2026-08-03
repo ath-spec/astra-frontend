@@ -1,6 +1,7 @@
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
@@ -111,7 +112,7 @@ class AddRecurringScreen extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(
-                                    getProportionateScreenWidth(24),
+                                    getProportionateScreenWidth(4),
                                   ),
                                 ),
                                 child: Text(
@@ -191,7 +192,7 @@ class AddRecurringScreen extends StatelessWidget {
       padding: EdgeInsets.all(getProportionateScreenWidth(20)),
       decoration: BoxDecoration(
         color: const Color(0xFFE5EBD1), // Light sage green
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(24)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
       ),
       child: Column(
         children: [
@@ -205,7 +206,7 @@ class AddRecurringScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(
-                    getProportionateScreenWidth(20),
+                    getProportionateScreenWidth(4),
                   ),
                 ),
                 child: const Icon(
@@ -258,7 +259,7 @@ class AddRecurringScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF1A1A1A),
               borderRadius: BorderRadius.circular(
-                getProportionateScreenWidth(22),
+                getProportionateScreenWidth(4),
               ),
             ),
             child: Text(
@@ -323,7 +324,7 @@ class AddRecurringScreen extends StatelessWidget {
                 ),
                 SizedBox(height: getProportionateScreenHeight(8)),
                 Text(
-                  item['name'].toString().toLowerCase(),
+                  item['name'].toString().toCapitalized(),
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: getProportionateScreenWidth(9),
@@ -347,7 +348,7 @@ class AddRecurringScreen extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(24)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         border: Border.all(color: const Color(0xFFECEBDB)),
       ),
       alignment: Alignment.centerLeft,

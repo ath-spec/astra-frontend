@@ -19,7 +19,7 @@ class BudgetColors {
   static const Color grey4 = Color(0xFFE0E0E0);
   static const Color grey5 = Color(0xFFBDBDBD);
   static const Color grey6 = Color(0xFFB4B4B4);
-  static const Color grey7 = Color(0xFF757575);
+  static const Color grey7 = Color(0xFF969696);
   static const Color grey8 = Color(0xFF616161);
   static const Color grey9 = Color(0xFF424242);
 

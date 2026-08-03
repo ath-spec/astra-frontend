@@ -33,7 +33,7 @@ class CategoryBudgetItem extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: BudgetColors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Colors.black12),
       ),
       child: Column(

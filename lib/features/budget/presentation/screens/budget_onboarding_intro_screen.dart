@@ -28,7 +28,7 @@ class _BudgetOnboardingIntroScreenState extends State<BudgetOnboardingIntroScree
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-      backgroundColor: const Color(0xFFfaf5ea),
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,7 +67,7 @@ class _BudgetOnboardingIntroScreenState extends State<BudgetOnboardingIntroScree
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(4),
                 child: Image.asset(
                   'lib/core/images/budget_intro_bg.webp',
                   fit: BoxFit.cover,

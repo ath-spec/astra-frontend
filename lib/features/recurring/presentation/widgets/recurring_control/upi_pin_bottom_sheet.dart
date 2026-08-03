@@ -51,8 +51,8 @@ class _UpiPinBottomSheetState extends State<UpiPinBottomSheet> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(getProportionateScreenWidth(40)),
-            topRight: Radius.circular(getProportionateScreenWidth(40)),
+            topLeft: Radius.circular(getProportionateScreenWidth(4)),
+            topRight: Radius.circular(getProportionateScreenWidth(4)),
           ),
         ),
         padding: EdgeInsets.symmetric(
@@ -69,7 +69,7 @@ class _UpiPinBottomSheetState extends State<UpiPinBottomSheet> {
                 height: getProportionateScreenHeight(4),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(getProportionateScreenWidth(2)),
+                  borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                 ),
               ),
             ),

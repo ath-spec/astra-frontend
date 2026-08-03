@@ -175,7 +175,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                   ),
                   child: Text("Set up category budgets",
                     style: TextStyle(fontFamily: 'DMSans', 
-                      fontSize: getProportionateScreenWidth(26),
+                      fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: BudgetColors.black,
                     ),
@@ -226,7 +226,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                                 child: Icon(
                                   cat.icon,
                                   color: cat.iconColor,
-                                  size: 24,
+                                  size: 20,
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -237,7 +237,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                                     Text(
                                       cat.title,
                                       style: TextStyle(fontFamily: 'DMSans', 
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: BudgetColors.black,
                                       ),
@@ -247,13 +247,13 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                                       children: [
                                         const Icon(
                                           Icons.auto_awesome,
-                                          size: 12,
+                                          size: 10,
                                           color: BudgetColors.grey7,
                                         ),
                                         const SizedBox(width: 4),
                                         Text("Suggested: ${currencyFormat.format(cat.suggestedAmount)}/mo",
                                           style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                                            fontSize: 12,
+                                            fontSize: 10,
                                             color: BudgetColors.grey7,
                                           ),
                                         ),
@@ -267,7 +267,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                                     ? Icons.check_circle_rounded
                                     : Icons.add_rounded,
                                 color: cat.isSet ? BudgetColors.successText : Colors.black45,
-                                size: 28,
+                                size: 20,
                               ),
                             ],
                           ),
@@ -335,7 +335,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                       disabledForegroundColor: Colors.black38,
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       elevation: _anyCategorySet ? 4 : 0,
                     ),
@@ -386,7 +386,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                       side: BorderSide.none,
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                     child: Text("Not now",

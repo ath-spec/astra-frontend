@@ -14,8 +14,8 @@ class CancelSuccessBottomSheet extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(getProportionateScreenWidth(40)),
-            topRight: Radius.circular(getProportionateScreenWidth(40)),
+            topLeft: Radius.circular(getProportionateScreenWidth(4)),
+            topRight: Radius.circular(getProportionateScreenWidth(4)),
           ),
         ),
         padding: EdgeInsets.symmetric(
@@ -47,7 +47,7 @@ class CancelSuccessBottomSheet extends StatelessWidget {
                   height: getProportionateScreenWidth(120),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+                    borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.05),
@@ -141,7 +141,7 @@ class CancelSuccessBottomSheet extends StatelessWidget {
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+                    borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                   ),
                   elevation: 0,
                 ),

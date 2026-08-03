@@ -97,8 +97,8 @@ class BudgetOverviewCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: backgroundColor, // Background color
-        borderRadius: BorderRadius.circular(isMini ? 16 : 24),
-        border: borderColor != null ? Border.all(color: borderColor!, width: 2) : null,
+        borderRadius: BorderRadius.circular(isMini && !isCategoryCard ? 16 : (!isMini ? 24 : 4)),
+        border: (isCategoryCard || borderColor != null) ? Border.all(color: borderColor ?? const Color(0xFFE2E8F0), width: 1) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,57 +111,125 @@ class BudgetOverviewCard extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(fontFamily: 'DMSans', 
-                    fontSize: getProportionateScreenWidth(isMini ? 14 : 24),
+                    fontSize: getProportionateScreenWidth(isMini ? 12 : 14),
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   ),
                 ),
                 if (!isMini)
-                  ZeyroIconButton(eventName: 'budget_overview_card_forward_tapped', 
-                    onPressed: onTopIconTap ?? () {},
-                    icon: Icon(topIcon, color: textColor),
-                  ),
+                  onTopIconTap != null
+                      ? ZeyroIconButton(
+                          eventName: 'budget_overview_card_forward_tapped',
+                          onPressed: onTopIconTap ?? () {},
+                          icon: Icon(topIcon, color: textColor),
+                        )
+                      : Icon(topIcon, color: textColor),
               ],
             ),
             SizedBox(height: getProportionateScreenHeight(isMini ? 4 : 0)),
           ],
-          Text(
-            _formatPeriod(),
-            style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-              fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
-              color: textColor.withOpacity(0.9),
+          if (!isCategoryCard)
+            Text(
+              _formatPeriod(),
+              style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
+                fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
+                color: textColor.withOpacity(0.9),
+              ),
             ),
-          ),
           SizedBox(height: getProportionateScreenHeight(isMini ? 4 : 16)),
-          // Main amount
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  "₹",
-                  style: TextStyle(fontFamily: 'DMSans', 
-                    fontSize: getProportionateScreenWidth(isMini ? 16 : 24),
-                    fontWeight: FontWeight.w600,
-                    color: textColor,
+          // Main amount and conditional Left/Cap
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          "₹",
+                          style: TextStyle(fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(isMini ? 12 : 14),
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                          ),
+                        ),
+                        Text(
+                          formatCompact(spentAmount),
+                          style: TextStyle(fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(isMini ? 14 : 20),
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Text(
-                  formatCompact(spentAmount),
-                  style: TextStyle(fontFamily: 'DMSans', 
-                    fontSize: getProportionateScreenWidth(isMini ? 28 : 56),
-                    fontWeight: FontWeight.w600,
-                    color: textColor,
+                  if (isCategoryCard && isMini) ...[
+                    SizedBox(height: getProportionateScreenHeight(2)),
+                    Text(
+                      "Cap: ₹${formatCompact(totalBudget)}",
+                      style: TextStyle(fontFamily: 'DMSans', 
+                        fontSize: getProportionateScreenWidth(10),
+                        fontWeight: FontWeight.w500,
+                        color: textColor.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              if (isCategoryCard && isMini && showCapAndOverspent)
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      if (remainingAmount < 0) ...[
+                        TextSpan(
+                          text: "Overspent\n",
+                          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(9),
+                            color: textColor.withOpacity(0.9),
+                          ),
+                        ),
+                        TextSpan(
+                          text: "₹${formatCompact(remainingAmount.abs())}",
+                          style: TextStyle(fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(11),
+                            fontWeight: FontWeight.w700,
+                            color: textColor,
+                          ),
+                        ),
+                      ] else ...[
+                        TextSpan(
+                          text: "Left\n",
+                          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(9),
+                            color: textColor.withOpacity(0.9),
+                          ),
+                        ),
+                        TextSpan(
+                          text: "₹${formatCompact(remainingAmount)}",
+                          style: TextStyle(fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(11),
+                            fontWeight: FontWeight.w700,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
+                  textAlign: TextAlign.right,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ],
-            ),
+            ],
           ),
           SizedBox(height: getProportionateScreenHeight(isMini ? 2 : 4)),
-          if (showCapAndOverspent)
+          if (showCapAndOverspent && !(isCategoryCard && isMini))
             Text.rich(
               TextSpan(
                 children: [
@@ -169,14 +237,14 @@ class BudgetOverviewCard extends StatelessWidget {
                     TextSpan(
                       text: "Overspent by ",
                       style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                        fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+                        fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
                         color: textColor.withOpacity(0.9),
                       ),
                     ),
                     TextSpan(
                       text: "₹${formatCompact(remainingAmount.abs())}",
                       style: TextStyle(fontFamily: 'DMSans', 
-                        fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+                        fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
                         fontWeight: FontWeight.w600,
                         color: textColor,
                       ),
@@ -185,14 +253,14 @@ class BudgetOverviewCard extends StatelessWidget {
                     TextSpan(
                       text: "₹${formatCompact(remainingAmount)} ",
                       style: TextStyle(fontFamily: 'DMSans', 
-                        fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+                        fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
                         fontWeight: FontWeight.w600,
                         color: textColor,
                       ),
                     ),
                     TextSpan(text: "Left",
                       style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                        fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+                        fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
                         color: textColor.withOpacity(0.9),
                       ),
                     ),
@@ -204,7 +272,8 @@ class BudgetOverviewCard extends StatelessWidget {
           if (showCapAndOverspent)
             SizedBox(height: getProportionateScreenHeight(isMini ? 4 : 24)),
           // Days to go and per day amount
-          Row(
+          if (!isMini || (isMini && !isCategoryCard))
+            Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text.rich(
@@ -213,14 +282,14 @@ class BudgetOverviewCard extends StatelessWidget {
                     TextSpan(
                       text: "$daysRemaining ",
                       style: TextStyle(fontFamily: 'DMSans', 
-                        fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+                        fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
                         fontWeight: FontWeight.w600,
                         color: textColor,
                       ),
                     ),
                     TextSpan(text: "Days to go",
                       style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                        fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+                        fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
                         color: textColor,
                       ),
                     ),
@@ -234,14 +303,14 @@ class BudgetOverviewCard extends StatelessWidget {
                       TextSpan(
                         text: "₹${perDay.isFinite ? nf.format(perDay) : '0'} ",
                         style: TextStyle(fontFamily: 'DMSans', 
-                          fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+                          fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
                           fontWeight: FontWeight.w600,
                           color: textColor,
                         ),
                       ),
                       TextSpan(text: "Per day",
                         style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                          fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+                          fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
                           color: textColor.withOpacity(0.8),
                         ),
                       ),
@@ -302,7 +371,7 @@ class BudgetOverviewCard extends StatelessWidget {
           if (showCapAndOverspent)
             SizedBox(height: getProportionateScreenHeight(isMini ? 8 : 24)),
           // Spent and Due breakdown
-          if (showCapAndOverspent)
+          if (showCapAndOverspent && (!isMini || (isMini && !isCategoryCard)))
             _buildBreakdownRow(
               isSelected: true,
               label: isCategoryCard ? "Cap" : "Budget",
@@ -323,8 +392,9 @@ class BudgetOverviewCard extends StatelessWidget {
                     amountDecimal:
                         "", // Compact format doesn't need separate decimals
                     label: "Incoming",
-                    backgroundColor: const Color(0xFFE2EFE9),
-                    textColor: const Color(0xFF133026),
+                    backgroundColor: const Color(0xFFF9FAFB),
+                    textColor: const Color(0xFF0F172A),
+                    borderColor: const Color(0xFFE2E8F0),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -333,8 +403,9 @@ class BudgetOverviewCard extends StatelessWidget {
                     amountWhole: formatCompact(spentAmount).replaceAll('₹', ''),
                     amountDecimal: "",
                     label: "Outgoing",
-                    backgroundColor: const Color(0xFFE2EFE9),
-                    textColor: const Color(0xFF133026),
+                    backgroundColor: const Color(0xFFF9FAFB),
+                    textColor: const Color(0xFF0F172A),
+                    borderColor: const Color(0xFFE2E8F0),
                   ),
                 ),
               ],
@@ -378,7 +449,7 @@ class BudgetOverviewCard extends StatelessWidget {
         Text(
           label,
           style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-            fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+            fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
             color: textColor,
           ),
         ),
@@ -412,7 +483,7 @@ class BudgetOverviewCard extends StatelessWidget {
         Text(
           amount,
           style: TextStyle(fontFamily: 'DMSans', 
-            fontSize: getProportionateScreenWidth(isMini ? 10 : 14),
+            fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
             fontWeight: FontWeight.w600,
             color: textColor,
           ),

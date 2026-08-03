@@ -99,11 +99,12 @@ class _BudgetCard extends StatelessWidget {
         width: double.infinity,
         constraints: const BoxConstraints(minHeight: 130),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 255, 227),
-          borderRadius: BorderRadius.circular(24),
+          color: const Color(0XFFFFFFFF),
+          borderRadius: BorderRadius.circular(4),
+          border:Border.all(color:const Color.fromARGB(255, 240, 240, 235),)
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(4),
           child: LayoutBuilder(
             builder: (context, constraints) {
               return Stack(
@@ -117,7 +118,7 @@ class _BudgetCard extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(4),
                         child: Image.asset(
                           'lib/core/images/budget_intro_bg.webp',
                           fit: BoxFit.cover,
@@ -142,7 +143,7 @@ class _BudgetCard extends StatelessWidget {
                           'Build a budget',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 18,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: Colors.black,
                           ),

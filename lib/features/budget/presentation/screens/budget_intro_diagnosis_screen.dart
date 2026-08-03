@@ -37,7 +37,7 @@ class _BudgetIntroDiagnosisScreenState
 
     if (state.isLoadingDiagnosis) {
       return const Scaffold(
-        backgroundColor: Color(0xFFfaf5ea),
+        backgroundColor: const Color(0xFFFFFFFF),
         body: Center(child: CircularProgressIndicator(color: BudgetColors.black)),
       );
     }
@@ -50,7 +50,7 @@ class _BudgetIntroDiagnosisScreenState
         diag.diagnosisInsights.isEmpty;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFfaf5ea),
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SizedBox.expand(
         child: Stack(
           children: [
@@ -93,7 +93,7 @@ class _BudgetIntroDiagnosisScreenState
                         ),
                         child: Text("Here's what we gathered",
                           style: TextStyle(fontFamily: 'DMSans', 
-                            fontSize: (22),
+                            fontSize: (18),
                             fontWeight: FontWeight.w600,
                             color: BudgetColors.black,
                             letterSpacing: 1,
@@ -115,7 +115,7 @@ class _BudgetIntroDiagnosisScreenState
                               : "We reviewed your income and spending from the past 6 months.",
                           textAlign: TextAlign.left,
                           style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                            fontSize: (13),
+                            fontSize: (12),
                             color: BudgetColors.grey7,
                           ),
                         ),
@@ -150,7 +150,7 @@ class _BudgetIntroDiagnosisScreenState
                               ),
                               decoration: BoxDecoration(
                                 color: BudgetColors.white,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: BudgetColors.grey7,
                                   width: 1,
@@ -199,7 +199,7 @@ class _BudgetIntroDiagnosisScreenState
                               SizedBox(height: (12)),
                               Text("No data available",
                                 style: TextStyle(fontFamily: 'DMSans', 
-                                  fontSize: (16),
+                                  fontSize: (14),
                                   fontWeight: FontWeight.w600,
                                   color: BudgetColors.foreground,
                                 ),
@@ -243,7 +243,7 @@ class _BudgetIntroDiagnosisScreenState
                         alignment: Alignment.centerLeft,
                         child: Text("Our diagnosis",
                           style: TextStyle(fontFamily: 'DMSans', 
-                            fontSize: (15),
+                            fontSize: (14),
                             fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                             color: BudgetColors.grey7,
@@ -287,14 +287,14 @@ class _BudgetIntroDiagnosisScreenState
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           border: Border.all(color: BudgetColors.black12, width: 1.5),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("What this means",
                               style: TextStyle(fontFamily: 'DMSans', 
-                                fontSize: (14),
+                                fontSize: (12),
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1,
                                 color: BudgetColors.black,
@@ -308,7 +308,7 @@ class _BudgetIntroDiagnosisScreenState
                                   "Analyzing your data...",
                               textAlign: TextAlign.left,
                               style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                                fontSize: (12),
+                                fontSize: (10),
                                 color: BudgetColors.grey7,
                                 height: 1.5,
                               ),
@@ -368,7 +368,7 @@ class _BudgetIntroDiagnosisScreenState
                     foregroundColor: BudgetColors.white,
                     minimumSize: const Size(double.infinity, 56),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     elevation: 4,
                   ),
@@ -403,7 +403,7 @@ class _BudgetIntroDiagnosisScreenState
           label,
           textAlign: TextAlign.center,
           style: TextStyle(fontFamily: 'DMSans', 
-            fontSize: (20),
+            fontSize: (14),
             color: BudgetColors.black,
             fontWeight: FontWeight.w500,
           ),
@@ -414,7 +414,7 @@ class _BudgetIntroDiagnosisScreenState
           child: Text(
             amount,
             style: TextStyle(fontFamily: 'DMSans', 
-              fontSize: (isHighlight ? 26 : 22),
+              fontSize: (isHighlight ? 18 : 14),
               color: BudgetColors.black,
               fontWeight: FontWeight.w600,
             ),
@@ -430,17 +430,17 @@ class _BudgetIntroDiagnosisScreenState
       margin: const EdgeInsets.only(right: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFfaf5ea),
-        borderRadius: BorderRadius.circular(16),
+        color: const Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: BudgetColors.black12, width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title.toLowerCase(),
+            title,
             style: TextStyle(fontFamily: 'DMSans', 
-              fontSize: (13),
+              fontSize: (12),
               fontWeight: FontWeight.w600,
               color: BudgetColors.black,
             ),
@@ -449,9 +449,9 @@ class _BudgetIntroDiagnosisScreenState
           Expanded(
             child: SingleChildScrollView(
               child: Text(
-                (body).toLowerCase(),
+                (body),
                 style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                  fontSize: (12),
+                  fontSize: (10),
                   height: 1.4,
                   color: BudgetColors.grey7,
                 ),

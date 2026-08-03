@@ -1,6 +1,7 @@
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 
@@ -156,7 +157,7 @@ class _YearlyCalendarViewWidgetState extends State<YearlyCalendarViewWidget> {
               SizedBox(
                 height: getProportionateScreenHeight(24),
                 child: Text(
-                  monthName.toLowerCase(),
+                  monthName.toCapitalized(),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(16),
                     fontWeight: FontWeight.w600,

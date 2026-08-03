@@ -1,6 +1,7 @@
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/pause_autopay_bottom_sheet.dart';
@@ -60,8 +61,8 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
         decoration: BoxDecoration(
           color: const Color(0xFFFBF8E7),
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(getProportionateScreenWidth(28)),
-            topRight: Radius.circular(getProportionateScreenWidth(28)),
+            topLeft: Radius.circular(getProportionateScreenWidth(4)),
+            topRight: Radius.circular(getProportionateScreenWidth(4)),
           ),
         ),
         child: Stack(
@@ -136,7 +137,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
                     opacity: opacity,
                     child: Center(
                       child: Text(
-                        (widget.payment['name'] as String).toLowerCase(),
+                        (widget.payment['name'] as String).toCapitalized(),
                         style: TextStyle(fontFamily: 'DMSans', 
                           fontSize: getProportionateScreenWidth(15),
                           fontWeight: FontWeight.w600,
@@ -177,7 +178,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
               height: getProportionateScreenWidth(56),
               decoration: BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+                borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
               ),
               child: Center(
                 child: widget.payment['name'] == 'Netflix'
@@ -201,7 +202,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    (widget.payment['name'] as String).toLowerCase(),
+                    (widget.payment['name'] as String).toCapitalized(),
                     style: TextStyle(fontFamily: 'DMSans', 
                       fontSize: getProportionateScreenWidth(16),
                       fontWeight: FontWeight.w600,
@@ -219,10 +220,10 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
                       color: !isCanceled 
                           ? const Color(0xFFDFF0D8) 
                           : const Color(0xFFF2E7D5),
-                      borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+                      borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                     ),
                     child: Text(
-                      (!isCanceled ? "active" : "cancelled").toLowerCase(),
+                      (!isCanceled ? "active" : "cancelled").toCapitalized(),
                       style: TextStyle(fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(9),
                         fontWeight: FontWeight.w600,
@@ -266,7 +267,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
       padding: EdgeInsets.all(getProportionateScreenWidth(16)),
       decoration: BoxDecoration(
         color: const Color(0xFFFFFDF1),
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         border: Border.all(color: const Color(0xFFECEBDB)),
       ),
       child: Column(
@@ -305,7 +306,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
           ),
           Container(
             padding: EdgeInsets.all(getProportionateScreenWidth(6)),
-            decoration: BoxDecoration(color: const Color(0xFFFBF8E7), borderRadius: BorderRadius.circular(6)),
+            decoration: BoxDecoration(color: const Color(0xFFFBF8E7), borderRadius: BorderRadius.circular(4)),
             child: Icon(icon, size: 14, color: Colors.black.withOpacity(0.4)),
           ),
         ],
@@ -321,7 +322,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
       child: Container(
         height: getProportionateScreenHeight(40),
         alignment: Alignment.center,
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)), border: Border.all(color: const Color(0xFFECEBDB))),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)), border: Border.all(color: const Color(0xFFECEBDB))),
         child: Text(text, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(12), fontWeight: FontWeight.w600, color: Colors.black)),
       ),
     );
@@ -354,7 +355,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
           SizedBox(width: getProportionateScreenWidth(10)),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(6)),
+            decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(4)),
             child: Text(status, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(8), fontWeight: FontWeight.w600, color: textColor)),
           ),
         ],
@@ -408,7 +409,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
               width: double.infinity,
               height: getProportionateScreenHeight(48),
               alignment: Alignment.center,
-              decoration: BoxDecoration(color: const Color(0xFFFFFDF1), borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)), border: Border.all(color: const Color(0xFFECEBDB))),
+              decoration: BoxDecoration(color: const Color(0xFFFFFDF1), borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)), border: Border.all(color: const Color(0xFFECEBDB))),
               child: Text("Pause subscription", style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(14), fontWeight: FontWeight.w600, color: Colors.black)),
             ),
           ),
@@ -419,7 +420,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
               width: double.infinity,
               height: getProportionateScreenHeight(48),
               alignment: Alignment.center,
-              decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(getProportionateScreenWidth(15))),
+              decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(getProportionateScreenWidth(4))),
               child: Text("Cancel subscription", style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(14), fontWeight: FontWeight.w600, color: Colors.white)),
             ),
           ),
@@ -430,8 +431,8 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
               width: double.infinity,
               height: getProportionateScreenHeight(48),
               alignment: Alignment.center,
-              decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(getProportionateScreenWidth(15))),
-              child: Text((status == 'paused' ? "resume subscription" : "renew subscription").toLowerCase(), style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(14), fontWeight: FontWeight.w600, color: Colors.white)),
+              decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(getProportionateScreenWidth(4))),
+              child: Text((status == 'paused' ? "resume subscription" : "renew subscription").toCapitalized(), style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(14), fontWeight: FontWeight.w600, color: Colors.white)),
             ),
           ),
         ],

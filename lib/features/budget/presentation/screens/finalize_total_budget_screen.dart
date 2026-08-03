@@ -207,7 +207,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
         ),
         textAlign: TextAlign.left,
         style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-          fontSize: 12,
+          fontSize: 10,
           color: _getTextColor(),
           height: 1.5,
         ),
@@ -294,7 +294,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                           ),
                           child: Text("Finalize your budget",
                             style: TextStyle(fontFamily: 'DMSans', 
-                              fontSize: getProportionateScreenWidth(26),
+                              fontSize: getProportionateScreenWidth(18),
                               fontWeight: FontWeight.w600,
                               color: BudgetColors.black,
                             ),
@@ -336,14 +336,14 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                             horizontal: 20,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0XFFffdf80),
-                            borderRadius: BorderRadius.circular(20),
+                            color: const Color(0XFFFFFFFF),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Column(
                             children: [
                               Text("Monthly budget",
                                 style: TextStyle(fontFamily: 'DMSans', 
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   color: BudgetColors.black,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -371,17 +371,23 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                     LengthLimitingTextInputFormatter(8),
                                   ],
                                   style: TextStyle(fontFamily: 'DMSans', 
-                                    fontSize: 44,
+                                    fontSize: 28,
                                     fontWeight: FontWeight.w600,
                                     color: BudgetColors.black,
                                   ),
+                                  cursorColor: BudgetColors.black,
                                   decoration: const InputDecoration(
+                                    filled: false,
                                     border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
                                     isDense: true,
                                     contentPadding: EdgeInsets.zero,
                                     prefixText: '₹',
                                     prefixStyle: TextStyle(
-                                      fontSize: 32,
+                                      fontSize: 28,
                                       fontWeight: FontWeight.w600,
                                       color: BudgetColors.black,
                                     ),
@@ -432,7 +438,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                 Text("Stay within ${_formatCompact(_suggestedBudget * 0.9)} - ${_formatCompact(_suggestedBudget * 1.1)} to stay on track.",
                                   style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                                     fontSize: 12,
-                                    color: BudgetColors.grey7,
+                                    color: const Color.fromARGB(255, 150, 150, 150),
                                   ),
                                 ),
                               ],
@@ -458,7 +464,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                   padding: const EdgeInsets.all(20),
                                   decoration: BoxDecoration(
                                     color: BudgetColors.errorBg,
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(4),
                                     border: Border.all(
                                       color: const Color(0xFFB71C1C),
                                       width: 1.5,
@@ -528,12 +534,12 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
                                   color: _getCardColor(),
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Your potential savings".toLowerCase(),
+                                    Text("Your potential savings",
                                       textAlign: TextAlign.left,
                                       style: TextStyle(fontFamily: 'DMSans', 
                                         fontSize: 14,
@@ -698,7 +704,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                       foregroundColor: BudgetColors.white,
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       elevation: 4,
                       shadowColor: BudgetColors.black.withOpacity(0.3),
@@ -830,7 +836,7 @@ class _BudgetDialState extends State<_BudgetDial> {
       height: 80,
       decoration: BoxDecoration(
         color: BudgetColors.white, // Match background
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: BudgetColors.black12), // Subtle border
       ),
       child: LayoutBuilder(
@@ -871,7 +877,6 @@ class _BudgetDialState extends State<_BudgetDial> {
                         height: isMajorTick ? 30.0 : 15.0,
                         decoration: BoxDecoration(
                           color: isMajorTick ? BudgetColors.black : Colors.black26,
-                          borderRadius: BorderRadius.circular(1),
                         ),
                       ),
                     );
@@ -887,8 +892,8 @@ class _BudgetDialState extends State<_BudgetDial> {
                     width: 40,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        bottomLeft: Radius.circular(15),
+                        topLeft: Radius.circular(4),
+                        bottomLeft: Radius.circular(4),
                       ),
                       gradient: LinearGradient(
                         colors: [BudgetColors.white, BudgetColors.white.withOpacity(0.0)],
@@ -899,8 +904,8 @@ class _BudgetDialState extends State<_BudgetDial> {
                     width: 40,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(15),
-                        bottomRight: Radius.circular(15),
+                        topRight: Radius.circular(4),
+                        bottomRight: Radius.circular(4),
                       ),
                       gradient: LinearGradient(
                         colors: [BudgetColors.white.withOpacity(0.0), BudgetColors.white],
@@ -932,7 +937,6 @@ class _BudgetDialState extends State<_BudgetDial> {
                     height: 50,
                     decoration: BoxDecoration(
                       color: BudgetColors.black,
-                      borderRadius: BorderRadius.circular(2),
                       boxShadow: [
                         BoxShadow(
                           color: BudgetColors.black.withOpacity(0.2),

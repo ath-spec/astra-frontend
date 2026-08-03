@@ -2,6 +2,7 @@
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
@@ -159,7 +160,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
                     opacity: opacity,
                     child: Center(
                       child: Text(
-                        (widget.payment['name'] as String).toLowerCase(),
+                        (widget.payment['name'] as String).toCapitalized(),
                         style: TextStyle(fontFamily: 'DMSans', 
                           fontSize: getProportionateScreenWidth(16),
                           fontWeight: FontWeight.w400,
@@ -216,7 +217,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    (widget.payment['name'] as String).toLowerCase(),
+                    (widget.payment['name'] as String).toCapitalized(),
                     style: TextStyle(fontFamily: 'DMSans', 
                       fontSize: getProportionateScreenWidth(16),
                       fontWeight: FontWeight.w600,
@@ -234,10 +235,10 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
                       color: !isCanceled 
                           ? const Color(0xFFDFF0D8) 
                           : const Color(0xFFF2E7D5),
-                      borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+                      borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                     ),
                     child: Text(
-                      (!isCanceled ? "active" : "cancelled").toLowerCase(),
+                      (!isCanceled ? "active" : "cancelled").toCapitalized(),
                       style: TextStyle(fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(9),
                         fontWeight: FontWeight.w600,
@@ -264,7 +265,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
                   (widget.payment['name']?.toString().toLowerCase() == 'canva' || widget.payment['isYearly'] == true
                           ? "per year"
                           : "per month")
-                      .toLowerCase(),
+                      .toCapitalized(),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(10),
                     color: Colors.black.withOpacity(0.4),
@@ -284,7 +285,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
       padding: EdgeInsets.all(getProportionateScreenWidth(16)),
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 255, 255, 255),
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         border: Border.all(color: const Color.fromARGB(255, 206, 206, 205)),
       ),
       child: Column(
@@ -323,7 +324,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
           ),
           Container(
             padding: EdgeInsets.all(getProportionateScreenWidth(6)),
-            decoration: BoxDecoration(color: const Color.fromARGB(255, 255, 255, 255), borderRadius: BorderRadius.circular(6)),
+            decoration: BoxDecoration(color: const Color.fromARGB(255, 255, 255, 255), borderRadius: BorderRadius.circular(4)),
             child: Icon(icon, size: 14, color: Colors.black.withOpacity(0.4)),
           ),
         ],
@@ -339,7 +340,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
       child: Container(
         height: getProportionateScreenHeight(40),
         alignment: Alignment.center,
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)), border: Border.all(color: const Color.fromARGB(255, 206, 206, 205))),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)), border: Border.all(color: const Color.fromARGB(255, 206, 206, 205))),
         child: Text(text, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(12), fontWeight: FontWeight.w600, color: Colors.black)),
       ),
     );
@@ -369,7 +370,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
         padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(0), vertical: getProportionateScreenHeight(16)),
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 255, 255, 255),
-          borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+          borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -426,19 +427,19 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: getProportionateScreenWidth(36),
-              height: getProportionateScreenHeight(20),
+              width: getProportionateScreenWidth(28),
+              height: getProportionateScreenHeight(14),
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(4),
                 color: _remindMe ? Colors.black : const Color.fromARGB(255, 230, 230, 230),
               ),
               child: AnimatedAlign(
                 duration: const Duration(milliseconds: 200),
                 alignment: _remindMe ? Alignment.centerRight : Alignment.centerLeft,
                 child: Container(
-                  width: getProportionateScreenWidth(16),
-                  height: getProportionateScreenWidth(16),
+                  width: getProportionateScreenWidth(10),
+                  height: getProportionateScreenWidth(10),
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
@@ -473,7 +474,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: const Color(0xFF0A0B1A), // Exact color from budget intro
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   "Pause",
@@ -495,7 +496,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 0, 0, 0),
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(4),
                   // No border as per budget intro's OutlinedButton style
                 ),
                 child: Text(
@@ -518,13 +519,13 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: const Color(0xFF0A0B1A),
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   (status == 'paused'
                           ? "resume subscription"
                           : "renew subscription")
-                      .toLowerCase(),
+                      .toCapitalized(),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: 15,
                     fontWeight: FontWeight.w600,

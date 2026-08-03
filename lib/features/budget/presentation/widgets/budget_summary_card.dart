@@ -7,6 +7,7 @@ class BudgetSummaryCard extends StatelessWidget {
   final String label;
   final Color? backgroundColor;
   final Color? textColor;
+  final Color? borderColor;
 
   const BudgetSummaryCard({
     super.key,
@@ -15,6 +16,7 @@ class BudgetSummaryCard extends StatelessWidget {
     required this.label,
     this.backgroundColor,
     this.textColor,
+    this.borderColor,
   });
 
   @override
@@ -26,7 +28,8 @@ class BudgetSummaryCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: backgroundColor ?? const Color(0xFFE2EFE9), // Lighter teal/cream
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
+        border: borderColor != null ? Border.all(color: borderColor!) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

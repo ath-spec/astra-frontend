@@ -53,7 +53,7 @@ class RecurringPaymentsCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: const Color(0xFF131313),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(44),
         border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
@@ -133,7 +133,7 @@ class RecurringPaymentsCard extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(
               bill['icon'] as IconData,

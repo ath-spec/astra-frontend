@@ -22,14 +22,14 @@ class CategoryBudgetScreen extends StatelessWidget {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-      backgroundColor: BudgetColors.white,
+      backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: ZeyroIconButton(eventName: 'category_budget_screen_back_tapped', 
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: Color(0xFF133026),
+            color: const Color(0xFF0F172A),
             size: 20,
           ),
           onPressed: () { Navigator.of(context).pop(); },
@@ -37,9 +37,9 @@ class CategoryBudgetScreen extends StatelessWidget {
         title: Text(
           "Category Budgets",
           style: TextStyle(fontFamily: 'DMSans', 
-            color: const Color(0xFF133026),
+            color: const Color(0xFF0F172A),
             fontWeight: FontWeight.w600,
-            fontSize: getProportionateScreenWidth(20),
+            fontSize: getProportionateScreenWidth(18),
           ),
         ),
         centerTitle: true,
@@ -57,17 +57,17 @@ class CategoryBudgetScreen extends StatelessWidget {
                 Text(
                   "Total Budget: ₹${NumberFormat('#,##,###').format(dash?.totalBudget ?? 0)}",
                   style: TextStyle(fontFamily: 'DMSans', 
-                    fontSize: getProportionateScreenWidth(24),
+                    fontSize: getProportionateScreenWidth(14),
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF133026),
+                    color: const Color(0xFF0F172A),
                   ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(8)),
                 Text(
                   "Your active budget categories for the month.",
                   style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                    fontSize: getProportionateScreenWidth(14),
-                    color: const Color(0xFF133026).withOpacity(0.8),
+                    fontSize: getProportionateScreenWidth(10),
+                    color: const Color(0xFF9CA3AF),
                   ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(24)),
@@ -91,16 +91,16 @@ class CategoryBudgetScreen extends StatelessWidget {
           width: double.infinity,
           padding: EdgeInsets.all(getProportionateScreenWidth(24)),
           decoration: BoxDecoration(
-            color: BudgetColors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFF133026).withOpacity(0.1)),
+            color: const Color(0xFFF9FAFB),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
           ),
           child: Column(
             children: [
               Icon(
                 Icons.pie_chart_outline_rounded,
                 size: getProportionateScreenWidth(48),
-                color: const Color(0xFF133026).withOpacity(0.3),
+                color: const Color(0xFF9CA3AF),
               ),
               SizedBox(height: getProportionateScreenHeight(16)),
               Text(
@@ -108,7 +108,7 @@ class CategoryBudgetScreen extends StatelessWidget {
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(20),
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF133026),
+                  color: const Color(0xFF0F172A),
                 ),
               ),
               SizedBox(height: getProportionateScreenHeight(8)),
@@ -117,7 +117,7 @@ class CategoryBudgetScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(14),
-                  color: const Color(0xFF133026).withOpacity(0.7),
+                  color: const Color(0xFF9CA3AF),
                 ),
               ),
             ],
@@ -141,22 +141,22 @@ class CategoryBudgetScreen extends StatelessWidget {
     Color getCategoryColor(String? status) {
       switch (status) {
         case 'warning':
-          return const Color(0xFFFFF3E0);
+          return const Color(0xFFFEF3C7);
         case 'critical':
-          return BudgetColors.errorBg;
+          return const Color(0xFFFEE2E2);
         default:
-          return BudgetColors.successBg;
+          return const Color(0xFFECFDF5);
       }
     }
 
     Color getCategoryTextColor(String? status) {
       switch (status) {
         case 'warning':
-          return const Color(0xFFE65100);
+          return const Color(0xFFB45309);
         case 'critical':
-          return const Color(0xFFC62828);
+          return const Color(0xFF991B1B);
         default:
-          return BudgetColors.darkGreen;
+          return const Color.fromARGB(255, 5, 134, 91);
       }
     }
 
@@ -182,8 +182,9 @@ class CategoryBudgetScreen extends StatelessWidget {
           percentageUsed: b.percentageUsed,
           daysRemaining: (dash!.daysRemainingInMonth) > 0 ? dash!.daysRemainingInMonth : (DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day - DateTime.now().day),
           icon: getIconForName(b.categoryName),
-          backgroundColor: parseColor(b.categoryColor, fallback: getCategoryColor(b.status)),
+          backgroundColor: parseColor(b.categoryColor, fallback: getCategoryColor(b.status)).withOpacity(0.15),
           textColor: parseColor(b.categoryTextColor, fallback: getCategoryTextColor(b.status)),
+          borderColor: const Color(0xFFE2E8F0),
         ),
       );
     }).toList();

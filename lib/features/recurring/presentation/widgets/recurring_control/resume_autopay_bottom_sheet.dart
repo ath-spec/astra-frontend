@@ -1,6 +1,7 @@
 
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 
 class ResumeAutoPayBottomSheet extends StatefulWidget {
@@ -24,8 +25,8 @@ class _ResumeAutoPayBottomSheetState extends State<ResumeAutoPayBottomSheet> {
         decoration: BoxDecoration(
           color: const Color(0xFFFBF8E7),
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(getProportionateScreenWidth(28)),
-            topRight: Radius.circular(getProportionateScreenWidth(28)),
+            topLeft: Radius.circular(getProportionateScreenWidth(4)),
+            topRight: Radius.circular(getProportionateScreenWidth(4)),
           ),
         ),
         child: Column(
@@ -90,7 +91,7 @@ class _ResumeAutoPayBottomSheetState extends State<ResumeAutoPayBottomSheet> {
             height: getProportionateScreenHeight(4),
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
         ],
@@ -109,7 +110,7 @@ class _ResumeAutoPayBottomSheetState extends State<ResumeAutoPayBottomSheet> {
           height: getProportionateScreenWidth(48),
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+            borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
           ),
           child: Center(
             child: widget.payment['name'] == 'Netflix'
@@ -123,7 +124,7 @@ class _ResumeAutoPayBottomSheetState extends State<ResumeAutoPayBottomSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                (widget.payment['name'] as String).toLowerCase(),
+                (widget.payment['name'] as String).toCapitalized(),
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(15),
                   fontWeight: FontWeight.w600,
@@ -179,7 +180,7 @@ class _ResumeAutoPayBottomSheetState extends State<ResumeAutoPayBottomSheet> {
             width: double.infinity,
             height: getProportionateScreenHeight(48),
             alignment: Alignment.center,
-            decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(getProportionateScreenWidth(15))),
+            decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(getProportionateScreenWidth(4))),
             child: Text("Resume auto-pay", style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(14), fontWeight: FontWeight.w600, color: Colors.white, decoration: TextDecoration.none)),
           ),
         ),
@@ -190,7 +191,7 @@ onTap: () => Navigator.pop(context),
             width: double.infinity,
             height: getProportionateScreenHeight(48),
             alignment: Alignment.center,
-            decoration: BoxDecoration(color: const Color(0xFFFFFDF1), borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)), border: Border.all(color: const Color(0xFFECEBDB))),
+            decoration: BoxDecoration(color: const Color(0xFFFFFDF1), borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)), border: Border.all(color: const Color(0xFFECEBDB))),
             child: Text("Don't resume", style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(14), fontWeight: FontWeight.w600, color: Colors.black, decoration: TextDecoration.none)),
           ),
         ),

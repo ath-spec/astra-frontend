@@ -30,8 +30,8 @@ class _AiSetAllBottomSheetState extends State<AiSetAllBottomSheet> {
       decoration: const BoxDecoration(
         color: BudgetColors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
+          topLeft: Radius.circular(4),
+          topRight: Radius.circular(4),
         ),
       ),
       child: SafeArea(
@@ -104,7 +104,7 @@ class _AiSetAllBottomSheetState extends State<AiSetAllBottomSheet> {
             foregroundColor: BudgetColors.white,
             minimumSize: const Size(double.infinity, 56),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
           child: Text("Done",

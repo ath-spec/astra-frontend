@@ -1,5 +1,6 @@
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/features/recurring/presentation/screens/manage_autopay_screen.dart';
@@ -79,7 +80,7 @@ class SubscriptionTile extends StatelessWidget {
         padding: EdgeInsets.all(getProportionateScreenWidth(12)),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+          borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -119,7 +120,7 @@ class SubscriptionTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      (item['name'] as String).toLowerCase(),
+                      (item['name'] as String).toCapitalized(),
                       style: TextStyle(fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(12),
                         fontWeight: FontWeight.w600,
@@ -131,7 +132,7 @@ class SubscriptionTile extends StatelessWidget {
                     ),
                     SizedBox(height: getProportionateScreenHeight(2)),
                     Text(
-                      _getSubtitle().toLowerCase(),
+                      _getSubtitle().toCapitalized(),
                       style: TextStyle(fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(9),
                         color: Colors.black,
@@ -154,7 +155,7 @@ class SubscriptionTile extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        status.toLowerCase(),
+                        status.toCapitalized(),
                         style: TextStyle(fontFamily: 'DMSans', 
                           fontSize: getProportionateScreenWidth(8),
                           fontWeight: FontWeight.w500,

@@ -61,7 +61,7 @@ class _RecurringCalendarWidgetState extends State<RecurringCalendarWidget> {
       ),
       decoration: BoxDecoration(
         color: const Color.fromARGB(0, 255, 255, 255),
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
       ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
@@ -237,27 +237,23 @@ class _RecurringCalendarWidgetState extends State<RecurringCalendarWidget> {
           ),
         ),
         
-        // Segmented Multi-Payment Pill using Theme Colors
+        // Individual Multi-Payment Dots (Google Calendar style)
         if (otherPayments.isNotEmpty) ...[
           SizedBox(height: getProportionateScreenHeight(4)),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(getProportionateScreenWidth(pillHeight / 2)),
-              border: Border.all(color: Colors.white, width: 0.5),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(getProportionateScreenWidth(pillHeight / 2)),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(otherPayments.length, (index) {
-                  return Container(
-                    width: getProportionateScreenWidth(segmentWidth),
-                    height: getProportionateScreenWidth(pillHeight),
-                    color: themeColors[index % themeColors.length],
-                  );
-                }),
-              ),
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(otherPayments.length, (index) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(1)),
+                width: getProportionateScreenWidth(4),
+                height: getProportionateScreenWidth(4),
+                decoration: BoxDecoration(
+                  color: themeColors[index % themeColors.length],
+                  shape: BoxShape.circle,
+                ),
+              );
+            }),
           ),
         ],
       ],

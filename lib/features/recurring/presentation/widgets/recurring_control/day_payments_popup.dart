@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 
@@ -27,7 +28,7 @@ class DayPaymentsPopup extends StatelessWidget {
       width: getProportionateScreenWidth(300),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.12),
@@ -86,7 +87,7 @@ class DayPaymentsPopup extends StatelessWidget {
             height: getProportionateScreenWidth(36),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(getProportionateScreenWidth(10)),
+              borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
             ),
             child: Center(
               child: (payment['logoAsset'] != null)
@@ -117,7 +118,7 @@ class DayPaymentsPopup extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  (payment['name'] as String).toLowerCase(),
+                  (payment['name'] as String).toCapitalized(),
                   style: TextStyle(fontFamily: 'Syne', 
                     fontSize: getProportionateScreenWidth(12),
                     fontWeight: FontWeight.w600,
@@ -126,7 +127,7 @@ class DayPaymentsPopup extends StatelessWidget {
                 ),
                 SizedBox(height: getProportionateScreenHeight(1)),
                 Text(
-                  (payment['type'] as String).toLowerCase(),
+                  (payment['type'] as String).toCapitalized(),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(10),
                     color: Colors.black.withOpacity(0.4),

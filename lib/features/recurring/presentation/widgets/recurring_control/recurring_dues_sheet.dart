@@ -1,5 +1,6 @@
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'package:flutter/material.dart';
+import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/dues_sheet/all_time_tab.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/dues_sheet/this_month_tab.dart';
@@ -69,8 +70,8 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
             child: Material(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(getProportionateScreenWidth(28)),
-                topRight: Radius.circular(getProportionateScreenWidth(28)),
+                topLeft: Radius.circular(getProportionateScreenWidth(4)),
+                topRight: Radius.circular(getProportionateScreenWidth(4)),
               ),
             child: Column(
               children: [
@@ -138,7 +139,7 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
           height: getProportionateScreenHeight(4),
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(2),
+            borderRadius: BorderRadius.circular(4),
           ),
         ),
       ),
@@ -156,7 +157,7 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
               padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(16)),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+                borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                 border: Border.all(color: Colors.black.withOpacity(0.1)),
               ),
               child: Row(
@@ -175,7 +176,7 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
                        decoration: InputDecoration(
                          isDense: true,
                          contentPadding: EdgeInsets.zero,
-                         hintText: "search subscriptions...",
+                         hintText: "Search subscriptions...",
                          hintStyle: TextStyle(fontFamily: 'DMSans', 
                            color: Colors.black.withOpacity(0.4),
                            fontSize: getProportionateScreenWidth(12),
@@ -196,7 +197,7 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
             height: getProportionateScreenHeight(40),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+              borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
               border: Border.all(color: Colors.black.withOpacity(0.1)),
             ),
             child: Icon(Icons.tune_rounded, color: Colors.black, size: 20),
@@ -229,11 +230,11 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: isSelected ? Colors.black : Colors.white,
-                  borderRadius: BorderRadius.circular(getProportionateScreenWidth(12)),
+                  borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                   border: isSelected ? null : Border.all(color: Colors.black.withOpacity(0.1)),
                 ),
                 child: Text(
-                  _tabs[index],
+                  _tabs[index].toCapitalized(),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(12),
                     color: isSelected ? Colors.white : Colors.black.withOpacity(0.6),

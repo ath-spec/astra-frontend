@@ -187,7 +187,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: const Color(0xFFfaf5ea),
+        backgroundColor: const Color(0xFFFFFFFF),
         body: Stack(
           children: [
             SafeArea(
@@ -230,7 +230,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                             "Your suggested monthly budget",
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: getProportionateScreenWidth(22),
+                              fontSize: getProportionateScreenWidth(18),
                               fontWeight: FontWeight.w600,
                               color: BudgetColors.black,
                             ),
@@ -252,13 +252,13 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xfffbd1d3),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             "₹${NumberFormat('#,##,###').format(widget.totalBudget)}",
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 40,
+                              fontSize: 28,
                               fontWeight: FontWeight.w600,
                               color: BudgetColors.black,
                             ),
@@ -289,7 +289,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                           decoration: BoxDecoration(
                             color: const Color(0xfffbd1d3),
                             borderRadius: BorderRadius.circular(
-                              getProportionateScreenWidth(24),
+                              getProportionateScreenWidth(4),
                             ),
                           ),
                           child: Stack(
@@ -340,7 +340,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                                         "Why ₹${NumberFormat('#,##,###').format(widget.totalBudget)}?",
                                         style: TextStyle(
                                           fontFamily: 'DMSans',
-                                          fontSize: 18,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                           color: BudgetColors.black,
                                         ),
@@ -397,7 +397,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                       foregroundColor: BudgetColors.white,
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       elevation: 4,
                       shadowColor: BudgetColors.black.withOpacity(0.3),
@@ -429,15 +429,23 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 2),
-            child: Text('• ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: color)),
+            child: Text(
+              '• ',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                color: color,
+              ),
+            ),
           ),
           Expanded(
             child: Text(
               text,
               textAlign: TextAlign.left,
-              style: TextStyle(fontWeight: FontWeight.w600, 
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
                 fontFamily: 'DMSans',
-                fontSize: 11,
+                fontSize: 10,
                 color: color,
                 height: 1.5,
               ),
@@ -449,28 +457,63 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
   }
 }
 
-class _SuggestedBarChart extends ConsumerWidget {
+class _SuggestedBarChart extends ConsumerStatefulWidget {
   final double totalBudget;
   const _SuggestedBarChart({required this.totalBudget});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_SuggestedBarChart> createState() => _SuggestedBarChartState();
+}
+
+class _SuggestedBarChartState extends ConsumerState<_SuggestedBarChart>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  // strong ease-out curve recommended by emil-design-eng
+  final Curve _easeOut = const Cubic(0.23, 1, 0.32, 1);
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final diag = ref.watch(budgetStateProvider).currentDiagnosis;
     final history = (diag?.historicalSpending ?? [])
         .map((e) => HistoricalSpending.fromJson(e as Map<String, dynamic>))
         .toList();
 
-    double maxSpend = totalBudget > 0 ? totalBudget : 1.0;
+    double maxSpend = widget.totalBudget > 0 ? widget.totalBudget : 1.0;
     for (var h in history) {
       if (h.expenses > maxSpend) maxSpend = h.expenses;
     }
 
-    double budgetHeightFactor = maxSpend > 0 ? (totalBudget / maxSpend) : 0.0;
+    double budgetHeightFactor = maxSpend > 0
+        ? (widget.totalBudget / maxSpend)
+        : 0.0;
 
     final double maxBarHeight = getProportionateScreenHeight(90);
     final double barBottom = getProportionateScreenHeight(120);
     final double containerHeight = getProportionateScreenHeight(140);
     final double lineTop = barBottom - (maxBarHeight * budgetHeightFactor);
+
+    final lineAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Interval(0.65, 1.0, curve: _easeOut),
+      ),
+    );
 
     return Stack(
       clipBehavior: Clip.none,
@@ -481,26 +524,41 @@ class _SuggestedBarChart extends ConsumerWidget {
           top: lineTop,
           left: 0,
           right: 0,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Flex(
-                direction: Axis.horizontal,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: List.generate(
-                  (constraints.constrainWidth() /
-                          getProportionateScreenWidth(10))
-                      .floor(),
-                  (index) => SizedBox(
-                    width: getProportionateScreenWidth(5),
-                    height: getProportionateScreenHeight(1),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(color: Colors.black38),
-                    ),
+          child: AnimatedBuilder(
+            animation: lineAnim,
+            builder: (context, child) {
+              return ClipRect(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: lineAnim.value,
+                  child: Opacity(
+                    opacity: lineAnim.value.clamp(0.0, 1.0),
+                    child: child,
                   ),
                 ),
               );
             },
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Flex(
+                  direction: Axis.horizontal,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: List.generate(
+                    (constraints.constrainWidth() /
+                            getProportionateScreenWidth(10))
+                        .floor(),
+                    (index) => SizedBox(
+                      width: getProportionateScreenWidth(5),
+                      height: getProportionateScreenHeight(1),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(color: Colors.black38),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
 
@@ -524,20 +582,29 @@ class _SuggestedBarChart extends ConsumerWidget {
           top: 0,
           left: 0,
           right: 0,
-          child: Center(
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(4),
-                vertical: getProportionateScreenHeight(1),
-              ),
-              color: Colors.transparent, // No longer needs to mask bars
-              child: Text(
-                "₹${NumberFormat('#,##,###').format(totalBudget)}",
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: getProportionateScreenWidth(12),
-                  fontWeight: FontWeight.w600,
-                  color: BudgetColors.foreground,
+          child: AnimatedBuilder(
+            animation: lineAnim,
+            builder: (context, child) {
+              return Opacity(
+                opacity: lineAnim.value.clamp(0.0, 1.0),
+                child: child,
+              );
+            },
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: getProportionateScreenWidth(4),
+                  vertical: getProportionateScreenHeight(1),
+                ),
+                color: Colors.transparent, // No longer needs to mask bars
+                child: Text(
+                  "₹${NumberFormat('#,##,###').format(widget.totalBudget)}",
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: getProportionateScreenWidth(12),
+                    fontWeight: FontWeight.w600,
+                    color: BudgetColors.foreground,
+                  ),
                 ),
               ),
             ),
@@ -557,7 +624,8 @@ class _SuggestedBarChart extends ConsumerWidget {
 
     final historyMap = {for (var h in history) '${h.year}-${h.month}': h};
 
-    for (int i = 5; i >= 0; i--) {
+    int barIndex = 0;
+    for (int i = 6; i >= 1; i--) {
       int m = now.month - i;
       int y = now.year;
       while (m <= 0) {
@@ -572,30 +640,62 @@ class _SuggestedBarChart extends ConsumerWidget {
       if (h != null && maxSpend > 0) {
         heightFactor = h.expenses / maxSpend;
       }
-      bars.add(_buildBar(monthStr, heightFactor, maxBarHeight));
+
+      double start = barIndex * 0.05;
+      double end = start + 0.40;
+      if (end > 0.65) end = 0.65;
+
+      bars.add(_buildBar(monthStr, heightFactor, maxBarHeight, start, end));
+      barIndex++;
     }
     return bars;
   }
 
-  Widget _buildBar(String month, double heightFactor, double maxBarHeight) {
+  Widget _buildBar(
+    String month,
+    double heightFactor,
+    double maxBarHeight,
+    double start,
+    double end,
+  ) {
+    final animation = CurvedAnimation(
+      parent: _controller,
+      curve: Interval(start, end, curve: _easeOut),
+    );
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Container(
-          width: getProportionateScreenWidth(14),
-          height: maxBarHeight * heightFactor,
-          decoration: BoxDecoration(
-            color: BudgetColors.foreground,
-            borderRadius: BorderRadius.circular(10),
-          ),
+        AnimatedBuilder(
+          animation: animation,
+          builder: (context, child) {
+            return Opacity(
+              opacity: (animation.value * 2).clamp(0.0, 1.0),
+              child: Container(
+                width: getProportionateScreenWidth(14),
+                height: maxBarHeight * heightFactor * animation.value,
+                decoration: BoxDecoration(color: BudgetColors.foreground),
+              ),
+            );
+          },
         ),
         SizedBox(height: getProportionateScreenHeight(8)),
-        Text(
-          month,
-          style: TextStyle(fontWeight: FontWeight.w600, 
-            fontFamily: 'DMSans',
-            fontSize: getProportionateScreenWidth(12),
-            color: BudgetColors.grey7,
+        AnimatedBuilder(
+          animation: animation,
+          builder: (context, child) {
+            return Opacity(
+              opacity: (animation.value * 2).clamp(0.0, 1.0),
+              child: child,
+            );
+          },
+          child: Text(
+            month,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontFamily: 'DMSans',
+              fontSize: getProportionateScreenWidth(10),
+              color: BudgetColors.grey7,
+            ),
           ),
         ),
       ],

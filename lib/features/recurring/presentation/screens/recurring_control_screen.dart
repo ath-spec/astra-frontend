@@ -403,6 +403,14 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
                                     if (_isYearlyView) {
                                       setState(() => _isYearlyView = false);
                                     } else if (_sheetController.isAttached && _sheetController.size < 0.55) {
+                                      final double sectionHeight = YearlyCalendarViewWidget.calculateYearSectionHeight(context);
+                                      final int targetIndex = _selectedDate.year - YearlyCalendarViewWidget.getStartYear();
+                                      final oldController = _yearlyScrollController;
+                                      _yearlyScrollController = ScrollController(
+                                        initialScrollOffset: sectionHeight * targetIndex,
+                                        keepScrollOffset: false,
+                                      );
+                                      oldController.dispose();
                                       setState(() => _isYearlyView = true);
                                     }
                                   },
@@ -411,7 +419,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        DateFormat('MMMM yyyy').format(_selectedDate).toLowerCase(),
+                                        DateFormat('MMMM yyyy').format(_selectedDate),
                                         style: TextStyle(fontFamily: 'DMSans', 
                                           fontSize: getProportionateScreenWidth(18),
                                           fontWeight: FontWeight.w600,
@@ -438,7 +446,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
                                     width: getProportionateScreenWidth(30),
                                     height: getProportionateScreenWidth(30),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(getProportionateScreenWidth(11)),
+                                      borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                                       border: Border.all(
                                         color: Colors.white,
                                         width: 1.2,
@@ -535,7 +543,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
                                         
                                         final oldController = _yearlyScrollController;
                                         _yearlyScrollController = ScrollController(
-                                          initialScrollOffset: sectionHeight * targetIndex,
+                                          initialScrollOffset: sectionHeight * targetIndex, keepScrollOffset: false,
                                         );
                                         oldController.dispose();
 
@@ -658,7 +666,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
     return ZeyroTapDetector(eventName: 'recurring_control_screen_today_tapped', 
       onTap: _onTodayPressed,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(getProportionateScreenWidth(30)),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
@@ -668,7 +676,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
             ),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(getProportionateScreenWidth(30)),
+              borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
             ),
             child: Text(
               "today",

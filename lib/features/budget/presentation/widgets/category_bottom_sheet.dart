@@ -44,8 +44,8 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
       decoration: const BoxDecoration(
         color: BudgetColors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
+          topLeft: Radius.circular(4),
+          topRight: Radius.circular(4),
         ),
       ),
       child: SafeArea(
@@ -98,12 +98,12 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
 
         InkWell(
           onTap: _startLoading,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.black12, width: 1.5),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Row(
               children: [
@@ -139,12 +139,12 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
 
         InkWell(
           onTap: () => setState(() => _currentState = _SheetState.manualInput),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.black12, width: 1.5),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Row(
               children: [
@@ -238,7 +238,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
             foregroundColor: BudgetColors.white,
             minimumSize: const Size(double.infinity, 56),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
           child: Text("Save limit",
@@ -310,7 +310,7 @@ class _CategoryBottomSheetState extends State<CategoryBottomSheet> {
             foregroundColor: BudgetColors.white,
             minimumSize: const Size(double.infinity, 56),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
           child: Text("Done",
