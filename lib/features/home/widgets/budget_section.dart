@@ -97,7 +97,7 @@ class _BudgetCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        constraints: const BoxConstraints(minHeight: 130),
+        height: 140,
         decoration: BoxDecoration(
           color: const Color(0XFFFFFFFF),
           borderRadius: BorderRadius.circular(4),
@@ -131,8 +131,8 @@ class _BudgetCard extends StatelessWidget {
                     padding: EdgeInsets.only(
                       left: constraints.maxWidth * 0.4 + 10,
                       right: 18,
-                      top: 20,
-                      bottom: 16,
+                      top: 10,
+                      bottom: 10,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

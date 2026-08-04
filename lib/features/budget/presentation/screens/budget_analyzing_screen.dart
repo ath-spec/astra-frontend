@@ -132,7 +132,7 @@ class _BudgetAnalyzingScreenState extends ConsumerState<BudgetAnalyzingScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(24),
                   child: Image.asset(
-                    'lib/core/images/budget_loading.webp',
+                    'lib/core/images/budget_analysis.webp',
                     fit: BoxFit.contain,
                   ),
                 ),

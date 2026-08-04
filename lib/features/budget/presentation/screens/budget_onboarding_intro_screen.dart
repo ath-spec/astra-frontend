@@ -58,13 +58,6 @@ class _BudgetOnboardingIntroScreenState extends State<BudgetOnboardingIntroScree
               height: getProportionateScreenWidth(280),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: BudgetColors.black.withOpacity(0.05),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(4),
@@ -132,7 +125,7 @@ class _BudgetOnboardingIntroScreenState extends State<BudgetOnboardingIntroScree
                       foregroundColor: BudgetColors.white,
                       minimumSize: const Size(double.infinity, 56),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       elevation: 0,
                     ),

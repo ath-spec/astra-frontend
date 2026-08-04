@@ -9,7 +9,8 @@ class RecurringIntroScreen extends ConsumerStatefulWidget {
   const RecurringIntroScreen({super.key});
 
   @override
-  ConsumerState<RecurringIntroScreen> createState() => _RecurringIntroScreenState();
+  ConsumerState<RecurringIntroScreen> createState() =>
+      _RecurringIntroScreenState();
 }
 
 class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
@@ -17,7 +18,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: Color(0XFFFEFEFE),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -27,13 +28,16 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
               alignment: Alignment.topLeft,
               child: Padding(
                 padding: const EdgeInsets.only(left: 16.0, top: 8.0),
-                child: ZeyroIconButton(eventName: 'recurring_intro_screen_back_tapped', 
+                child: ZeyroIconButton(
+                  eventName: 'recurring_intro_screen_back_tapped',
                   icon: const Icon(
                     Icons.arrow_back_ios_new_rounded,
                     color: Colors.black,
                     size: 20,
                   ),
-                  onPressed: () {Navigator.of(context).pop(); },
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
               ),
             ),
@@ -42,16 +46,6 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
             Container(
               width: getProportionateScreenWidth(280),
               height: getProportionateScreenWidth(280),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: Image.asset(
@@ -69,7 +63,8 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
               child: Text(
                 "Manage subscriptions without the chaos",
                 textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: 'DMSans', 
+                style: TextStyle(
+                  fontFamily: 'DMSans',
                   fontSize: getProportionateScreenWidth(18),
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
@@ -86,7 +81,8 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
               child: Text(
                 "One view for all your dues. take control of your recurring payments with ease.",
                 textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: 'DMSans', 
+                style: TextStyle(
+                  fontFamily: 'DMSans',
                   fontSize: getProportionateScreenWidth(12),
                   fontWeight: FontWeight.w400,
                   color: Colors.black54,
@@ -100,10 +96,11 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
               padding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(32),
               ),
-              child: ZeyroButton(eventName: 'recurring_intro_screen_start_tapped', 
+              child: ZeyroButton(
+                eventName: 'recurring_intro_screen_start_tapped',
                 onPressed: () {
                   ref.read(budgetStateProvider).setRecurringSetup(true);
-                  // Use go('/') to reset the stack, then push to get the normal 
+                  // Use go('/') to reset the stack, then push to get the normal
                   // forward slide transition, just like other screens.
                   context.go('/');
                   context.push('/recurring-control');
@@ -119,7 +116,8 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
                 ),
                 child: Text(
                   'get started',
-                  style: TextStyle(fontFamily: 'DMSans', 
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -131,7 +129,8 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
             // Disclosures/Helper text
             Text(
               "achieve inner peace",
-              style: TextStyle(fontFamily: 'DMSans', 
+              style: TextStyle(
+                fontFamily: 'DMSans',
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
                 color: Colors.grey,

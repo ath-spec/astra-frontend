@@ -386,7 +386,7 @@ class _NoRecurringCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(minHeight: 130),
+      height: 140,
       decoration: BoxDecoration(
         color: const Color(0XFFFFFFFF),
         borderRadius: BorderRadius.circular(4),
@@ -403,25 +403,23 @@ class _NoRecurringCard extends StatelessWidget {
                   left: 0,
                   top: 0,
                   bottom: 0,
-                  width: constraints.maxWidth * 0.45,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: Image.asset(
-                        'lib/core/images/bills_card.webp',
-                        fit: BoxFit.cover,
-                      ),
+                  width: constraints.maxWidth * 0.4,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: Image.asset(
+                      'lib/core/images/bills_card.webp',
+                      fit: BoxFit.contain, // Contain will show the whole image
+                      alignment: Alignment.center,
                     ),
                   ),
                 ),
                 // ── Right text panel ─────────────────────────────────────
                 Padding(
                   padding: EdgeInsets.only(
-                    left: constraints.maxWidth * 0.45 + 10,
+                    left: constraints.maxWidth * 0.4 + 10,
                     right: 18,
-                    top: 20,
-                    bottom: 16,
+                    top: 10,
+                    bottom: 10,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -85,7 +85,7 @@ class BudgetConfirmationScreen extends StatelessWidget {
                   foregroundColor: BudgetColors.white,
                   minimumSize: const Size(double.infinity, 56),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   elevation: 4,
                   shadowColor: BudgetColors.black.withOpacity(0.3),

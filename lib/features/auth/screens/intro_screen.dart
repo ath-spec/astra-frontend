@@ -335,32 +335,35 @@ class _IntroScreenState extends State<IntroScreen>
 
 
 
-                    // PAGE 3: Logo and CTA
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const Spacer(),
-                          Center(
+                    // PAGE 2: Logo and intro2 image
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 0), // Push logo to the very top
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
                             child: Image.asset(
                               'lib/core/images/logo_text_only.png',
                               width: 220,
                               fit: BoxFit.contain,
                             ),
                           ),
-                          const SizedBox(height: 24),
-                          Flexible(
-                            child: Center(
+                        ),
+                        Expanded(
+                          child: Transform.translate(
+                            offset: const Offset(0, -80), // Move the image up even more
+                            child: Transform.scale(
+                              scale: 0.95, // Make the image slightly smaller
                               child: Image.asset(
                                 'lib/core/images/intro2.webp',
                                 fit: BoxFit.contain,
+                                alignment: Alignment.topCenter,
                               ),
                             ),
                           ),
-                          const Spacer(),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -369,12 +372,10 @@ class _IntroScreenState extends State<IntroScreen>
               // --- Bottom Bar (padded, constrained) ---
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: SizedBox(
-                  height: 48,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Page Indicators
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Page Indicators
                       AnimatedOpacity(
                         opacity: _currentPage == 1 ? 0.0 : 1.0,
                         duration: const Duration(milliseconds: 300),
@@ -445,12 +446,11 @@ class _IntroScreenState extends State<IntroScreen>
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
+                      ), // ends AnimatedOpacity
+                    ], // ends Stack children
+                  ), // ends Stack
+                ), // ends Padding
+              const SizedBox(height: 24),
             ],
           ),
         ),

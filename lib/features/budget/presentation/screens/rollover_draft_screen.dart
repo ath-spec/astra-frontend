@@ -371,7 +371,7 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: BudgetColors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: BudgetColors.black.withValues(alpha: 0.05)),
                         boxShadow: [
                           BoxShadow(
@@ -517,7 +517,7 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                               disabledForegroundColor: Colors.black38,
                               minimumSize: const Size(double.infinity, 56),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               elevation: _anyCategorySet ? 4 : 0,
                             ),
@@ -545,7 +545,7 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
                               side: const BorderSide(color: BudgetColors.black12, width: 1.5),
                               minimumSize: const Size(double.infinity, 56),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             child: Text("Modify",

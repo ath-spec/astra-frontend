@@ -186,7 +186,7 @@ class _BudgetIntroDiagnosisScreenState
                           decoration: BoxDecoration(
                             color: const Color(0xFFFFF4F4),
                             border: Border.all(color: BudgetColors.errorText.withOpacity(0.3), width: 1.5),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
