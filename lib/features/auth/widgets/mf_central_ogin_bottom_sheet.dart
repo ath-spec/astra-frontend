@@ -108,14 +108,10 @@ class _MfCentralLoginBottomSheetState extends State<MfCentralLoginBottomSheet> {
                       child: const Icon(Icons.close, size: 20, color: Color(0xFF0F172A)),
                     ),
                   ),
-                  const Text(
-                    'mfcentral.com',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF0F172A),
-                    ),
+                  Image.asset(
+                    'lib/core/images/mfcentral_logo.webp',
+                    height: 48,
+                    fit: BoxFit.contain,
                   ),
                   Container(
                     padding: const EdgeInsets.all(8),
@@ -290,14 +286,10 @@ class _MfCentralLoginBottomSheetState extends State<MfCentralLoginBottomSheet> {
                   ),
                   side: const BorderSide(color: Color(0xFFCBD5E1)),
                 ),
-                icon: const Text(
-                  'G',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF4285F4),
-                  ),
+                icon: Image.asset(
+                  'lib/core/images/google_logo.webp',
+                  height: 20,
+                  fit: BoxFit.contain,
                 ),
                 label: const Text(
                   'Login with Google',
@@ -309,27 +301,29 @@ class _MfCentralLoginBottomSheetState extends State<MfCentralLoginBottomSheet> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              OutlinedButton.icon(
-                onPressed: _socialLogin,
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+              if (Theme.of(context).platform == TargetPlatform.iOS) ...[
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: _socialLogin,
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 52),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    side: const BorderSide(color: Color(0xFFCBD5E1)),
                   ),
-                  side: const BorderSide(color: Color(0xFFCBD5E1)),
-                ),
-                icon: const Icon(Icons.apple, color: Colors.black),
-                label: const Text(
-                  'Login with Apple',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0F172A),
+                  icon: const Icon(Icons.apple, color: Colors.black),
+                  label: const Text(
+                    'Login with Apple',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
                   ),
                 ),
-              ),
+              ],
               const SizedBox(height: 48),
               // Footer
               Center(

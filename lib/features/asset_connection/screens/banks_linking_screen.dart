@@ -166,7 +166,25 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                         _buildStatItem('ACCESS', '1 Month'),
                       ],
                     ),
-                    const SizedBox(height: 44),
+                    const SizedBox(height: 32),
+                    
+                    Row(
+                      children: const [
+                        Text(
+                          'YOUR ACCOUNTS',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            color: Color(0xFF9CA3AF),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        Icon(Icons.unfold_more, size: 16, color: Color(0xFF64748B)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
 
                     // Bank Accounts List
                     Flexible(
@@ -187,23 +205,29 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     const SizedBox(height: 46),
 
                     // Connect More Accounts Label
-                    const Text(
-                      'CONNECT MORE ACCOUNTS',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        color: Color(0xFF9CA3AF),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.2,
-                      ),
+                    Row(
+                      children: const [
+                        Text(
+                          'CONNECT MORE ACCOUNTS',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            color: Color(0xFF9CA3AF),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        Icon(Icons.unfold_more, size: 16, color: Color(0xFF64748B)),
+                      ],
                     ),
                     const SizedBox(height: 8),
 
                     Expanded(
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
-                        itemCount: _popularBanks.length,
-                        itemBuilder: (context, index) {
+                          itemCount: _popularBanks.length,
+                          itemBuilder: (context, index) {
                           final bankName = _popularBanks[index];
                           final isSelected = _selectedMoreBanks.contains(bankName);
                           return Container(
@@ -424,58 +448,70 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     );
   }
 
-  String _getBankLogoUrl(String bankName) {
+  String? _getBankLogoAsset(String bankName) {
     final name = bankName.toLowerCase();
-    String domain = 'rbi.org.in'; // Default fallback
+    
+    if (name.contains('hdfc')) return 'lib/core/images/hdfc_logo.webp';
+    else if (name.contains('icici')) return 'lib/core/images/icici.webp';
+    else if (name.contains('state bank') || name.contains('sbi')) return 'lib/core/images/sbi_logo.webp';
+    else if (name.contains('axis')) return 'lib/core/images/axis_logo.webp';
+    else if (name.contains('kotak')) return 'lib/core/images/kotak.webp';
+    else if (name.contains('punjab national') || name.contains('pnb')) return 'lib/core/images/pnb.webp';
+    else if (name.contains('bank of baroda') || name.contains('bob')) return 'lib/core/images/bankofbaroda_logo.webp';
+    else if (name.contains('canara')) return 'lib/core/images/canara_logo.webp';
+    else if (name.contains('union')) return 'lib/core/images/uniobank_logo.webp';
+    else if (name.contains('indusind')) return 'lib/core/images/indusind_logo.webp';
+    else if (name.contains('yes')) return 'lib/core/images/yesbank_logo.webp';
+    else if (name.contains('uco')) return 'lib/core/images/uco_bank_logo.webp';
+    else if (name.contains('punjab & sind') || name.contains('punjab and sind')) return 'lib/core/images/punjab_sindh_bank_logo.webp';
+    else if (name.contains('indian overseas bank')) return 'lib/core/images/indian_overseas_bank_logo.webp';
+    else if (name.contains('indian bank')) return 'lib/core/images/indian_bank_logo.webp';
+    else if (name.contains('maharashtra')) return 'lib/core/images/bank_of_maharashtra_logo.webp';
+    else if (name.contains('bank of india') || name.contains('boi')) return 'lib/core/images/bankofindia_logo.webp';
+    
+    return null;
+  }
 
-    if (name.contains('hdfc')) domain = 'hdfcbank.com';
-    else if (name.contains('icici')) domain = 'icicibank.com';
-    else if (name.contains('state bank') || name.contains('sbi')) domain = 'sbi.co.in';
-    else if (name.contains('axis')) domain = 'axisbank.com';
-    else if (name.contains('kotak')) domain = 'kotak.com';
-    else if (name.contains('yes')) domain = 'yesbank.in';
-    else if (name.contains('punjab national') || name.contains('pnb')) domain = 'pnbindia.in';
-    else if (name.contains('indusind')) domain = 'indusind.com';
-    else if (name.contains('bank of baroda') || name.contains('bob')) domain = 'bankofbaroda.in';
-    else if (name.contains('canara')) domain = 'canarabank.com';
-    else if (name.contains('union')) domain = 'unionbankofindia.co.in';
-    else if (name.contains('indian overseas')) domain = 'iob.in';
-    else if (name.contains('indian bank')) domain = 'indianbank.in';
-    else if (name.contains('central')) domain = 'centralbankofindia.co.in';
-    else if (name.contains('uco')) domain = 'ucobank.com';
-    else if (name.contains('maharashtra')) domain = 'bankofmaharashtra.in';
-    else if (name.contains('sind')) domain = 'punjabandsindbank.co.in';
-    else if (name.contains('bank of india')) domain = 'bankofindia.co.in';
-
-    // Using Google's favicon service which is more reliable for Indian PSU banks and avoids adblocker issues
-    return 'https://www.google.com/s2/favicons?domain=$domain&sz=128';
+  Widget _buildFallbackLogo(double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(
+        color: Color(0xFFF1F5F9),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Icon(
+          Icons.account_balance,
+          size: size * 0.6,
+          color: Color(0xFF94A3B8),
+        ),
+      ),
+    );
   }
 
   Widget _buildBankLogoWidget(String bankName, {double size = 30}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(size / 2),
-      child: Image.network(
-        _getBankLogoUrl(bankName),
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Container(
+    final assetPath = _getBankLogoAsset(bankName);
+    
+    if (assetPath != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(size / 2),
+        child: Container(
+          color: Colors.white,
+          child: Image.asset(
+            assetPath,
             width: size,
             height: size,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF1F5F9),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.account_balance_rounded,
-              size: size * 0.6,
-              color: Color(0xFF64748B),
-            ),
-          );
-        },
-      ),
-    );
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              return _buildFallbackLogo(size);
+            },
+          ),
+        ),
+      );
+    }
+    
+    return _buildFallbackLogo(size);
   }
 
   Widget _buildBankCard({

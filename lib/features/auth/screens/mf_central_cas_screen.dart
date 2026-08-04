@@ -12,6 +12,7 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
   bool _selectAll = true;
   final List<bool> _amcSelections = List.generate(5, (_) => true);
   String _extentData = 'Transactions';
+  String _typeData = 'Regular + Direct Investments';
   
   final List<String> _amcs = [
     'Canara Robeco\nMutual Fund',
@@ -172,32 +173,10 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.touch_app, size: 32, color: Color(0xFF4338CA)),
-                        const SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'mf',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF4338CA),
-                                height: 1.0,
-                              ),
-                            ),
-                            Text(
-                              'central',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF4338CA),
-                                height: 1.0,
-                              ),
-                            ),
-                          ],
+                        Image.asset(
+                          'lib/core/images/mfcentral_logo.webp',
+                          height: 72,
+                          fit: BoxFit.contain,
                         ),
                       ],
                     ),
@@ -290,10 +269,69 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildDropdownCard(
-                                  title: 'What type of data can be shared?',
-                                  subtitle: 'Choose the investment categories to include\n(select one)',
-                                  value: 'Regular + Direct Investments',
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'What type of data can be shared?',
+                                      style: TextStyle(
+                                        fontFamily: 'DMSans',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF0F172A),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      'Choose the investment categories to include\n(select one)',
+                                      style: TextStyle(
+                                        fontFamily: 'DMSans',
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF64748B),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<String>(
+                                          value: _typeData,
+                                          icon: const Icon(Icons.unfold_more, size: 16, color: Color(0xFF0F172A)),
+                                          isExpanded: true,
+                                          isDense: true,
+                                          style: const TextStyle(
+                                            fontFamily: 'DMSans',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF0F172A),
+                                          ),
+                                          onChanged: (String? newValue) {
+                                            if (newValue != null) {
+                                              setState(() {
+                                                _typeData = newValue;
+                                              });
+                                            }
+                                          },
+                                          items: <String>['Regular + Direct Investments', 'Regular Investments', 'Direct Investments']
+                                              .map<DropdownMenuItem<String>>((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 32),
                                 Column(

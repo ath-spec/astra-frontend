@@ -81,18 +81,6 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
               duration: const Duration(milliseconds: 400),
               switchInCurve: Curves.easeOut,
               switchOutCurve: Curves.easeIn,
-              transitionBuilder: (child, animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0.05, 0),
-                      end: Offset.zero,
-                    ).animate(animation),
-                    child: child,
-                  ),
-                );
-              },
               child: _buildCurrentView(),
             ),
           ),

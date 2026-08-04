@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/asset_connection_provider.dart';
+import '../../auth/providers/auth_provider.dart';
 
 class ManageBankAccountsScreen extends ConsumerWidget {
   const ManageBankAccountsScreen({super.key});
@@ -10,6 +11,21 @@ class ManageBankAccountsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(assetConnectionProvider);
     final linkedAccounts = state.bankAccounts.where((b) => b.isLinked).toList();
+
+    final authState = ref.watch(authProvider);
+    String userName = 'Investor';
+    String connectionNumber = 'Not Available';
+
+    if (authState is AuthAuthenticated) {
+      userName = authState.user.name.toUpperCase();
+      if (authState.user.email.contains('@astra.dev')) {
+        connectionNumber = authState.user.email.replaceAll('@astra.dev', '');
+      } else if (authState.user.email == 'guest@example.com') {
+        connectionNumber = 'GUEST CONNECTION';
+      } else {
+        connectionNumber = authState.user.email;
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -95,7 +111,7 @@ class ManageBankAccountsScreen extends ConsumerWidget {
                       itemCount: linkedAccounts.length,
                       separatorBuilder: (context, index) => const SizedBox(height: 16),
                       itemBuilder: (context, index) {
-                        return _buildAccountCard(context, ref, linkedAccounts[index]);
+                        return _buildAccountCard(context, ref, linkedAccounts[index], userName, connectionNumber);
                       },
                     ),
             ),
@@ -105,7 +121,7 @@ class ManageBankAccountsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAccountCard(BuildContext context, WidgetRef ref, BankAccountItem account) {
+  Widget _buildAccountCard(BuildContext context, WidgetRef ref, BankAccountItem account, String userName, String connectionNumber) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF9FAFB),
@@ -120,28 +136,7 @@ class ManageBankAccountsScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(20),
             child: Row(
               children: [
-                // Logo
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'i', // Placeholder for ICICI logo
-                      style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.red.shade700,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ),
-                ),
+                _buildBankLogoWidget(account.bankName, size: 40),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
@@ -189,11 +184,11 @@ class ManageBankAccountsScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildDetailRow('ACCOUNT HOLDER', 'MR.YUGAL BHARADWAJ'),
+                _buildDetailRow('ACCOUNT HOLDER', userName),
                 const Divider(color: Color(0xFFF1F5F9), height: 32),
                 _buildDetailRow('BANK ACCOUNT NUMBER', 'XXXXXXXXX${account.accountNumber.substring(account.accountNumber.length - 4)}'),
                 const Divider(color: Color(0xFFF1F5F9), height: 32),
-                _buildDetailRow('CONNECTION NUMBER', '6351539934'),
+                _buildDetailRow('CONNECTION NUMBER', connectionNumber),
                 const Divider(color: Color(0xFFF1F5F9), height: 32),
                 _buildDetailRow('TYPE', 'Bank Account'),
                 const SizedBox(height: 24),
@@ -288,6 +283,72 @@ class ManageBankAccountsScreen extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  String? _getBankLogoAsset(String bankName) {
+    final name = bankName.toLowerCase();
+    
+    if (name.contains('hdfc')) return 'lib/core/images/hdfc_logo.webp';
+    else if (name.contains('icici')) return 'lib/core/images/icici.webp';
+    else if (name.contains('state bank') || name.contains('sbi')) return 'lib/core/images/sbi_logo.webp';
+    else if (name.contains('axis')) return 'lib/core/images/axis_logo.webp';
+    else if (name.contains('kotak')) return 'lib/core/images/kotak.webp';
+    else if (name.contains('punjab national') || name.contains('pnb')) return 'lib/core/images/pnb.webp';
+    else if (name.contains('bank of baroda') || name.contains('bob')) return 'lib/core/images/bankofbaroda_logo.webp';
+    else if (name.contains('canara')) return 'lib/core/images/canara_logo.webp';
+    else if (name.contains('union')) return 'lib/core/images/uniobank_logo.webp';
+    else if (name.contains('indusind')) return 'lib/core/images/indusind_logo.webp';
+    else if (name.contains('yes')) return 'lib/core/images/yesbank_logo.webp';
+    else if (name.contains('uco')) return 'lib/core/images/uco_bank_logo.webp';
+    else if (name.contains('punjab & sind') || name.contains('punjab and sind')) return 'lib/core/images/punjab_sindh_bank_logo.webp';
+    else if (name.contains('indian overseas bank')) return 'lib/core/images/indian_overseas_bank_logo.webp';
+    else if (name.contains('indian bank')) return 'lib/core/images/indian_bank_logo.webp';
+    else if (name.contains('maharashtra')) return 'lib/core/images/bank_of_maharashtra_logo.webp';
+    else if (name.contains('bank of india') || name.contains('boi')) return 'lib/core/images/bankofindia_logo.webp';
+    
+    return null;
+  }
+
+  Widget _buildFallbackLogo(double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(
+        color: Color(0xFFF1F5F9),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Icon(
+          Icons.account_balance,
+          size: size * 0.6,
+          color: Color(0xFF94A3B8),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBankLogoWidget(String bankName, {double size = 30}) {
+    final assetPath = _getBankLogoAsset(bankName);
+    
+    if (assetPath != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(size / 2),
+        child: Container(
+          color: Colors.white,
+          child: Image.asset(
+            assetPath,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              return _buildFallbackLogo(size);
+            },
+          ),
+        ),
+      );
+    }
+    
+    return _buildFallbackLogo(size);
   }
 
   void _showRevokeDialog(BuildContext context, WidgetRef ref, String accountId) {

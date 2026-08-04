@@ -7,6 +7,7 @@ import 'holding_item.dart';
 import 'simple_holdings_list.dart';
 import 'detailed_holdings_list.dart';
 import 'table_holdings_list.dart';
+import 'holding_details_bottom_sheet.dart';
 
 
 
@@ -132,35 +133,84 @@ class _ConnectedHoldingsViewState extends State<ConnectedHoldingsView> with Sing
         double xirrVal = 9.98 * _numberAnimation.value;
         double returnsVal = 45120 * _numberAnimation.value;
         
-        return Container(
-          margin: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+        return GestureDetector(
+          onTap: () {
+            final aggregateItem = HoldingItem(
+              name: 'Total Portfolio',
+              category: 'All Assets',
+              current: investedVal + returnsVal,
+              invested: investedVal,
+              returns: returnsVal,
+              returnsPercent: (returnsVal / investedVal) * 100,
+              oneDayChange: 1250.0, // Mock
+              oneDayChangePercent: 0.45, // Mock
+              xirr: xirrVal,
+              logoPath: 'lib/core/images/icici.png', // Mock default
+              isSip: false,
+            );
+            
+            showModalBottomSheet(
+              context: context,
+              useRootNavigator: true,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  color: Colors.transparent,
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: () {}, // Prevent taps on the card from dismissing
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: HoldingDetailsBottomSheet(
+                          item: aggregateItem,
+                          formatCurrency: formatCurrency,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ],
-          ),
-          child: Column(
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    'Holding details',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF0F172A),
-                    ),
+                children: [
+                  Row(
+                    children: const [
+                      Text(
+                        'Holding details',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Icon(Icons.unfold_more, size: 16, color: Color(0xFF64748B)),
+                    ],
                   ),
+                  const Icon(Icons.chevron_right, size: 18, color: Color(0xFF94A3B8)),
                 ],
               ),
               const SizedBox(height: 16),
@@ -241,6 +291,7 @@ class _ConnectedHoldingsViewState extends State<ConnectedHoldingsView> with Sing
               ),
             ],
           ),
+        ),
         );
       }
     );

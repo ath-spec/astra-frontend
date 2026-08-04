@@ -30,7 +30,7 @@ class MainNavPill extends StatelessWidget {
         Icons.pie_chart_rounded, // Mutual Funds
         Icons.widgets_rounded, // Others
       ],
-      labels: const ['Home', 'Mutual Funds', 'Others'],
+      labels: const ['Home', 'Investments', 'Others'],
     );
   }
 }

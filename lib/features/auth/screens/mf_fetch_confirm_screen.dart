@@ -361,14 +361,14 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(
+                                children: [
+                                  const Icon(
                                     Icons.shield_outlined,
                                     size: 14,
                                     color: Color(0xFF64748B),
                                   ),
-                                  SizedBox(width: 6),
-                                  Text(
+                                  const SizedBox(width: 6),
+                                  const Text(
                                     'powered by ',
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
@@ -377,14 +377,10 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                       color: Color(0xFF64748B),
                                     ),
                                   ),
-                                  Text(
-                                    'mfcentral',
-                                    style: TextStyle(
-                                      fontFamily: 'DMSans',
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF64748B),
-                                    ),
+                                  Image.asset(
+                                    'lib/core/images/mfcentral_logo.webp',
+                                    height: 24,
+                                    fit: BoxFit.contain,
                                   ),
                                 ],
                               ),

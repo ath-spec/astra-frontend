@@ -720,6 +720,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                 ),
+                /*
                 GestureDetector(
                   onTap: onLockTap,
                   child: Container(
@@ -737,6 +738,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                 ),
+                */
               ],
             ),
           ),

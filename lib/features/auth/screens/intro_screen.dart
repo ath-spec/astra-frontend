@@ -333,37 +333,7 @@ class _IntroScreenState extends State<IntroScreen>
                       ],
                     ),
 
-                    // PAGE 2: Placeholder Section
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Advanced Insights",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'SpaceGrotesk',
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              height: 1.15,
-                              letterSpacing: -1.0,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            "Dive deep into the market with cutting-edge data and realtime analytics.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+
 
                     // PAGE 3: Logo and CTA
                     Padding(
@@ -407,19 +377,19 @@ class _IntroScreenState extends State<IntroScreen>
                     children: [
                       // Page Indicators
                       AnimatedOpacity(
-                        opacity: _currentPage == 2 ? 0.0 : 1.0,
+                        opacity: _currentPage == 1 ? 0.0 : 1.0,
                         duration: const Duration(milliseconds: 300),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [_buildDot(0), _buildDot(1), _buildDot(2)],
+                          children: [_buildDot(0), _buildDot(1)],
                         ),
                       ),
                       // CTA Button
                       AnimatedOpacity(
-                        opacity: _currentPage == 2 ? 1.0 : 0.0,
+                        opacity: _currentPage == 1 ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 300),
                         child: IgnorePointer(
-                          ignoring: _currentPage != 2,
+                          ignoring: _currentPage != 1,
                           child: GestureDetector(
                             onTapDown: (_) => _animationController.forward(),
                             onTapUp: (_) => _animationController.reverse(),

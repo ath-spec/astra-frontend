@@ -142,32 +142,10 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.touch_app, size: 32, color: Color(0xFF4338CA)), // Placeholder icon
-                        const SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'mf',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF4338CA),
-                                height: 1.0,
-                              ),
-                            ),
-                            Text(
-                              'central',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF4338CA),
-                                height: 1.0,
-                              ),
-                            ),
-                          ],
+                        Image.asset(
+                          'lib/core/images/mfcentral_logo.webp',
+                          height: 72,
+                          fit: BoxFit.contain,
                         ),
                       ],
                     ),
