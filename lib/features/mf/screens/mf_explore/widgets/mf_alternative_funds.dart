@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../fund_profile/mf_fund_profile_screen.dart';
+import '../../mf_collection/mf_alternative_collection_screen.dart';
 
 class MfAlternativeFunds extends StatelessWidget {
   const MfAlternativeFunds({super.key});
@@ -43,24 +45,40 @@ class MfAlternativeFunds extends StatelessWidget {
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    'View all',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F172A),
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (_) => const MfAlternativeCollectionScreen(
+                        title: 'Alternative to FD',
+                        subtitle: 'Better returns than FDs, liquid and tax efficient',
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 2),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 16,
-                    color: Color(0xFF9CA3AF),
-                  ),
-                ],
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                  child: Row(
+                    children: [
+                    const Text(
+                      'View all',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      size: 16,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                  ],
+                ),
+              ),
               ),
             ],
           ),
@@ -76,6 +94,7 @@ class MfAlternativeFunds extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
                   _buildAlternativeCard(
+                    context: context,
                     width: cardWidth,
                     name: 'Union Liquid Fund',
                     category: 'Debt • Liquid',
@@ -87,14 +106,51 @@ class MfAlternativeFunds extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   _buildAlternativeCard(
+                    context: context,
+                    width: cardWidth,
+                    name: 'Nippon India Arbitrage Fund',
+                    category: 'Alternative to FD',
+                    expense: '0.35%',
+                    aum: '14,352',
+                    returns: '7.8%',
+                    logoIcon: Icons.balance,
+                    logoColor: const Color(0xFFDC2626),
+                  ),
+                  const SizedBox(width: 16),
+                  _buildAlternativeCard(
+                    context: context,
+                    width: cardWidth,
+                    name: 'SBI Equity Savings Fund',
+                    category: 'Alternative to FD',
+                    expense: '0.41%',
+                    aum: '3,210',
+                    returns: '9.2%',
+                    logoIcon: Icons.eco,
+                    logoColor: const Color(0xFF15803D),
+                  ),
+                  const SizedBox(width: 16),
+                  _buildAlternativeCard(
+                    context: context,
                     width: cardWidth,
                     name: 'HDFC Liquid Fund',
                     category: 'Debt • Liquid',
                     expense: '0.08%',
-                    aum: '₹8000 Crs',
+                    aum: '8,000',
                     returns: '7.1%',
                     logoIcon: Icons.account_balance,
                     logoColor: Colors.red,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildAlternativeCard(
+                    context: context,
+                    width: cardWidth,
+                    name: 'Kotak Equity Arbitrage',
+                    category: 'Alternative to FD',
+                    expense: '0.38%',
+                    aum: '5,420',
+                    returns: '7.5%',
+                    logoIcon: Icons.money,
+                    logoColor: Colors.amber,
                   ),
                 ],
               );
@@ -106,6 +162,7 @@ class MfAlternativeFunds extends StatelessWidget {
   }
 
   Widget _buildAlternativeCard({
+    required BuildContext context,
     required double width,
     required String name,
     required String category,
@@ -115,8 +172,10 @@ class MfAlternativeFunds extends StatelessWidget {
     required IconData logoIcon,
     required Color logoColor,
   }) {
-    return Container(
-      width: width,
+    return GestureDetector(
+      onTap: () => MfFundProfileScreen.showModal(context, name),
+      child: Container(
+        width: width,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -185,8 +244,9 @@ class MfAlternativeFunds extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildStat(String label, String value, {bool isGreen = false}) {
     return Column(
