@@ -1,152 +1,54 @@
 import 'package:flutter/material.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfMutualFundsScreen extends StatefulWidget {
-  const MfMutualFundsScreen({super.key});
+class MfGoldCollectionScreen extends StatefulWidget {
+  const MfGoldCollectionScreen({super.key});
 
   @override
-  State<MfMutualFundsScreen> createState() => _MfMutualFundsScreenState();
+  State<MfGoldCollectionScreen> createState() => _MfGoldCollectionScreenState();
 }
 
-class _MfMutualFundsScreenState extends State<MfMutualFundsScreen> {
+class _MfGoldCollectionScreenState extends State<MfGoldCollectionScreen> {
   String _activeFilter = 'All';
 
-  final _filters = ['All', 'Large Cap', 'Mid Cap', 'Small Cap'];
+  final _filters = ['All', 'SGB', 'Gold ETF', 'Digital Gold'];
 
   final List<Map<String, dynamic>> _allFunds = [
-    // Large Cap
     {
-      'name': 'Mirae Asset Large Cap Fund',
-      'category': 'Equity • Large Cap',
-      'cap': 'Large Cap',
-      'returns': {'1Y': '28.40%', '3Y': '16.80%', '5Y': '14.50%'},
+      'name': 'SGB Aug 2028',
+      'category': 'Government • SGB',
+      'cap': 'SGB',
+      'returns': {'1Y': '18.40%', '3Y': '14.80%', '5Y': '12.50%'},
       'rating': 5,
     },
     {
-      'name': 'HDFC Top 100 Fund',
-      'category': 'Equity • Large Cap',
-      'cap': 'Large Cap',
-      'returns': {'1Y': '26.10%', '3Y': '15.90%', '5Y': '13.80%'},
-      'rating': 4,
-    },
-    {
-      'name': 'ICICI Pru Bluechip Fund',
-      'category': 'Equity • Large Cap',
-      'cap': 'Large Cap',
-      'returns': {'1Y': '25.60%', '3Y': '15.20%', '5Y': '13.20%'},
+      'name': 'SGB Dec 2029',
+      'category': 'Government • SGB',
+      'cap': 'SGB',
+      'returns': {'1Y': '18.10%', '3Y': '14.40%', '5Y': '12.10%'},
       'rating': 5,
     },
     {
-      'name': 'SBI Bluechip Fund',
-      'category': 'Equity • Large Cap',
-      'cap': 'Large Cap',
-      'returns': {'1Y': '23.80%', '3Y': '14.70%', '5Y': '12.90%'},
+      'name': 'SBI Gold ETF',
+      'category': 'Commodity • Gold ETF',
+      'cap': 'Gold ETF',
+      'returns': {'1Y': '17.60%', '3Y': '11.80%', '5Y': '10.20%'},
       'rating': 4,
     },
     {
-      'name': 'Axis Bluechip Fund',
-      'category': 'Equity • Large Cap',
-      'cap': 'Large Cap',
-      'returns': {'1Y': '21.40%', '3Y': '13.50%', '5Y': '11.80%'},
-      'rating': 3,
-    },
-    // Mid Cap
-    {
-      'name': 'Quant Mid Cap Fund',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '52.10%', '3Y': '32.40%', '5Y': '24.50%'},
-      'rating': 5,
-    },
-    {
-      'name': 'Nippon India Growth Fund',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '46.80%', '3Y': '28.60%', '5Y': '21.20%'},
+      'name': 'MMTC-PAMP Digital Gold',
+      'category': 'Commodity • Digital Gold',
+      'cap': 'Digital Gold',
+      'returns': {'1Y': '16.50%', '3Y': '11.20%', '5Y': '9.80%'},
       'rating': 4,
-    },
-    {
-      'name': 'HDFC Mid-Cap Opportunities',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '43.20%', '3Y': '26.90%', '5Y': '20.10%'},
-      'rating': 5,
-    },
-    {
-      'name': 'Motilal Oswal Midcap Fund',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '41.50%', '3Y': '25.30%', '5Y': '19.40%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Edelweiss Mid Cap Fund',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '38.90%', '3Y': '23.80%', '5Y': '18.60%'},
-      'rating': 3,
-    },
-    // Small Cap
-    {
-      'name': 'Quant Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '65.20%', '3Y': '42.10%', '5Y': '32.80%'},
-      'rating': 5,
-    },
-    {
-      'name': 'Nippon India Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '58.40%', '3Y': '38.60%', '5Y': '29.50%'},
-      'rating': 5,
-    },
-    {
-      'name': 'SBI Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '52.80%', '3Y': '34.20%', '5Y': '26.80%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Axis Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '46.10%', '3Y': '29.80%', '5Y': '23.40%'},
-      'rating': 4,
-    },
-    {
-      'name': 'DSP Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '42.30%', '3Y': '27.50%', '5Y': '21.90%'},
-      'rating': 3,
     },
   ];
 
-  String _returnPeriod = '3Y';
+  String _returnPeriod = '1Y';
 
   List<Map<String, dynamic>> get _filteredFunds {
     if (_activeFilter == 'All') return _allFunds;
     return _allFunds.where((f) => f['cap'] == _activeFilter).toList();
-  }
-
-  Color _capColor(String cap) {
-    switch (cap) {
-      case 'Large Cap': return const Color(0xFF3B82F6);
-      case 'Mid Cap': return const Color(0xFF8B5CF6);
-      case 'Small Cap': return const Color(0xFF10B981);
-      default: return const Color(0xFF64748B);
-    }
-  }
-
-  Color _capBgColor(String cap) {
-    switch (cap) {
-      case 'Large Cap': return const Color(0xFFEFF6FF);
-      case 'Mid Cap': return const Color(0xFFF5F3FF);
-      case 'Small Cap': return const Color(0xFFECFDF5);
-      default: return const Color(0xFFF1F5F9);
-    }
   }
 
   @override
@@ -174,7 +76,7 @@ class _MfMutualFundsScreenState extends State<MfMutualFundsScreen> {
           ),
         ),
         title: const Text(
-          'Mutual Funds',
+          'Gold Collection',
           style: TextStyle(
             fontFamily: 'DMSans',
             fontSize: 16,
@@ -219,34 +121,37 @@ class _MfMutualFundsScreenState extends State<MfMutualFundsScreen> {
           Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-            child: Row(
-              children: _filters.map((filter) {
-                final isActive = _activeFilter == filter;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: GestureDetector(
-                    onTap: () => setState(() => _activeFilter = filter),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOut,
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                      decoration: BoxDecoration(
-                        color: isActive ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        filter,
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: isActive ? Colors.white : const Color(0xFF64748B),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: _filters.map((filter) {
+                  final isActive = _activeFilter == filter;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _activeFilter = filter),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: isActive ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          filter,
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: isActive ? Colors.white : const Color(0xFF64748B),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           ),
           // Divider
@@ -257,7 +162,7 @@ class _MfMutualFundsScreenState extends State<MfMutualFundsScreen> {
             child: Row(
               children: [
                 Text(
-                  '${funds.length} funds',
+                  '${funds.length} options',
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 11,
@@ -294,7 +199,7 @@ class _MfMutualFundsScreenState extends State<MfMutualFundsScreen> {
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
               children: [
-                // Logo — same style as MfCollectionScreen
+                // Logo
                 Stack(
                   children: [
                     Container(
@@ -385,5 +290,3 @@ class _MfMutualFundsScreenState extends State<MfMutualFundsScreen> {
     );
   }
 }
-
-

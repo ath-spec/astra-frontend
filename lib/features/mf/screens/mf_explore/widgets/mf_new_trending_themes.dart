@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../mf_theme_collection/mf_theme_collection_screen.dart';
+import '../../mf_collection/mf_theme_collection_screen.dart';
 
 class MfNewTrendingThemes extends StatefulWidget {
   const MfNewTrendingThemes({super.key});
