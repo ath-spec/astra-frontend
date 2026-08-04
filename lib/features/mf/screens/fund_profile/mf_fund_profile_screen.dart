@@ -202,7 +202,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
       returnDuration: newReturnDuration,
       comparisonText: baseData.comparisonText,
       chartDataPoints: newChartData,
-      chartColor: baseData.chartColor,
+      chartColor: isPositiveGraph ? const Color(0xFF10B981) : const Color(0xFFEF4444),
       sipAmount: baseData.sipAmount,
       sipDurationText: baseData.sipDurationText,
       sipFinalAmount: baseData.sipFinalAmount,

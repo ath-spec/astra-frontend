@@ -55,7 +55,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: Image.asset(
-                  'lib/core/images/recurring_firsttime.webp',
+                  'lib/core/images/new_recurring_white_bg.webp',
                   fit: BoxFit.cover,
                 ),
               ),

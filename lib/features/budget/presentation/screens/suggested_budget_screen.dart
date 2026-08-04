@@ -301,7 +301,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                                 bottom: 0,
                                 width: getProportionateScreenWidth(150),
                                 child: Image.asset(
-                                  "lib/core/images/why_budget.webp",
+                                  "lib/core/images/whybudget.webp",
                                   fit: BoxFit.contain,
                                 ),
                               ),

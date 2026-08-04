@@ -120,7 +120,7 @@ class _BudgetCard extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
                         child: Image.asset(
-                          'lib/core/images/budget_intro_bg.webp',
+                          'lib/core/images/new_budget.webp',
                           fit: BoxFit.cover,
                         ),
                       ),

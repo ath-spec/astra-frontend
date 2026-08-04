@@ -350,13 +350,12 @@ class _IntroScreenState extends State<IntroScreen>
                             ),
                           ),
                           const SizedBox(height: 24),
-                          const Text(
-                            "Welcome to the future of wealth management.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
+                          Flexible(
+                            child: Center(
+                              child: Image.asset(
+                                'lib/core/images/intro2.webp',
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                           const Spacer(),

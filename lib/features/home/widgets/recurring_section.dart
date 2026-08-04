@@ -409,7 +409,7 @@ class _NoRecurringCard extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: Image.asset(
-                        'lib/core/images/no_recurring_bg.webp',
+                        'lib/core/images/bills_card.webp',
                         fit: BoxFit.cover,
                       ),
                     ),
