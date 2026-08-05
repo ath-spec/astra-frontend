@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../fund_profile/mf_fund_profile_screen.dart';
+import '../../mf_collection/mf_reits_collection_screen.dart';
+import '../../mf_collection/mf_gold_collection_screen.dart';
+import '../../mf_collection/mf_invits_collection_screen.dart';
+import '../../mf_collection/mf_theme_collection_screen.dart';
 
 class MfNewAlternativeAssets extends StatelessWidget {
   const MfNewAlternativeAssets({super.key});
@@ -53,6 +56,11 @@ class MfNewAlternativeAssets extends StatelessWidget {
                       imageScaleFraction: 0.8,
                       imageRightFraction: 0.03,
                       imageBottomFraction: 0.03,
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(builder: (_) => const MfReitsCollectionScreen()),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -65,6 +73,11 @@ class MfNewAlternativeAssets extends StatelessWidget {
                       imageScaleFraction: 1.35,
                       imageRightFraction: 0.35,
                       imageBottomFraction: 0.35,
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(builder: (_) => const MfGoldCollectionScreen()),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -81,6 +94,15 @@ class MfNewAlternativeAssets extends StatelessWidget {
                       imageScaleFraction: 1.35,
                       imageRightFraction: 0.35,
                       imageBottomFraction: 0.35,
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(builder: (_) => const MfThemeCollectionScreen(
+                            title: 'Silver Funds',
+                            subtitle: 'Add silver to your portfolio.',
+                            imagePath: 'lib/core/images/silver.webp',
+                          )),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -93,6 +115,11 @@ class MfNewAlternativeAssets extends StatelessWidget {
                       imageScaleFraction: 0.8,
                       imageRightFraction: 0.1,
                       imageBottomFraction: 0.14,
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(builder: (_) => const MfInvitsCollectionScreen()),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -113,12 +140,14 @@ class _AnimatedAssetCard extends StatefulWidget {
   final double imageScaleFraction;
   final double imageRightFraction;
   final double imageBottomFraction;
+  final VoidCallback onTap;
 
   const _AnimatedAssetCard({
     required this.title,
     required this.subtitle,
     required this.imageAsset,
     required this.backgroundColor,
+    required this.onTap,
     this.imageScaleFraction = 0.9,
     this.imageRightFraction = 0.1,
     this.imageBottomFraction = 0.3,
@@ -137,7 +166,7 @@ class _AnimatedAssetCardState extends State<_AnimatedAssetCard> {
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
         setState(() => _isPressed = false);
-        MfFundProfileScreen.showModal(context, widget.title);
+        widget.onTap();
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(

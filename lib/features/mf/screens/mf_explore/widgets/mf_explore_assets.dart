@@ -6,7 +6,7 @@ import '../../mf_collection/mf_etfs_collection_screen.dart';
 import '../../mf_collection/mf_gold_collection_screen.dart';
 import '../../mf_collection/mf_reits_collection_screen.dart';
 import '../../mf_collection/mf_invits_collection_screen.dart';
-import '../../mf_collection/mf_global_funds_collection_screen.dart';
+import '../../mf_collection/mf_global_invest_collections_screen.dart';
 import '../../mf_collection/mf_fds_collection_screen.dart';
 import '../../mf_collection/mf_bonds_collection_screen.dart';
 class MfExploreAssets extends StatelessWidget {
@@ -120,7 +120,7 @@ class MfExploreAssets extends StatelessWidget {
                     );
                   } else if (item['title'] == 'Global\nFunds') {
                     Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(builder: (_) => const MfGlobalFundsCollectionScreen()),
+                      MaterialPageRoute(builder: (_) => const MfGlobalInvestCollectionsScreen()),
                     );
                   }
                 },

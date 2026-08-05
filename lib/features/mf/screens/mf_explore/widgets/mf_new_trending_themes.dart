@@ -170,6 +170,7 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                         title: 'Renewable Energy',
                         subtitle: 'Powering the future of energy.',
                         funds: _renewableFunds,
+                        imagePath: 'lib/core/images/renewal.webp',
                       ),
                     ),
                   );
@@ -193,6 +194,7 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                         title: 'Semiconductor',
                         subtitle: 'Powering the digital future.',
                         funds: _semiConductorFunds,
+                        imagePath: 'lib/core/images/semi.webp',
                       ),
                     ),
                   );
@@ -215,6 +217,7 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                         title: 'AI Revolution',
                         subtitle: 'Invest in companies building AI.',
                         funds: _aiFunds,
+                        imagePath: 'lib/core/images/ai.webp',
                       ),
                     ),
                   );
@@ -237,6 +240,7 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                         title: 'India Manufacturing',
                         subtitle: "Back India's next growth engine.",
                         funds: _indiaMfgFunds,
+                        imagePath: 'lib/core/images/manu.webp',
                       ),
                     ),
                   );
@@ -259,6 +263,7 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
                         title: 'EV Mobility',
                         subtitle: 'The future of electric mobility.',
                         funds: _evFunds,
+                        imagePath: 'lib/core/images/ev.webp',
                       ),
                     ),
                   );

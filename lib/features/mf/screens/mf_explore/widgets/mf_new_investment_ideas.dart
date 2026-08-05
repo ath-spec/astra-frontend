@@ -37,13 +37,13 @@ class MfNewInvestmentIdeas extends StatelessWidget {
                   sectionTitle: '', // We use our own header above
                   cardTitle: 'High Growth',
                   cardSubtitle: 'Top ideas with high potential returns.',
-                  cardGraphic: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFEFF6FF),
-                      border: Border.all(color: const Color(0xFFDBEAFE)),
+                  cardGraphic: SizedBox(
+                    width: 90,
+                    height: 90,
+                    child: Image.asset(
+                      'lib/core/images/growth_collections.webp',
+                      fit: BoxFit.contain,
                     ),
-                    child: const Icon(Icons.rocket_launch_rounded, color: Color(0xFF3B82F6), size: 32),
                   ),
                   onViewCollection: () {
                     Navigator.of(context, rootNavigator: true).push(
@@ -51,6 +51,7 @@ class MfNewInvestmentIdeas extends StatelessWidget {
                         builder: (_) => const MfCollectionScreen(
                           title: 'High Growth',
                           subtitle: 'Top ideas with high potential returns.',
+                          imagePath: 'lib/core/images/growth_collections.webp',
                         ),
                       ),
                     );
@@ -88,13 +89,13 @@ class MfNewInvestmentIdeas extends StatelessWidget {
                   sectionTitle: '',
                   cardTitle: 'Safe Investing',
                   cardSubtitle: 'Protect your capital with safer options.',
-                  cardGraphic: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFF1F5F9),
-                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                  cardGraphic: SizedBox(
+                    width: 90,
+                    height: 90,
+                    child: Image.asset(
+                      'lib/core/images/safe_investments.webp',
+                      fit: BoxFit.contain,
                     ),
-                    child: const Icon(Icons.shield_rounded, color: Color(0xFF64748B), size: 32),
                   ),
                   onViewCollection: () {
                     Navigator.of(context, rootNavigator: true).push(
@@ -102,6 +103,7 @@ class MfNewInvestmentIdeas extends StatelessWidget {
                         builder: (_) => const MfCollectionScreen(
                           title: 'Safe Investing',
                           subtitle: 'Protect your capital with safer options.',
+                          imagePath: 'lib/core/images/safe_investments.webp',
                         ),
                       ),
                     );

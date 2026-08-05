@@ -5,12 +5,18 @@ class MfThemeCollectionScreen extends StatefulWidget {
   final String title;
   final String subtitle;
   final List<Map<String, dynamic>>? funds;
+  final String? imagePath;
+  final IconData? icon;
+  final Color? iconColor;
 
   const MfThemeCollectionScreen({
     super.key,
     required this.title,
     required this.subtitle,
     this.funds,
+    this.imagePath,
+    this.icon,
+    this.iconColor,
   });
 
   @override
@@ -93,8 +99,10 @@ class _MfThemeCollectionScreenState extends State<MfThemeCollectionScreen> {
           ),
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
+      body: SafeArea(
+        bottom: true,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
           final double maxWidth = constraints.maxWidth > 600 ? 600 : constraints.maxWidth;
           return Center(
             child: SizedBox(
@@ -134,16 +142,26 @@ class _MfThemeCollectionScreenState extends State<MfThemeCollectionScreen> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // Placeholder graphic
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
-                          shape: BoxShape.circle,
+                      // Graphic
+                      if (widget.imagePath != null)
+                        SizedBox(
+                          width: 140,
+                          height: 140,
+                          child: Image.asset(
+                            widget.imagePath!,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      else
+                        SizedBox(
+                          width: 140,
+                          height: 140,
+                          child: Icon(
+                            widget.icon ?? Icons.pie_chart,
+                            color: widget.iconColor ?? const Color(0xFF00C75A),
+                            size: 60,
+                          ),
                         ),
-                        child: const Icon(Icons.pie_chart, color: Color(0xFF00C75A), size: 40),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 32),
@@ -155,6 +173,7 @@ class _MfThemeCollectionScreenState extends State<MfThemeCollectionScreen> {
             ),
           );
         },
+      ),
       ),
     );
   }

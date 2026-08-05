@@ -4,11 +4,13 @@ import '../fund_profile/mf_fund_profile_screen.dart';
 class MfCollectionScreen extends StatefulWidget {
   final String title;
   final String subtitle;
+  final String? imagePath;
 
   const MfCollectionScreen({
     super.key,
     required this.title,
     required this.subtitle,
+    this.imagePath,
   });
 
   @override
@@ -91,8 +93,10 @@ class _MfCollectionScreenState extends State<MfCollectionScreen> {
           ),
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
+      body: SafeArea(
+        bottom: true,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
           final double maxWidth = constraints.maxWidth > 600 ? 600 : constraints.maxWidth;
           return Center(
             child: SizedBox(
@@ -132,16 +136,22 @@ class _MfCollectionScreenState extends State<MfCollectionScreen> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // Placeholder graphic
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
-                          shape: BoxShape.circle,
+                      // Graphic
+                      if (widget.imagePath != null)
+                        SizedBox(
+                          width: 140,
+                          height: 140,
+                          child: Image.asset(
+                            widget.imagePath!,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      else
+                        const SizedBox(
+                          width: 140,
+                          height: 140,
+                          child: Icon(Icons.pie_chart, color: Color(0xFF00C75A), size: 60),
                         ),
-                        child: const Icon(Icons.pie_chart, color: Color(0xFF00C75A), size: 40),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 32),
@@ -153,6 +163,7 @@ class _MfCollectionScreenState extends State<MfCollectionScreen> {
             ),
           );
         },
+      ),
       ),
     );
   }

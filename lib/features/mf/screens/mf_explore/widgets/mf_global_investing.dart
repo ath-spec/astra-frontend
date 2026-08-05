@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../fund_profile/mf_fund_profile_screen.dart';
+import '../../mf_collection/mf_global_invest_collections_screen.dart';
 
 class MfGlobalInvesting extends StatelessWidget {
   const MfGlobalInvesting({super.key});
@@ -24,7 +25,11 @@ class MfGlobalInvesting extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         GestureDetector(
-          onTap: () => MfFundProfileScreen.showModal(context, 'Global Exposure'),
+          onTap: () => Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute(
+              builder: (context) => const MfGlobalInvestCollectionsScreen(),
+            ),
+          ),
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 16.0),
           decoration: BoxDecoration(
@@ -41,29 +46,19 @@ class MfGlobalInvesting extends StatelessWidget {
           clipBehavior: Clip.hardEdge,
           child: Stack(
             children: [
-              // Globe simulation background graphic
+              // Graphic
               Positioned(
-                right: -40,
+                right: -10,
                 top: -20,
                 bottom: -20,
-                child: Container(
+                child: SizedBox(
                   width: 200,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFF818CF8).withOpacity(0.4), // Indigo 400
-                        const Color(0xFF3730A3).withOpacity(0.6), // Indigo 800
-                        const Color(0xFF0F172A).withOpacity(0.0),
-                      ],
-                      stops: const [0.2, 0.6, 1.0],
-                    ),
-                  ),
                   child: Center(
-                    child: Icon(
-                      Icons.public_rounded,
-                      size: 140,
-                      color: Colors.white.withOpacity(0.15),
+                    child: Image.asset(
+                      'lib/core/images/global_invest.webp',
+                      width: 140,
+                      height: 140,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),
@@ -116,51 +111,7 @@ class MfGlobalInvesting extends StatelessWidget {
           ),
           ),
         ),
-        const SizedBox(height: 16),
-        // Pills
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              _buildPill(context, 'Magnificent 7', isDark: true),
-              const SizedBox(width: 8),
-              _buildPill(context, 'AI'),
-              const SizedBox(width: 8),
-              _buildPill(context, 'Healthcare'),
-              const SizedBox(width: 8),
-              _buildPill(context, 'Japan'),
-              const SizedBox(width: 8),
-              _buildPill(context, 'Europe'),
-            ],
-          ),
-        ),
       ],
-    );
-  }
-
-  Widget _buildPill(BuildContext context, String text, {bool isDark = false}) {
-    return GestureDetector(
-      onTap: () => MfFundProfileScreen.showModal(context, text),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isDark ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0),
-        ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontFamily: 'DMSans',
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: isDark ? Colors.white : const Color(0xFF475569),
-        ),
-      ),
-      ),
     );
   }
 }

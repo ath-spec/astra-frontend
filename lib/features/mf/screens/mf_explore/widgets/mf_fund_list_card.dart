@@ -64,7 +64,7 @@ class MfFundListCard extends StatelessWidget {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 4.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -97,11 +97,7 @@ class MfFundListCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 16),
                     // Simulated 3D Graphic
-                    SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: cardGraphic,
-                    ),
+                    cardGraphic,
                   ],
                 ),
               ),
