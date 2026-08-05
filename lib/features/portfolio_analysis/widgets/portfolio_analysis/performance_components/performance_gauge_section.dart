@@ -188,15 +188,26 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                 color: Color(0xFF94A3B8),
               ),
               children: [
-                TextSpan(text: 'Your portfolio is earning '),
-                TextSpan(
+                const WidgetSpan(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 4.0),
+                    child: Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 12,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                  alignment: PlaceholderAlignment.middle,
+                ),
+                const TextSpan(text: 'Your portfolio is earning '),
+                const TextSpan(
                   text: 'well above what most Very Aggressive investors see. ',
                   style: TextStyle(
                     color: Color(0xFF0F172A),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                TextSpan(
+                const TextSpan(
                   text: 'Your investment decisions are clearly paying off.',
                 ),
               ],

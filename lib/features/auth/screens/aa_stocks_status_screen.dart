@@ -16,7 +16,7 @@ class AaStocksStatusScreen extends ConsumerStatefulWidget {
 
 class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
     with SingleTickerProviderStateMixin {
-  bool _hasDemat = false; // Default matching Image 3
+  bool _hasDemat = true; // Happy case: demat is fetched
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
@@ -179,7 +179,7 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          _hasDemat ? 'Demat accounts linked!' : 'No Demat found',
+                          _hasDemat ? 'Demat connected' : 'No Demat found',
                           style: const TextStyle(
                             fontFamily: 'SpaceGrotesk',
                             fontSize: 28,

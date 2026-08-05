@@ -182,9 +182,20 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
                 color: Color(0xFF64748B),
               ),
               children: [
-                TextSpan(text: 'You have almost no stable, low-risk assets in your portfolio. ',
+                const WidgetSpan(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 4.0),
+                    child: Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 12,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                  alignment: PlaceholderAlignment.middle,
+                ),
+                const TextSpan(text: 'You have almost no stable, low-risk assets in your portfolio. ',
                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),),
-                TextSpan(
+                const TextSpan(
                   text: 'You\'re fully riding market momentum, with all your wealth geared towards growth.',
                   style: TextStyle(color: Color(0xFF94A3B8)),
                 ),

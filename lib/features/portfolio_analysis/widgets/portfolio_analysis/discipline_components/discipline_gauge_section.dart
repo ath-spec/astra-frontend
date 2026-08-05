@@ -178,10 +178,21 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
                 color: Color(0xFF64748B),
               ),
               children: [
-                TextSpan(
-                  text: 'Small withdrawals and some active months, but ',
+                const WidgetSpan(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 4.0),
+                    child: Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 12,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                  alignment: PlaceholderAlignment.middle,
                 ),
-                TextSpan(
+                const TextSpan(
+                  text: 'Small withdrawals and some active months, ',
+                ),
+                const TextSpan(
                   text:
                       'but the habit needs to show up more consistently to move the score higher.',
                   style: TextStyle(

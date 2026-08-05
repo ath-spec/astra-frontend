@@ -16,6 +16,7 @@ import '../widgets/home_portfolio_analysis.dart';
 import 'package:astra_frontend/features/home/widgets/home_portfolio_growth.dart';
 import 'package:astra_frontend/features/home/widgets/budget_section.dart';
 import 'package:astra_frontend/features/home/widgets/recurring_section.dart';
+import '../widgets/home_wealth_feed.dart';
 
 /// Screen 4: New Home Screen / Dashboard (Image 4) in clean light mode.
 /// Displays user wealth header, portfolio chart card, asset status list (with FETCHING status),
@@ -31,6 +32,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  final ScrollController _scrollController = ScrollController();
+  bool _showFab = false;
 
   @override
   void initState() {
@@ -43,12 +46,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _pulseAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 500 && !_showFab) {
+        setState(() => _showFab = true);
+      } else if (_scrollController.offset <= 500 && _showFab) {
+        setState(() => _showFab = false);
+      }
+    });
   }
 
   @override
   void dispose() {
     _pulseController.stop();
     _pulseController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -65,11 +77,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
+      floatingActionButton: AnimatedScale(
+        scale: _showFab ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 250),
+        curve: const Cubic(0.23, 1, 0.32, 1),
+        child: AnimatedOpacity(
+          opacity: _showFab ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 250),
+          curve: const Cubic(0.23, 1, 0.32, 1),
+          child: FloatingActionButton(
+            onPressed: () {
+              _scrollController.animateTo(
+                0,
+                duration: const Duration(milliseconds: 500),
+                curve: const Cubic(0.23, 1, 0.32, 1),
+              );
+            },
+            backgroundColor: const Color(0xFF0F172A),
+            elevation: 8,
+            child: const Icon(Icons.arrow_upward_rounded, color: Colors.white),
+          ),
+        ),
+      ),
       body: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800, minHeight: double.infinity), // Max width for tablet/web, full height
           child: CustomScrollView(
+            controller: _scrollController,
             slivers: [
           SliverPersistentHeader(
             pinned: true,
@@ -147,10 +182,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             child: BudgetSection(),
           ),
 
+          const SliverToBoxAdapter(
+            child: RecurringSection(),
+          ),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 24),
+          ),
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(bottom: bottomPadding + 100),
-              child: const RecurringSection(),
+              child: const HomeWealthFeed(),
             ),
           ),
         ],

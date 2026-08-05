@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
+import '../../asset_connection/providers/asset_connection_provider.dart';
 
 /// Screen matching Image 2 for Account Aggregator Stocks data fetching state.
 /// Displays animated loader, skeleton cards, and automatically transitions to status UI.
@@ -20,7 +21,7 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
   bool _showStatus = false;
-  final bool _hasDemat = false; // By default no demat
+  final bool _hasDemat = true; // Happy case: demat is fetched
 
   @override
   void initState() {
@@ -40,6 +41,8 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
         });
         _timer = Timer(const Duration(milliseconds: 2000), () {
           if (mounted) {
+            // Happy path: Set stocks as connected before moving to banks searching
+            ref.read(assetConnectionProvider.notifier).connectFoundStocks();
             context.pushReplacement('/banks-searching');
           }
         });
@@ -195,7 +198,7 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
                                     children: [
                                       Text(
                                         _hasDemat
-                                            ? 'Demat accounts linked!'
+                                            ? 'Demat connected'
                                             : 'No Demat found',
                                         style: const TextStyle(
                                           fontFamily: 'DMSans',

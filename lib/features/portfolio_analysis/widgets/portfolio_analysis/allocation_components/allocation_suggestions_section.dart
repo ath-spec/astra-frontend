@@ -33,8 +33,14 @@ class AllocationSuggestionsSection extends StatelessWidget {
           
           Row(
             children: const [
+              Icon(
+                Icons.auto_awesome_rounded,
+                size: 14,
+                color: Color(0xFF94A3B8),
+              ),
+              SizedBox(width: 4),
               Text(
-                'INSIGHTS',
+                'INSIGHTS BY PORTFOLIO AGENT',
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,

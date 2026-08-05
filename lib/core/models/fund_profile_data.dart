@@ -25,6 +25,9 @@ class FundProfileData {
   final String overviewText;
   
   final AssetAllocationData? assetAllocation;
+  
+  final FundInsightsData? insightsData;
+  final InstrumentDeepDiveData? instrumentData;
 
   const FundProfileData({
     required this.id,
@@ -44,5 +47,41 @@ class FundProfileData {
     required this.sipReturnPercentage,
     required this.overviewText,
     this.assetAllocation,
+    this.insightsData,
+    this.instrumentData,
+  });
+}
+
+class FundInsightsData {
+  final bool isPositiveImpact;
+  final String whyGetFund;
+  final String suitableFor;
+  final String avoidIf;
+  final String impactText;
+  final List<double>? currentValues;
+  final List<double>? projectedValues;
+
+  const FundInsightsData({
+    required this.isPositiveImpact,
+    required this.whyGetFund,
+    required this.suitableFor,
+    required this.avoidIf,
+    required this.impactText,
+    this.currentValues,
+    this.projectedValues,
+  });
+}
+
+class InstrumentDeepDiveData {
+  final String primaryRole;
+  final String secondaryRole;
+  final String strengths;
+  final String tradeOffs;
+
+  const InstrumentDeepDiveData({
+    required this.primaryRole,
+    required this.secondaryRole,
+    required this.strengths,
+    required this.tradeOffs,
   });
 }

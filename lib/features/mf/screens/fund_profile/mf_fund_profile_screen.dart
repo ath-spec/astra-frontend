@@ -6,6 +6,8 @@ import '../mf_explore/data/mf_mock_fund_data.dart';
 import 'widgets/mf_fund_chart_widget.dart';
 import 'widgets/mf_fund_overview_card.dart';
 import 'widgets/mf_fund_fees_taxes.dart';
+import 'widgets/mf_fund_insights.dart';
+import 'widgets/mf_instrument_card.dart';
 import 'widgets/mf_fund_return_ratios.dart';
 import 'widgets/mf_fund_asset_allocation.dart';
 import 'dart:math' as math;
@@ -105,6 +107,26 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                         // Fund Overview
                         MfFundOverviewCard(data: processedData),
                         
+                        const SizedBox(height: 16),
+                        MfInstrumentCard(
+                          primaryRole: processedData.instrumentData?.primaryRole ?? 'Grows your wealth steadily over many years.',
+                          secondaryRole: processedData.instrumentData?.secondaryRole ?? 'Keeps your money relatively safe when the market gets bumpy, thanks to its focus on giant, established companies.',
+                          strengths: processedData.instrumentData?.strengths ?? 'It usually beats the market average, costs very little in fees, and you can withdraw your money easily when needed.',
+                          tradeOffs: processedData.instrumentData?.tradeOffs ?? 'Because it plays it safe with big companies, it won\'t skyrocket as fast as smaller, riskier funds during a booming market. It also doesn\'t pay out much regular income.',
+                        ),
+                        
+                        const SizedBox(height: 16),
+                        MfFundInsights(
+                          isPositiveImpact: processedData.insightsData?.isPositiveImpact ?? true,
+                          whyGetFund: processedData.insightsData?.whyGetFund ?? 'To gain aggressive exposure to top 100 blue-chip companies with relatively lower volatility than mid-caps.',
+                          suitableFor: processedData.insightsData?.suitableFor ?? 'Investors looking for a stable core equity holding with a 5+ year time horizon.',
+                          avoidIf: processedData.insightsData?.avoidIf ?? 'Those needing short-term liquidity or investors who already have high overlap in Large Cap indexes.',
+                          impactText: processedData.insightsData?.impactText ?? 'It will significantly strengthen your core growth engine while improving overall capital preservation during market dips.\n\nIt also aligns perfectly with your stated goal of "Buying a House in 5 Years".',
+                          currentValues: processedData.insightsData?.currentValues,
+                          projectedValues: processedData.insightsData?.projectedValues,
+                        ),
+                        
+                        const SizedBox(height: 16),
                         const MfFundFeesTaxes(),
                         const MfFundReturnRatios(),
                         MfFundAssetAllocation(data: processedData.assetAllocation ?? MfMockFundData.mockAssetAllocation),
