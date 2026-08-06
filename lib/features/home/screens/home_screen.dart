@@ -202,7 +202,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(bottom: bottomPadding + 100),
+              padding: EdgeInsets.only(bottom: bottomPadding + MediaQuery.of(context).size.height * 0.7),
               child: HomeWealthFeed(
                 scrollController: _scrollController,
                 isSecondCardStacked: _isSecondCardStacked,

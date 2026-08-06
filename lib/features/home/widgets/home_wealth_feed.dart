@@ -112,44 +112,46 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
 
   @override
   Widget build(BuildContext context) {
+    double scale = (MediaQuery.of(context).size.width / 393.0).clamp(0.8, 1.2);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Header
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: 24.0 * scale),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Your wealth feed',
                 style: TextStyle(
                   fontFamily: 'SpaceGrotesk',
-                  fontSize: 18,
+                  fontSize: 18 * scale,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.5,
-                  color: Color(0xFF0F172A),
+                  color: const Color(0xFF0F172A),
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8 * scale),
               Row(
                 children: [
                   Container(
-                    width: 8,
-                    height: 8,
+                    width: 8 * scale,
+                    height: 8 * scale,
                     decoration: const BoxDecoration(
                       color: Color(0xFF22C55E), // Green
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8 * scale),
                   Text(
                     'Last updated: Today, $_currentTimeIst',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12,
+                      fontSize: 10 * scale,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF64748B),
+                      color: const Color(0xFF64748B),
                     ),
                   ),
                 ],
@@ -157,15 +159,15 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
             ],
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24 * scale),
         
         // Feed
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: 24.0 * scale),
           itemCount: _newsItems.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 24),
+          separatorBuilder: (context, index) => SizedBox(height: 24 * scale),
           itemBuilder: (context, index) {
             final item = _newsItems[index];
             return _WealthFeedCard(
@@ -213,11 +215,48 @@ class _WealthFeedCard extends StatefulWidget {
 class _WealthFeedCardState extends State<_WealthFeedCard> {
   final GlobalKey _wrapperKey = GlobalKey();
   bool _isPressed = false;
+  double? _absoluteY;
+  double? _cardHeight;
+  double _currentOverlap = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateLayoutInfo();
+    });
+  }
+
+  void _updateLayoutInfo() {
+    if (!mounted) return;
+    if (_wrapperKey.currentContext != null) {
+      final box = _wrapperKey.currentContext!.findRenderObject() as RenderBox?;
+      if (box != null && box.hasSize) {
+        final double globalY = box.localToGlobal(Offset.zero).dy;
+        final newAbsoluteY = globalY + widget.scrollController.offset;
+        final newHeight = box.size.height;
+        
+        // Only update if significant layout change to avoid rebuild loops
+        if (_absoluteY == null || (_absoluteY! - newAbsoluteY).abs() > 2.0 || _cardHeight != newHeight) {
+          setState(() {
+            _absoluteY = newAbsoluteY;
+            _cardHeight = newHeight;
+          });
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Keep layout metrics updated as long as we aren't pinned, handles image loading
+      if (mounted && _currentOverlap < 10.0) _updateLayoutInfo();
+    });
+
+    double scale = (MediaQuery.of(context).size.width / 393.0).clamp(0.8, 1.2);
     final topSafeArea = MediaQuery.of(context).padding.top;
-    final double pinOffset = topSafeArea + 90.0 + (widget.index * 4.0); // Slight stagger for stacked cards
+    final double pinOffset = topSafeArea + 90.0; // No stagger, stack perfectly on top
 
     return SizedBox(
       key: _wrapperKey,
@@ -228,12 +267,22 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
           double scale = 1.0;
           double opacity = 1.0;
 
-          if (_wrapperKey.currentContext != null) {
-            final RenderBox box = _wrapperKey.currentContext!.findRenderObject() as RenderBox;
-            final double yPos = box.localToGlobal(Offset.zero).dy;
+          if (_wrapperKey.currentContext != null && _absoluteY != null && _cardHeight != null) {
+            // Calculate smooth Y position based purely on the controller's offset
+            final double yPos = _absoluteY! - widget.scrollController.offset;
             
-            overlap = pinOffset - yPos;
+            double overlap = pinOffset - yPos;
             if (overlap < 0) overlap = 0.0; // Not pinned yet
+            
+            _currentOverlap = overlap; // Cache for post frame callback
+            
+            // The next card arrives when overlap equals this card's height + the 24px separator
+            final double distanceToNextCard = (_cardHeight! + 24.0 * scale) - overlap;
+            
+            // Fade out the current card ONLY when the next one is right about to cover it
+            if (distanceToNextCard < 60.0) {
+              opacity = (distanceToNextCard / 60.0).clamp(0.0, 1.0);
+            }
             
             // Notify if this is the second card
             if (widget.index == 1 && widget.isSecondCardStacked != null) {
@@ -246,18 +295,10 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                 });
               }
             }
-            
-            // Emil's design: scale down slightly as it goes under
-            scale = 1.0 - (overlap * 0.0003);
-            scale = scale.clamp(0.90, 1.0);
-            
-            // Fade out as it gets pushed deep
-            opacity = 1.0 - (overlap * 0.0015);
-            opacity = opacity.clamp(0.0, 1.0);
           }
 
           return Transform(
-            transform: Matrix4.translationValues(0, overlap, 0)..scale(scale, scale),
+            transform: Matrix4.translationValues(0, _currentOverlap, 0),
             alignment: Alignment.topCenter,
             child: Opacity(
               opacity: opacity,
@@ -271,24 +312,26 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
   }
 
   Widget _buildCardContent() {
+    double scale = (MediaQuery.of(context).size.width / 393.0).clamp(0.8, 1.2);
+
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) => setState(() => _isPressed = false),
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(
         scale: _isPressed ? 0.98 : 1.0,
-        duration: const Duration(milliseconds: 160),
-        curve: const Cubic(0.23, 1, 0.32, 1), // Strong ease-out (Emil)
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOut,
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(4), // As specifically requested by user
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            borderRadius: BorderRadius.circular(4 * scale),
+            border: Border.all(color: const Color(0xFFF1F5F9)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 10,
+                color: const Color(0xFF0F172A).withOpacity(0.04),
                 offset: const Offset(0, 4),
+                blurRadius: 16 * scale,
               ),
             ],
           ),
@@ -297,10 +340,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
             children: [
               // Image Section
               ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(4),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(4 * scale)),
                 child: AspectRatio(
                   aspectRatio: 16 / 10,
                   child: Image.asset(
@@ -309,10 +349,9 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                   ),
                 ),
               ),
-              
-              // Content Section
+               // Content Section
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0 * scale),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -321,33 +360,26 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       children: widget.tags.map((tag) {
                         final isTrending = tag.toLowerCase().contains('trending') || tag.toLowerCase().contains('hot');
                         return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: EdgeInsets.only(right: 8.0 * scale),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: EdgeInsets.symmetric(horizontal: 8 * scale, vertical: 4 * scale),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(4 * scale),
                               border: Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 if (isTrending) ...[
-                                  Container(
-                                    width: 6,
-                                    height: 6,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFEF4444), // Red
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
+                                  Icon(Icons.local_fire_department_rounded, size: 12 * scale, color: const Color(0xFFEF4444)),
+                                  SizedBox(width: 4 * scale),
                                 ],
                                 Text(
                                   tag.replaceAll('•', '').trim(),
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 8,
+                                    fontSize: 10 * scale,
                                     fontWeight: FontWeight.w600,
                                     color: isTrending ? const Color(0xFFEF4444) : const Color(0xFF64748B),
                                   ),
@@ -358,77 +390,81 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                         );
                       }).toList(),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12 * scale),
                     
                     // Title
                     Text(
                       widget.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14,
+                        fontSize: 14 * scale,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF0F172A),
+                        color: const Color(0xFF0F172A),
                         height: 1.3,
-                        letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8 * scale),
                     
                     // Description
                     Text(
                       widget.description,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10,
+                        fontSize: 10 * scale,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFF475569),
+                        color: const Color(0xFF475569),
                         height: 1.5,
                       ),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16 * scale),
                     
-                    // Source
-                    Text(
-                      'Source: ${widget.source}',
-                      style: const TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF94A3B8),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    
-                    // Read More Button
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Text(
-                            'Read summary',
-                            style: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF0F172A),
-                            ),
+                    // Footer (Source and Read More)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Source: ${widget.source}',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 10 * scale,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF94A3B8),
                           ),
-                          SizedBox(width: 4),
-                          Icon(
-                            Icons.chevron_right_rounded,
-                            size: 12,
-                            color: Color(0xFF0F172A),
+                        ),
+                        
+                        // Read More Button
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 8 * scale),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20 * scale),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
                           ),
-                        ],
-                      ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Read summary',
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 10 * scale,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF0F172A),
+                                ),
+                              ),
+                              SizedBox(width: 4 * scale),
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                size: 16 * scale,
+                                color: const Color(0xFF0F172A),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
