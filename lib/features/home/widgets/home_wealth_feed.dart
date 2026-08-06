@@ -3,7 +3,10 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 
 class HomeWealthFeed extends StatefulWidget {
-  const HomeWealthFeed({super.key});
+  final ScrollController scrollController;
+  final ValueNotifier<bool>? isSecondCardStacked;
+
+  const HomeWealthFeed({super.key, required this.scrollController, this.isSecondCardStacked});
 
   @override
   State<HomeWealthFeed> createState() => _HomeWealthFeedState();
@@ -36,70 +39,70 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
 
   final List<Map<String, dynamic>> _newsItems = [
     {
-      'image': 'lib/core/images/budget_analysis.webp',
+      'image': 'lib/core/images/no_recurring_bg.webp',
       'tags': ['Top News', '• Trending'],
       'title': 'Income Tax Department\'s NUDGE drive leads to 1.25 crore updated ITRs',
       'description': 'The CBDT\'s technology-driven NUDGE campaign prompted 1.25 crore taxpayers to revise or update their ITRs over FY25.',
       'source': 'LiveMint',
     },
     {
-      'image': 'lib/core/images/growth_card.webp',
+      'image': 'lib/core/images/why_budget.webp',
       'tags': ['News from our experts'],
       'title': 'A 3 year investment break turned ₹17 crore into ₹12.1 crore',
       'description': 'Two investors start with ₹1 crore each, both compounding at 12% for 25 years. The first stays uninterrupted and ends with ₹17 crore.',
       'source': 'Economic Times',
     },
     {
-      'image': 'lib/core/images/ai.webp',
+      'image': 'lib/core/images/xplore_pillars.webp',
       'tags': ['Tech', '• Hot'],
       'title': 'AI Stocks Rally: Are we in a bubble or a new era?',
       'description': 'Global tech funds see massive inflows as semiconductor and AI software companies post record-breaking quarterly guidance.',
       'source': 'MoneyControl',
     },
     {
-      'image': 'lib/core/images/safe_investments.webp',
+      'image': 'lib/core/images/gold.webp',
       'tags': ['Bonds', 'Alert'],
       'title': 'RBI holds repo rate steady at 6.5%',
       'description': 'The Monetary Policy Committee has decided to keep the repo rate unchanged for the sixth consecutive meeting, focusing on inflation.',
       'source': 'Bloomberg Quint',
     },
     {
-      'image': 'lib/core/images/mag_7.webp',
+      'image': 'lib/core/images/silver.webp',
       'tags': ['Global Investing'],
       'title': 'Magnificent 7 stocks drive 80% of S&P 500 returns',
       'description': 'Tech giants continue their dominant run, leaving traditional value stocks trailing behind in the first half of the year.',
       'source': 'CNBC TV18',
     },
     {
-      'image': 'lib/core/images/realestate.webp',
+      'image': 'lib/core/images/budget_loading.webp',
       'tags': ['Real Estate'],
       'title': 'Commercial real estate sees 15% bump in tier 2 cities',
       'description': 'As companies push for hybrid models, tier 2 cities are emerging as the new hotspots for commercial real estate investments.',
       'source': 'LiveMint',
     },
     {
-      'image': 'lib/core/images/gold.webp',
+      'image': 'lib/core/images/no_recurring_bg.webp',
       'tags': ['Commodities', '• Trending'],
       'title': 'Gold hits new all-time high amid geopolitical tensions',
       'description': 'Safe-haven demand surges as investors seek shelter from market volatility, pushing gold prices to unprecedented levels.',
       'source': 'Reuters',
     },
     {
-      'image': 'lib/core/images/silver.webp',
+      'image': 'lib/core/images/why_budget.webp',
       'tags': ['Commodities'],
       'title': 'Silver follows gold\'s rally, breaks key resistance',
       'description': 'Industrial demand coupled with precious metal momentum creates a perfect storm for silver prices this quarter.',
       'source': 'ET Markets',
     },
     {
-      'image': 'lib/core/images/invits.webp',
+      'image': 'lib/core/images/xplore_pillars.webp',
       'tags': ['Infrastructure'],
       'title': 'New INVIT guidelines to boost retail participation',
       'description': 'SEBI\'s latest circular reduces minimum investment limits, making Infrastructure Investment Trusts more accessible.',
       'source': 'Business Standard',
     },
     {
-      'image': 'lib/core/images/new_budget.webp',
+      'image': 'lib/core/images/gold.webp',
       'tags': ['Taxation', 'Update'],
       'title': 'New tax regime sees 60% adoption among millennials',
       'description': 'Simplified tax structures and reduced surcharge rates make the new tax regime the preferred choice for young earners.',
@@ -114,18 +117,18 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
       children: [
         // Header
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
                 'Your wealth feed',
                 style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -1.0,
-                  color: Color(0xFF1E1E1E),
+                  fontFamily: 'SpaceGrotesk',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.5,
+                  color: Color(0xFF0F172A),
                 ),
               ),
               const SizedBox(height: 8),
@@ -160,7 +163,7 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
           itemCount: _newsItems.length,
           separatorBuilder: (context, index) => const SizedBox(height: 24),
           itemBuilder: (context, index) {
@@ -171,6 +174,9 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
               title: item['title'],
               description: item['description'],
               source: item['source'],
+              scrollController: widget.scrollController,
+              index: index,
+              isSecondCardStacked: widget.isSecondCardStacked,
             );
           },
         ),
@@ -185,6 +191,9 @@ class _WealthFeedCard extends StatefulWidget {
   final String title;
   final String description;
   final String source;
+  final ScrollController scrollController;
+  final int index;
+  final ValueNotifier<bool>? isSecondCardStacked;
 
   const _WealthFeedCard({
     required this.imagePath,
@@ -192,6 +201,9 @@ class _WealthFeedCard extends StatefulWidget {
     required this.title,
     required this.description,
     required this.source,
+    required this.scrollController,
+    required this.index,
+    this.isSecondCardStacked,
   });
 
   @override
@@ -199,10 +211,66 @@ class _WealthFeedCard extends StatefulWidget {
 }
 
 class _WealthFeedCardState extends State<_WealthFeedCard> {
+  final GlobalKey _wrapperKey = GlobalKey();
   bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
+    final topSafeArea = MediaQuery.of(context).padding.top;
+    final double pinOffset = topSafeArea + 90.0 + (widget.index * 4.0); // Slight stagger for stacked cards
+
+    return SizedBox(
+      key: _wrapperKey,
+      child: AnimatedBuilder(
+        animation: widget.scrollController,
+        builder: (context, child) {
+          double overlap = 0.0;
+          double scale = 1.0;
+          double opacity = 1.0;
+
+          if (_wrapperKey.currentContext != null) {
+            final RenderBox box = _wrapperKey.currentContext!.findRenderObject() as RenderBox;
+            final double yPos = box.localToGlobal(Offset.zero).dy;
+            
+            overlap = pinOffset - yPos;
+            if (overlap < 0) overlap = 0.0; // Not pinned yet
+            
+            // Notify if this is the second card
+            if (widget.index == 1 && widget.isSecondCardStacked != null) {
+              final bool currentlyStacked = overlap > 0;
+              if (widget.isSecondCardStacked!.value != currentlyStacked) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    widget.isSecondCardStacked!.value = currentlyStacked;
+                  }
+                });
+              }
+            }
+            
+            // Emil's design: scale down slightly as it goes under
+            scale = 1.0 - (overlap * 0.0003);
+            scale = scale.clamp(0.90, 1.0);
+            
+            // Fade out as it gets pushed deep
+            opacity = 1.0 - (overlap * 0.0015);
+            opacity = opacity.clamp(0.0, 1.0);
+          }
+
+          return Transform(
+            transform: Matrix4.translationValues(0, overlap, 0)..scale(scale, scale),
+            alignment: Alignment.topCenter,
+            child: Opacity(
+              opacity: opacity,
+              child: child,
+            ),
+          );
+        },
+        child: _buildCardContent(),
+      ),
+    );
+  }
+
+  Widget _buildCardContent() {
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) => setState(() => _isPressed = false),
@@ -279,7 +347,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                                   tag.replaceAll('•', '').trim(),
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 10,
+                                    fontSize: 8,
                                     fontWeight: FontWeight.w600,
                                     color: isTrending ? const Color(0xFFEF4444) : const Color(0xFF64748B),
                                   ),
@@ -297,7 +365,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       widget.title,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF0F172A),
                         height: 1.3,
@@ -311,7 +379,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       widget.description,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: Color(0xFF475569),
                         height: 1.5,
@@ -326,7 +394,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       'Source: ${widget.source}',
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12,
+                        fontSize: 10,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF94A3B8),
                       ),
@@ -335,7 +403,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                     
                     // Read More Button
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
@@ -348,7 +416,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                             'Read summary',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 12,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF0F172A),
                             ),
@@ -356,7 +424,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                           SizedBox(width: 4),
                           Icon(
                             Icons.chevron_right_rounded,
-                            size: 16,
+                            size: 12,
                             color: Color(0xFF0F172A),
                           ),
                         ],

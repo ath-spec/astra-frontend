@@ -20,9 +20,9 @@ class BudgetAnalyzingScreen extends ConsumerStatefulWidget {
 class _BudgetAnalyzingScreenState extends ConsumerState<BudgetAnalyzingScreen> {
   int _textIndex = 0;
   final List<String> _loadingTexts = [
-    "Analyzing your cash flow...",
-    "Reviewing your spending habits...",
-    "Generating a plan...",
+    "Agent is analyzing your cash flow...",
+    "Agent is reviewing your spending habits...",
+    "Agent is generating a plan...",
   ];
 
   Timer? _textTimer;

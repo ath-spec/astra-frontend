@@ -15,6 +15,9 @@ import 'package:intl/intl.dart';
 import 'widgets/mf_fund_details_house.dart';
 import 'widgets/mf_amount_scroller.dart';
 import 'widgets/mf_bookmark_button.dart';
+import '../holdings/widgets/holding_item.dart';
+import '../holdings/widgets/holding_instrument_card.dart';
+import '../../../fund_profile/widgets/holding_fund_insights.dart';
 
 
 class MfFundProfileScreen extends StatefulWidget {
@@ -43,6 +46,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final FundProfileData baseData = MfMockFundData.getFundData(widget.fundId);
+    final bool hasHoldings = widget.fundId == '1';
     
     // Process data based on selected period
     final processedData = _processDataForPeriod(baseData, _selectedPeriod);
@@ -108,23 +112,43 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                         MfFundOverviewCard(data: processedData),
                         
                         const SizedBox(height: 16),
-                        MfInstrumentCard(
-                          primaryRole: processedData.instrumentData?.primaryRole ?? 'Grows your wealth steadily over many years.',
-                          secondaryRole: processedData.instrumentData?.secondaryRole ?? 'Keeps your money relatively safe when the market gets bumpy, thanks to its focus on giant, established companies.',
-                          strengths: processedData.instrumentData?.strengths ?? 'It usually beats the market average, costs very little in fees, and you can withdraw your money easily when needed.',
-                          tradeOffs: processedData.instrumentData?.tradeOffs ?? 'Because it plays it safe with big companies, it won\'t skyrocket as fast as smaller, riskier funds during a booming market. It also doesn\'t pay out much regular income.',
-                        ),
+                        hasHoldings 
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                child: HoldingInstrumentCard(
+                                  data: HoldingDeepDiveData(
+                                    primaryRole: 'Core Growth',
+                                    secondaryRole: 'Capital Preservation',
+                                    contribution: 'Provides stability and consistent growth by investing in established, large-cap companies. Acts as an anchor for the equity portion of your portfolio.',
+                                  ),
+                                ),
+                              )
+                            : MfInstrumentCard(
+                                primaryRole: processedData.instrumentData?.primaryRole ?? 'Grows your wealth steadily over many years.',
+                                secondaryRole: processedData.instrumentData?.secondaryRole ?? 'Keeps your money relatively safe when the market gets bumpy, thanks to its focus on giant, established companies.',
+                                strengths: processedData.instrumentData?.strengths ?? 'It usually beats the market average, costs very little in fees, and you can withdraw your money easily when needed.',
+                                tradeOffs: processedData.instrumentData?.tradeOffs ?? 'Because it plays it safe with big companies, it won\'t skyrocket as fast as smaller, riskier funds during a booming market. It also doesn\'t pay out much regular income.',
+                              ),
                         
                         const SizedBox(height: 16),
-                        MfFundInsights(
-                          isPositiveImpact: processedData.insightsData?.isPositiveImpact ?? true,
-                          whyGetFund: processedData.insightsData?.whyGetFund ?? 'To gain aggressive exposure to top 100 blue-chip companies with relatively lower volatility than mid-caps.',
-                          suitableFor: processedData.insightsData?.suitableFor ?? 'Investors looking for a stable core equity holding with a 5+ year time horizon.',
-                          avoidIf: processedData.insightsData?.avoidIf ?? 'Those needing short-term liquidity or investors who already have high overlap in Large Cap indexes.',
-                          impactText: processedData.insightsData?.impactText ?? 'It will significantly strengthen your core growth engine while improving overall capital preservation during market dips.\n\nIt also aligns perfectly with your stated goal of "Buying a House in 5 Years".',
-                          currentValues: processedData.insightsData?.currentValues,
-                          projectedValues: processedData.insightsData?.projectedValues,
-                        ),
+                        hasHoldings
+                            ? const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                child: HoldingFundInsights(
+                                  isPositiveImpact: true,
+                                  whatItDoesRightNow: 'Currently provides a solid foundation of large-cap equity exposure, balancing out the higher volatility of your mid and small-cap holdings.',
+                                  whatBuyingMoreWillDo: 'Adding more to this fund will pull your overall portfolio slightly towards the "Capital Preservation" and "Income" vectors, reducing overall portfolio volatility while maintaining steady growth.',
+                                ),
+                              )
+                            : MfFundInsights(
+                                isPositiveImpact: processedData.insightsData?.isPositiveImpact ?? true,
+                                whyGetFund: processedData.insightsData?.whyGetFund ?? 'To gain aggressive exposure to top 100 blue-chip companies with relatively lower volatility than mid-caps.',
+                                suitableFor: processedData.insightsData?.suitableFor ?? 'Investors looking for a stable core equity holding with a 5+ year time horizon.',
+                                avoidIf: processedData.insightsData?.avoidIf ?? 'Those needing short-term liquidity or investors who already have high overlap in Large Cap indexes.',
+                                impactText: processedData.insightsData?.impactText ?? 'It will significantly strengthen your core growth engine while improving overall capital preservation during market dips.\n\nIt also aligns perfectly with your stated goal of "Buying a House in 5 Years".',
+                                currentValues: processedData.insightsData?.currentValues,
+                                projectedValues: processedData.insightsData?.projectedValues,
+                              ),
                         
                         const SizedBox(height: 16),
                         const MfFundFeesTaxes(),

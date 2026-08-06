@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../widgets/orders_bottom_sheet.dart';
 import '../widgets/folios_bottom_sheet.dart';
 import '../../mf/screens/fund_profile/mf_fund_profile_screen.dart';
+import '../../mf/screens/holdings/widgets/holding_item.dart';
+import '../../mf/screens/holdings/widgets/holding_instrument_card.dart';
+import '../widgets/holding_fund_insights.dart';
 
 class YourFundProfileScreen extends StatelessWidget {
   const YourFundProfileScreen({super.key});
@@ -38,6 +41,21 @@ class YourFundProfileScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 24 * s),
                           _buildMoreDetailsSection(context, s),
+                          SizedBox(height: 24 * s),
+                          // Injecting mock deep dive data here for demonstration
+                          HoldingInstrumentCard(
+                            data: HoldingDeepDiveData(
+                              primaryRole: 'Core Growth',
+                              secondaryRole: 'Capital Preservation',
+                              contribution: 'Provides stability and consistent growth by investing in established, large-cap companies. Acts as an anchor for the equity portion of your portfolio.',
+                            ),
+                          ),
+                          SizedBox(height: 24 * s),
+                          HoldingFundInsights(
+                            isPositiveImpact: true,
+                            whatItDoesRightNow: 'Currently provides a solid foundation of large-cap equity exposure, balancing out the higher volatility of your mid and small-cap holdings.',
+                            whatBuyingMoreWillDo: 'Adding more to this fund will pull your overall portfolio slightly towards the "Capital Preservation" and "Income" vectors, reducing overall portfolio volatility while maintaining steady growth.',
+                          ),
                           SizedBox(height: 120 * s), // Padding for sticky bottom CTA
                         ],
                       ),

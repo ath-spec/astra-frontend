@@ -29,9 +29,9 @@ class BudgetGenerateScreen extends ConsumerStatefulWidget {
 class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
   int _textIndex = 0;
   final List<String> _loadingTexts = [
-    "Saving your preferences...",
-    "Generating final budget plan...",
-    "Setting up budget control center for you...",
+    "Agent is saving your preferences...",
+    "Agent is generating final budget plan...",
+    "Agent is setting up budget control center for you...",
   ];
 
   Timer? _textTimer;

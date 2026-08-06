@@ -33,6 +33,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
   final ScrollController _scrollController = ScrollController();
+  final ValueNotifier<bool> _isSecondCardStacked = ValueNotifier(false);
   bool _showFab = false;
 
   @override
@@ -47,10 +48,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    _scrollController.addListener(() {
-      if (_scrollController.offset > 500 && !_showFab) {
+    _isSecondCardStacked.addListener(() {
+      if (_isSecondCardStacked.value && !_showFab) {
         setState(() => _showFab = true);
-      } else if (_scrollController.offset <= 500 && _showFab) {
+      } else if (!_isSecondCardStacked.value && _showFab) {
         setState(() => _showFab = false);
       }
     });
@@ -61,6 +62,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _pulseController.stop();
     _pulseController.dispose();
     _scrollController.dispose();
+    _isSecondCardStacked.dispose();
     super.dispose();
   }
 
@@ -77,25 +79,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      floatingActionButton: AnimatedScale(
-        scale: _showFab ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 250),
-        curve: const Cubic(0.23, 1, 0.32, 1),
-        child: AnimatedOpacity(
-          opacity: _showFab ? 1.0 : 0.0,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 80.0), // Sit above the navigation bar
+        child: AnimatedScale(
+          scale: _showFab ? 1.0 : 0.0,
           duration: const Duration(milliseconds: 250),
           curve: const Cubic(0.23, 1, 0.32, 1),
-          child: FloatingActionButton(
-            onPressed: () {
-              _scrollController.animateTo(
-                0,
-                duration: const Duration(milliseconds: 500),
-                curve: const Cubic(0.23, 1, 0.32, 1),
-              );
-            },
-            backgroundColor: const Color(0xFF0F172A),
-            elevation: 8,
-            child: const Icon(Icons.arrow_upward_rounded, color: Colors.white),
+          child: AnimatedOpacity(
+            opacity: _showFab ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 250),
+            curve: const Cubic(0.23, 1, 0.32, 1),
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: FloatingActionButton(
+                onPressed: () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: const Cubic(0.23, 1, 0.32, 1),
+                  );
+                },
+                backgroundColor: const Color(0xFF0F172A),
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                child: const Icon(Icons.arrow_upward_rounded, color: Colors.white, size: 20),
+              ),
+            ),
           ),
         ),
       ),
@@ -191,7 +203,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(bottom: bottomPadding + 100),
-              child: const HomeWealthFeed(),
+              child: HomeWealthFeed(
+                scrollController: _scrollController,
+                isSecondCardStacked: _isSecondCardStacked,
+              ),
             ),
           ),
         ],

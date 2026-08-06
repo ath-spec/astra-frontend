@@ -25,9 +25,9 @@ class _BudgetCategoryAnalyzingScreenState
     extends ConsumerState<BudgetCategoryAnalyzingScreen> {
   int _textIndex = 0;
   final List<String> _loadingTexts = [
-    "Reviewing your spending habits...",
-    "Generating a budget plan...",
-    "Generating category budgets...",
+    "Agent is reviewing your spending habits...",
+    "Agent is generating a budget plan...",
+    "Agent is generating category budgets...",
   ];
 
   Timer? _textTimer;

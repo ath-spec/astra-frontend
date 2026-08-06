@@ -19,8 +19,8 @@ class SpiderChartInfoSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(getProportionateScreenWidth(24)),
-          topRight: Radius.circular(getProportionateScreenWidth(24)),
+          topLeft: Radius.circular(getProportionateScreenWidth(4)),
+          topRight: Radius.circular(getProportionateScreenWidth(4)),
         ),
       ),
       padding: EdgeInsets.only(
