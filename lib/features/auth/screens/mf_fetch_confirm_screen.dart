@@ -6,7 +6,8 @@ import '../widgets/link_different_pan_bottom_sheet.dart';
 import '../widgets/mf_central_ogin_bottom_sheet.dart';
 
 class MfFetchConfirmScreen extends ConsumerStatefulWidget {
-  const MfFetchConfirmScreen({super.key});
+  final bool isOnboarding;
+  const MfFetchConfirmScreen({super.key, this.isOnboarding = false});
 
   @override
   ConsumerState<MfFetchConfirmScreen> createState() =>
@@ -314,10 +315,14 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                       ),
                                       GestureDetector(
                                         onTap: () async {
-                                          await showLinkDifferentPanBottomSheet(
+                                          final shouldEdit = await showLinkDifferentPanBottomSheet(
                                             context,
                                           );
-                                          setState(() {});
+                                          if (shouldEdit == true && mounted) {
+                                            context.pushReplacement('/pan', extra: {'isOnboarding': widget.isOnboarding});
+                                          } else {
+                                            setState(() {});
+                                          }
                                         },
                                         behavior: HitTestBehavior.opaque,
                                         child: const Padding(
@@ -391,7 +396,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                       const SizedBox(height: 32),
                       ElevatedButton(
                         onPressed: () {
-                          showMfCentralLoginBottomSheet(context);
+                          showMfCentralLoginBottomSheet(context, isOnboarding: widget.isOnboarding);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0F172A),

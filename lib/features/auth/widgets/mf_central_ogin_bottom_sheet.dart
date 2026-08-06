@@ -3,7 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MfCentralLoginBottomSheet extends StatefulWidget {
-  const MfCentralLoginBottomSheet({super.key});
+  final bool isOnboarding;
+  const MfCentralLoginBottomSheet({super.key, this.isOnboarding = false});
 
   @override
   State<MfCentralLoginBottomSheet> createState() => _MfCentralLoginBottomSheetState();
@@ -34,7 +35,7 @@ class _MfCentralLoginBottomSheetState extends State<MfCentralLoginBottomSheet> {
       if (context.canPop()) {
         context.pop();
       }
-      context.push('/mf-central-otp');
+      context.push('/mf-central-otp', extra: {'isOnboarding': widget.isOnboarding});
     }
   }
 
@@ -42,7 +43,7 @@ class _MfCentralLoginBottomSheetState extends State<MfCentralLoginBottomSheet> {
     if (context.canPop()) {
       context.pop();
     }
-    context.push('/mf-central-otp');
+    context.push('/mf-central-otp', extra: {'isOnboarding': widget.isOnboarding});
   }
 
   @override
@@ -372,7 +373,7 @@ class _MfCentralLoginBottomSheetState extends State<MfCentralLoginBottomSheet> {
   }
 }
 
-void showMfCentralLoginBottomSheet(BuildContext context) {
+void showMfCentralLoginBottomSheet(BuildContext context, {bool isOnboarding = false}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -380,7 +381,7 @@ void showMfCentralLoginBottomSheet(BuildContext context) {
     backgroundColor: Colors.transparent,
     builder: (context) => Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: const MfCentralLoginBottomSheet(),
+      child: MfCentralLoginBottomSheet(isOnboarding: isOnboarding),
     ),
   );
 }

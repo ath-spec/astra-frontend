@@ -88,7 +88,7 @@ class _NameScreenState extends ConsumerState<NameScreen>
   void _submit() {
     if (_isEnabled) {
       ref.read(authProvider.notifier).setPendingName(_nameController.text.trim());
-      context.push('/aa-stocks-otp');
+      context.push('/pan', extra: {'isOnboarding': true});
     }
   }
 

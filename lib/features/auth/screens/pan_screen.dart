@@ -75,7 +75,8 @@ class _PanInputFormatter extends TextInputFormatter {
 /// Validates 10 alphanumeric uppercase characters (5 letters, 4 digits, 1 letter)
 /// and collects Account Aggregator / MF Central consent.
 class PanVerificationScreen extends ConsumerStatefulWidget {
-  const PanVerificationScreen({super.key});
+  final bool isOnboarding;
+  const PanVerificationScreen({super.key, this.isOnboarding = false});
 
   @override
   ConsumerState<PanVerificationScreen> createState() =>
@@ -179,10 +180,14 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
     if (pan.length == 10 && _isConsented) {
       final authNotifier = ref.read(authProvider.notifier);
       authNotifier.setPendingPan(pan);
-      if (context.canPop()) {
-        context.pop();
+      if (widget.isOnboarding) {
+        context.pushReplacement('/mf-fetch-confirm', extra: {'isOnboarding': true});
       } else {
-        context.push('/mf-fetch-confirm');
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.pushReplacement('/mf-fetch-confirm');
+        }
       }
     }
   }

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class MfCentralCasScreen extends StatefulWidget {
-  const MfCentralCasScreen({super.key});
+  final bool isOnboarding;
+  const MfCentralCasScreen({super.key, this.isOnboarding = false});
 
   @override
   State<MfCentralCasScreen> createState() => _MfCentralCasScreenState();
@@ -34,7 +35,7 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
   }
 
   void _onGenerateQr() {
-    context.go('/mf-fetch-loading');
+    context.pushReplacement('/mf-fetch-loading', extra: {'isOnboarding': widget.isOnboarding});
   }
 
   void _toggleSelectAll(bool? value) {

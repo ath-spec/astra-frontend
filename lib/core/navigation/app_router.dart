@@ -62,6 +62,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           loc == '/notification-permission' ||
           loc == '/dob' ||
           loc == '/name' ||
+          loc == '/mf-fetch-confirm' ||
+          loc == '/mf-central-otp' ||
+          loc == '/mf-central-cas' ||
+          loc == '/mf-fetch-loading' ||
+          loc == '/mf-edit-phone' ||
           loc == '/aa-stocks-otp' ||
           loc == '/aa-stocks-fetching' ||
           loc == '/banks-searching' ||
@@ -118,7 +123,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/pan',
-        builder: (context, state) => const PanVerificationScreen(),
+        builder: (context, state) {
+          final isOnboarding = (state.extra as Map<String, dynamic>?)?['isOnboarding'] as bool? ?? false;
+          return PanVerificationScreen(isOnboarding: isOnboarding);
+        },
       ),
       GoRoute(
         path: '/pan-otp',
@@ -130,19 +138,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/mf-fetch-confirm',
-        builder: (context, state) => const MfFetchConfirmScreen(),
+        builder: (context, state) {
+          final isOnboarding = (state.extra as Map<String, dynamic>?)?['isOnboarding'] as bool? ?? false;
+          return MfFetchConfirmScreen(isOnboarding: isOnboarding);
+        },
       ),
       GoRoute(
         path: '/mf-central-otp',
-        builder: (context, state) => const MfCentralOtpScreen(),
+        builder: (context, state) {
+          final isOnboarding = (state.extra as Map<String, dynamic>?)?['isOnboarding'] as bool? ?? false;
+          return MfCentralOtpScreen(isOnboarding: isOnboarding);
+        },
       ),
       GoRoute(
         path: '/mf-central-cas',
-        builder: (context, state) => const MfCentralCasScreen(),
+        builder: (context, state) {
+          final isOnboarding = (state.extra as Map<String, dynamic>?)?['isOnboarding'] as bool? ?? false;
+          return MfCentralCasScreen(isOnboarding: isOnboarding);
+        },
       ),
       GoRoute(
         path: '/mf-fetch-loading',
-        builder: (context, state) => const MfFetchLoadingScreen(),
+        builder: (context, state) {
+          final isOnboarding = (state.extra as Map<String, dynamic>?)?['isOnboarding'] as bool? ?? false;
+          return MfFetchLoadingScreen(isOnboarding: isOnboarding);
+        },
       ),
       GoRoute(
         path: '/mf-edit-phone',
@@ -162,11 +182,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/aa-stocks-otp',
-        builder: (context, state) => const AaStocksOtpScreen(),
+        builder: (context, state) {
+          final isOnboarding = (state.extra as Map<String, dynamic>?)?['isOnboarding'] as bool? ?? false;
+          return AaStocksOtpScreen(isOnboarding: isOnboarding);
+        },
       ),
       GoRoute(
         path: '/aa-stocks-fetching',
-        builder: (context, state) => const AaStocksFetchingScreen(),
+        builder: (context, state) {
+          final isOnboarding = (state.extra as Map<String, dynamic>?)?['isOnboarding'] as bool? ?? false;
+          return AaStocksFetchingScreen(isOnboarding: isOnboarding);
+        },
       ),
       GoRoute(
         path: '/banks-searching',

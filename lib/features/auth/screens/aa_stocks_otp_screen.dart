@@ -9,7 +9,8 @@ import '../widgets/edit_number_overlay.dart';
 /// Screen matching Image 0 & Image 1 for Account Aggregator Stocks OTP verification.
 /// Features 6-digit OTP input with zero IME cursor positioning bugs and an SMS consent modal.
 class AaStocksOtpScreen extends ConsumerStatefulWidget {
-  const AaStocksOtpScreen({super.key});
+  final bool isOnboarding;
+  const AaStocksOtpScreen({super.key, this.isOnboarding = false});
 
   @override
   ConsumerState<AaStocksOtpScreen> createState() => _AaStocksOtpScreenState();
@@ -77,7 +78,7 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
 
   void _proceedToNext() {
     ref.read(authProvider.notifier).verifyAccountAggregator();
-    context.push('/aa-stocks-fetching');
+    context.push('/aa-stocks-fetching', extra: {'isOnboarding': widget.isOnboarding});
   }
 
   Widget _buildDashedDivider() {

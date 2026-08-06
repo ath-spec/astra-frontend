@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class MfCentralOtpScreen extends StatefulWidget {
-  const MfCentralOtpScreen({super.key});
+  final bool isOnboarding;
+  const MfCentralOtpScreen({super.key, this.isOnboarding = false});
 
   @override
   State<MfCentralOtpScreen> createState() => _MfCentralOtpScreenState();
@@ -44,7 +45,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
   }
 
   void _onAuthenticate() {
-    context.pushReplacement('/mf-central-cas');
+    context.pushReplacement('/mf-central-cas', extra: {'isOnboarding': widget.isOnboarding});
   }
 
   Widget _buildSecurityListItem({required IconData icon, required Color iconColor, required String text}) {

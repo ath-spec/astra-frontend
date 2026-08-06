@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
 
 class MfFetchLoadingScreen extends ConsumerStatefulWidget {
-  const MfFetchLoadingScreen({super.key});
+  final bool isOnboarding;
+  const MfFetchLoadingScreen({super.key, this.isOnboarding = false});
 
   @override
   ConsumerState<MfFetchLoadingScreen> createState() => _MfFetchLoadingScreenState();
@@ -31,7 +32,11 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
 
   void _onProceed() {
     ref.read(assetConnectionProvider.notifier).connectMutualFunds();
-    context.go('/'); // Replaces the stack, returning home
+    if (widget.isOnboarding) {
+      context.pushReplacement('/aa-stocks-otp', extra: {'isOnboarding': true});
+    } else {
+      context.go('/'); // Replaces the stack, returning home
+    }
   }
 
   @override

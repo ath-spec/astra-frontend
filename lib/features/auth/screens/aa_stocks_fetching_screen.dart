@@ -9,7 +9,8 @@ import '../../asset_connection/providers/asset_connection_provider.dart';
 /// Screen matching Image 2 for Account Aggregator Stocks data fetching state.
 /// Displays animated loader, skeleton cards, and automatically transitions to status UI.
 class AaStocksFetchingScreen extends ConsumerStatefulWidget {
-  const AaStocksFetchingScreen({super.key});
+  final bool isOnboarding;
+  const AaStocksFetchingScreen({super.key, this.isOnboarding = false});
 
   @override
   ConsumerState<AaStocksFetchingScreen> createState() => _AaStocksFetchingScreenState();
@@ -43,7 +44,15 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
           if (mounted) {
             // Happy path: Set stocks as connected before moving to banks searching
             ref.read(assetConnectionProvider.notifier).connectFoundStocks();
-            context.pushReplacement('/banks-searching');
+            if (widget.isOnboarding) {
+              context.pushReplacement('/banks-searching');
+            } else {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/');
+              }
+            }
           }
         });
       }
