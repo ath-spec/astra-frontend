@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class HomeWealthFeed extends StatefulWidget {
   final ScrollController scrollController;
@@ -15,12 +21,16 @@ class HomeWealthFeed extends StatefulWidget {
 class _HomeWealthFeedState extends State<HomeWealthFeed> {
   late Timer _timer;
   String _currentTimeIst = '';
+  List<Map<String, dynamic>> _newsItems = [];
+  bool _isLoading = true;
+  final _storage = const FlutterSecureStorage();
 
   @override
   void initState() {
     super.initState();
     _updateTime();
     _timer = Timer.periodic(const Duration(minutes: 1), (_) => _updateTime());
+    _fetchNews();
   }
 
   @override
@@ -37,78 +47,104 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
     });
   }
 
-  final List<Map<String, dynamic>> _newsItems = [
-    {
-      'image': 'lib/core/images/no_recurring_bg.webp',
-      'tags': ['Top News', '• Trending'],
-      'title': 'Income Tax Department\'s NUDGE drive leads to 1.25 crore updated ITRs',
-      'description': 'The CBDT\'s technology-driven NUDGE campaign prompted 1.25 crore taxpayers to revise or update their ITRs over FY25.',
-      'source': 'LiveMint',
-    },
-    {
-      'image': 'lib/core/images/why_budget.webp',
-      'tags': ['News from our experts'],
-      'title': 'A 3 year investment break turned ₹17 crore into ₹12.1 crore',
-      'description': 'Two investors start with ₹1 crore each, both compounding at 12% for 25 years. The first stays uninterrupted and ends with ₹17 crore.',
-      'source': 'Economic Times',
-    },
-    {
-      'image': 'lib/core/images/xplore_pillars.webp',
-      'tags': ['Tech', '• Hot'],
-      'title': 'AI Stocks Rally: Are we in a bubble or a new era?',
-      'description': 'Global tech funds see massive inflows as semiconductor and AI software companies post record-breaking quarterly guidance.',
-      'source': 'MoneyControl',
-    },
-    {
-      'image': 'lib/core/images/gold.webp',
-      'tags': ['Bonds', 'Alert'],
-      'title': 'RBI holds repo rate steady at 6.5%',
-      'description': 'The Monetary Policy Committee has decided to keep the repo rate unchanged for the sixth consecutive meeting, focusing on inflation.',
-      'source': 'Bloomberg Quint',
-    },
-    {
-      'image': 'lib/core/images/silver.webp',
-      'tags': ['Global Investing'],
-      'title': 'Magnificent 7 stocks drive 80% of S&P 500 returns',
-      'description': 'Tech giants continue their dominant run, leaving traditional value stocks trailing behind in the first half of the year.',
-      'source': 'CNBC TV18',
-    },
-    {
-      'image': 'lib/core/images/budget_loading.webp',
-      'tags': ['Real Estate'],
-      'title': 'Commercial real estate sees 15% bump in tier 2 cities',
-      'description': 'As companies push for hybrid models, tier 2 cities are emerging as the new hotspots for commercial real estate investments.',
-      'source': 'LiveMint',
-    },
-    {
-      'image': 'lib/core/images/no_recurring_bg.webp',
-      'tags': ['Commodities', '• Trending'],
-      'title': 'Gold hits new all-time high amid geopolitical tensions',
-      'description': 'Safe-haven demand surges as investors seek shelter from market volatility, pushing gold prices to unprecedented levels.',
-      'source': 'Reuters',
-    },
-    {
-      'image': 'lib/core/images/why_budget.webp',
-      'tags': ['Commodities'],
-      'title': 'Silver follows gold\'s rally, breaks key resistance',
-      'description': 'Industrial demand coupled with precious metal momentum creates a perfect storm for silver prices this quarter.',
-      'source': 'ET Markets',
-    },
-    {
-      'image': 'lib/core/images/xplore_pillars.webp',
-      'tags': ['Infrastructure'],
-      'title': 'New INVIT guidelines to boost retail participation',
-      'description': 'SEBI\'s latest circular reduces minimum investment limits, making Infrastructure Investment Trusts more accessible.',
-      'source': 'Business Standard',
-    },
-    {
-      'image': 'lib/core/images/gold.webp',
-      'tags': ['Taxation', 'Update'],
-      'title': 'New tax regime sees 60% adoption among millennials',
-      'description': 'Simplified tax structures and reduced surcharge rates make the new tax regime the preferred choice for young earners.',
-      'source': 'Financial Express',
-    },
-  ];
+  Future<void> _fetchNews() async {
+    try {
+      final todayStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      // Changed cache key to force a fresh fetch with the new logic
+      final cachedDate = await _storage.read(key: 'marketaux_fetch_date_v2');
+      
+      if (cachedDate == todayStr) {
+        final cachedNewsStr = await _storage.read(key: 'marketaux_news_v2');
+        if (cachedNewsStr != null) {
+          final List<dynamic> decoded = jsonDecode(cachedNewsStr);
+          setState(() {
+            _newsItems = List<Map<String, dynamic>>.from(decoded);
+            _isLoading = false;
+          });
+          return;
+        }
+      }
+
+      final apiKey = dotenv.env['MARKETAUX_API_KEY'];
+      if (apiKey == null) throw Exception('API Key not found');
+
+      final dio = Dio();
+      dio.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          final client = HttpClient();
+          client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+          return client;
+        },
+      );
+
+      List<dynamic> allData = [];
+      // Fetch up to 3 pages (if limit is 3 per page, this gives up to 9 articles)
+      for (int page = 1; page <= 3; page++) {
+        final response = await dio.get(
+          'https://api.marketaux.com/v1/news/all',
+          queryParameters: {
+            'api_token': apiKey,
+            'language': 'en',
+            'countries': 'in,us',
+            'search': 'law | regulation | market | trending',
+            'page': page,
+          },
+        );
+
+        if (response.statusCode == 200) {
+          final data = response.data['data'] as List<dynamic>;
+          allData.addAll(data);
+          // If we reached our goal or no more data, stop fetching
+          if (allData.length >= 7 || data.isEmpty) break;
+        } else {
+          break; // Stop on API error
+        }
+      }
+
+      if (allData.isNotEmpty) {
+        // Enforce exactly 7 articles if we have more
+        if (allData.length > 7) {
+          allData = allData.sublist(0, 7);
+        }
+
+        final List<Map<String, dynamic>> parsedNews = allData.map((article) {
+          List<String> tags = [];
+          if (article['entities'] != null && (article['entities'] as List).isNotEmpty) {
+            final entities = article['entities'] as List<dynamic>;
+            for (var entity in entities) {
+              if (entity['industry'] != null && !tags.contains(entity['industry'])) {
+                tags.add(entity['industry']);
+              } else if (entity['type'] != null && !tags.contains(entity['type'])) {
+                tags.add(entity['type']);
+              }
+            }
+          }
+          List<String> finalTags = tags.isEmpty ? ['Top News'] : tags.take(2).toList();
+          
+          return {
+            'image': article['image_url'] ?? 'lib/core/images/no_recurring_bg.webp',
+            'tags': finalTags,
+            'title': article['title'] ?? '',
+            'description': article['description'] ?? article['snippet'] ?? '',
+            'source': article['source'] ?? 'Marketaux',
+          };
+        }).toList();
+
+        setState(() {
+          _newsItems = parsedNews;
+          _isLoading = false;
+        });
+
+        await _storage.write(key: 'marketaux_fetch_date_v2', value: todayStr);
+        await _storage.write(key: 'marketaux_news_v2', value: jsonEncode(parsedNews));
+      } else {
+        if (mounted) setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      debugPrint('Error fetching news: $e');
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,26 +198,46 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
         SizedBox(height: 24 * scale),
         
         // Feed
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 24.0 * scale),
-          itemCount: _newsItems.length,
-          separatorBuilder: (context, index) => SizedBox(height: 24 * scale),
-          itemBuilder: (context, index) {
-            final item = _newsItems[index];
-            return _WealthFeedCard(
-              imagePath: item['image'],
-              tags: List<String>.from(item['tags']),
-              title: item['title'],
-              description: item['description'],
-              source: item['source'],
-              scrollController: widget.scrollController,
-              index: index,
-              isSecondCardStacked: widget.isSecondCardStacked,
-            );
-          },
-        ),
+        if (_isLoading)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40 * scale),
+            child: const Center(child: CircularProgressIndicator(color: Color(0xFF0F172A))),
+          )
+        else if (_newsItems.isEmpty)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40 * scale),
+            child: Center(
+              child: Text(
+                "No news available at the moment.",
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 14 * scale,
+                  color: const Color(0xFF64748B),
+                ),
+              ),
+            ),
+          )
+        else
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 24.0 * scale),
+            itemCount: _newsItems.length,
+            separatorBuilder: (context, index) => SizedBox(height: 24 * scale),
+            itemBuilder: (context, index) {
+              final item = _newsItems[index];
+              return _WealthFeedCard(
+                imagePath: item['image'],
+                tags: List<String>.from(item['tags']),
+                title: item['title'],
+                description: item['description'],
+                source: item['source'],
+                scrollController: widget.scrollController,
+                index: index,
+                isSecondCardStacked: widget.isSecondCardStacked,
+              );
+            },
+          ),
       ],
     );
   }
@@ -343,9 +399,19 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(4 * scale)),
                 child: AspectRatio(
                   aspectRatio: 16 / 10,
-                  child: Image.asset(
-                    widget.imagePath,
-                    fit: BoxFit.cover,
+                  child: Container(
+                    color: const Color(0xFFF8FAFC), // subtle background for letterboxing
+                    child: widget.imagePath.startsWith('http')
+                        ? Image.network(
+                            widget.imagePath,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Image.asset('lib/core/images/no_recurring_bg.webp', fit: BoxFit.cover),
+                          )
+                        : Image.asset(
+                            widget.imagePath,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
               ),
