@@ -151,7 +151,7 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
                     'What is Allocation?',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14,
+                      fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
@@ -164,14 +164,14 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10,
+                        fontSize: 12,
                         height: 1.6,
                         color: Color(0xFF64748B),
                       ),
                     ),
                   ),
                   
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 58),
                   
                   // Spectrum Bar
                   Padding(
@@ -211,7 +211,7 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
                           'We group your holdings by how much they\'ve typically moved in the past, and then show how much of your money sits in each bucket. It\'s a simple way to see where stability and growth are coming from in your portfolio.',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 10,
+                            fontSize: 12,
                             height: 1.6,
                             color: Color(0xFF64748B),
                           ),
@@ -296,7 +296,7 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
                   description,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
+                    fontSize: 12,
                     height: 1.5,
                     color: Color(0xFF64748B),
                   ),
@@ -356,7 +356,7 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
                       if (index != 0)
                         Positioned(
                           left: 0,
-                          top: -6,
+                          top: -32,
                           bottom: -32,
                           child: CustomPaint(
                             size: const Size(1, 48),
