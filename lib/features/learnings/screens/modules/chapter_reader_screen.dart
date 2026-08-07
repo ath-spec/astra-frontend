@@ -197,13 +197,6 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                                         decoration: const BoxDecoration(
                                           color: Colors.white,
                                           shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black12,
-                                              blurRadius: 4,
-                                              offset: Offset(0, 2),
-                                            ),
-                                          ],
                                         ),
                                         child: Center(
                                           child: Icon(
@@ -570,7 +563,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                   textScaler: TextScaler.linear(_textScale),
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: bodyColor,
                     height: 1.6,

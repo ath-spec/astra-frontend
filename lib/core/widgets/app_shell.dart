@@ -254,13 +254,18 @@ class _AppShellState extends ConsumerState<AppShell> {
                                 child: FadeTransition(opacity: animation, child: child),
                               );
                             },
-                            child: navContext == NavContext.main || isInputMode
+                            child: isInputMode
                                 ? const SizedBox.shrink(key: ValueKey('no_home'))
-                                : Padding(
-                                    key: const ValueKey('has_home'),
-                                    padding: const EdgeInsets.only(right: 12.0),
-                                    child: buildHomeCircle(() => _onPillTap(0)),
-                                  ),
+                                : (navContext == NavContext.main
+                                    ? const SizedBox(
+                                        key: ValueKey('home_placeholder'),
+                                        width: 50.0, // Matches width of home circle + padding (38+12)
+                                      )
+                                    : Padding(
+                                        key: const ValueKey('has_home'),
+                                        padding: const EdgeInsets.only(right: 12.0),
+                                        child: buildHomeCircle(() => _onPillTap(0)),
+                                      )),
                           ),
                           Expanded(
                             child: AnimatedSwitcher(
@@ -323,7 +328,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                                     key: const ValueKey('has_gem'),
                                     padding: const EdgeInsets.only(left: 12.0),
                                     child: buildGemButton(() {
-                                      if (navContext == NavContext.main) {
+                                      if (widget.navigationShell.currentIndex == 0) {
                                         _onPillTap(2, clearChat: true);
                                       } else {
                                         ref.read(navInputModeProvider.notifier).state = true;

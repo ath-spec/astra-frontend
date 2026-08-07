@@ -31,10 +31,9 @@ class LearningsScreen extends ConsumerWidget {
                       const Text(
                         'Learnings',
                         style: TextStyle(
-                          fontFamily: 'SpaceGrotesk',
+                          fontFamily: 'DMSans',
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: -1.0,
                           color: Color(0xFF0F172A),
                         ),
                       ),
@@ -43,7 +42,7 @@ class LearningsScreen extends ConsumerWidget {
                         'Bite-sized financial wisdom, curated for you.',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF64748B),
                         ),

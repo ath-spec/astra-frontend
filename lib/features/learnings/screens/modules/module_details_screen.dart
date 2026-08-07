@@ -23,7 +23,7 @@ class ModuleDetailsScreen extends StatelessWidget {
           child: Row(
             children: [
               const SizedBox(width: 16),
-              const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E40AF), size: 18),
+              const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E40AF), size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -166,7 +166,7 @@ class ModuleDetailsScreen extends StatelessWidget {
               module.title,
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 14,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF0F172A),
                 height: 1.2,
@@ -179,7 +179,7 @@ class ModuleDetailsScreen extends StatelessWidget {
           module.description,
           style: const TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: FontWeight.w400,
             color: Color(0xFF64748B),
             height: 1.5,
@@ -237,7 +237,7 @@ class ModuleDetailsScreen extends StatelessWidget {
                   'Learn more',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF2563EB),
                   ),
@@ -308,8 +308,8 @@ class _ChapterLevelCardState extends State<ChapterLevelCard> {
                       '${widget.chapters} Chapters • ${widget.readTimeMinutes} min read',
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
                         color: Color(0xFF0F172A),
                       ),
                     ),

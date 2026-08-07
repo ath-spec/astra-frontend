@@ -31,7 +31,7 @@ class ChapterListScreen extends StatelessWidget {
               const Icon(
                 Icons.arrow_back_ios_new_rounded,
                 color: Color(0xFF1E40AF),
-                size: 18,
+                size: 20,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -39,7 +39,7 @@ class ChapterListScreen extends StatelessWidget {
                   'Module ${module.id} • $level',
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 16,
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
@@ -160,7 +160,7 @@ class ChapterListScreen extends StatelessWidget {
                 'To fully complete this level, read all chapters and attempt all questions',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: Color(0xFF334155),
                   height: 1.4,
@@ -196,8 +196,8 @@ class ChapterListScreen extends StatelessWidget {
                   percent.toString().padLeft(2, '0'),
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                     color: Color(0xFF0F172A),
                   ),
                 ),
@@ -206,7 +206,7 @@ class ChapterListScreen extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     color: Color(0xFF0F172A),
                   ),
                 ),

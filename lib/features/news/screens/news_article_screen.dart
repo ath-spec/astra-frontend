@@ -164,7 +164,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                                         cleaned,
                                         style: TextStyle(
                                           fontFamily: 'DMSans',
-                                          fontSize: 10,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.w600,
                                           color: isTrending
                                               ? const Color(0xFFDC2626)
@@ -183,7 +183,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                               widget.title,
                               style: const TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 14,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF1A1A17),
                                 height: 1.4,
@@ -208,7 +208,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                                   widget.source,
                                   style: const TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 10,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFF2563EB),
                                   ),
@@ -228,7 +228,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                                   '4 min read',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 10,
+                                    fontSize: 12,
                                     color: Color(0xFFA8A89A),
                                   ),
                                 ),
@@ -252,7 +252,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                                 widget.description,
                                 style: const TextStyle(
                                   fontFamily: 'DMSans',
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: Color(0xFF1E40AF),
                                   height: 1.6,
@@ -283,7 +283,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                                       para,
                                       style: const TextStyle(
                                         fontFamily: 'DMSans',
-                                        fontSize: 14,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xFF1A1A17),
                                         height: 1.7,
@@ -298,7 +298,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                                   para,
                                   style: const TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xFF3D3D35),
                                     height: 1.75,
@@ -322,7 +322,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                                     'This article is for informational purposes only and does not constitute investment advice. Past performance is not indicative of future results.',
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
-                                      fontSize: 10,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFFA8A89A),
                                       height: 1.6,

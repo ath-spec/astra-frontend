@@ -26,14 +26,14 @@ class _NewsScreenState extends State<NewsScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFF9FAFB),
         elevation: 0,
+        titleSpacing: 24.0,
         title: const Text(
           'News & Insights',
           style: TextStyle(
-            fontFamily: 'SpaceGrotesk',
+            fontFamily: 'DMSans',
             color: Color(0xFF0F172A),
             fontSize: 24,
             fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
           ),
         ),
         centerTitle: false,

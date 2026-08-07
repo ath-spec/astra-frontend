@@ -122,35 +122,14 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
         // Header
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Your wealth feed',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -1.0,
-                  color: const Color(0xFF0F172A),
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Row(
-                children: [
-                  SizedBox(width: 8.w),
-                  Text(
-                    'Last updated: Today, $_currentTimeIst',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF64748B),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          child: Text(
+            'Last updated: Today, $_currentTimeIst',
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF64748B),
+            ),
           ),
         ),
         SizedBox(height: 24.h),
@@ -394,7 +373,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       widget.title,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF0F172A),
                         height: 1.3,
@@ -407,7 +386,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       widget.description,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10,
+                        fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: const Color(0xFF475569),
                         height: 1.5,
@@ -460,7 +439,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                                   'Read summary',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 10,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF0F172A),
                                   ),
