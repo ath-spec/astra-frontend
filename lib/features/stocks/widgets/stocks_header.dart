@@ -1,5 +1,6 @@
 import 'dart:ui' show lerpDouble, ImageFilter;
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/widgets/arch_background.dart';
 
 class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
@@ -33,8 +34,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final scale = MediaQuery.of(context).size.width / 375.0;
-    
+        
     final shrinkRatio = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
     final curve = Curves.easeInOutCubic;
     final double easedRatio = curve.transform(shrinkRatio);
@@ -57,11 +57,11 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
           // Background Arch
           Positioned(
             top: -shrinkOffset * 0.5,
-            left: 0 * scale,
-            right: 0 * scale,
+            left: 0,
+            right: 0,
             child: Opacity(
               opacity: 1.0 - shrinkRatio,
-              child: ArchBackground(height: 250 * scale),
+              child: ArchBackground(height: 250),
             ),
           ),
 
@@ -97,7 +97,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                         Colors.white.withOpacity(lerpDouble(0.0, 0.4, easedRatio)!),
                         Colors.white.withOpacity(0.0),
                       ],
-                      stops: const [0.0, 0.7, 1.0],
+                      stops: [0.0, 0.7, 1.0],
                     ),
                   ),
                 ),
@@ -108,8 +108,8 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
           // Subtitle "STOCKS & ETF"
           Positioned(
             top: currentSubtitleTop,
-            left: 0 * scale,
-            right: 0 * scale,
+            left: 0,
+            right: 0,
             child: Opacity(
               opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0), 
               child: Center(
@@ -118,7 +118,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     color: Color(0xFF64748B),
-                    fontSize: 10 * scale,
+                    fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
                   ),
@@ -130,8 +130,8 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
           // Total Amount
           Positioned(
             top: currentTop,
-            left: 0 * scale,
-            right: 0 * scale,
+            left: 0,
+            right: 0,
             child: Align(
               alignment: Alignment.topCenter,
               child: Text(
@@ -152,8 +152,8 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
           if (shrinkRatio < 1.0)
             Positioned(
               top: currentTop + 48.0,
-              left: 0 * scale,
-              right: 0 * scale,
+              left: 0,
+              right: 0,
               child: Opacity(
                 opacity: (1.0 - (shrinkRatio * 3.0)).clamp(0.0, 1.0),
                 child: Center(
@@ -161,7 +161,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                     todayChange,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12 * scale,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF10B981),
                     ),
@@ -174,8 +174,8 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
           if (shrinkRatio < 1.0)
             Positioned(
               top: currentTop + 72.0,
-              left: 0 * scale,
-              right: 0 * scale,
+              left: 0,
+              right: 0,
               child: Opacity(
                 opacity: (1.0 - (shrinkRatio * 4.0)).clamp(0.0, 1.0),
                 child: Center(
@@ -183,11 +183,11 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                     onTap: onRefreshTap,
                     behavior: HitTestBehavior.opaque,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 6 * scale),
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16 * scale),
-                        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5.w),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.03),
@@ -201,15 +201,15 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                         children: [
                           Icon(
                             Icons.sync_rounded,
-                            size: 12 * scale,
+                            size: 12,
                             color: const Color(0xFF0F172A),
                           ),
-                          SizedBox(width: 6 * scale),
+                          SizedBox(width: 6.w),
                           Text(
                             lastRefreshedText,
                             style: TextStyle(
                               fontFamily: 'SpaceGrotesk',
-                              fontSize: 10 * scale,
+                              fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF0F172A),
                               letterSpacing: 0.5,
@@ -226,20 +226,20 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
           // Top Row Buttons (Back, Lock)
           Positioned(
             top: safeAreaTop + 12.0,
-            left: 24.0 * scale,
-            right: 24.0 * scale,
+            left: 24.0,
+            right: 24.0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
                   onTap: onBackTap,
                   child: Container(
-                    width: 44 * scale,
-                    height: 44 * scale,
+                    width: 44.w,
+                    height: 44,
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       color: Color(0xFF0F172A),
-                      size: 20 * scale,
+                      size: 20,
                     ),
                   ),
                 ),
@@ -248,8 +248,8 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                     GestureDetector(
                       onTap: onLockTap,
                       child: Container(
-                        width: 36 * scale,
-                        height: 36 * scale,
+                        width: 36.w,
+                        height: 36,
                         decoration: BoxDecoration(
                           color: const Color(0xFFF1F5F9),
                           shape: BoxShape.circle,
@@ -258,18 +258,18 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                         child: Icon(
                           isLocked ? Icons.lock_outline_rounded : Icons.lock_open_rounded,
                           color: const Color(0xFF0F172A),
-                          size: 18 * scale,
+                          size: 18,
                         ),
                       ),
                     ),
-                    SizedBox(width: 12 * scale),
+                    SizedBox(width: 12.w),
                     GestureDetector(
                       onTap: onAddAccountsTap,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 8 * scale),
+                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16 * scale),
+                          borderRadius: BorderRadius.circular(16.r),
                           border: Border.all(color: const Color(0xFFE2E8F0)),
                         ),
                         child: Row(
@@ -277,15 +277,15 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                           children: [
                             Icon(
                               Icons.add_circle,
-                              size: 12 * scale,
+                              size: 12,
                               color: const Color(0xFF475569),
                             ),
-                            SizedBox(width: 4 * scale),
+                            SizedBox(width: 4.w),
                             Text(
                               'ADD ACCOUNTS',
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 10 * scale,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFF0F172A),
                                 letterSpacing: 0.5,

@@ -107,35 +107,38 @@ class HomePortfolioAnalysis extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 24.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: _buildLockedCard(
-                  title: 'Discipline',
-                  icon: Icons.track_changes,
-                  color: const Color(0xFF4299E1), // Blue
-                  brailleDots: '⠓⠕⠗⠍',
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: _buildLockedCard(
+                    title: 'Discipline',
+                    icon: Icons.track_changes,
+                    color: const Color(0xFF4299E1), // Blue
+                    brailleDots: '⠓⠕⠗⠍',
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildLockedCard(
-                  title: 'Allocation',
-                  icon: Icons.layers_outlined,
-                  color: const Color(0xFF9F7AEA), // Purple
-                  brailleDots: '⠓⠕⠗⠍',
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildLockedCard(
+                    title: 'Allocation',
+                    icon: Icons.layers_outlined,
+                    color: const Color(0xFF9F7AEA), // Purple
+                    brailleDots: '⠓⠕⠗⠍',
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildLockedCard(
-                  title: 'Performance',
-                  icon: Icons.change_history,
-                  color: const Color(0xFF48BB78), // Green
-                  brailleDots: '⠓⠕⠗⠍',
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildLockedCard(
+                    title: 'Performance',
+                    icon: Icons.change_history,
+                    color: const Color(0xFF48BB78), // Green
+                    brailleDots: '⠓⠕⠗⠍',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
 
@@ -199,7 +202,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
     required String brailleDots,
   }) {
     return Container(
-      padding: const EdgeInsets.only(top: 32, bottom: 40),
+      padding: const EdgeInsets.symmetric(vertical: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),

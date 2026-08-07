@@ -39,8 +39,7 @@ class StockCard extends StatefulWidget {
 }
 
 class _StockCardState extends State<StockCard> {
-  double get scale => MediaQuery.of(context).size.width / 375.0;
-  bool _isExpanded = false;
+    bool _isExpanded = false;
 
   final _currencyFormat = NumberFormat.currency(
     locale: 'en_IN',
@@ -76,7 +75,7 @@ class _StockCardState extends State<StockCard> {
         duration: const Duration(milliseconds: 300),
         curve: curve,
         margin: EdgeInsets.only(bottom: 12.h),
-        padding: EdgeInsets.fromLTRB(16, 16, 16, 12),
+        padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 12.h),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4.r),

@@ -116,6 +116,8 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
+      height: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/privacy_provider.dart';
@@ -17,8 +18,7 @@ class StocksScreen extends ConsumerStatefulWidget {
 enum ViewMode { summary, expanded, table }
 
 class _StocksScreenState extends ConsumerState<StocksScreen> {
-  double get scale => MediaQuery.of(context).size.width / 375.0;
-  ViewMode _viewMode = ViewMode.summary;
+    ViewMode _viewMode = ViewMode.summary;
 
   Set<String> _activeFilters = {'Stocks'};
   String _activeSort = 'Current Value';
@@ -34,7 +34,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
   }
 
 
-  final List<StockData> _mockStocks = const [
+  final List<StockData> _mockStocks = [
     StockData(
       name: 'Mazagon Dock',
       sector: 'Aerospace & Defence',
@@ -184,7 +184,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
           // Section Title & View Toggle
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(24 * scale, 24 * scale, 24 * scale, 16 * scale),
+              padding: EdgeInsets.fromLTRB(24, 24, 24, 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -192,7 +192,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                     'Holdings',
                     style: TextStyle(
                       fontFamily: 'SpaceGrotesk',
-                      fontSize: 18 * scale,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                       letterSpacing: -0.5,
@@ -201,16 +201,16 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFFF1F5F9),
-                      borderRadius: BorderRadius.circular(4 * scale),
+                      borderRadius: BorderRadius.circular(4.r),
                     ),
-                    padding: EdgeInsets.all(4 * scale),
+                    padding: EdgeInsets.all(4.w),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _buildViewToggleIcon(Icons.view_agenda_rounded, ViewMode.summary),
-                        SizedBox(width: 4 * scale),
+                        SizedBox(width: 4.w),
                         _buildViewToggleIcon(Icons.view_stream_rounded, ViewMode.expanded),
-                        SizedBox(width: 4 * scale),
+                        SizedBox(width: 4.w),
                         _buildViewToggleIcon(Icons.grid_view_rounded, ViewMode.table),
                       ],
                     ),
@@ -224,17 +224,17 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
           SliverToBoxAdapter(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 24 * scale),
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Row(
                 children: [
                   _buildChip('Sort by', icon: Icons.sort_rounded, isOutline: true),
-                  SizedBox(width: 8 * scale),
+                  SizedBox(width: 8.w),
                   _buildChip('Stocks'),
-                  SizedBox(width: 8 * scale),
+                  SizedBox(width: 8.w),
                   _buildChip('ETFs'),
-                  SizedBox(width: 8 * scale),
+                  SizedBox(width: 8.w),
                   _buildChip('Gainers'),
-                  SizedBox(width: 8 * scale),
+                  SizedBox(width: 8.w),
                   _buildChip('Losers'),
                 ],
               ),
@@ -244,7 +244,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
           // List Header or Table Header
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(24 * scale, 24 * scale, 24 * scale, 8 * scale),
+              padding: EdgeInsets.fromLTRB(24, 24, 24, 8),
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 switchInCurve: const Cubic(0.23, 1.0, 0.32, 1.0),
@@ -258,7 +258,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
 
           // Holdings Content
           SliverPadding(
-            padding: EdgeInsets.fromLTRB(24 * scale, 0, 24 * scale, 40 * scale + MediaQuery.of(context).padding.bottom),
+            padding: EdgeInsets.fromLTRB(24, 0, 24, 40 + MediaQuery.of(context).padding.bottom),
             sliver: _viewMode == ViewMode.table
                 ? SliverToBoxAdapter(
                     child: _buildUnifiedTable(filteredStocks, isLocked),
@@ -290,7 +290,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
           _activeFilters.isEmpty ? 'ALL HOLDINGS' : _activeFilters.join(', ').toUpperCase(),
           style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 10 * scale,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             letterSpacing: 1.2,
             color: Color(0xFF94A3B8),
@@ -309,7 +309,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16 * scale),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: Row(
@@ -317,25 +317,25 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
         children: [
           // Static Left Column
           Container(
-            width: 140 * scale, // Fixed width for STOCKS
+            width: 140, // Fixed width for STOCKS
             decoration: BoxDecoration(
-              border: Border(right: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
+              border: Border(right: BorderSide(color: Color(0xFFF1F5F9), width: 1.w)),
             ),
             child: Column(
               children: [
                 // Header
                 Container(
                   height: headerHeight,
-                  padding: EdgeInsets.symmetric(horizontal: 16 * scale),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   alignment: Alignment.centerLeft,
                   child: Row(
                     children: [
                       Text(
                         'STOCKS',
-                        style: TextStyle(fontFamily: 'DMSans', fontSize: 10 * scale, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: Color(0xFF0F172A)),
+                        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: Color(0xFF0F172A)),
                       ),
-                      SizedBox(width: 4 * scale),
-                      Icon(Icons.keyboard_arrow_down_rounded, size: 12 * scale, color: Color(0xFF94A3B8)),
+                      SizedBox(width: 4.w),
+                      Icon(Icons.keyboard_arrow_down_rounded, size: 12, color: Color(0xFF94A3B8)),
                     ],
                   ),
                 ),
@@ -345,16 +345,16 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                   final stock = entry.value;
                   return Container(
                     height: rowHeight,
-                    padding: EdgeInsets.symmetric(horizontal: 16 * scale),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       border: Border(
-                        top: BorderSide(color: const Color(0xFFF1F5F9), width: 1),
+                        top: BorderSide(color: const Color(0xFFF1F5F9), width: 1.w),
                       ),
                     ),
                     child: Text(
                       stock.name,
-                      style: TextStyle(fontFamily: 'DMSans', fontSize: 10 * scale, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                      style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
                       overflow: TextOverflow.ellipsis,
                     ),
                   );
@@ -390,25 +390,25 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                       height: rowHeight,
                       decoration: BoxDecoration(
                         border: Border(
-                          top: BorderSide(color: const Color(0xFFF1F5F9), width: 1),
+                          top: BorderSide(color: const Color(0xFFF1F5F9), width: 1.w),
                         ),
                       ),
                       child: Row(
                         children: [
                           // Amount Column
                           Container(
-                            width: 100 * scale,
-                            padding: EdgeInsets.symmetric(horizontal: 16 * scale),
+                            width: 100,
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
                             alignment: Alignment.centerLeft,
                             child: Text(
                               PrivacyFormatter.obscure(intl.NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0).format(stock.currentVal), isLocked),
-                              style: TextStyle(fontFamily: 'DMSans', fontSize: 10 * scale, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                              style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
                             ),
                           ),
                           // 1D Column
                           Container(
-                            width: 100 * scale,
-                            padding: EdgeInsets.symmetric(horizontal: 16 * scale),
+                            width: 100,
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
                             alignment: Alignment.centerLeft,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -418,17 +418,17 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                                   isLocked ? PrivacyFormatter.cypher : '${isPositive ? '↑ ' : '↓ '}₹${stock.oneDayChange.abs().toStringAsFixed(0)}',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 10 * scale,
+                                    fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                     color: isPositive ? const Color(0xFF10B981) : const Color(0xFFEF4444),
                                   ),
                                 ),
-                                SizedBox(height: 2),
+                                SizedBox(height: 2.h),
                                 Text(
                                   isLocked ? PrivacyFormatter.cypher : '(${stock.oneDayChangePct}%)',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 10 * scale,
+                                    fontSize: 10,
                                     fontWeight: FontWeight.w500,
                                     color: isPositive ? const Color(0xFF10B981) : const Color(0xFFEF4444),
                                   ),
@@ -438,22 +438,22 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                           ),
                           // LTP Column
                           Container(
-                            width: 100 * scale,
-                            padding: EdgeInsets.symmetric(horizontal: 16 * scale),
+                            width: 100,
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
                             alignment: Alignment.center,
                             child: Text(
                               PrivacyFormatter.obscure(ltpFormat.format(stock.ltp), isLocked),
-                              style: TextStyle(fontFamily: 'DMSans', fontSize: 10 * scale, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                              style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
                             ),
                           ),
                           // QTY Column
                           Container(
-                            width: 80 * scale,
-                            padding: EdgeInsets.symmetric(horizontal: 16 * scale),
+                            width: 80,
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
                             alignment: Alignment.centerRight,
                             child: Text(
                               isLocked ? PrivacyFormatter.cypher : '${stock.quantity}',
-                              style: TextStyle(fontFamily: 'DMSans', fontSize: 10 * scale, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                              style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
                             ),
                           ),
                         ],
@@ -472,17 +472,17 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
   Widget _buildTableHeaderCell(String title, double width, {bool isRight = false, bool isCenter = false}) {
     return Container(
       width: width,
-      padding: EdgeInsets.symmetric(horizontal: 16 * scale),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       alignment: isRight ? Alignment.centerRight : (isCenter ? Alignment.center : Alignment.centerLeft),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             title,
-            style: TextStyle(fontFamily: 'DMSans', fontSize: 10 * scale, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: Color(0xFF0F172A)),
+            style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: Color(0xFF0F172A)),
           ),
-          SizedBox(width: 4 * scale),
-          Icon(Icons.keyboard_arrow_down_rounded, size: 12 * scale, color: Color(0xFF94A3B8)),
+          SizedBox(width: 4.w),
+          Icon(Icons.keyboard_arrow_down_rounded, size: 12, color: Color(0xFF94A3B8)),
         ],
       ),
     );
@@ -500,23 +500,23 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: const Cubic(0.23, 1.0, 0.32, 1.0),
-        padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 6 * scale),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(4 * scale),
+          borderRadius: BorderRadius.circular(4.r),
           boxShadow: isSelected
               ? [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4 * scale,
-                    offset: Offset(0, 2 * scale),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
                   )
                 ]
               : null,
         ),
         child: Icon(
           icon,
-          size: 16 * scale,
+          size: 16,
           color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF64748B),
         ),
       ),
@@ -549,18 +549,18 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: const Cubic(0.23, 1.0, 0.32, 1.0),
-          padding: EdgeInsets.symmetric(horizontal: 10 * scale, vertical: 6 * scale),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6.h),
           decoration: BoxDecoration(
             color: isOutline ? Colors.transparent : (isSelected ? Colors.white : const Color(0xFFF1F5F9)),
-            borderRadius: BorderRadius.circular(4 * scale),
+            borderRadius: BorderRadius.circular(4.r),
             border: Border.all(
               color: isOutline ? const Color(0xFFE2E8F0) : (isSelected ? const Color(0xFFE2E8F0) : Colors.transparent),
             ),
             boxShadow: isSelected && !isOutline ? [
               BoxShadow(
                 color: Colors.black.withOpacity(0.02),
-                blurRadius: 4 * scale,
-                offset: Offset(0, 2 * scale),
+                blurRadius: 4,
+                offset: Offset(0, 2),
               )
             ] : null,
           ),
@@ -568,14 +568,14 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 14 * scale, color: Color(0xFF0F172A)),
-                SizedBox(width: 4 * scale),
+                Icon(icon, size: 14, color: Color(0xFF0F172A)),
+                SizedBox(width: 4.w),
               ],
               Text(
                 label,
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 10 * scale,
+                  fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: isOutline ? const Color(0xFF0F172A) : (isSelected ? const Color(0xFF0F172A) : const Color(0xFF64748B)),
                 ),
@@ -592,14 +592,14 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
       context: context,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(4 * scale)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4.r)),
       ),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return SafeArea(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24 * scale, vertical: 24 * scale),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -611,7 +611,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                           'Sort by',
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
-                            fontSize: 14 * scale,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0F172A),
                           ),
@@ -623,12 +623,12 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                             });
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8 * scale, vertical: 4 * scale),
+                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                             child: Text(
                               'Reset',
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 12 * scale,
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF0F172A),
                               ),
@@ -637,13 +637,13 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 24 * scale),
+                    SizedBox(height: 24.h),
                     // Options
                     _buildSortOption('Current Value', setModalState),
                     _buildSortOption('1-Day Change', setModalState),
                     _buildSortOption('Quantity', setModalState),
                     _buildSortOption('Alphabetically', setModalState),
-                    SizedBox(height: 32 * scale),
+                    SizedBox(height: 32.h),
                     // Apply Button
                     GestureDetector(
                       onTap: () {
@@ -652,15 +652,15 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 14 * scale),
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
                         decoration: BoxDecoration(
                           color: const Color(0xFF0F172A),
-                          borderRadius: BorderRadius.circular(4 * scale), // User requested border radius 4
+                          borderRadius: BorderRadius.circular(4.r), // User requested border radius 4
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8 * scale,
-                              offset: Offset(0, 4 * scale),
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
                             ),
                           ],
                         ),
@@ -669,7 +669,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                             'Apply',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 14 * scale,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
                             ),
@@ -697,30 +697,30 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16 * scale),
+        padding: EdgeInsets.symmetric(vertical: 16.h),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
+          border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1.w)),
         ),
         child: Row(
           children: [
             Container(
-              width: 14 * scale, // Reduced size
-              height: 14 * scale,
+              width: 14.w, // Reduced size
+              height: 14,
               decoration: BoxDecoration(
                 color: isSelected ? const Color(0xFF0F172A) : Colors.transparent,
-                borderRadius: BorderRadius.circular(4 * scale), // User requested border radius 4
+                borderRadius: BorderRadius.circular(4.r), // User requested border radius 4
                 border: Border.all(
                   color: isSelected ? const Color(0xFF0F172A) : const Color(0xFFCBD5E1),
-                  width: 1.5,
+                  width: 1.5.w,
                 ),
               ),
             ),
-            SizedBox(width: 12 * scale),
+            SizedBox(width: 12.w),
             Text(
               label,
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 10 * scale, // Reduced text size
+                fontSize: 10, // Reduced text size
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                 color: const Color(0xFF0F172A),
               ),

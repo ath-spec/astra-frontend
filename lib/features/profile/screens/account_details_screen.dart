@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -8,9 +9,7 @@ class AccountDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final scale = MediaQuery.of(context).size.width / 375.0;
-
-    final authState = ref.watch(authProvider);
+        final authState = ref.watch(authProvider);
     final authNotifier = ref.read(authProvider.notifier);
 
     String name = 'Not provided';
@@ -37,31 +36,31 @@ class AccountDetailsScreen extends ConsumerWidget {
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.only(left: 24 * scale, top: 16 * scale, right: 24 * scale, bottom: 24 * scale),
+              padding: EdgeInsets.only(left: 24.w, top: 16.h, right: 24.w, bottom: 24.h),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
                     behavior: HitTestBehavior.opaque,
                     child: Container(
-                      width: 44 * scale,
-                      height: 44 * scale,
+                      width: 44.w,
+                      height: 44,
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         color: const Color(0xFF0F172A),
-                        size: 20 * scale,
+                        size: 20,
                       ),
                     ),
                   ),
                   Expanded(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.only(right: 44 * scale), // balance the back button
+                        padding: EdgeInsets.only(right: 44.w), // balance the back button
                         child: Text(
                           'ACCOUNT DETAILS',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 10 * scale,
+                            fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF0F172A),
                             letterSpacing: 1.0,
@@ -83,7 +82,7 @@ class AccountDetailsScreen extends ConsumerWidget {
             // Content
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24 * scale, vertical: 32 * scale),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -91,46 +90,46 @@ class AccountDetailsScreen extends ConsumerWidget {
                       'Mutual fund account',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14 * scale,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF0F172A),
                         letterSpacing: -0.5,
                       ),
                     ),
-                    SizedBox(height: 32 * scale),
+                    SizedBox(height: 32.h),
                     
                     _buildDetailRow(
-                      scale: scale,
+                      
                       label: 'KYC status',
                       value: 'Not Verified',
                       hasCopy: false,
                     ),
                     _buildDetailRow(
-                      scale: scale,
+                      
                       label: 'Name',
                       value: name,
                       hasCopy: false,
                     ),
                     _buildDetailRow(
-                      scale: scale,
+                      
                       label: 'PAN',
                       value: pan,
                       hasCopy: true,
                     ),
                     _buildDetailRow(
-                      scale: scale,
+                      
                       label: 'Unique client code',
                       value: '0KV001IZ40',
                       hasCopy: true,
                     ),
                     _buildDetailRow(
-                      scale: scale,
+                      
                       label: 'Mobile',
                       value: mobile,
                       hasCopy: false,
                     ),
                     _buildDetailRow(
-                      scale: scale,
+                      
                       label: 'Communication mobile',
                       value: mobile,
                       hasCopy: false,
@@ -147,7 +146,7 @@ class AccountDetailsScreen extends ConsumerWidget {
   }
 
   Widget _buildDetailRow({
-    required double scale,
+    
     required String label,
     required String value,
     required bool hasCopy,
@@ -160,12 +159,12 @@ class AccountDetailsScreen extends ConsumerWidget {
           label,
           style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 10 * scale,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF94A3B8),
           ),
         ),
-        SizedBox(height: 8 * scale),
+        SizedBox(height: 8.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -173,7 +172,7 @@ class AccountDetailsScreen extends ConsumerWidget {
               value,
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12 * scale,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF0F172A),
               ),
@@ -181,15 +180,15 @@ class AccountDetailsScreen extends ConsumerWidget {
             if (hasCopy)
               Icon(
                 Icons.copy_rounded,
-                size: 12 * scale,
+                size: 12,
                 color: const Color(0xFF94A3B8),
               ),
           ],
         ),
-        SizedBox(height: 16 * scale),
+        SizedBox(height: 16.h),
         if (!isLast) ...[
           const _DashedDivider(),
-          SizedBox(height: 16 * scale),
+          SizedBox(height: 16.h),
         ],
       ],
     );
@@ -212,7 +211,7 @@ class _DashedDivider extends StatelessWidget {
           direction: Axis.horizontal,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(dashCount, (_) {
-            return const SizedBox(
+            return SizedBox(
               width: dashWidth,
               height: dashHeight,
               child: DecoratedBox(

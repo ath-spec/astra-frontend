@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FoliosBottomSheet extends StatelessWidget {
   const FoliosBottomSheet({super.key});
@@ -6,34 +7,32 @@ class FoliosBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final s = screenWidth / 375.0;
-
-    return Container(
-      decoration: const BoxDecoration(
+        return Container(
+      decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
+          topLeft: Radius.circular(16.r),
+          topRight: Radius.circular(16.r),
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 12 * s),
+          SizedBox(height: 12.h),
           Center(
             child: Container(
-              width: 40 * s,
-              height: 4 * s,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: const Color(0xFFE2E8F0),
-                borderRadius: BorderRadius.circular(2 * s),
+                borderRadius: BorderRadius.circular(2.r),
               ),
             ),
           ),
-          SizedBox(height: 24 * s),
+          SizedBox(height: 24.h),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24 * s),
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -41,55 +40,55 @@ class FoliosBottomSheet extends StatelessWidget {
                   'Folios',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12 * s,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w700,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8 * s),
+                SizedBox(height: 8.h),
                 Text(
                   '1 folio',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10 * s,
+                    fontSize: 10,
                     color: const Color(0xFF94A3B8),
                   ),
                 ),
-                SizedBox(height: 24 * s),
-                _buildDashedDivider(s),
-                SizedBox(height: 24 * s),
+                SizedBox(height: 24.h),
+                _buildDashedDivider(),
+                SizedBox(height: 24.h),
                 Text(
                   '₹2,36,538.56',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14 * s,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8 * s),
+                SizedBox(height: 8.h),
                 Row(
                   children: [
                     Text(
                       'Folio no. 17762024046',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10 * s,
+                        fontSize: 10,
                         color: const Color(0xFF94A3B8),
                       ),
                     ),
-                    SizedBox(width: 8 * s),
+                    SizedBox(width: 8.w),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6 * s, vertical: 2 * s),
+                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                       decoration: BoxDecoration(
                         color: const Color(0xFFE2E8F0),
-                        borderRadius: BorderRadius.circular(2 * s),
+                        borderRadius: BorderRadius.circular(2.r),
                       ),
                       child: Text(
                         'EXTERNAL',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10 * s,
+                          fontSize: 10,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
                           color: const Color(0xFF475569),
@@ -98,7 +97,7 @@ class FoliosBottomSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 48 * s), // bottom padding
+                SizedBox(height: 48.h), // bottom padding
               ],
             ),
           ),
@@ -107,12 +106,12 @@ class FoliosBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildDashedDivider(double s) {
+  Widget _buildDashedDivider() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final boxWidth = constraints.constrainWidth();
-        final dashWidth = 4.0 * s;
-        final dashHeight = 1.0 * s;
+        final dashWidth = 4.0;
+        final dashHeight = 1.0;
         final dashCount = (boxWidth / (2 * dashWidth)).floor();
         return Flex(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

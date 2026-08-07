@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class MfReportScreen extends StatelessWidget {
@@ -6,9 +7,7 @@ class MfReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scale = MediaQuery.of(context).size.width / 375.0;
-
-    return Scaffold(
+        return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
@@ -16,31 +15,31 @@ class MfReportScreen extends StatelessWidget {
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.only(left: 24 * scale, top: 16 * scale, right: 24 * scale, bottom: 24 * scale),
+              padding: EdgeInsets.only(left: 24.w, top: 16.h, right: 24.w, bottom: 24.h),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
                     behavior: HitTestBehavior.opaque,
                     child: Container(
-                      width: 44 * scale,
-                      height: 44 * scale,
+                      width: 44.w,
+                      height: 44,
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         color: const Color(0xFF0F172A),
-                        size: 20 * scale,
+                        size: 20,
                       ),
                     ),
                   ),
                   Expanded(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.only(right: 44 * scale), // balance the back button
+                        padding: EdgeInsets.only(right: 44.w), // balance the back button
                         child: Text(
                           'MUTUAL FUND REPORT',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 10 * scale,
+                            fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF0F172A),
                             letterSpacing: 1.0,
@@ -62,38 +61,38 @@ class MfReportScreen extends StatelessWidget {
             // Content List
             Expanded(
               child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 24 * scale, vertical: 24 * scale),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
                 children: [
                   _buildReportSection(
                     context,
-                    scale: scale,
+                    
                     title: 'ELSS Statement',
                     latestPeriod: 'FY 2026-27',
                     latestSubtitle: "from april '26 to mar '27",
                     onViewAll: () => context.push('/mf-report-list', extra: 'ELSS STATEMENT'),
                   ),
-                  _buildDivider(scale),
+                  _buildDivider(),
                   _buildReportSection(
                     context,
-                    scale: scale,
+                    
                     title: 'Capital Gains',
                     latestPeriod: 'FY 2026-27',
                     latestSubtitle: "from april '26 to mar '27",
                     onViewAll: () => context.push('/mf-report-list', extra: 'CAPITAL GAINS'),
                   ),
-                  _buildDivider(scale),
+                  _buildDivider(),
                   _buildReportSection(
                     context,
-                    scale: scale,
+                    
                     title: 'Transactions',
                     latestPeriod: 'FY 2026-27',
                     latestSubtitle: "from april '26 to mar '27",
                     onViewAll: () => context.push('/mf-report-list', extra: 'TRANSACTIONS'),
                   ),
-                  _buildDivider(scale),
+                  _buildDivider(),
                   _buildReportSection(
                     context,
-                    scale: scale,
+                    
                     title: 'Mutual Fund Holdings',
                     latestPeriod: 'Your Mutual Fund Holdings',
                     latestSubtitle: "as of today",
@@ -108,9 +107,9 @@ class MfReportScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider(double scale) {
+  Widget _buildDivider() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24 * scale),
+      padding: EdgeInsets.symmetric(vertical: 24.h),
       child: Container(
         height: 1,
         color: const Color(0xFFF1F5F9),
@@ -120,7 +119,7 @@ class MfReportScreen extends StatelessWidget {
 
   Widget _buildReportSection(
     BuildContext context, {
-    required double scale,
+    
     required String title,
     required String latestPeriod,
     required String latestSubtitle,
@@ -136,7 +135,7 @@ class MfReportScreen extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12 * scale,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF0F172A),
               ),
@@ -148,7 +147,7 @@ class MfReportScreen extends StatelessWidget {
                   'View all',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10 * scale,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF94A3B8), // gray-400
                   ),
@@ -156,12 +155,12 @@ class MfReportScreen extends StatelessWidget {
               ),
           ],
         ),
-        SizedBox(height: 16 * scale),
+        SizedBox(height: 16.h),
         Container(
-          padding: EdgeInsets.all(16 * scale),
+          padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
             color: const Color(0xFFF8FAFC), // very light gray/blue fill
-            borderRadius: BorderRadius.circular(4 * scale),
+            borderRadius: BorderRadius.circular(4.r),
             border: Border.all(color: const Color(0xFF0F172A), width: 1.0),
           ),
           child: Row(
@@ -174,34 +173,34 @@ class MfReportScreen extends StatelessWidget {
                     latestPeriod,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 10 * scale,
+                      fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF0F172A),
                     ),
                   ),
-                  SizedBox(height: 4 * scale),
+                  SizedBox(height: 4.h),
                   Text(
                     latestSubtitle,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 10 * scale,
+                      fontSize: 10,
                       color: const Color(0xFF64748B),
                     ),
                   ),
                 ],
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 8 * scale),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(4 * scale),
+                  borderRadius: BorderRadius.circular(4.r),
                   border: Border.all(color: const Color(0xFF0F172A), width: 1.0),
                 ),
                 child: Text(
                   'Download',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 8 * scale,
+                    fontSize: 8.sp,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF0F172A),
                   ),

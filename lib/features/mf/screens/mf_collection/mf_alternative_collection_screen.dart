@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
 class MfAlternativeCollectionScreen extends StatefulWidget {
@@ -66,24 +67,22 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final scale = (screenWidth / 375.0).clamp(0.85, 1.2);
-
-    return Scaffold(
+        return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
         leading: Padding(
-          padding: EdgeInsets.only(left: 16.0 * scale),
+          padding: EdgeInsets.only(left: 16.0),
           child: Center(
             child: InkWell(
               onTap: () => Navigator.pop(context),
-              borderRadius: BorderRadius.circular(4 * scale),
+              borderRadius: BorderRadius.circular(4.r),
               child: SizedBox(
-                width: 40 * scale,
-                height: 40 * scale,
-                child: Icon(Icons.arrow_back_ios_new_rounded, size: 16 * scale, color: const Color(0xFF1E1E1E)),
+                width: 40,
+                height: 40,
+                child: Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: const Color(0xFF1E1E1E)),
               ),
             ),
           ),
@@ -96,7 +95,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
             child: SizedBox(
               width: maxWidth,
               child: ListView(
-                padding: EdgeInsets.all(16.0 * scale),
+                padding: EdgeInsets.all(16.0),
                 children: [
                   // Header Section
                   Row(
@@ -110,18 +109,18 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                               widget.title,
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 20 * scale,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFF1E1E1E),
                                 letterSpacing: -0.5,
                               ),
                             ),
-                            SizedBox(height: 8 * scale),
+                            SizedBox(height: 8.h),
                             Text(
                               widget.subtitle,
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 10 * scale,
+                                fontSize: 10,
                                 color: const Color(0xFF64748B), // Slate 500
                                 height: 1.4,
                               ),
@@ -129,23 +128,23 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                           ],
                         ),
                       ),
-                      SizedBox(width: 16 * scale),
+                      SizedBox(width: 16.w),
                       // Graphic
                       Container(
-                        width: 80 * scale,
-                        height: 80 * scale,
+                        width: 80,
+                        height: 80,
                         decoration: const BoxDecoration(
                           color: Color(0xFFF1F5F9),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.account_balance, color: const Color(0xFFDC2626), size: 40 * scale),
+                        child: Icon(Icons.account_balance, color: const Color(0xFFDC2626), size: 40),
                       ),
                     ],
                   ),
-                  SizedBox(height: 32 * scale),
+                  SizedBox(height: 32.h),
                   // Fund List
-                  ..._mockFunds.map((fund) => _buildFundRow(fund, scale)).toList(),
-                  SizedBox(height: 32 * scale),
+                  ..._mockFunds.map((fund) => _buildFundRow(fund)).toList(),
+                  SizedBox(height: 32.h),
                 ],
               ),
             ),
@@ -155,21 +154,21 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
     );
   }
 
-  Widget _buildFundRow(Map<String, dynamic> fund, double scale) {
+  Widget _buildFundRow(Map<String, dynamic> fund) {
     return Column(
       children: [
         InkWell(
           onTap: () => MfFundProfileScreen.showModal(context, fund['name']),
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.0 * scale),
+            padding: EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
               children: [
                 // Logo
                 Stack(
                   children: [
                     Container(
-                      width: 40 * scale,
-                      height: 40 * scale,
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(color: const Color(0xFFF1F5F9)),
@@ -179,7 +178,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                           fund['initial'],
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12 * scale,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF1E1E1E),
                           ),
@@ -190,17 +189,17 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                       bottom: 0,
                       right: 0,
                       child: Container(
-                        padding: EdgeInsets.all(2 * scale),
+                        padding: EdgeInsets.all(2.w),
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.stars, color: const Color(0xFFDC2626), size: 12 * scale),
+                        child: Icon(Icons.stars, color: const Color(0xFFDC2626), size: 12),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(width: 16 * scale),
+                SizedBox(width: 16.w),
                 // Details
                 Expanded(
                   child: Column(
@@ -210,17 +209,17 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                         fund['name'],
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 12 * scale,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF1E1E1E),
                         ),
                       ),
-                      SizedBox(height: 4 * scale),
+                      SizedBox(height: 4.h),
                       Text(
                         fund['category'],
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10 * scale,
+                          fontSize: 10,
                           color: const Color(0xFF64748B),
                         ),
                       ),
@@ -235,7 +234,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                     key: ValueKey<String>('${fund['name']}_$_returnPeriod'),
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 10 * scale,
+                      fontSize: 10,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF00C75A),
                     ),

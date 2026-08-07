@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/mf_holdings_empty_state.dart';
 import 'widgets/mf_holdings_header.dart';
@@ -28,27 +29,20 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
       return const ConnectedHoldingsView();
     }
 
-    final size = MediaQuery.of(context).size;
-    final padding = MediaQuery.of(context).padding;
-    final double scale = size.width / 375.0;
-    final double logicalHeight = (size.height - padding.top - padding.bottom) / scale;
-
-    return Scaffold(
+                    return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       body: SafeArea(
-        child: Transform.scale(
-          scale: scale,
-          alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: 375,
-            height: logicalHeight,
+        child: Builder(
+          builder: (context) => SizedBox(
+            width: double.infinity,
+            height: double.infinity,
             child: CustomScrollView(
               slivers: [
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: HoldingsHeaderDelegate(
                     safeAreaTop: 0,
-                    screenHeight: logicalHeight,
+                    screenHeight: MediaQuery.sizeOf(context).height,
                     hasImportedPortfolio: _hasImportedPortfolio,
                     isLocked: isLocked,
                     onLockTap: () {
@@ -60,7 +54,7 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    padding: EdgeInsets.symmetric(vertical: 12.0),
                     child: Column(
                       children: [
                         MfHoldingsEmptyState(
@@ -74,7 +68,7 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
                             });
                           },
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12.h),
                         MfHoldingsEmptyState(
                           title: "Unlock Portfolio Intelligence",
                           subtitle: "Import your holdings to unlock personalized insights, risk analysis, and smarter recommendations.",
@@ -84,7 +78,7 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
                             context.push('/mf-fetch-confirm');
                           },
                         ),
-                        const SizedBox(height: 48),
+                        SizedBox(height: 48.h),
                       ],
                     ),
                   ),

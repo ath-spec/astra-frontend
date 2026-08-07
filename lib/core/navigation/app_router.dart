@@ -29,6 +29,7 @@ import '../../features/chat/screens/chat_screen.dart';
 import '../../features/chat/screens/chat_history_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/news/screens/news_screen.dart';
+import '../../features/learnings/screens/learnings_screen.dart';
 import '../../features/budget/presentation/screens/budget_onboarding_intro_screen.dart';
 import '../../features/budget/presentation/screens/budget_control_screen.dart';
 import '../../features/recurring/presentation/screens/recurring_intro_screen.dart';
@@ -350,6 +351,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/news',
                 builder: (context, state) => const NewsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/learnings',
+                builder: (context, state) => const LearningsScreen(),
               ),
             ],
           ),

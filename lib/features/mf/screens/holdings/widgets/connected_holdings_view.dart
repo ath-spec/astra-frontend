@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'sort_by_bottom_sheet.dart';
 import 'mf_holdings_header.dart';
@@ -181,7 +182,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     child: GestureDetector(
                       onTap: () {}, // Prevent taps on the card from dismissing
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: HoldingDetailsBottomSheet(
                           item: aggregateItem,
                           formatCurrency: formatCurrency,
@@ -194,11 +195,11 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
             );
           },
           child: Container(
-            margin: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            padding: const EdgeInsets.all(20),
+            margin: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
+            padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(4.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.03),
@@ -214,17 +215,17 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      children: const [
+                      children: [
                         Text(
                           'Holding details',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0F172A),
                           ),
                         ),
-                        SizedBox(width: 4),
+                        SizedBox(width: 4.w),
                         Icon(
                           Icons.unfold_more,
                           size: 16,
@@ -232,14 +233,14 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                         ),
                       ],
                     ),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right,
                       size: 18,
                       color: Color(0xFF94A3B8),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -249,15 +250,15 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                       children: [
                         Text(
                           isLocked ? '₹ * * * *' : formatLargeNumber(investedVal),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0F172A),
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        const Text(
+                        SizedBox(height: 2.h),
+                        Text(
                           'Invested',
                           style: TextStyle(
                             fontFamily: 'DMSans',
@@ -272,15 +273,15 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                       children: [
                         Text(
                           isLocked ? '* * *' : '${xirrVal.toStringAsFixed(2)}%',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0F172A),
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        const Text(
+                        SizedBox(height: 2.h),
+                        Text(
                           'Current XIRR',
                           style: TextStyle(
                             fontFamily: 'DMSans',
@@ -295,15 +296,15 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                       children: [
                         Text(
                           isLocked ? '₹ * * * *' : '+${formatLargeNumber(returnsVal)} (15.04%)',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF22C55E),
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        const Text(
+                        SizedBox(height: 2.h),
+                        Text(
                           'Total Returns',
                           style: TextStyle(
                             fontFamily: 'DMSans',
@@ -326,7 +327,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
   Widget _buildFilterChips() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         children: [
           _buildChip(
@@ -335,25 +336,25 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
             onTap: _showSortBottomSheet,
             isActive: _currentSort != null,
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           _buildChip(
             'Equity',
             onTap: () => _toggleFilter('Equity'),
             isActive: _activeFilters.contains('Equity'),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           _buildChip(
             'Debt',
             onTap: () => _toggleFilter('Debt'),
             isActive: _activeFilters.contains('Debt'),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           _buildChip(
             'Global',
             onTap: () => _toggleFilter('Global'),
             isActive: _activeFilters.contains('Global'),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           _buildChip(
             'SIP',
             onTap: () => _toggleFilter('SIP'),
@@ -374,10 +375,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: isActive ? Colors.black : Colors.white,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(4.r),
           border: Border.all(
             color: isActive ? Colors.black : const Color(0xFFE2E8F0),
           ),
@@ -390,7 +391,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                 size: 14,
                 color: isActive ? Colors.white : const Color(0xFF0F172A),
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: 6.w),
             ],
             Text(
               label,
@@ -409,11 +410,11 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
 
   Widget _buildHeaderRow() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+          Text(
             'Holdings',
             style: TextStyle(
               fontFamily: 'DMSans',
@@ -425,10 +426,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(4),
+            padding: EdgeInsets.all(4.w),
             decoration: BoxDecoration(
               color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(4.r),
             ),
             child: Row(
               children: [
@@ -448,10 +449,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
     return GestureDetector(
       onTap: () => setState(() => _viewType = index),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(4.r),
           boxShadow: isSelected
               ? [
                   BoxShadow(
@@ -478,39 +479,39 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
       color: const Color(0xFFF9FAFB),
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top,
-        bottom: 8,
+        bottom: 8.h,
       ),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 8.0,
             ),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                     border: Border.all(color: const Color(0xFFE2E8F0)),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.arrow_back,
                     size: 20,
                     color: Color(0xFF0F172A),
                   ),
                 ),
-                const Spacer(),
+                Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(4.r),
                     border: Border.all(color: const Color(0xFFE2E8F0)),
                   ),
                   child: AnimatedBuilder(
@@ -518,9 +519,9 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     builder: (context, child) {
                       return Text(
                         isLocked ? '₹ * * * *' : formatCurrency.format(345126 * _numberAnimation.value),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF0F172A),
                         ),
@@ -528,11 +529,11 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     },
                   ),
                 ),
-                const Spacer(),
+                Spacer(),
                 GestureDetector(
                   onTap: () => ref.read(privacyProvider.notifier).state = !isLocked,
                   child: Container(
-                    padding: const EdgeInsets.all(4),
+                    padding: EdgeInsets.all(4.w),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
@@ -545,17 +546,17 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8.w),
                 GestureDetector(
                   onTap: () => context.push('/cart'),
                   child: Container(
-                    padding: const EdgeInsets.all(4),
+                    padding: EdgeInsets.all(4.w),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
                       border: Border.all(color: const Color(0xFFE2E8F0)),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.shopping_cart_outlined,
                       size: 10,
                       color: Color(0xFF0F172A),
@@ -567,10 +568,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
           ),
           // Subtle details below top bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: [
                 Text(
                   'Invested',
                   style: TextStyle(
@@ -605,29 +606,22 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final padding = MediaQuery.of(context).padding;
-    final double scale = size.width / 375.0;
-    final double logicalHeight =
-        (size.height - padding.top - padding.bottom) / scale;
-    final isLocked = ref.watch(privacyProvider);
+                    final isLocked = ref.watch(privacyProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       body: SafeArea(
-        child: Transform.scale(
-          scale: scale,
-          alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: 375,
-            height: logicalHeight,
+        child: Builder(
+          builder: (context) => SizedBox(
+            width: double.infinity,
+            height: double.infinity,
             child: CustomScrollView(
               slivers: [
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: HoldingsHeaderDelegate(
                     safeAreaTop: 0, // Handled by SafeArea
-                    screenHeight: logicalHeight,
+                    screenHeight: MediaQuery.sizeOf(context).height,
                     hasImportedPortfolio: true,
                     isLocked: isLocked,
                     onLockTap: () {
@@ -642,14 +636,14 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 16),
+                        padding: EdgeInsets.only(top: 16.h),
                         child: _buildTopCard(isLocked),
                       ),
 
                       _buildHeaderRow(),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       _buildFilterChips(),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24.h),
                     ],
                   ),
                 ),
@@ -657,35 +651,35 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                 if (_displayHoldings.isEmpty)
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         vertical: 64.0,
                         horizontal: 24.0,
                       ),
                       child: Center(
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.filter_alt_off_rounded,
                               size: 48,
                               color: Color(0xFFCBD5E1),
                             ),
-                            const SizedBox(height: 16),
-                            const Text(
+                            SizedBox(height: 16.h),
+                            Text(
                               'No holdings found',
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 18,
+                                fontSize: 18.sp,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF0F172A),
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            const Text(
+                            SizedBox(height: 8.h),
+                            Text(
                               'Try adjusting or clearing your filters to see your portfolio.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 14,
+                                fontSize: 14.sp,
                                 color: Color(0xFF64748B),
                               ),
                             ),
@@ -719,7 +713,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                 ],
 
                 SliverToBoxAdapter(
-                  child: const SizedBox(
+                  child: SizedBox(
                     height: 120,
                   ), // Bottom padding for navigation
                 ),
