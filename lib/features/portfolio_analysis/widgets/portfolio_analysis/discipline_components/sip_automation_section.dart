@@ -628,48 +628,27 @@ class _AnimatedPercentageBarState extends State<_AnimatedPercentageBar>
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
-          final currentPercent = _animation.value * widget.percentage;
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              final maxWidth = constraints.maxWidth;
-              return SizedBox(
-                height: 24,
-                width: maxWidth,
-                child: Stack(
-                  alignment: Alignment.centerLeft,
-                  children: [
-                    Container(
-                      width: maxWidth,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    ),
-                    Container(
-                      width: maxWidth * currentPercent,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF38A169),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    ),
-                    Positioned(
-                      left: (maxWidth * currentPercent) + 8,
-                      child: Text(
-                        '${(currentPercent * 100).toInt()}%',
-                        style: const TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF0F172A),
-                        ),
-                      ),
-                    ),
-                  ],
+          // Proportionally scale width: if 25% = 100px, 58% = 232px
+          return Row(
+            children: [
+              Container(
+                height: 8,
+                width: 232 * _animation.value,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE2E8F0),
                 ),
-              );
-            },
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${(widget.percentage * 100).toInt()}%',
+                style: const TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF0F172A),
+                ),
+              ),
+            ],
           );
         },
       ),

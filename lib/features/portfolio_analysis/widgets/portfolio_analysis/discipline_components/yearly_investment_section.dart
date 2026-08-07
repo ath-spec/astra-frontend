@@ -231,7 +231,7 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
                   text: 'Momentum is strong your yearly investment pattern shows positive growth trajectory. consistency is building wealth steadily.',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
+                    fontSize: 12,
                     height: 1.5,
                     color: Colors.white,
                   ),
@@ -504,7 +504,7 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
 
       final textPainter = TextPainter(
         text: TextSpan(
-          text: '?42.57K AVG',
+          text: 'Rs. 42.57K AVG',
           style: TextStyle(
             fontFamily: 'DMSans',
             fontSize: 8 * scale,
