@@ -21,19 +21,26 @@ class _DisciplineTabState extends State<DisciplineTab> with AutomaticKeepAliveCl
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final gapHeight = MediaQuery.sizeOf(context).height * 0.04;
+    final standardGap = SizedBox(height: gapHeight);
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(
-            children: const [
-              DisciplineGaugeSection(),
-              DisciplineFactorsCard(),
-              MonthlyInvestmentSection(),
-              SipDisciplineGrid(),
-              SipAutomationSection(),
-              YearlyInvestmentSection(),
+            children: [
+              const DisciplineGaugeSection(),
+              const DisciplineFactorsCard(),
+              standardGap,
+              const MonthlyInvestmentSection(),
+              standardGap,
+              const SipDisciplineGrid(),
+              standardGap,
+              const SipAutomationSection(),
+              standardGap,
+              const YearlyInvestmentSection(),
+              standardGap,
 
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
@@ -46,7 +53,7 @@ class _DisciplineTabState extends State<DisciplineTab> with AutomaticKeepAliveCl
                   textAlign: TextAlign.left,
                 ),
               ),
-              SizedBox(height: 48),
+              const SizedBox(height: 48),
             ],
           ),
         ),

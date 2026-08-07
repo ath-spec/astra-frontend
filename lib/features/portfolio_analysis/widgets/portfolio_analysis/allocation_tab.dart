@@ -20,17 +20,22 @@ class _AllocationTabState extends State<AllocationTab> with AutomaticKeepAliveCl
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final standardGap = SizedBox(height: MediaQuery.sizeOf(context).height * 0.04);
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(
-            children: const [
-              AllocationGaugeSection(),
-              AllocationFactorsCard(),
-              SizedBox(height: 48),
-              AllocationSuggestionsSection(),
-              IndexFundExposureSection(),
-              EquitySectorExposureSection(),
+            children: [
+              const AllocationGaugeSection(),
+              standardGap,
+              const AllocationFactorsCard(),
+              standardGap,
+              const AllocationSuggestionsSection(),
+              standardGap,
+              const IndexFundExposureSection(),
+              standardGap,
+              const EquitySectorExposureSection(),
+              standardGap,
             ],
           ),
         ),

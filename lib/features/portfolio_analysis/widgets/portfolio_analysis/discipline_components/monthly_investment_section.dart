@@ -93,7 +93,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                 'Monthly Net Investment',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 20.sp,
+                  fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
@@ -134,7 +134,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                 '₹4,001',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 22.sp,
+                  fontSize: 22,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
@@ -144,27 +144,25 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                 'average invested per month',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 10.sp,
+                  fontSize: 10,
                   color: Color(0xFF64748B),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 12),
           Text(
             'Steady investing reduces the impact of\nmarket swings over time.',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 10.sp,
+              fontSize: 10,
               height: 1.5,
               color: Color(0xFF64748B),
             ),
           ),
-          SizedBox(height: 32),
 
           // The Graph Area
           AspectRatio(
-            aspectRatio: 360 / 220,
+            aspectRatio: 360 / 200,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onHorizontalDragDown: (details) =>
@@ -211,7 +209,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                       'PRO TIP BY BEHAVIOUR AGENT',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10.sp,
+                        fontSize: 10,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 2.0,
                         color: Colors.white,
@@ -230,18 +228,21 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
             ],
           ),
           SizedBox(height: 12),
-          RotatingShimmerBorder(
-            borderRadius: BorderRadius.circular(4),
+          AnimatedGradientShimmer(
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
               child: TypewriterText(
                 text: 'Gaps in investing flow your investing rhythm has some breaks. keeping it steady will grow your money faster.',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   height: 1.5,
-                  color: Color(0xFF64748B),
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -266,7 +267,8 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final scale = size.width / 360.0;
-    final y0 = size.height * 0.65;
+    // Adjust y0 to shift graph up, creating more space for labels below
+    final y0 = size.height * 0.55;
     final paddingX = 36.0 * scale;
     final chartWidth = size.width - paddingX * 2;
 
@@ -402,7 +404,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
     final linePaint = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5 * scale;
+      ..strokeWidth = 1 * scale;
     canvas.drawPath(path, linePaint);
 
     // Draw AVG Pill
@@ -522,8 +524,8 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
         text: text,
         style: TextStyle(
           fontFamily: 'DMSans',
-          fontSize: 9 * scale,
-          fontWeight: FontWeight.w700,
+          fontSize: 8 * scale,
+          fontWeight: FontWeight.w600,
           color: Colors.black,
         ),
       ),
@@ -554,7 +556,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       Paint()
         ..color = Colors.black
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5 * scale,
+        ..strokeWidth = 1 * scale,
     );
 
     // Draw upward pointer
@@ -570,7 +572,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       Paint()
         ..color = Colors.black
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5 * scale,
+        ..strokeWidth = 1 * scale,
     );
     canvas.drawPath(
       pPath,
@@ -596,6 +598,11 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
     Size size,
     double scale,
   ) {
+    canvas.save();
+    canvas.translate(point.dx, point.dy);
+    canvas.scale(0.75, 0.75);
+    canvas.translate(-point.dx, -point.dy);
+
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
     textPainter.text = TextSpan(
       text: value,
@@ -694,6 +701,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
         ..color = Colors.white
         ..style = PaintingStyle.fill,
     );
+    canvas.restore();
   }
 
   void _drawExpandedTooltip(
@@ -706,6 +714,11 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
     Size size,
     double scale,
   ) {
+canvas.save();
+    canvas.translate(point.dx, point.dy);
+    canvas.scale(0.75, 0.75);
+    canvas.translate(-point.dx, -point.dy);
+
     final boxWidth = 145.0 * scale;
     final boxHeight = 68.0 * scale;
 
@@ -858,6 +871,8 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
         top + boxHeight - (16 * scale),
       ),
     );
+
+    canvas.restore();
   }
 
   void _drawDashedLine(

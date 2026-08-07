@@ -18,14 +18,18 @@ class _PerformanceTabState extends State<PerformanceTab> with AutomaticKeepAlive
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final standardGap = SizedBox(height: MediaQuery.sizeOf(context).height * 0.04);
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(
-            children: const [
-              PerformanceGaugeSection(),
-              MutualFundPerformanceSection(),
-              ExpensiveFundsSection(),
+            children: [
+              const PerformanceGaugeSection(),
+              standardGap,
+              const MutualFundPerformanceSection(),
+              standardGap,
+              const ExpensiveFundsSection(),
+              standardGap,
             ],
           ),
         ),

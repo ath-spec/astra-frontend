@@ -64,11 +64,12 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final gaugeWidth = screenWidth * 0.8;
-    final gaugeHeight = gaugeWidth * 0.5;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final gaugeWidth = constraints.maxWidth * 0.8;
+        final gaugeHeight = gaugeWidth * 0.5;
 
-    return Column(
+        return Column(
       children: [
         const SizedBox(height: 40),
         SizedBox(
@@ -199,8 +200,7 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
                     text: 'You have almost no stable, low-risk assets in your portfolio. You\'re fully riding market momentum, with all your wealth geared towards growth.',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 10,
-                      height: 1.5,
+                      fontSize: 13,
                       color: Colors.white,
                     ),
                   ),
@@ -212,6 +212,7 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
         const SizedBox(height: 40),
       ],
     );
+    });
   }
 }
 

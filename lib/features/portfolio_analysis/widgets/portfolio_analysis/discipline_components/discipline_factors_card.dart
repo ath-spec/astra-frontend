@@ -22,28 +22,9 @@ class DisciplineFactorsCard extends StatelessWidget {
               );
             },
             behavior: HitTestBehavior.opaque,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    'DISCIPLINE FACTORS',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                      color: Color(0xFF94A3B8),
-                    ),
-                  ),
-                  Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
-                ],
-              ),
-            ),
+            child: const SizedBox.shrink(),
           ),
           const SizedBox(height: 4),
-          const Divider(color: Color(0xFFE2E8F0), thickness: 1, height: 1),
           const SizedBox(height: 24),
           Stack(
             clipBehavior: Clip.none,
@@ -54,18 +35,31 @@ class DisciplineFactorsCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: const Color(0xFFF1F5F9)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 24,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
+                  border: Border.all(color: const Color.fromARGB(255, 188, 187, 187)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text(
+                            'DISCIPLINE FACTORS',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 2.0,
+                              color: Color(0xFF94A3B8),
+                            ),
+                          ),
+                          Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     _buildFactorItem(
                       icon: Icons.layers_outlined,
                       title: 'Monthly Consistency',
@@ -109,8 +103,8 @@ class DisciplineFactorsCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border(
-                        top: BorderSide(color: const Color(0xFFF1F5F9)),
-                        left: BorderSide(color: const Color(0xFFF1F5F9)),
+                        top: BorderSide(color: const Color.fromARGB(255, 188, 187, 187)),
+                        left: BorderSide(color: const Color.fromARGB(255, 188, 187, 187)),
                       ),
                     ),
                   ),
@@ -158,7 +152,7 @@ class DisciplineFactorsCard extends StatelessWidget {
                     title,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF334155),
                     ),
@@ -168,7 +162,7 @@ class DisciplineFactorsCard extends StatelessWidget {
                     subtitle,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 10,
+                      fontSize: 12,
                       color: Color(0xFF94A3B8),
                       height: 1.4,
                     ),

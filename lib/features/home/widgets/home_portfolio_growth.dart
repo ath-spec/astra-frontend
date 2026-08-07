@@ -130,11 +130,12 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
           child: Text(
             'Portfolio Growth',
             style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontFamily: 'DMSans',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -1.0,
               color: Color(0xFF0F172A),
-              letterSpacing: -0.5,
+
             ),
           ),
         ),

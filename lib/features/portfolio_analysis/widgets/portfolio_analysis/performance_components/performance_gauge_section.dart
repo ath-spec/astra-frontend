@@ -63,11 +63,10 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final gaugeWidth = screenWidth * 0.8;
-    final gaugeHeight = gaugeWidth * 0.5;
-
-    return VisibilityDetector(
+    return LayoutBuilder(builder: (context, constraints) {
+      final gaugeWidth = constraints.maxWidth * 0.8;
+      final gaugeHeight = gaugeWidth * 0.5;
+      return VisibilityDetector(
       key: const Key('PerformanceGaugeSection'),
       onVisibilityChanged: (info) {
         if (info.visibleFraction > 0.2 && !_hasAnimated) {
@@ -205,8 +204,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                     text: 'Your portfolio is earning well above what most Very Aggressive investors see. Your investment decisions are clearly paying off.',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 10,
-                      height: 1.5,
+                      fontSize: 13,
                       color: Colors.white,
                     ),
                   ),
@@ -225,7 +223,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: const _NotchBorder(
-                side: BorderSide(color: Color(0xFFE2E8F0)),
+                side: BorderSide(color: const Color.fromARGB(255, 188, 187, 187)),
               ),
               shadows: [
                 BoxShadow(
@@ -389,6 +387,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
       ],
       ),
     );
+    });
   }
 }
 

@@ -128,10 +128,10 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
               Text(
                 'Your wealth feed',
                 style: TextStyle(
-                  fontFamily: 'SpaceGrotesk',
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.5,
+                  fontFamily: 'DMSans',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -1.0,
                   color: const Color(0xFF0F172A),
                 ),
               ),

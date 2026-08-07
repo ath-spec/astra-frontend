@@ -71,11 +71,10 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final gaugeWidth = screenWidth * 0.8;
-    final gaugeHeight = gaugeWidth * 0.5;
-
-    return Column(
+    return LayoutBuilder(builder: (context, constraints) {
+      final gaugeWidth = constraints.maxWidth * 0.8;
+      final gaugeHeight = gaugeWidth * 0.5;
+      return Column(
       children: [
         const SizedBox(height: 40),
         SizedBox(
@@ -194,8 +193,7 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
                     text: 'Small withdrawals and some active months, but the habit needs to show up more consistently to move the score higher.',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 10,
-                      height: 1.5,
+                      fontSize: 13,
                       color: Colors.white,
                     ),
                   ),
@@ -204,9 +202,9 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
             ),
           ),
         ),
-        const SizedBox(height: 40),
       ],
     );
+    });
   }
 
   Widget _buildLabelText() {

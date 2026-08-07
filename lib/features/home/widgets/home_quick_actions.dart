@@ -14,10 +14,10 @@ class HomeQuickActions extends ConsumerWidget {
         const Text(
           'Quick actions',
           style: TextStyle(
-            fontFamily: 'SpaceGrotesk',
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.5,
+            fontFamily: 'DMSans',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -1.0,
             color: Color(0xFF0F172A),
           ),
         ),

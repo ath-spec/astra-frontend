@@ -219,21 +219,22 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
             ),
             const SizedBox(height: 16),
             // Pro Tip Card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-              ),
-              child: const TypewriterText(
-                text: 'Momentum is strong your yearly investment pattern shows positive growth trajectory. consistency is building wealth steadily.',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  height: 1.5,
-                  color: Color(0xFF64748B),
+            AnimatedGradientShimmer(
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const TypewriterText(
+                  text: 'Momentum is strong your yearly investment pattern shows positive growth trajectory. consistency is building wealth steadily.',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 10,
+                    height: 1.5,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -316,66 +317,7 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
     final maxVal = 200000.0;
     final maxBarHeight = 120.0 * scale;
 
-    // Horizontal AVG line (dotted green)
-    final avgValue = 42570.0;
-    final avgY = baseLine - (avgValue / maxVal) * maxBarHeight;
 
-    if (progress > 0.8) {
-      final avgPaint = Paint()
-        ..color = const Color(0xFF38A169)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1 * scale;
-
-      double startX = 0;
-      while (startX < size.width) {
-        canvas.drawLine(
-          Offset(startX, avgY),
-          Offset(startX + (4 * scale), avgY),
-          avgPaint,
-        );
-        startX += 8 * scale;
-      }
-
-      // AVG Pill
-      final avgPillRect = RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(size.width / 2, avgY),
-          width: 90 * scale,
-          height: 22 * scale,
-        ),
-        Radius.circular(11 * scale),
-      );
-      canvas.drawRRect(avgPillRect, Paint()..color = Colors.white);
-      canvas.drawRRect(
-        avgPillRect,
-        Paint()
-          ..color = const Color(0xFF38A169)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1 * scale,
-      );
-
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: '₹42.57K AVG',
-          style: TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 10 * scale,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF38A169),
-            letterSpacing: 1.0 * scale,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(
-          size.width / 2 - textPainter.width / 2,
-          avgY - textPainter.height / 2,
-        ),
-      );
-    }
 
     final data = [
       {'year': '2020', 'val': 0.0},
@@ -522,6 +464,67 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
       }
     }
 
+    // Horizontal AVG line (dotted green)
+    final avgValue = 42570.0;
+    final avgY = baseLine - (avgValue / maxVal) * maxBarHeight;
+
+    if (progress > 0.8) {
+      final avgPaint = Paint()
+        ..color = const Color(0xFF38A169)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1 * scale;
+
+      double startX = 0;
+      while (startX < size.width) {
+        canvas.drawLine(
+          Offset(startX, avgY),
+          Offset(startX + (4 * scale), avgY),
+          avgPaint,
+        );
+        startX += 8 * scale;
+      }
+
+      // AVG Pill
+      final avgPillRect = RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(size.width / 2, avgY),
+          width: 72 * scale,
+          height: 18 * scale,
+        ),
+        Radius.circular(4 * scale),
+      );
+      canvas.drawRRect(avgPillRect, Paint()..color = Colors.white);
+      canvas.drawRRect(
+        avgPillRect,
+        Paint()
+          ..color = const Color(0xFF38A169)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1 * scale,
+      );
+
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: '?42.57K AVG',
+          style: TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 8 * scale,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF38A169),
+            letterSpacing: 0.5 * scale,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        Offset(
+          size.width / 2 - textPainter.width / 2,
+          avgY - textPainter.height / 2,
+        ),
+      );
+    }
+
     // Draw tooltip on top of all bars and gridlines
     if (drawTooltipAction != null) {
       drawTooltipAction!();
@@ -556,6 +559,11 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
         ..color = const Color(0xFF0F172A)
         ..strokeWidth = 1.0 * scale,
     );
+
+    canvas.save();
+    canvas.translate(barTop.dx, pointerTipY);
+    canvas.scale(0.68, 0.68);
+    canvas.translate(-barTop.dx, -pointerTipY);
 
     // Position tooltip to not go offscreen
     double left = barTop.dx - boxWidth / 2;
@@ -787,6 +795,7 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
         totalRect.top + (7 * scale),
       ),
     );
+    canvas.restore();
   }
 
   @override
