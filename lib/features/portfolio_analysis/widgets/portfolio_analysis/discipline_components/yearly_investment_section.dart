@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:math' as math;
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
@@ -47,6 +49,17 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _handleTouch(Offset localPosition, double totalWidth) {
+    final numBars = 7;
+    final stepX = totalWidth / numBars;
+    final index = (localPosition.dx / stepX).floor().clamp(0, numBars - 1);
+    
+    if (_tappedIndex != index) {
+      HapticFeedback.selectionClick();
+      setState(() => _tappedIndex = index);
+    }
   }
 
   @override
@@ -145,30 +158,12 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
               aspectRatio: 360 / 250,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onHorizontalDragDown: (details) {
-                  final numBars = 7;
-                  final stepX = context.size!.width / numBars;
-                  final index = (details.localPosition.dx / stepX)
-                      .floor()
-                      .clamp(0, numBars - 1);
-                  setState(() => _tappedIndex = index);
-                },
-                onHorizontalDragUpdate: (details) {
-                  final numBars = 7;
-                  final stepX = context.size!.width / numBars;
-                  final index = (details.localPosition.dx / stepX)
-                      .floor()
-                      .clamp(0, numBars - 1);
-                  setState(() => _tappedIndex = index);
-                },
-                onTapDown: (details) {
-                  final numBars = 7;
-                  final stepX = context.size!.width / numBars;
-                  final index = (details.localPosition.dx / stepX)
-                      .floor()
-                      .clamp(0, numBars - 1);
-                  setState(() => _tappedIndex = index);
-                },
+                onHorizontalDragDown: (details) =>
+                    _handleTouch(details.localPosition, context.size!.width),
+                onHorizontalDragUpdate: (details) =>
+                    _handleTouch(details.localPosition, context.size!.width),
+                onTapDown: (details) =>
+                    _handleTouch(details.localPosition, context.size!.width),
                 child: AnimatedBuilder(
                   animation: _animation,
                   builder: (context, child) {
@@ -284,6 +279,7 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final scale = size.width / 360.0;
+    final textScale = math.max(scale, 0.85);
     final y0 = size.height - (40 * scale);
     final baseLine = y0 - (30 * scale);
 
@@ -472,50 +468,55 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
       final avgPaint = Paint()
         ..color = const Color(0xFF38A169)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1 * scale;
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 1.5 * scale;
 
       double startX = 0;
       while (startX < size.width) {
         canvas.drawLine(
           Offset(startX, avgY),
-          Offset(startX + (4 * scale), avgY),
+          Offset(startX + (0.1 * scale), avgY),
           avgPaint,
         );
-        startX += 8 * scale;
+        startX += 3.6 * scale;
       }
 
-      // AVG Pill
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: '₹42.57K AVG',
+          style: TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 8 * textScale,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF38A169),
+            letterSpacing: 0.5 * textScale,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout();
+
+      final pillWidth = textPainter.width + (16 * textScale);
+      final pillHeight = textPainter.height + (8 * textScale);
+
       final avgPillRect = RRect.fromRectAndRadius(
         Rect.fromCenter(
           center: Offset(size.width / 2, avgY),
-          width: 72 * scale,
-          height: 18 * scale,
+          width: pillWidth,
+          height: pillHeight,
         ),
-        Radius.circular(4 * scale),
+        Radius.circular(pillHeight / 2),
       );
+      
       canvas.drawRRect(avgPillRect, Paint()..color = Colors.white);
       canvas.drawRRect(
         avgPillRect,
         Paint()
           ..color = const Color(0xFF38A169)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1 * scale,
+          ..strokeWidth = 0.5 * scale,
       );
 
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: 'Rs. 42.57K AVG',
-          style: TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 8 * scale,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF38A169),
-            letterSpacing: 0.5 * scale,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-      textPainter.layout();
       textPainter.paint(
         canvas,
         Offset(
@@ -561,8 +562,13 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
     );
 
     canvas.save();
+    
+    // Clamp the effective scale so it never drops below 0.85
+    final effectiveScale = math.max(scale * 0.68, 0.85);
+    final tooltipScale = effectiveScale / scale;
+    
     canvas.translate(barTop.dx, pointerTipY);
-    canvas.scale(0.68, 0.68);
+    canvas.scale(tooltipScale, tooltipScale);
     canvas.translate(-barTop.dx, -pointerTipY);
 
     // Position tooltip to not go offscreen

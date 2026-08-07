@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'generic_info_sheet.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
@@ -28,11 +29,11 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1200),
+      duration: Duration(milliseconds: 800),
     );
     _animation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeInOutCubic,
+      curve: Curves.easeOutCubic,
     );
 
     Future.delayed(Duration(milliseconds: 400), () {
@@ -62,6 +63,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
     final int index = (adjX / stepX).round().clamp(0, 8);
 
     if (_hoverIndex != index) {
+      HapticFeedback.selectionClick();
       setState(() {
         _hoverIndex = index;
         _isExpanded = true;
@@ -77,6 +79,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
     _holdTimer?.cancel(); // In case any exist from older code
     setState(() {
       _isExpanded = false;
+      _hoverIndex = 8;
     });
   }
 
@@ -267,6 +270,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final scale = size.width / 360.0;
+    final textScale = math.max(scale, 0.85);
     // Adjust y0 to shift graph up, creating more space for labels below
     final y0 = size.height * 0.55;
     final paddingX = 36.0 * scale;
@@ -407,16 +411,46 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       ..strokeWidth = 1 * scale;
     canvas.drawPath(path, linePaint);
 
-    // Draw AVG Pill
+    // Draw AVG Pill and Line
     if (progress > 0.8 && hoverIndex == 8 && !isExpanded) {
+      final avgLinePaint = Paint()
+        ..color = const Color(0xFF38A169)
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 1.5 * scale;
+      _drawDashedLine(
+        canvas,
+        Offset(paddingX, y0 - (4 * scale)),
+        Offset(size.width - paddingX, y0 - (4 * scale)),
+        avgLinePaint,
+        scale,
+        dashWidth: 0.1 * scale,
+        dashSpace: 3.5 * scale,
+      );
+
+      textPainter.text = TextSpan(
+        text: '₹4K AVG',
+        style: TextStyle(
+          fontFamily: 'DMSans',
+          fontSize: 8 * textScale,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF38A169),
+        ),
+      );
+      textPainter.layout();
+
+      final pillWidth = textPainter.width + (16 * textScale);
+      final pillHeight = textPainter.height + (8 * textScale);
+
       final avgPillRect = RRect.fromRectAndRadius(
         Rect.fromCenter(
-          center: Offset(paddingX + 4 * stepX, y0 - (2 * scale)),
-          width: 70 * scale,
-          height: 20 * scale,
+          center: Offset(paddingX + 4 * stepX, y0 - (4 * scale)),
+          width: pillWidth,
+          height: pillHeight,
         ),
-        Radius.circular(10 * scale),
+        Radius.circular(pillHeight / 2),
       );
+      
       final pillPaint = Paint()..color = Colors.white;
       final pillBorderPaint = Paint()
         ..color = Color(0xFF38A169)
@@ -426,21 +460,11 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       canvas.drawRRect(avgPillRect, pillPaint);
       canvas.drawRRect(avgPillRect, pillBorderPaint);
 
-      textPainter.text = TextSpan(
-        text: '₹4K AVG',
-        style: TextStyle(
-          fontFamily: 'DMSans',
-          fontSize: 8.5 * scale,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF38A169),
-        ),
-      );
-      textPainter.layout();
       textPainter.paint(
         canvas,
         Offset(
           (paddingX + 4 * stepX) - textPainter.width / 2,
-          y0 - (2 * scale) - textPainter.height / 2,
+          y0 - (4 * scale) - textPainter.height / 2,
         ),
       );
     }
@@ -599,8 +623,13 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
     double scale,
   ) {
     canvas.save();
+    
+    // Clamp the effective scale so it never drops below 0.85
+    final effectiveScale = math.max(scale * 0.75, 0.85);
+    final tooltipScale = effectiveScale / scale;
+    
     canvas.translate(point.dx, point.dy);
-    canvas.scale(0.75, 0.75);
+    canvas.scale(tooltipScale, tooltipScale);
     canvas.translate(-point.dx, -point.dy);
 
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
@@ -714,9 +743,14 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
     Size size,
     double scale,
   ) {
-canvas.save();
+    canvas.save();
+    
+    // Clamp the effective scale so it never drops below 0.85
+    final effectiveScale = math.max(scale * 0.75, 0.85);
+    final tooltipScale = effectiveScale / scale;
+    
     canvas.translate(point.dx, point.dy);
-    canvas.scale(0.75, 0.75);
+    canvas.scale(tooltipScale, tooltipScale);
     canvas.translate(-point.dx, -point.dy);
 
     final boxWidth = 145.0 * scale;
@@ -875,26 +909,16 @@ canvas.save();
     canvas.restore();
   }
 
-  void _drawDashedLine(
-    Canvas canvas,
-    Offset p1,
-    Offset p2,
-    Paint paint,
-    double scale,
-  ) {
+  void _drawDashedLine(Canvas canvas, Offset p1, Offset p2, Paint paint, double scale, {double? dashWidth, double? dashSpace}) {
     final distance = (p2 - p1).distance;
     final direction = (p2 - p1) / distance;
-    double dashWidth = 4 * scale;
-    double dashSpace = 4 * scale;
+    double w = dashWidth ?? (4 * scale);
+    double s = dashSpace ?? (4 * scale);
     double start = 0;
-
+    
     while (start < distance) {
-      canvas.drawLine(
-        p1 + direction * start,
-        p1 + direction * math.min(start + dashWidth, distance),
-        paint,
-      );
-      start += dashWidth + dashSpace;
+      canvas.drawLine(p1 + direction * start, p1 + direction * math.min(start + w, distance), paint);
+      start += w + s;
     }
   }
 

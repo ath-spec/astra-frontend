@@ -229,7 +229,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ),
                 
                 const SizedBox(height: 40),
-                const HomePortfolioInsights(),
+                HomePortfolioInsights(isLocked: isLocked),
                 
                 const SizedBox(height: 48),
                 const HomePortfolioAnalysis(),

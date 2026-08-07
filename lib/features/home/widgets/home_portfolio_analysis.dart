@@ -158,21 +158,6 @@ class HomePortfolioAnalysis extends StatelessWidget {
                   end: Alignment.bottomCenter,
                 ),
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(
-                      0xFF48BB78,
-                    ).withOpacity(0.3), // Glow effect
-                    blurRadius: 24,
-                    spreadRadius: 4,
-                    offset: const Offset(0, 10),
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
                 border: Border.all(
                   color: Colors.white.withOpacity(0.1),
                   width: 1,
@@ -399,16 +384,13 @@ class _LockedSemiCircleGaugePainter extends CustomPainter {
         ..strokeWidth = 6
         ..strokeCap = StrokeCap.round);
 
-    // Show 3 filled segments (preview state), drawn right-to-left for overlapping caps
-    for (int i = 2; i >= 0; i--) {
-      final start = startAngle + (i * segmentSweep);
-      canvas.drawArc(innerRect, start, segmentSweep, false,
-        Paint()
-          ..color = color.withOpacity(0.4 + (i * 0.2))
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 6
-          ..strokeCap = StrokeCap.round);
-    }
+    // Show 3 filled segments (preview state) as a solid color
+    canvas.drawArc(innerRect, startAngle, segmentSweep * 3, false,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..strokeCap = StrokeCap.round);
   }
 
   @override

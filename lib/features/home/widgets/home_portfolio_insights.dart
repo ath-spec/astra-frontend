@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class HomePortfolioInsights extends StatelessWidget {
-  const HomePortfolioInsights({super.key});
+  final bool isLocked;
+  const HomePortfolioInsights({super.key, this.isLocked = false});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class HomePortfolioInsights extends StatelessWidget {
                 index: 0,
                 title: 'Tax harvesting:\nlock in ₹1.25L tax-\nfree',
                 buttonText: 'KNOW MORE',
-                painter: TaxHarvestingPainter(),
+                painter: TaxHarvestingPainter(isLocked: isLocked),
                 cardWidth: 280,
               ),
               const SizedBox(width: 16),
@@ -58,7 +59,7 @@ class HomePortfolioInsights extends StatelessWidget {
                 index: 1,
                 title: 'Steady your\ngrowth with index\nfunds',
                 buttonText: 'KNOW MORE',
-                painter: IndexFundsPainter(),
+                painter: IndexFundsPainter(isLocked: isLocked),
                 cardWidth: 280,
               ),
             ],
@@ -169,6 +170,9 @@ class HomePortfolioInsights extends StatelessWidget {
 }
 
 class TaxHarvestingPainter extends CustomPainter {
+  final bool isLocked;
+  TaxHarvestingPainter({this.isLocked = false});
+
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width;
@@ -214,12 +218,16 @@ class TaxHarvestingPainter extends CustomPainter {
 
     canvas.drawPath(leftFace, Paint()..color = const Color(0xFF38B2AC)); // Teal 400
     
-    final gradientPaint = Paint()
-      ..shader = const LinearGradient(
+    final gradientPaint = Paint();
+    if (isLocked) {
+      gradientPaint.color = const Color(0xFF81E6D9);
+    } else {
+      gradientPaint.shader = const LinearGradient(
         colors: [Color(0xFF81E6D9), Color(0xFFE6FFFA)],
         begin: Alignment.bottomLeft,
         end: Alignment.topRight,
       ).createShader(Rect.fromLTRB(40, h-85, 110, h-20));
+    }
     canvas.drawPath(rightFace, gradientPaint);
     
     canvas.drawPath(topFace, Paint()..color = const Color(0xFFE6FFFA)); // Teal 50
@@ -285,6 +293,9 @@ class TaxHarvestingPainter extends CustomPainter {
 }
 
 class IndexFundsPainter extends CustomPainter {
+  final bool isLocked;
+  IndexFundsPainter({this.isLocked = false});
+
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width;
