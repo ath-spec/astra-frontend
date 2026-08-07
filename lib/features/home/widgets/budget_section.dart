@@ -152,7 +152,7 @@ class _BudgetCard extends StatelessWidget {
                           'AI sets up your budget and helps you track progress all month long',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 9,
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: Colors.black54,
                           ),

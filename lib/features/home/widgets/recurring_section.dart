@@ -191,7 +191,7 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
             label,
             style: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
               color: Colors.black54,
             ),
@@ -204,8 +204,8 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
           child: Text(
             value,
             style: const TextStyle(
-              fontFamily: 'SpaceGrotesk',
-              fontSize: 15,
+              fontFamily: 'DMSans',
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Colors.black,
             ),
@@ -267,7 +267,7 @@ class DuePaymentCard extends StatelessWidget {
                     Text(
                       payeeName.toLowerCase(),
                       style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
+                        fontFamily: 'DMSans',
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: isDark ? Colors.white : Colors.black87,
@@ -439,7 +439,7 @@ class _NoRecurringCard extends StatelessWidget {
                         'AI automatically fetches your bills and reminds you to pay them on time',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 9,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: Colors.black54,
                         ),
@@ -454,13 +454,6 @@ class _NoRecurringCard extends StatelessWidget {
                             end: Alignment.bottomCenter,
                           ),
                           borderRadius: BorderRadius.circular(4),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
                           border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
                         ),
                         child: const Text(

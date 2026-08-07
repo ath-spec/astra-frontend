@@ -686,7 +686,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                                     251,
                                     250,
                                   ),
-                                  borderRadius: BorderRadius.circular(8 * s),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                     color: const Color.fromARGB(
                                       255,
@@ -881,20 +881,13 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
       width: 200 * s,
       padding: EdgeInsets.all(16 * s),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8 * s),
+        borderRadius: BorderRadius.circular(4),
         gradient: const LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [Color(0xFFCFFAFE), Colors.white],
         ),
         border: Border.all(color: const Color(0xFFCFFAFE)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 4 * s,
-            offset: Offset(0, 2 * s),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1830,16 +1823,16 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                 ),
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF3E8FF),
-                                  borderRadius: BorderRadius.circular(8 * s),
-                                  border: Border.all(color: Color(0xFFF3E8FF)),
+                                  color: Color.fromARGB(255, 255, 245, 232),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: Color.fromARGB(255, 255, 250, 232)),
                                 ),
                                 child: TypewriterText(
                                   text:
                                       'Only ~26% largecap and ~12% mid / smallcap funds beat their index over 10 years',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12 * s,
+                                    fontSize: 12,
                                     color: Colors.black87,
                                     fontWeight: FontWeight.w500,
                                     height: 1.4,
@@ -1860,7 +1853,20 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                               color: const Color(0xFF6B46C1),
                             ),
                           ),
-                          SizedBox(height: 32 * s),
+                          SizedBox(height: 16 * s),
+                          Text(
+                            'Investing ₹1.23L in index will\nget you to a healthy index\nallocation of 20%',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 22 * s,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF0F172A),
+                              height: 1.2,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          SizedBox(height: 16 * s),
 
                           // Inline CTA at end of scroll
                           Column(
@@ -1871,20 +1877,15 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                 text: TextSpan(
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12 * s,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color.fromARGB(
-                                      255,
-                                      169,
-                                      169,
-                                      169,
-                                    ),
-                                    height: 1.3,
+                                    fontSize: 14 * s,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF64748B),
+                                    height: 1.5,
                                   ),
                                   children: [
-                                    const TextSpan(text: 'Inve '),
+                                    const TextSpan(text: 'Add '),
                                     TextSpan(
-                                      text: '₹ 1.23L',
+                                      text: '₹1,23,832',
                                       style: TextStyle(
                                         color: const Color(
                                           0xFF10B981,
@@ -1892,7 +1893,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                       ),
                                     ),
                                     const TextSpan(
-                                      text: ' to increase exposure to 20%.',
+                                      text: ' to increase your index exposure\nto 20%',
                                     ),
                                   ],
                                 ),
@@ -1991,14 +1992,13 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                           children: [
                             const TextSpan(text: 'Add '),
                             TextSpan(
-                              text: '₹ 86.28K',
+                              text: '₹1,23,832',
                               style: TextStyle(
                                 color: const Color(0xFF10B981), // Crisp green
                               ),
                             ),
                             const TextSpan(
-                              text:
-                                  ' to index to reach healthy allocation of 20%',
+                              text: ' to increase your index exposure to 20%',
                             ),
                           ],
                         ),
