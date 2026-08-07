@@ -46,13 +46,6 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
         decoration: ShapeDecoration(
           color: Colors.white,
           shape: const _NotchBorder(),
-          shadows: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 24,
-              offset: const Offset(0, 10),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,8 +111,8 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
               index: 0,
               icon: Icons.change_history,
               title: 'Stable assets',
-              subtitle: 'Bank Accounts, FDs, Surplus & Liqui...',
-              amount: '₹3,058',
+              subtitle: 'Bank Accounts, FDs, Surplus & Liquid Funds',
+              amount: '₹ 3,058',
               percentage: '1%',
               iconColor: const Color(0xFF38A169),
             ),
@@ -130,7 +123,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
               icon: Icons.call_split,
               title: 'Low volatility assets',
               subtitle: 'Mostly steady, small ups and downs',
-              amount: '₹0',
+              amount: '₹ 0',
               percentage: '0%',
               iconColor: const Color(0xFF38A169),
             ),
@@ -141,7 +134,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
               icon: Icons.star_border,
               title: 'Medium volatility assets',
               subtitle: 'Moderate swings, growth potential',
-              amount: '₹0',
+              amount: '₹ 0',
               percentage: '0%',
               iconColor: const Color(0xFFDD6B20),
             ),
@@ -152,7 +145,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
               icon: Icons.ac_unit,
               title: 'High volatility assets',
               subtitle: 'High swings, high potential',
-              amount: '₹3,45,126',
+              amount: '₹ 3,45,126',
               percentage: '99%',
               iconColor: const Color(0xFFE53E3E),
             ),
@@ -205,7 +198,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
                   title,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
@@ -215,7 +208,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
                   subtitle,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
+                    fontSize: 12,
                     color: Color(0xFF94A3B8),
                   ),
                 ),
@@ -240,7 +233,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
                 percentage,
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 10,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF64748B),
                 ),
@@ -293,7 +286,7 @@ class _DottedDivider extends StatelessWidget {
 }
 
 class _NotchBorder extends OutlinedBorder {
-  const _NotchBorder({super.side = const BorderSide(color: Color(0xFFF1F5F9), width: 1.0)});
+  const _NotchBorder({super.side = const BorderSide(color: const Color.fromARGB(255, 188, 187, 187), width: 1.0)});
 
   @override
   OutlinedBorder copyWith({BorderSide? side}) => _NotchBorder(side: side ?? this.side);

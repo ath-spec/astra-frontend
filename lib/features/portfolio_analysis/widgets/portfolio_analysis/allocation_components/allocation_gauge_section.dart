@@ -209,7 +209,6 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
             ),
           ),
         ),
-        const SizedBox(height: 40),
       ],
     );
     });

@@ -54,22 +54,22 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               'Equity Sector Exposure',
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 14,
+                fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
               ),
             ),
             const SizedBox(height: 24),
             
-            _buildSectorBar('Financial Services', 34, '₹1,12,756'),
+            _buildSectorBar('Financial Services', 34, '₹ 1,12,756'),
             const SizedBox(height: 24),
-            _buildSectorBar('Consumer Cyclical', 13, '₹42,835'),
+            _buildSectorBar('Consumer Cyclical', 13, '₹ 42,835'),
             const SizedBox(height: 24),
-            _buildSectorBar('Industrials', 9, '₹30,140'),
+            _buildSectorBar('Industrials', 9, '₹ 30,140'),
             const SizedBox(height: 24),
-            _buildSectorBar('Technology', 8, '₹26,533'),
+            _buildSectorBar('Technology', 8, '₹ 26,533'),
             const SizedBox(height: 24),
-            _buildSectorBar('Others', 34, '₹1,13,471'),
+            _buildSectorBar('Others', 34, '₹ 1,13,471'),
             
             const SizedBox(height: 48),
 
@@ -117,7 +117,7 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
                     text: 'Your portfolio has a strong tilt towards Financial Services (34%) and Cyclical sectors. While great for growth during economic expansions, this creates a blind spot in defensive sectors like Healthcare or Utilities. This means your portfolio is highly sensitive to interest rate changes and economic cycles, lacking stability during market downturns.',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: getProportionateScreenWidth(10),
+                      fontSize: 12,
                       height: 1.5,
                       color: const Color(0xFF64748B),
                     ),
@@ -156,7 +156,7 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               '$name ($percentage%)',
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
               ),
@@ -165,7 +165,7 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               amount,
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF0F172A),
               ),

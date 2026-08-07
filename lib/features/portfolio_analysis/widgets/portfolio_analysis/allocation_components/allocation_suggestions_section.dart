@@ -17,7 +17,7 @@ class AllocationSuggestionsSection extends StatelessWidget {
             'Allocation Suggestions',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 14,
+              fontSize: 20,
               fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
             ),
@@ -27,7 +27,7 @@ class AllocationSuggestionsSection extends StatelessWidget {
             'Insights based on your current portfolio mix.',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 10,
+              fontSize: 12,
               color: Color(0xFF64748B),
             ),
           ),
@@ -90,7 +90,6 @@ class AllocationSuggestionsSection extends StatelessWidget {
               end: Alignment.bottomRight,
             ),
           ),
-          const SizedBox(height: 48),
         ],
       ),
     );

@@ -25,11 +25,11 @@ class _PerformanceTabState extends State<PerformanceTab> with AutomaticKeepAlive
           child: Column(
             children: [
               const PerformanceGaugeSection(),
-              standardGap,
+              const SizedBox(height: 56),
               const MutualFundPerformanceSection(),
-              standardGap,
+              const SizedBox(height: 56),
               const ExpensiveFundsSection(),
-              standardGap,
+              const SizedBox(height: 56),
             ],
           ),
         ),

@@ -38,17 +38,17 @@ class _MutualFundPerformanceSectionState
           'Mutual Fund Performance',
           style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 14,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: Color(0xFF0F172A),
           ),
         ),
         const SizedBox(height: 12),
         const Text(
-          '₹3,45,126',
+          '₹ 3,45,126',
           style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.5,
             color: Color(0xFF0F172A),
@@ -145,7 +145,7 @@ class _MutualFundPerformanceSectionState
           color: const Color(0xFFE53E3E),
           title: 'Under-performing funds',
           percentage: '0%',
-          amount: '₹0',
+          amount: '₹ 0',
           onTap: () {
             showModalBottomSheet(
               context: context,
@@ -161,7 +161,7 @@ class _MutualFundPerformanceSectionState
           color: const Color(0xFF4ADE80), // Light green
           title: 'In line performing funds',
           percentage: '31%',
-          amount: '₹1,08,587',
+          amount: '₹ 1,08,587',
           onTap: () {
             showModalBottomSheet(
               context: context,
@@ -177,7 +177,7 @@ class _MutualFundPerformanceSectionState
           color: const Color(0xFF16A34A), // Dark green
           title: 'Out-performing funds',
           percentage: '68%',
-          amount: '₹2,36,538',
+          amount: '₹ 2,36,538',
           onTap: () {
             showModalBottomSheet(
               context: context,
@@ -245,7 +245,7 @@ class _MutualFundPerformanceSectionState
                   text: 'Winning streak most of your funds are ahead of the benchmark. momentum is strong.',
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
+                    fontSize: 12,
                     height: 1.5,
                     color: Color(0xFF64748B),
                   ),
@@ -254,7 +254,6 @@ class _MutualFundPerformanceSectionState
             ],
           ),
         ),
-        const SizedBox(height: 48),
       ],
     );
   }
@@ -360,7 +359,7 @@ class _Performance3DBarPainter extends CustomPainter {
       {
         'label': 'UNDER\nPERFORMING',
         'val': 10.0,
-        'amt': '₹0',
+        'amt': '₹ 0',
         'colorFront': const Color(0xFFF87171),
         'colorSide': const Color(0xFFEF4444),
         'colorTop': const Color(0xFFFCA5A5),
@@ -368,7 +367,7 @@ class _Performance3DBarPainter extends CustomPainter {
       {
         'label': 'IN LINE\nPERFORMING',
         'val': 90.0,
-        'amt': '₹1.08L',
+        'amt': '₹ 1.08L',
         'colorFront': const Color(0xFF86EFAC),
         'colorSide': const Color(0xFF22C55E),
         'colorTop': const Color(0xFFBBF7D0),
@@ -376,7 +375,7 @@ class _Performance3DBarPainter extends CustomPainter {
       {
         'label': 'OUT\nPERFORMING',
         'val': 180.0,
-        'amt': '₹2.36L',
+        'amt': '₹ 2.36L',
         'colorFront': const Color(0xFF4ADE80),
         'colorSide': const Color(0xFF16A34A),
         'colorTop': const Color(0xFF86EFAC),

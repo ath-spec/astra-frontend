@@ -53,7 +53,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
                 'Expensive Funds',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14,
+                  fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
@@ -91,10 +91,10 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
             text: const TextSpan(
               children: [
                 TextSpan(
-                  text: '₹0 ',
+                  text: '₹ 0 ',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                     letterSpacing: -1.0,
@@ -166,12 +166,12 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
                   'View funds',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
                 ),
-                Icon(Icons.chevron_right, size: 12, color: Color(0xFF0F172A)),
+                Icon(Icons.chevron_right, size: 14, color: Color(0xFF0F172A)),
               ],
             ),
           ),
@@ -235,7 +235,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
               text: 'Fees aren\'t eating into your gains every rupee is compounding efficiently for you.',
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 10,
+                fontSize: 12,
                 height: 1.5,
                 color: Color(0xFF64748B),
               ),

@@ -204,7 +204,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                     text: 'Your portfolio is earning well above what most Very Aggressive investors see. Your investment decisions are clearly paying off.',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 13,
+                      fontSize: 12,
                       color: Colors.white,
                     ),
                   ),
@@ -261,7 +261,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                             'Your Lifetime MF XIRR ',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 10,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF64748B),
                             ),
@@ -270,7 +270,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                             '4.06% higher',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 10,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF38A169),
                             ),
@@ -316,7 +316,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                             '9.48%',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 10,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF0F172A),
                             ),
@@ -336,7 +336,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                         'Benchmark',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF64748B),
                         ),
@@ -370,7 +370,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                             '5.42%',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 10,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF0F172A),
                             ),

@@ -66,7 +66,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       'Index Fund Exposure',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14,
+                        fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
@@ -105,7 +105,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       '25% less',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
@@ -128,7 +128,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                   children: [
                     const Icon(Icons.person, size: 12, color: Color(0xFF64748B)),
                     const SizedBox(width: 8),
-                    const Text('You', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF64748B))),
+                    const Text('You', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: Color(0xFF64748B),fontWeight: FontWeight.w600)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -147,7 +147,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       child: const Icon(Icons.people, size: 12, color: Color(0xFF22543D)),
                     ),
                     const SizedBox(width: 8),
-                    const Text('Investors like you', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF64748B),fontWeight: FontWeight.w600)),
+                    const Text('Investors like you', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: Color(0xFF64748B),fontWeight: FontWeight.w600)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -184,7 +184,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       'Equity Market cap split',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14,
+                        fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
@@ -223,7 +223,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       '₹2,30,102',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
@@ -241,7 +241,7 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  'Breakdown of your equity exposure by\ncompany size and sector - including\nunderlying stocks within your mutual funds.',
+                  'Breakdown of your equity exposure by company size and sector - including\nunderlying stocks within your mutual funds.',
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 10,
