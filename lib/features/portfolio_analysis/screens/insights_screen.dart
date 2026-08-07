@@ -339,8 +339,9 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                         SizedBox(
                           height: 120 * s,
                           width: 160 * s,
-                          child: CustomPaint(
-                            painter: _TaxBriefcasePainter(scale: s),
+                          child: Image.asset(
+                            'lib/core/images/insight1.webp',
+                            fit: BoxFit.contain,
                           ),
                         ),
                         SizedBox(height: 32 * s),
@@ -687,55 +688,69 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                         SizedBox(height: 48 * s),
 
                         // Inline CTA (above disclaimer)
-                        VisibilityDetector(
-                          key: const Key('Insight1_InlineCTA'),
-                          onVisibilityChanged: (info) {
-                            final visible = info.visibleFraction > 0.05;
-                            if (visible != _isCTAVisible && mounted) {
-                              setState(() => _isCTAVisible = visible);
-                            }
-                          },
-                          child: Column(
+                        Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                'Optimize your tax liability',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 14 * s,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF0D9488),
+                            Text(
+                              'NEXT STEP',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 10 * s,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.5,
+                                color: const Color(0xFF14B8A6),
+                              ),
+                            ),
+                            SizedBox(height: 8 * s),
+                            Text(
+                              'Use your LTCG limit before\nthe year ends',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 18 * s,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF0F766E),
+                                height: 1.3,
+                              ),
+                            ),
+                            SizedBox(height: 12 * s),
+                            Text(
+                              'Choose eligible holdings, harvest gains within\nyour tax bracket, and reinvest with a higher\ntax basis.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 12 * s,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF64748B),
+                                height: 1.5,
+                              ),
+                            ),
+                            SizedBox(height: 24 * s),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 56 * s,
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF0F172A),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4 * s),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  'Harvest gains now',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 14 * s,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 12 * s),
-                              SizedBox(
-                                width: double.infinity,
-                                height: 56 * s,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF0F172A),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        4 * s,
-                                      ),
-                                    ),
-                                    elevation: 0,
-                                  ),
-                                  child: Text(
-                                    'Harvest gains now',
-                                    style: TextStyle(
-                                      fontFamily: 'DMSans',
-                                      fontSize: 12 * s,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            ),
                             ],
                           ),
-                        ),
                         SizedBox(height: 32 * s),
 
                         // Disclaimer
@@ -833,11 +848,11 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8 * s),
         gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFE0F2FE), Colors.white], // light blue/teal
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [Color(0xFFCFFAFE), Colors.white],
         ),
-        border: Border.all(color: const Color(0xFFF0F9FF)),
+        border: Border.all(color: const Color(0xFFCFFAFE)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -854,9 +869,9 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
             decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFBAE6FD)),
+              border: Border.all(color: const Color(0xFF67E8F9)),
             ),
-            child: Icon(icon, color: const Color(0xFF0284C7), size: 16 * s),
+            child: Icon(icon, color: const Color(0xFF0891B2), size: 16 * s),
           ),
           SizedBox(height: 12 * s),
           Text(
@@ -884,8 +899,8 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
   }
 
   Widget _buildHoldingItem(double s) {
-    final logoSize = 48.0 * s;
-    final badgeSize = 18.0 * s;
+    final logoSize = 40.0 * s;
+    final badgeSize = 16.0 * s;
 
     return GestureDetector(
       onTap: () {
@@ -897,17 +912,9 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
         );
       },
       child: Container(
-        padding: EdgeInsets.all(16 * s),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16 * s),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 16 * s,
-              offset: Offset(0, 8 * s),
-            ),
-          ],
+        padding: EdgeInsets.symmetric(horizontal: 4 * s, vertical: 8 * s),
+        decoration: const BoxDecoration(
+          color: Colors.transparent,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -924,8 +931,15 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                     color: Colors.white,
                     border: Border.all(
                       color: const Color(0xFFF1F5F9),
-                      width: 2 * s,
+                      width: 1.5 * s,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 12 * s,
+                        offset: Offset(0, 4 * s),
+                      ),
+                    ],
                   ),
                   child: Center(
                     child: Column(
@@ -935,7 +949,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                           'CANARA',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 7 * s,
+                            fontSize: 5.5 * s,
                             fontWeight: FontWeight.w800,
                             color: const Color(0xFF06B6D4),
                             letterSpacing: 0.5,
@@ -945,7 +959,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                           'ROBECO',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 7 * s,
+                            fontSize: 5.5 * s,
                             fontWeight: FontWeight.w800,
                             color: const Color(0xFF0F172A),
                             letterSpacing: 0.5,
@@ -973,7 +987,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                       child: Text(
                         '✱',
                         style: TextStyle(
-                          fontSize: 10 * s,
+                          fontSize: 9 * s,
                           color: const Color(0xFFEF4444),
                           height: 1.0,
                         ),
@@ -1291,8 +1305,9 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                         SizedBox(
                           height: 120 * s,
                           width: 160 * s,
-                          child: CustomPaint(
-                            painter: _IndexFundsPainter(scale: s),
+                          child: Image.asset(
+                            'lib/core/images/insight2.webp',
+                            fit: BoxFit.contain,
                           ),
                         ),
                         SizedBox(height: 32 * s),
@@ -1773,15 +1788,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                         SizedBox(height: 32 * s),
 
                         // Inline CTA at end of scroll
-                        VisibilityDetector(
-                          key: const Key('Insight2_InlineCTA'),
-                          onVisibilityChanged: (info) {
-                            final visible = info.visibleFraction > 0.05;
-                            if (visible != _isCTAVisible && mounted) {
-                              setState(() => _isCTAVisible = visible);
-                            }
-                          },
-                          child: Column(
+                        Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               RichText(
@@ -1843,7 +1850,6 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                               ),
                             ],
                           ),
-                        ),
                         SizedBox(height: 32 * s),
 
                         // Disclaimer (Footer)
