@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../chat/widgets/thinking_orbs/thinking_orb.dart';
+
 /// Mutual Funds data fetching screen.
 /// Displays animated skeleton loader and automatically transitions
 /// to MfStatusScreen after a brief delay.
@@ -15,8 +17,10 @@ class MfFetchingScreen extends StatefulWidget {
 class _MfFetchingScreenState extends State<MfFetchingScreen>
     with SingleTickerProviderStateMixin {
   Timer? _timer;
+  Timer? _proceedTimer;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  bool _showStatus = false;
 
   @override
   void initState() {
@@ -31,14 +35,27 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
 
     _timer = Timer(const Duration(milliseconds: 2500), () {
       if (mounted) {
-        context.pushReplacement('/mf-status');
+        setState(() {
+          _showStatus = true;
+        });
+        _proceedTimer = Timer(const Duration(seconds: 3), () {
+          if (mounted) {
+            context.pushReplacement('/mf-status');
+          }
+        });
       }
     });
+  }
+
+  void _onProceed() {
+    _proceedTimer?.cancel();
+    context.pushReplacement('/mf-status');
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _proceedTimer?.cancel();
     _pulseController.stop();
     _pulseController.dispose();
     super.dispose();
@@ -158,32 +175,16 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const SizedBox(height: 12),
-                        // Pulsing Loader Dots
-                        AnimatedBuilder(
-                          animation: _pulseAnimation,
-                          builder: (context, child) {
-                            return Opacity(
-                              opacity: _pulseAnimation.value,
-                              child: child,
-                            );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(3, (i) {
-                              return Container(
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                ),
-                                width: 10,
-                                height: 10,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF031E6B),
-                                  shape: BoxShape.circle,
-                                ),
-                              );
-                            }),
+                        if (!_showStatus) ...[
+                          const SizedBox(height: 48),
+                          const Center(
+                            child: ThinkingOrb(
+                              mode: 'connecting',
+                              size: 100,
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 48),
+                        ],
                         const SizedBox(height: 24),
                         const Text(
                           'Securely fetching your mutual funds',
@@ -224,37 +225,100 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
                           ),
                         ),
                         const SizedBox(height: 36),
-                        // Skeleton Cards
-                        Column(
-                          children: List.generate(
-                            3,
-                            (index) => _buildSkeletonCard(index),
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        // Notice
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.access_time_rounded,
-                              size: 16,
-                              color: Color(0xFF6B7280),
+                        if (!_showStatus) ...[
+                          // Skeleton Cards
+                          Column(
+                            children: List.generate(
+                              3,
+                              (index) => _buildSkeletonCard(index),
                             ),
-                            const SizedBox(width: 8),
-                            const Flexible(
-                              child: Text(
-                                'Securely fetching all your folios. This may take a few seconds.',
+                          ),
+                          const SizedBox(height: 32),
+                          // Notice
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.access_time_rounded,
+                                size: 16,
+                                color: Color(0xFF6B7280),
+                              ),
+                              const SizedBox(width: 8),
+                              const Flexible(
+                                child: Text(
+                                  'Securely fetching all your folios. This may take a few seconds.',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 12,
+                                    color: Color(0xFF6B7280),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ] else ...[
+                          // Status Box
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF9FAFB),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: const Color(0xFFE5E7EB)),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.check_circle_rounded,
+                                  color: Color(0xFF10B981),
+                                  size: 24,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        'Mutual funds fetched successfully',
+                                        style: TextStyle(
+                                          fontFamily: 'DMSans',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF111827),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _onProceed,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF111827),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: const Text(
+                                'Proceed',
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
-                                  fontSize: 12,
-                                  color: Color(0xFF6B7280),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                         const SizedBox(height: 48),
                         // Footer
                         Column(

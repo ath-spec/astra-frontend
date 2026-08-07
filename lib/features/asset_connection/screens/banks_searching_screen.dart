@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/arch_background.dart';
 import '../providers/asset_connection_provider.dart';
+import '../../chat/widgets/thinking_orbs/thinking_orb.dart';
 
 /// Screen 2 of Banks Flow: Fetching Screen (Image 3) in clean light mode.
 /// Displays pulsing dots, skeleton account cards, and auto-navigates to HomeScreen.
@@ -100,6 +101,24 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
                       ),
                     ),
                     const SizedBox(height: 36),
+                    Center(
+                      child: ShaderMask(
+                        blendMode: BlendMode.srcIn,
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [
+                            Color(0xFF5BA1F7),
+                            Color(0xFF4F46E5),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(bounds),
+                        child: const ThinkingOrb(
+                          mode: 'globe',
+                          size: 140,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 24),
                       ],
                     ),

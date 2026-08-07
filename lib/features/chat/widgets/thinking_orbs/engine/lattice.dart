@@ -109,7 +109,7 @@ List<Move> makeMoves(int count) {
   return moves;
 }
 
-void drawRubik(Canvas ctx, double size, double t, bool dark, ModeOpts o) {
+void drawRubik(Canvas ctx, double size, double t, bool dark, ModeOpts o, [Color? color]) {
   final cx = size / 2;
   final cy = size / 2;
   final R = (size / 2) * 0.82;
@@ -155,10 +155,10 @@ void drawRubik(Canvas ctx, double size, double t, bool dark, ModeOpts o) {
     }
   }
 
-  paintDots(ctx, dots, dark, o.get('rMin', 0.3));
+  paintDots(ctx, dots, dark, o.get('rMin', 0.3), color);
 }
 
-void drawGlobe(Canvas ctx, double size, double t, bool dark, ModeOpts o) {
+void drawGlobe(Canvas ctx, double size, double t, bool dark, ModeOpts o, [Color? color]) {
   const spin = 0.5;
   final cx = size / 2;
   final cy = size / 2;

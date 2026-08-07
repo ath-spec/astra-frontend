@@ -78,6 +78,7 @@ class _ThinkingOrbState extends State<ThinkingOrb>
               isDark: isDark,
               mode: widget.mode,
               opts: _scaledOpts,
+              color: widget.color,
             ),
           );
         },
@@ -91,22 +92,24 @@ class _OrbPainter extends CustomPainter {
   final bool isDark;
   final String mode;
   final ModeOpts opts;
+  final Color? color;
 
   _OrbPainter({
     required this.t,
     required this.isDark,
     required this.mode,
     required this.opts,
+    this.color,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     switch (mode) {
       case 'globe':
-        drawGlobe(canvas, size.width, t, isDark, opts);
+        drawGlobe(canvas, size.width, t, isDark, opts, color);
         break;
       case 'rubik':
-        drawRubik(canvas, size.width, t, isDark, opts);
+        drawRubik(canvas, size.width, t, isDark, opts, color);
         break;
       case 'wave':
         drawWave(canvas, size.width, t, isDark, opts);
@@ -121,7 +124,7 @@ class _OrbPainter extends CustomPainter {
         drawMorph(canvas, size.width, t, isDark, opts);
         break;
       case 'connecting':
-        drawConnecting(canvas, size.width, t, isDark, opts);
+        drawConnecting(canvas, size.width, t, isDark, opts, color);
         break;
     }
   }

@@ -74,15 +74,16 @@ Projector makeProj(double yaw, double tilt, double cx, double cy, double scale) 
   };
 }
 
-void paintDots(Canvas canvas, List<Dot> dots, bool dark, [double rMin = 0.3]) {
+void paintDots(Canvas canvas, List<Dot> dots, bool dark, [double rMin = 0.3, Color? customColor]) {
   dots.sort((a, b) => a.z.compareTo(b.z));
   for (final d in dots) {
     if (d.alpha < 0.02) continue;
     final w = d.white.clamp(0.0, 1.0);
     final g = ((dark ? 1 - w : w) * 255).round();
     
+    final Color baseColor = customColor ?? Color.fromARGB(255, g, g, g);
     final paint = Paint()
-      ..color = Color.fromARGB((d.alpha * 255).round(), g, g, g)
+      ..color = baseColor.withOpacity(d.alpha)
       ..style = PaintingStyle.fill;
       
     canvas.drawCircle(Offset(d.x, d.y), max(rMin, d.r), paint);

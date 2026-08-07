@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
+import '../../chat/widgets/thinking_orbs/thinking_orb.dart';
 
 /// Screen matching Image 2 for Account Aggregator Stocks data fetching state.
 /// Displays animated loader, skeleton cards, and automatically transitions to status UI.
@@ -180,6 +181,29 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
                           ),
                         ),
                         const SizedBox(height: 32),
+                        
+                        if (!_showStatus) ...[
+                          const SizedBox(height: 48),
+                          Center(
+                            child: ShaderMask(
+                              blendMode: BlendMode.srcIn,
+                              shaderCallback: (bounds) => const LinearGradient(
+                                colors: [
+                                  Color(0xFF5BA1F7),
+                                  Color(0xFF4F46E5),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ).createShader(bounds),
+                              child: const ThinkingOrb(
+                                mode: 'globe',
+                                size: 100,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 48),
+                        ],
                         
                         // Status Box appears without replacing the main UI
                         if (_showStatus) ...[

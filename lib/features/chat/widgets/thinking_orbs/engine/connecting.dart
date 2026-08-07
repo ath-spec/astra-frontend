@@ -2,224 +2,152 @@ import 'dart:math';
 import 'dart:ui';
 import 'core.dart';
 
-// ---------------------------------------------------------------------------
-// CONNECTING — "a constellation wires itself"
-//
-// The animation cycle:
-//   1. N nodes (Fibonacci-distributed on the sphere surface) fade in one by one
-//   2. K nearest-neighbour edges draw themselves sequentially as glowing arcs
-//   3. A brief "hold" pause while the full constellation glows
-//   4. Everything fades out and the cycle restarts
-// ---------------------------------------------------------------------------
-
-const int _kNodes = 11;
-const int _kEdgesPerNode = 2; // number of nearest neighbours each node wires to
-const double _kCycleDur = 6.4; // seconds per full cycle
-const double _kNodeFrac = 0.22; // fraction of cycle spent fading nodes in
-const double _kEdgeFrac = 0.48; // fraction of cycle spent drawing edges
-const double _kHoldFrac = 0.15; // fraction of cycle holding completed constellation
-
-// ---------------------------------------------------------------------------
-// Edge definition: indices into the node list
-// ---------------------------------------------------------------------------
-class _Edge {
-  final int a;
-  final int b;
-  _Edge(this.a, this.b);
+class Line {
+  final double x1, y1, x2, y2, white, a, w;
+  Line({
+    required this.x1,
+    required this.y1,
+    required this.x2,
+    required this.y2,
+    required this.white,
+    required this.a,
+    required this.w,
+  });
 }
 
-// ---------------------------------------------------------------------------
-// Pre-compute stable node positions and edge pairs (deterministic from seed).
-// We recompute each time drawConnecting is called but these values are
-// identical every frame since they only depend on _kNodes / _kEdgesPerNode.
-// ---------------------------------------------------------------------------
-List<List<double>> _buildNodes() {
-  final nodes = <List<double>>[];
-  for (int i = 0; i < _kNodes; i++) {
-    final d = fibDir(i, _kNodes);
-    nodes.add(d); // [x, y, z] on unit sphere
+double frac(double x) => x - x.floorToDouble();
+
+double lerp(double a, double b, double t) => a + (b - a) * t;
+
+// A simple value noise based on hashD
+double vnoise(double x, double y) {
+  final ix = x.floorToDouble();
+  final iy = y.floorToDouble();
+  final fx = frac(x);
+  final fy = frac(y);
+  
+  // Smoothstep
+  final sx = fx * fx * (3.0 - 2.0 * fx);
+  final sy = fy * fy * (3.0 - 2.0 * fy);
+  
+  final v00 = hashD(ix, iy);
+  final v10 = hashD(ix + 1.0, iy);
+  final v01 = hashD(ix, iy + 1.0);
+  final v11 = hashD(ix + 1.0, iy + 1.0);
+  
+  final vx0 = lerp(v00, v10, sx);
+  final vx1 = lerp(v01, v11, sx);
+  
+  return lerp(vx0, vx1, sy);
+}
+
+void paintLines(Canvas ctx, List<Line> lines, bool dark, [Color? customColor]) {
+  for (final l in lines) {
+    if (l.a < 0.02) continue;
+    final w = l.white.clamp(0.0, 1.0);
+    final g = ((dark ? 1 - w : w) * 255).round();
+    final Color baseColor = customColor ?? Color.fromARGB(255, g, g, g);
+    final paint = Paint()
+      ..color = baseColor.withOpacity(l.a)
+      ..strokeWidth = l.w
+      ..style = PaintingStyle.stroke;
+    ctx.drawLine(Offset(l.x1, l.y1), Offset(l.x2, l.y2), paint);
   }
-  return nodes;
 }
 
-List<_Edge> _buildEdges(List<List<double>> nodes) {
-  final edges = <_Edge>[];
-  final seen = <String>{};
+void drawConnecting(Canvas ctx, double size, double t, bool dark, ModeOpts o, [Color? color]) {
+  final cx = size / 2;
+  final cy = size / 2;
+  final R = (size / 2) * 0.8 * o.get('spread', 1.0);
+  
+  // note the projector carries the radius as its scale, so node vectors stay
+  // unit-length and distances below are in unit-sphere space
+  final pt = makeProj(t * 0.12, 0.32, cx, cy, R);
+  final rs = radiusScale(size, o.get('rsPow', 0.6));
 
-  for (int i = 0; i < nodes.length; i++) {
-    // Compute distances to all others
-    final dists = <int, double>{};
-    for (int j = 0; j < nodes.length; j++) {
-      if (j == i) continue;
+  final int nodeN = o.get('nodeN', 30.0).toInt();
+  final thr = o.get('thr', 0.72);
+  final nodeR = o.get('nodeR', 1.4);
+  final nodeRDepth = o.get('nodeRDepth', 1.8);
+
+  // nodes: fib lattice + slow noise wander, renormalised to the surface
+  final List<List<double>> nodes = [];
+  for (int i = 0; i < nodeN; i++) {
+    final d = fibDir(i, nodeN);
+    final x = d[0] + 0.3 * (vnoise(i * 0.31 + 9, t * 0.24) - 0.5) * 2;
+    final y = d[1] + 0.3 * (vnoise(i * 0.53 + 27, t * 0.21) - 0.5) * 2;
+    final z = d[2] + 0.3 * (vnoise(i * 0.77 + 55, t * 0.27) - 0.5) * 2;
+    final l = max(1e-6, sqrt(x * x + y * y + z * z));
+    nodes.add([x / l, y / l, z / l]);
+  }
+
+  final List<Line> lines = [];
+  final List<Dot> dots = [];
+
+  // edges between close neighbours, alpha by proximity + depth
+  for (int i = 0; i < nodeN; i++) {
+    for (int j = i + 1; j < nodeN; j++) {
       final dx = nodes[i][0] - nodes[j][0];
       final dy = nodes[i][1] - nodes[j][1];
       final dz = nodes[i][2] - nodes[j][2];
-      dists[j] = dx * dx + dy * dy + dz * dz;
+      final dist = sqrt(dx * dx + dy * dy + dz * dz);
+      if (dist >= thr) continue;
+      
+      final p1 = pt(nodes[i][0], nodes[i][1], nodes[i][2]);
+      final p2 = pt(nodes[j][0], nodes[j][1], nodes[j][2]);
+      
+      final depth = ((p1[2] + p2[2]) / 2 + 1) / 2;
+      lines.add(Line(
+        x1: p1[0],
+        y1: p1[1],
+        x2: p2[0],
+        y2: p2[1],
+        white: 0.42,
+        a: (1 - dist / thr) * (0.3 + 0.55 * depth),
+        w: max(0.6, o.get('lineW', 0.8) * rs)
+      ));
     }
-
-    // Pick the _kEdgesPerNode closest
-    final sorted = dists.entries.toList()
-      ..sort((a, b) => a.value.compareTo(b.value));
-
-    for (int k = 0; k < min(_kEdgesPerNode, sorted.length); k++) {
-      final j = sorted[k].key;
-      final key = i < j ? '$i-$j' : '$j-$i';
-      if (!seen.contains(key)) {
-        seen.add(key);
-        edges.add(_Edge(i, j));
-      }
-    }
-  }
-  return edges;
-}
-
-// ---------------------------------------------------------------------------
-// Paint helper: dotted line between two projected points.
-// 'progress' ∈ [0,1] — how much of the edge has been drawn.
-// ---------------------------------------------------------------------------
-void _paintEdge(
-  Canvas ctx,
-  Offset from,
-  Offset to,
-  double progress,
-  double alpha,
-  bool dark,
-  double dotR,
-) {
-  if (progress <= 0 || alpha <= 0) return;
-  const int kSteps = 18;
-  final g = dark ? 200 : 55; // dot grey value
-  final paint = Paint()
-    ..color = Color.fromARGB((alpha * 255).round().clamp(0, 255), g, g, g)
-    ..style = PaintingStyle.fill;
-
-  final endStep = (progress * kSteps).round().clamp(0, kSteps);
-  for (int s = 0; s <= endStep; s++) {
-    final f = s / kSteps;
-    final px = from.dx + (to.dx - from.dx) * f;
-    final py = from.dy + (to.dy - from.dy) * f;
-    ctx.drawCircle(Offset(px, py), dotR, paint);
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Main draw function — follows the same signature as the other engine modes.
-// ---------------------------------------------------------------------------
-void drawConnecting(Canvas ctx, double size, double t, bool dark, ModeOpts o) {
-  final cx = size / 2;
-  final cy = size / 2;
-  final R = (size / 2) * 0.82;
-  final rs = radiusScale(size, o.get('rsPow', 0.6));
-
-  // Slowly rotate the whole constellation
-  final yaw = t * 0.18;
-  final tilt = 0.32 + 0.08 * sin(t * 0.41);
-  final proj = makeProj(yaw, tilt, cx, cy, R);
-
-  final nodes = _buildNodes();
-  final edges = _buildEdges(nodes);
-
-  // --- Cycle timing --------------------------------------------------------
-  final tc = t % _kCycleDur;
-  final nodeEndT = _kCycleDur * _kNodeFrac;
-  final edgeEndT = nodeEndT + _kCycleDur * _kEdgeFrac;
-  final holdEndT = edgeEndT + _kCycleDur * _kHoldFrac;
-  // After holdEndT → fade out everything, then loop
-
-  // Node reveal progress (per-node stagger)
-  double nodeProgress(int i) {
-    final nodeSlot = nodeEndT / _kNodes;
-    final start = i * nodeSlot;
-    final end = start + nodeSlot;
-    if (tc < start) return 0;
-    if (tc > end) return 1;
-    return ((tc - start) / (end - start)).clamp(0.0, 1.0);
   }
 
-  // Edge reveal progress (sequential stagger)
-  double edgeProgress(int i) {
-    if (tc <= nodeEndT) return 0;
-    if (tc > edgeEndT) return 1;
-    final edgeT = tc - nodeEndT;
-    final edgeDur = _kCycleDur * _kEdgeFrac;
-    final edgeSlot = edgeDur / edges.length;
-    final start = i * edgeSlot;
-    final end = start + edgeSlot;
-    if (edgeT < start) return 0;
-    if (edgeT > end) return 1;
-    return ((edgeT - start) / (end - start)).clamp(0.0, 1.0);
-  }
-
-  // Global alpha (fade out after hold)
-  double globalAlpha() {
-    if (tc < holdEndT) return 1.0;
-    final fadeT = _kCycleDur - holdEndT;
-    return (1.0 - ((tc - holdEndT) / fadeT)).clamp(0.0, 1.0);
-  }
-
-  final ga = globalAlpha();
-  if (ga <= 0) return;
-
-  // --- Project nodes -------------------------------------------------------
-  final projected = nodes.map((n) {
-    final p = proj(n[0], n[1], n[2]);
-    return Offset(p[0], p[1]);
-  }).toList();
-
-  // --- Draw edges first (below nodes) -------------------------------------
-  for (int i = 0; i < edges.length; i++) {
-    final ep = edgeProgress(i);
-    if (ep <= 0) continue;
-
-    final e = edges[i];
-    final np1 = nodeProgress(e.a);
-    final np2 = nodeProgress(e.b);
-    final bothVisible = np1 > 0.5 && np2 > 0.5;
-    if (!bothVisible) continue;
-
-    _paintEdge(
-      ctx,
-      projected[e.a],
-      projected[e.b],
-      ep,
-      0.35 * ga,
-      dark,
-      max(0.4, o.get('rMin', 0.3)),
-    );
-  }
-
-  // --- Draw node dots -------------------------------------------------------
-  for (int i = 0; i < nodes.length; i++) {
-    final np = nodeProgress(i);
-    if (np <= 0) continue;
-
-    final p = proj(nodes[i][0], nodes[i][1], nodes[i][2]);
+  for (int i = 0; i < nodeN; i++) {
+    final p = pt(nodes[i][0], nodes[i][1], nodes[i][2]);
     final depth = (p[2] + 1) / 2;
-
-    // Halo (slightly larger, very transparent)
-    final haloR = (o.get('rBase', 1.8) + o.get('rDepth', 2.5) * depth) * rs * 2.0;
-    final haloPaint = Paint()
-      ..color = Color.fromARGB(
-        ((0.12 * np * ga) * 255).round().clamp(0, 255),
-        dark ? 200 : 60,
-        dark ? 200 : 60,
-        dark ? 200 : 60,
-      )
-      ..style = PaintingStyle.fill;
-    ctx.drawCircle(Offset(p[0], p[1]), max(0.5, haloR), haloPaint);
-
-    // Core dot
-    final coreR = (o.get('rBase', 1.8) + o.get('rDepth', 2.5) * depth) * rs;
-    final w = (0.62 - 0.5 * depth).clamp(0.0, 1.0);
-    final g = ((dark ? 1 - w : w) * 255).round();
-    final corePaint = Paint()
-      ..color = Color.fromARGB(
-        ((np * ga) * 255).round().clamp(0, 255),
-        g,
-        g,
-        g,
-      )
-      ..style = PaintingStyle.fill;
-    ctx.drawCircle(Offset(p[0], p[1]), max(o.get('rMin', 0.3), coreR), corePaint);
+    final pulse = 1 + 0.25 * sin(t * 1.4 + i * 2.7);
+    dots.add(Dot(
+      x: p[0],
+      y: p[1],
+      z: p[2],
+      r: (nodeR + nodeRDepth * depth) * pulse * rs,
+      white: 0.55 - 0.45 * depth
+    ));
   }
+
+  // signals: bright packets running between paired nodes
+  final int signals = o.get('signals', 5.0).toInt();
+  for (int s = 0; s < signals; s++) {
+    final seg = (t * 0.55 + s * 7.31).floorToDouble();
+    final a = (hashD(seg, s * 3.1 + 1.7) * nodeN).floor().clamp(0, nodeN - 1);
+    final b = (hashD(seg, s * 5.7 + 4.2) * nodeN).floor().clamp(0, nodeN - 1);
+    if (a == b) continue;
+    
+    final f = frac(t * 0.55 + s * 7.31);
+    final x = lerp(nodes[a][0], nodes[b][0], f);
+    final y = lerp(nodes[a][1], nodes[b][1], f);
+    final z = lerp(nodes[a][2], nodes[b][2], f);
+    final l = max(1e-6, sqrt(x * x + y * y + z * z));
+    
+    final p = pt(x / l, y / l, z / l);
+    final depth = (p[2] + 1) / 2;
+    dots.add(Dot(
+      x: p[0],
+      y: p[1],
+      z: p[2],
+      r: (nodeR * 1.5 + nodeRDepth * depth) * rs,
+      white: 0.05,
+      alpha: 0.5 + 0.5 * depth
+    ));
+  }
+
+  paintLines(ctx, lines, dark, color);
+  paintDots(ctx, dots, dark, o.get('rMin', 0.3), color);
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ class MfFetchLoadingScreen extends ConsumerStatefulWidget {
 class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
+  Timer? _proceedTimer;
 
   @override
   void initState() {
@@ -22,15 +24,23 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
+
+    _proceedTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        _onProceed();
+      }
+    });
   }
 
   @override
   void dispose() {
+    _proceedTimer?.cancel();
     _pulseController.dispose();
     super.dispose();
   }
 
   void _onProceed() {
+    _proceedTimer?.cancel();
     ref.read(assetConnectionProvider.notifier).connectMutualFunds();
     if (widget.isOnboarding) {
       context.pushReplacement('/aa-stocks-otp', extra: {'isOnboarding': true});
@@ -66,44 +76,7 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                 child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Top decorative spacing (arch simulation)
-              Expanded(
-                child: Center(
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.bar_chart,
-                          size: 48,
-                          color: Color(0xFF475569),
-                        ),
-                      ),
-                      const Positioned(
-                        right: -4,
-                        bottom: -4,
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Color(0xFF10B981),
-                          size: 24,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              const Spacer(),
               const SizedBox(height: 32),
               
               // Title
