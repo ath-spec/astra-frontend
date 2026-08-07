@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import '../../news/screens/news_article_screen.dart';
 
 class HomeWealthFeed extends StatefulWidget {
   final ScrollController scrollController;
@@ -332,13 +333,16 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Image Section
-              ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(4.r)),
-                child: AspectRatio(
-                  aspectRatio: 16 / 10,
-                  child: Image.asset(
-                    widget.imagePath,
-                    fit: BoxFit.cover,
+              Hero(
+                tag: 'news_image_${widget.imagePath}_${widget.index}',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(4.r)),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 10,
+                    child: Image.asset(
+                      widget.imagePath,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -412,8 +416,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 16.h),
-                    
-                    // Footer (Source and Read More)
+                           // Footer (Source and Read More)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -427,34 +430,49 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                             color: const Color(0xFF94A3B8),
                           ),
                         ),
-                        
-                        // Read More Button
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Read summary',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF0F172A),
+                                   // Read More Button
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context, rootNavigator: true).push(
+                              MaterialPageRoute(
+                                builder: (context) => NewsArticleScreen(
+                                  image: widget.imagePath,
+                                  tags: widget.tags,
+                                  title: widget.title,
+                                  description: widget.description,
+                                  source: widget.source,
+                                  heroTag: 'news_image_${widget.imagePath}_${widget.index}',
                                 ),
                               ),
-                              SizedBox(width: 4.w),
-                              Icon(
-                                Icons.chevron_right_rounded,
-                                size: 16,
-                                color: const Color(0xFF0F172A),
-                              ),
-                            ],
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Read summary',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF0F172A),
+                                  ),
+                                ),
+                                SizedBox(width: 4.w),
+                                Icon(
+                                  Icons.chevron_right_rounded,
+                                  size: 16,
+                                  color: const Color(0xFF0F172A),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
