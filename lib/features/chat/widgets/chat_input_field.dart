@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/chat_provider.dart';
+import '../../../core/providers/speech_provider.dart';
 import 'package:go_router/go_router.dart';
 class ChatInputField extends ConsumerStatefulWidget {
   const ChatInputField({super.key});
@@ -35,11 +36,23 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
     }
   }
 
-  void _startVoice() {
-    // Placeholder for voice recording logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Voice recording coming soon"), duration: Duration(seconds: 1)),
-    );
+  void _toggleListening() {
+    final speechState = ref.read(speechProvider);
+    final speechNotifier = ref.read(speechProvider.notifier);
+
+    if (speechState.isListening) {
+      speechNotifier.stopListening();
+    } else {
+      speechNotifier.startListening(
+        onResultCallback: (text) {
+          if (text.isNotEmpty) {
+            _controller.text = text;
+            _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
+            _onTextChanged();
+          }
+        },
+      );
+    }
   }
 
   @override
@@ -136,8 +149,9 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                           builder: (context, hasText, child) {
                             return _DynamicActionSuffix(
                               hasText: hasText,
+                              isListening: ref.watch(speechProvider).isListening,
                               onSend: _submit,
-                              onMic: _startVoice,
+                              onMic: _toggleListening,
                             );
                           },
                         ),
@@ -158,11 +172,13 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
 
 class _DynamicActionSuffix extends StatefulWidget {
   final bool hasText;
+  final bool isListening;
   final VoidCallback onSend;
   final VoidCallback onMic;
 
   const _DynamicActionSuffix({
     required this.hasText,
+    required this.isListening,
     required this.onSend,
     required this.onMic,
   });
@@ -205,8 +221,10 @@ class _DynamicActionSuffixState extends State<_DynamicActionSuffix> {
             duration: const Duration(milliseconds: 200),
             transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
             child: Icon(
-              widget.hasText ? Icons.arrow_upward_rounded : Icons.mic_none_rounded,
-              key: ValueKey(widget.hasText),
+              widget.hasText 
+                ? Icons.arrow_upward_rounded 
+                : (widget.isListening ? Icons.stop_rounded : Icons.mic_none_rounded),
+              key: ValueKey('${widget.hasText}_${widget.isListening}'),
               size: 18,
               color: widget.hasText ? Colors.white : const Color(0xFF475569),
             ),

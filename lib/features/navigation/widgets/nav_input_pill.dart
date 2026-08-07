@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/nav_input_provider.dart';
 import '../../chat/providers/chat_provider.dart';
+import '../../../core/providers/speech_provider.dart';
 import 'border_beam.dart';
+import 'voice_animation.dart';
 
 enum NavInputState { initial, typing, generating, streaming, replied }
 
@@ -217,10 +219,30 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
     widget.onSend();
   }
 
-  void _insertDummyText() {
-    // Example functional button interaction
-    _controller.text = "How is my portfolio doing?";
-    _focusNode.requestFocus();
+  void _toggleListening() {
+    final speechState = ref.read(speechProvider);
+    final speechNotifier = ref.read(speechProvider.notifier);
+
+    if (speechState.isListening) {
+      speechNotifier.stopListening();
+    } else {
+      speechNotifier.startListening(
+        onResultCallback: (text) {
+          if (_currentState == NavInputState.initial || _currentState == NavInputState.typing) {
+            if (text.isNotEmpty) {
+              _controller.text = text;
+              _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
+              _onTextChanged();
+            }
+          } else if (_currentState == NavInputState.replied) {
+            if (text.isNotEmpty) {
+              _secondController.text = text;
+              _secondController.selection = TextSelection.fromPosition(TextPosition(offset: _secondController.text.length));
+            }
+          }
+        },
+      );
+    }
   }
 
   @override
@@ -258,10 +280,22 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
       ),
     );
 
+    final speechState = ref.watch(speechProvider);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        AnimatedSize(
+          duration: const Duration(milliseconds: 250),
+          curve: _snappyEaseOut,
+          child: speechState.isListening
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Center(child: VoiceAnimationWidget(isListening: true)),
+                )
+              : const SizedBox.shrink(),
+        ),
         BorderBeam(
           duration: 5,
           borderWidth: 2.0,
@@ -299,7 +333,6 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
           TextField(
             controller: _controller,
             focusNode: _focusNode,
-            autofocus: true,
             minLines: 1,
             maxLines: 5,
             keyboardType: TextInputType.multiline,
@@ -368,14 +401,18 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                           const SizedBox(width: 4),
                         ],
                         GestureDetector(
-                          onTap: _insertDummyText,
+                          onTap: _toggleListening,
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Color(0xFFD3E3FD), // Deeper blue for active mic
                             ),
-                            child: const Icon(Icons.mic_none_rounded, size: 20, color: Color(0xFF041E49)),
+                            child: Icon(
+                              ref.watch(speechProvider).isListening ? Icons.stop_rounded : Icons.mic_none_rounded, 
+                              size: 20, 
+                              color: const Color(0xFF041E49)
+                            ),
                           ),
                         ),
                       ],
@@ -558,17 +595,18 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            _secondController.text = "Tell me more about this.";
-                            _secondFocusNode.requestFocus();
-                          },
+                          onTap: _toggleListening,
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Color(0xFFD3E3FD), // Deeper blue for active mic
                             ),
-                            child: const Icon(Icons.mic_none_rounded, size: 20, color: Color(0xFF041E49)),
+                            child: Icon(
+                              ref.watch(speechProvider).isListening ? Icons.stop_rounded : Icons.mic_none_rounded, 
+                              size: 20, 
+                              color: const Color(0xFF041E49)
+                            ),
                           ),
                         ),
                       ],
