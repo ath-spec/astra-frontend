@@ -309,8 +309,17 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
     return Stack(
       children: [
         Positioned.fill(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 150 * s),
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (scrollInfo) {
+              if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 20 * s) {
+                if (!_isCTAVisible) setState(() => _isCTAVisible = true);
+              } else {
+                if (_isCTAVisible) setState(() => _isCTAVisible = false);
+              }
+              return false;
+            },
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: 150 * s),
             child: Stack(
               children: [
                 Positioned(
@@ -358,7 +367,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 14 * s,
+                              fontSize: 22,
                               fontWeight: FontWeight.w600,
                               color: Colors.white, // Masked
                               height: 1.2,
@@ -401,7 +410,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                             '₹11,984',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 24 * s,
+                              fontSize: 30,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
                             ),
@@ -772,23 +781,20 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
             ),
           ),
         ),
+      ),
 
-        // Sticky CTA Bottom (Fades out and slides down when scrolled to bottom)
+        // Sticky CTA Bottom (Fades out when scrolled to bottom)
         Positioned(
           bottom: 0,
           left: 0,
           right: 0,
-          child: AnimatedSlide(
+          child: AnimatedOpacity(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeOutCubic,
-            offset: _isCTAVisible ? const Offset(0, 1.0) : Offset.zero,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic,
-              opacity: _isCTAVisible ? 0.0 : 1.0,
-              child: IgnorePointer(
-                ignoring: _isCTAVisible,
-                child: Container(
+            opacity: _isCTAVisible ? 0.0 : 1.0,
+            child: IgnorePointer(
+              ignoring: _isCTAVisible,
+              child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -847,7 +853,6 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
               ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -1286,8 +1291,17 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
     return Stack(
       children: [
         Positioned.fill(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 150 * s),
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (scrollInfo) {
+              if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 20 * s) {
+                if (!_isCTAVisible) setState(() => _isCTAVisible = true);
+              } else {
+                if (_isCTAVisible) setState(() => _isCTAVisible = false);
+              }
+              return false;
+            },
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: 150 * s),
             child: Stack(
               children: [
                 Positioned(
@@ -1882,6 +1896,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
             ),
           ),
         ),
+      ),
 
         // Sticky CTA Bottom (Fades out and slides down when scrolled to bottom)
         Positioned(
