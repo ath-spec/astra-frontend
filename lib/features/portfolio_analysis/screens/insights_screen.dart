@@ -259,6 +259,9 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
   late Animation<double> _calloutScaleAnim;
   bool _isCTAVisible = false;
 
+  final GlobalKey _inlineButtonKey = GlobalKey();
+  final GlobalKey _stickyButtonKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -311,10 +314,15 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
         Positioned.fill(
           child: NotificationListener<ScrollNotification>(
             onNotification: (scrollInfo) {
-              if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 20 * s) {
-                if (!_isCTAVisible) setState(() => _isCTAVisible = true);
-              } else {
-                if (_isCTAVisible) setState(() => _isCTAVisible = false);
+              final inlineBox = _inlineButtonKey.currentContext?.findRenderObject() as RenderBox?;
+              final stickyBox = _stickyButtonKey.currentContext?.findRenderObject() as RenderBox?;
+              if (inlineBox != null && stickyBox != null) {
+                final inlinePos = inlineBox.localToGlobal(Offset.zero);
+                final stickyPos = stickyBox.localToGlobal(Offset.zero);
+                final shouldHideSticky = inlinePos.dy <= stickyPos.dy;
+                if (_isCTAVisible != shouldHideSticky) {
+                  setState(() => _isCTAVisible = shouldHideSticky);
+                }
               }
               return false;
             },
@@ -739,6 +747,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                               width: double.infinity,
                               height: 56 * s,
                               child: ElevatedButton(
+                                key: _inlineButtonKey,
                                 onPressed: () {},
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF0F172A),
@@ -789,7 +798,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
           left: 0,
           right: 0,
           child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 0),
             curve: Curves.easeOutCubic,
             opacity: _isCTAVisible ? 0.0 : 1.0,
             child: IgnorePointer(
@@ -827,6 +836,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                           width: double.infinity,
                           height: 56 * s,
                           child: ElevatedButton(
+                            key: _stickyButtonKey,
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF0F172A),
@@ -1237,6 +1247,9 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
   late Animation<double> _targetFadeAnim;
   bool _isCTAVisible = false;
 
+  final GlobalKey _inlineButtonKey = GlobalKey();
+  final GlobalKey _stickyButtonKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -1293,7 +1306,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
         Positioned.fill(
           child: NotificationListener<ScrollNotification>(
             onNotification: (scrollInfo) {
-              if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 20 * s) {
+              if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 260 * s) {
                 if (!_isCTAVisible) setState(() => _isCTAVisible = true);
               } else {
                 if (_isCTAVisible) setState(() => _isCTAVisible = false);
@@ -1852,6 +1865,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                 width: double.infinity,
                                 height: 56 * s,
                                 child: ElevatedButton(
+                                  key: _inlineButtonKey,
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF0F172A),
@@ -1898,89 +1912,85 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
         ),
       ),
 
-        // Sticky CTA Bottom (Fades out and slides down when scrolled to bottom)
+        // Sticky CTA Bottom (Fades out when scrolled to bottom)
         Positioned(
           bottom: 0,
           left: 0,
           right: 0,
-          child: AnimatedSlide(
-            duration: const Duration(milliseconds: 300),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 0),
             curve: Curves.easeOutCubic,
-            offset: _isCTAVisible ? const Offset(0, 1.0) : Offset.zero,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic,
-              opacity: _isCTAVisible ? 0.0 : 1.0,
-              child: IgnorePointer(
-                ignoring: _isCTAVisible,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.0),
-                        Colors.white,
-                        Colors.white,
-                      ],
-                      stops: const [0.0, 0.4, 1.0],
-                    ),
+            opacity: _isCTAVisible ? 0.0 : 1.0,
+            child: IgnorePointer(
+              ignoring: _isCTAVisible,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.0),
+                      Colors.white,
+                      Colors.white,
+                    ],
+                    stops: const [0.0, 0.4, 1.0],
                   ),
-                  padding: EdgeInsets.fromLTRB(24 * s, 32 * s, 24 * s, 24 * s),
-                  child: SafeArea(
-                               child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
+                ),
+                padding: EdgeInsets.fromLTRB(24 * s, 32 * s, 24 * s, 24 * s),
+                child: SafeArea(
+                             child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 12 * s,
+                            fontWeight: FontWeight.w600,
+                            color: const Color.fromARGB(255, 169, 169, 169),
+                            height: 1.3,
+                          ),
+                          children: [
+                            const TextSpan(text: 'Add '),
+                            TextSpan(
+                              text: '₹86.28K',
+                              style: TextStyle(
+                                color: const Color(0xFF10B981), // Crisp green
+                              ),
+                            ),
+                            const TextSpan(
+                              text: ' to index to reach healthy allocation of 20%',
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 12 * s),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56 * s,
+                        child: ElevatedButton(
+                          key: _stickyButtonKey,
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0F172A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4 * s),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            'Invest in the Index',
                             style: TextStyle(
                               fontFamily: 'DMSans',
                               fontSize: 12 * s,
                               fontWeight: FontWeight.w600,
-                              color: const Color.fromARGB(255, 169, 169, 169),
-                              height: 1.3,
-                            ),
-                            children: [
-                              const TextSpan(text: 'Add '),
-                              TextSpan(
-                                text: '₹86.28K',
-                                style: TextStyle(
-                                  color: const Color(0xFF10B981), // Crisp green
-                                ),
-                              ),
-                              const TextSpan(
-                                text: ' to index to reach healthy allocation of 20%',
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 12 * s),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56 * s,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0F172A),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4 * s),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              'Invest in the Index',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 12 * s,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
