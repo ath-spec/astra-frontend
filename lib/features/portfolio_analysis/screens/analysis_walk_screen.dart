@@ -101,10 +101,7 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
                       child: Container(
                         width: 40,
                         height: 40,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
+                        color: Colors.transparent,
                         child: const Icon(Icons.close, color: Colors.black, size: 20),
                       ),
                     ),

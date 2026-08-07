@@ -255,24 +255,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
               padding: const EdgeInsets.symmetric(vertical: 18),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFFFFFFF),
-                    Color(0xFF5BA1F7),
-                    Color(0xFF031E6B),
-                    Color(0xFF241714),
-                  ],
-                  stops: [0.0, 0.25, 0.7, 1.0],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                color: Colors.black,
               ),
               child: Center(
                 child: Text(

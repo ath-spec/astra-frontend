@@ -2,13 +2,13 @@ import 'dart:math';
 import 'dart:ui';
 import 'core.dart';
 
-void drawRibbon(Canvas ctx, double size, double t, bool dark, ModeOpts o) {
+void drawRibbon(Canvas ctx, double size, double t, bool dark, ModeOpts o, [Color? color]) {
   final cx = size / 2;
   final cy = size / 2;
   final R = (size / 2) * 0.82;
   final pt = makeProj(
     t * o.get('spin', 0.0), 
-    0.35 + 0.1 * sin(t * 0.9), 
+    1.15 + 0.1 * sin(t * 0.9), 
     cx, cy, R
   );
   
@@ -73,5 +73,5 @@ void drawRibbon(Canvas ctx, double size, double t, bool dark, ModeOpts o) {
     }
   }
   
-  paintDots(ctx, dots, dark, o.get('rMin', 0.3));
+  paintDots(ctx, dots, dark, o.get('rMin', 0.3), color);
 }

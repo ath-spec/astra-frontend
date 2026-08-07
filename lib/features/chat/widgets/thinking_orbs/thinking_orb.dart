@@ -118,7 +118,7 @@ class _OrbPainter extends CustomPainter {
         drawOrbits(canvas, size.width, t, isDark, opts);
         break;
       case 'ribbon':
-        drawRibbon(canvas, size.width, t, isDark, opts);
+        drawRibbon(canvas, size.width, t, isDark, opts, color);
         break;
       case 'morph':
         drawMorph(canvas, size.width, t, isDark, opts);
