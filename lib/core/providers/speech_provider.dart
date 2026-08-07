@@ -95,6 +95,7 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
     if (_speechToText.isListening) {
       await _speechToText.stop();
     }
+    _onResultCallback = null;
     state = state.copyWith(isListening: false);
   }
   
@@ -102,6 +103,7 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
     if (_speechToText.isListening) {
       await _speechToText.cancel();
     }
+    _onResultCallback = null;
     state = state.copyWith(isListening: false, recognizedWords: '');
   }
 }

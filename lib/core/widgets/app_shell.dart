@@ -194,17 +194,25 @@ class _AppShellState extends ConsumerState<AppShell> {
                 ],
               ),
             ),
-            if (isInputMode)
-              Positioned.fill(
+            Positioned.fill(
+              child: IgnorePointer(
+                ignoring: !isInputMode,
                 child: GestureDetector(
                   onTap: () {
-                    FocusScope.of(context).unfocus();
-                    ref.read(navInputModeProvider.notifier).state = false;
-                    ref.read(speechProvider.notifier).stopListening();
+                    if (isInputMode) {
+                      FocusScope.of(context).unfocus();
+                      ref.read(navInputModeProvider.notifier).state = false;
+                      ref.read(speechProvider.notifier).stopListening();
+                    }
                   },
-                  child: Container(color: Colors.transparent),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    color: isInputMode ? Colors.black.withOpacity(0.6) : Colors.transparent,
+                  ),
                 ),
               ),
+            ),
             if (_navVisible)
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 400),
@@ -240,7 +248,19 @@ class _AppShellState extends ConsumerState<AppShell> {
                               switchInCurve: Curves.easeOut,
                               switchOutCurve: Curves.easeOut,
                               transitionBuilder: (child, animation) {
-                                return FadeTransition(opacity: animation, child: child);
+                                final scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
+                                  CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeOutCubic,
+                                  ),
+                                );
+                                return ScaleTransition(
+                                  scale: scaleAnimation,
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
+                                );
                               },
                               child: isInputMode
                                   ? NavInputPill(

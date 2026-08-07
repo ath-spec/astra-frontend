@@ -13,6 +13,10 @@ class ChatNotifier extends _$ChatNotifier {
     return [];
   }
 
+  void addMessages(List<ChatMessage> messages) {
+    state = [...state, ...messages];
+  }
+
   void sendMessage(String text) {
     if (text.trim().isEmpty) return;
 

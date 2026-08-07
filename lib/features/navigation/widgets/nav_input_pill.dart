@@ -9,6 +9,8 @@ import '../../../core/providers/speech_provider.dart';
 import '../../../core/widgets/animated_gradient_text.dart';
 import 'border_beam.dart';
 import 'voice_animation.dart';
+import 'package:uuid/uuid.dart';
+import '../../chat/models/chat_message.dart';
 
 enum NavInputState { initial, typing, generating, streaming, replied }
 
@@ -73,12 +75,16 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
 
   @override
   void dispose() {
+    _controller.removeListener(_onTextChanged);
     _controller.dispose();
     _focusNode.dispose();
     _secondController.dispose();
     _secondFocusNode.dispose();
     _streamTimer?.cancel();
     _shimmerController.dispose();
+    try {
+      ref.read(speechProvider.notifier).stopListening();
+    } catch (_) {}
     super.dispose();
   }
 
@@ -131,10 +137,26 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
     final text = _secondController.text.trim();
     if (text.isEmpty) return;
 
-    // Send the first message
-    ref.read(chatNotifierProvider.notifier).sendMessage(_userMessage);
+    final uuid = const Uuid();
+    final messages = [
+      ChatMessage(
+        id: uuid.v4(),
+        text: _userMessage,
+        isUser: true,
+        timestamp: DateTime.now().subtract(const Duration(seconds: 2)),
+      ),
+      ChatMessage(
+        id: uuid.v4(),
+        text: _aiResponse,
+        isUser: false,
+        timestamp: DateTime.now().subtract(const Duration(seconds: 1)),
+      ),
+    ];
+
+    // Add the inline conversation history first
+    ref.read(chatNotifierProvider.notifier).addMessages(messages);
     
-    // Slight delay to allow first message to process before sending second
+    // Slight delay to allow history to process before sending the new message
     Future.delayed(const Duration(milliseconds: 100), () {
       ref.read(chatNotifierProvider.notifier).sendMessage(text);
     });
@@ -155,6 +177,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
     } else {
       speechNotifier.startListening(
         onResultCallback: (text) {
+          if (!mounted) return;
           if (_currentState == NavInputState.initial || _currentState == NavInputState.typing) {
             if (text.isNotEmpty) {
               _controller.text = text;
@@ -186,6 +209,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
       duration: const Duration(milliseconds: 250),
       curve: _snappyEaseOut,
       child: Container(
+        height: MediaQuery.of(context).size.height * 0.35,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
@@ -241,9 +265,9 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
       behavior: HitTestBehavior.opaque,
       child: Padding(
         key: const ValueKey('input_state'),
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
             // Header
           Row(
@@ -253,14 +277,14 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: const [
-                    Icon(Icons.auto_awesome, size: 14, color: Colors.white),
+                    Icon(Icons.auto_awesome, size: 20, color: Colors.white),
                     SizedBox(width: 6),
                     Text(
                       'ASTRA',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'SpaceGrotesk',
-                        fontSize: 12,
+                        fontSize: 24,
                         height: 1.1,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
@@ -272,7 +296,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 28),
           
           // Main Input
           TextField(
@@ -290,7 +314,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
               fontWeight: FontWeight.w400,
             ),
             decoration: const InputDecoration(
-              hintText: 'Type, talk, or share a photo',
+              hintText: "Type or talk, we've got you",
               hintStyle: TextStyle(
                 fontFamily: 'DMSans',
                 color: Color(0xFFCBD5E1),
@@ -307,7 +331,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
               focusColor: Colors.transparent,
             ),
           ),
-          const SizedBox(height: 16),
+          const Spacer(),
           
           // Bottom Row
           SizedBox(
@@ -328,7 +352,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (!isTyping) ...[
+                        if (!isTyping && !ref.watch(speechProvider).isListening) ...[
                           GestureDetector(
                             onTap: () {
                               if (_focusNode.hasFocus) {
@@ -340,7 +364,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                             behavior: HitTestBehavior.opaque,
                             child: const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Icon(Icons.keyboard_alt_outlined, size: 20, color: Color(0xFF444746)),
+                              child: Icon(Icons.keyboard_alt_outlined, size: 20, color: const Color(0xFF041E49)),
                             ),
                           ),
                           const SizedBox(width: 4),
@@ -349,10 +373,6 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                           onTap: _toggleListening,
                           child: Container(
                             padding: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFFD3E3FD), // Deeper blue for active mic
-                            ),
                             child: Icon(
                               ref.watch(speechProvider).isListening ? Icons.stop_rounded : Icons.mic_none_rounded, 
                               size: 20, 
@@ -420,9 +440,9 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
   Widget _buildChatState() {
     return Padding(
       key: const ValueKey('chat_state'),
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Top row: Logo
@@ -433,14 +453,14 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: const [
-                    Icon(Icons.auto_awesome, size: 14, color: Colors.white),
+                    Icon(Icons.auto_awesome, size: 20, color: Colors.white),
                     SizedBox(width: 6),
                     Text(
                       'ASTRA',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'SpaceGrotesk',
-                        fontSize: 14,
+                        fontSize: 18,
                         height: 1.1,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
@@ -453,6 +473,14 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
             ],
           ),
           const SizedBox(height: 16),
+          
+          Expanded(
+            child: SingleChildScrollView(
+              reverse: true,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
           
           // User Bubble
           Align(
@@ -501,9 +529,13 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                 const Icon(Icons.volume_up_outlined, size: 18, color: Color(0xFF444746)),
             ],
           ),
-          
-          if (_currentState == NavInputState.replied) ...[
-            const SizedBox(height: 16),
+        ],
+      ),
+    ),
+  ),
+  
+  if (_currentState == NavInputState.replied) ...[
+    const SizedBox(height: 16),
             // Second Input Field seamlessly integrated
             TextField(
               controller: _secondController,
