@@ -276,13 +276,16 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
 
   Widget _buildInputState() {
     final isTyping = _currentState == NavInputState.typing;
-    return Padding(
-      key: const ValueKey('input_state'),
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Header
+    return GestureDetector(
+      onTap: () => _focusNode.requestFocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        key: const ValueKey('input_state'),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -319,7 +322,12 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
               ),
               contentPadding: EdgeInsets.zero,
               border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
               isDense: true,
+              filled: false,
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
             ),
           ),
           const SizedBox(height: 16),
@@ -395,8 +403,9 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildPillIconButton({
     required IconData icon,
@@ -483,8 +492,13 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                   fontSize: 14,
                 ),
                 border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
+                filled: false,
+                hoverColor: Colors.transparent,
+                focusColor: Colors.transparent,
               ),
               style: const TextStyle(
                 fontFamily: 'DMSans',
