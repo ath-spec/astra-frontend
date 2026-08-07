@@ -77,7 +77,7 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
           label,
           style: const TextStyle(
             fontFamily: 'SpaceGrotesk',
-            fontSize: 10,
+            fontSize: 9, // Reduced font size
             fontWeight: FontWeight.w700,
             color: Color(0xFF0F172A),
           ),
@@ -86,7 +86,7 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
           _formatCurrency(value),
           style: const TextStyle(
             fontFamily: 'SpaceGrotesk',
-            fontSize: 10,
+            fontSize: 9, // Reduced font size
             fontWeight: FontWeight.w700,
             color: Color(0xFF0F172A),
           ),
@@ -249,11 +249,15 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                                   padding: const EdgeInsets.symmetric(horizontal: 12),
                                   child: Column(
                                     children: [
-                                      _buildBreakdownRow('MF:', point.mfValue),
-                                      const SizedBox(height: 4),
-                                      _buildBreakdownRow('STOCKS:', point.stocksValue),
-                                      const SizedBox(height: 4),
-                                      _buildBreakdownRow('SURPLUS:', point.surplusValue),
+                                      if (point.mfValue > 0) ...[
+                                        _buildBreakdownRow('MF:', point.mfValue),
+                                      ],
+                                      if (point.mfValue > 0 && point.stocksValue > 0) ...[
+                                        const SizedBox(height: 4),
+                                      ],
+                                      if (point.stocksValue > 0) ...[
+                                        _buildBreakdownRow('STOCKS:', point.stocksValue),
+                                      ],
                                     ],
                                   ),
                                 ),

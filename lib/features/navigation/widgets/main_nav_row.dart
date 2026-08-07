@@ -15,7 +15,7 @@ class MainNavPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int pillIndex = currentIndex;
-    if (currentIndex == 3) pillIndex = 2; // Map Others (3) to pill index (2)
+    if (currentIndex == 3) pillIndex = 2; // Map News (3) to pill index (2)
 
     return NavigationPill(
       currentIndex: pillIndex,
@@ -28,9 +28,9 @@ class MainNavPill extends StatelessWidget {
       icons: const [
         Icons.home_rounded,
         Icons.pie_chart_rounded, // Mutual Funds
-        Icons.widgets_rounded, // Others
+        Icons.newspaper_rounded, // News
       ],
-      labels: const ['Home', 'Investments', 'Others'],
+      labels: const ['Home', 'Investments', 'News'],
     );
   }
 }

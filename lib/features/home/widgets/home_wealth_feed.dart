@@ -136,14 +136,6 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
               SizedBox(height: 8 * scale),
               Row(
                 children: [
-                  Container(
-                    width: 8 * scale,
-                    height: 8 * scale,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF22C55E), // Green
-                      shape: BoxShape.circle,
-                    ),
-                  ),
                   SizedBox(width: 8 * scale),
                   Text(
                     'Last updated: Today, $_currentTimeIst',

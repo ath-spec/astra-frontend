@@ -28,7 +28,7 @@ import '../../features/home/screens/home_screen.dart';
 import '../../features/chat/screens/chat_screen.dart';
 import '../../features/chat/screens/chat_history_screen.dart';
 import 'package:flutter/material.dart';
-import '../../features/surpluse/screens/explore_screen.dart';
+import '../../features/news/screens/news_screen.dart';
 import '../../features/budget/presentation/screens/budget_onboarding_intro_screen.dart';
 import '../../features/budget/presentation/screens/budget_control_screen.dart';
 import '../../features/recurring/presentation/screens/recurring_intro_screen.dart';
@@ -36,10 +36,14 @@ import '../../features/recurring/presentation/screens/recurring_control_screen.d
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
 import '../../features/asset_connection/screens/manage_bank_accounts_screen.dart';
+import '../../features/asset_connection/screens/linked_bank_accounts_screen.dart';
+import '../../features/asset_connection/screens/bank_account_details_screen.dart';
 import 'package:astra_frontend/features/portfolio_analysis/screens/analysis_walk_screen.dart';
 import 'package:astra_frontend/features/portfolio_analysis/screens/portfolio_analysis_screen.dart';
 import 'package:astra_frontend/features/portfolio_analysis/screens/insights_screen.dart';
 import '../../features/mf/screens/mf_container_screen.dart';
+import '../../features/stocks/screens/owned_stocks_screen.dart';
+import '../../features/stocks/screens/cart_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/corner_fade_reveal_transition.dart';
 
@@ -207,8 +211,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ManageBankAccountsScreen(),
       ),
       GoRoute(
+        path: '/linked-bank-accounts',
+        builder: (context, state) => const LinkedBankAccountsScreen(),
+      ),
+      GoRoute(
+        path: '/bank-account-details',
+        builder: (context, state) {
+          final bankAccount = state.extra as dynamic;
+          return BankAccountDetailsScreen(bankAccount: bankAccount);
+        },
+      ),
+      GoRoute(
         path: '/chat-history',
         builder: (context, state) => const ChatHistoryScreen(),
+      ),
+      GoRoute(
+        path: '/stocks',
+        builder: (context, state) => const StocksScreen(),
       ),
 
       GoRoute(
@@ -302,8 +321,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/explore',
-                builder: (context, state) => const ExploreScreen(),
+                path: '/news',
+                builder: (context, state) => const NewsScreen(),
               ),
             ],
           ),

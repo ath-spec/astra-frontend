@@ -8,6 +8,9 @@ class BankAccountItem {
     required this.accountNumber,
     required this.isSelected,
     required this.isLinked,
+    this.ifsc = 'HDFC0000173', // Dummy default ifsc
+    this.branch = 'MUMBAI - NARIMAN POINT', // Dummy default branch
+    this.balance = 0.0, // Default balance
   });
 
   final String id;
@@ -15,6 +18,9 @@ class BankAccountItem {
   final String accountNumber;
   final bool isSelected;
   final bool isLinked;
+  final String ifsc;
+  final String branch;
+  final double balance;
 
   BankAccountItem copyWith({
     String? id,
@@ -22,6 +28,9 @@ class BankAccountItem {
     String? accountNumber,
     bool? isSelected,
     bool? isLinked,
+    String? ifsc,
+    String? branch,
+    double? balance,
   }) {
     return BankAccountItem(
       id: id ?? this.id,
@@ -29,6 +38,9 @@ class BankAccountItem {
       accountNumber: accountNumber ?? this.accountNumber,
       isSelected: isSelected ?? this.isSelected,
       isLinked: isLinked ?? this.isLinked,
+      ifsc: ifsc ?? this.ifsc,
+      branch: branch ?? this.branch,
+      balance: balance ?? this.balance,
     );
   }
 }
@@ -111,24 +123,30 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
             step: AssetConnectionStep.linkingMutualFunds,
             mfConnected: false,
             stocksConnected: false,
-            banksConnected: true,
+            banksConnected: false,
             mfStatusMessage: 'Linking now...',
             stocksStatusMessage: 'Pending',
-            banksStatusMessage: 'Successfully Linked',
+            banksStatusMessage: 'Pending',
             bankAccounts: [
               BankAccountItem(
                 id: '3192',
                 bankName: 'HDFC Bank',
                 accountNumber: 'SAVINGS account - xxxx 3192',
                 isSelected: true,
-                isLinked: true,
+                isLinked: false,
+                ifsc: 'HDFC0003192',
+                branch: 'MUMBAI - KHAR WEST',
+                balance: 14000.0,
               ),
               BankAccountItem(
                 id: '8779',
                 bankName: 'Axis Bank',
                 accountNumber: 'SAVINGS account - xxxx 8779',
                 isSelected: true,
-                isLinked: true,
+                isLinked: false,
+                ifsc: 'UTIB0008779',
+                branch: 'BENGALURU - INDIRANAGAR',
+                balance: 5544.0,
               ),
             ],
           ),

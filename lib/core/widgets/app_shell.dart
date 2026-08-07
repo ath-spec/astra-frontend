@@ -54,12 +54,10 @@ class _AppShellState extends ConsumerState<AppShell> {
         ref.invalidate(chatNotifierProvider);
       }
     } else {
-      if (index == 0) {
+      if (index == 0 || index == 3) {
         ref.read(navContextProvider.notifier).state = NavContext.main;
       } else if (index == 1) {
         ref.read(navContextProvider.notifier).state = NavContext.mf;
-      } else if (index == 3) {
-        ref.read(navContextProvider.notifier).state = NavContext.explore;
       }
     }
 

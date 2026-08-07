@@ -158,31 +158,34 @@ class _BudgetCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 18),
-                        Row(
-                          children: [
-                            const Text(
-                              'create now',
-                              style: TextStyle(
-                                fontFamily: 'SpaceGrotesk',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black87,
-                              ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF27272A), Color(0xFF09090B)],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
                             ),
-                            const SizedBox(width: 4),
-                            Container(
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                color: Colors.black87,
-                                borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
                               ),
-                              child: const Icon(
-                                Icons.north_east_rounded,
-                                size: 10,
-                                color: Color(0xFFFFDF82),
-                              ),
+                            ],
+                            border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+                          ),
+                          child: const Text(
+                            'Create now',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),

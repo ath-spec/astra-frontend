@@ -1,10 +1,14 @@
 import 'dart:ui' show lerpDouble, ImageFilter;
+import 'dart:math' show pi;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../core/widgets/arch_background.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
 import '../../../core/providers/nav_context_provider.dart';
+import '../../../core/providers/privacy_provider.dart';
+import '../../../core/utils/privacy_formatter.dart';
 
 import '../widgets/home_portfolio_insights.dart';
 import '../widgets/home_quick_actions.dart';
@@ -16,7 +20,6 @@ import '../widgets/home_portfolio_analysis.dart';
 import 'package:astra_frontend/features/home/widgets/home_portfolio_growth.dart';
 import 'package:astra_frontend/features/home/widgets/budget_section.dart';
 import 'package:astra_frontend/features/home/widgets/recurring_section.dart';
-import '../widgets/home_wealth_feed.dart';
 
 /// Screen 4: New Home Screen / Dashboard (Image 4) in clean light mode.
 /// Displays user wealth header, portfolio chart card, asset status list (with FETCHING status),
@@ -69,7 +72,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final assetState = ref.watch(assetConnectionProvider);
+    final isLocked = ref.watch(privacyProvider);
     final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    final double totalWealthValue = (assetState.mfConnected ? 352962.0 : 0.0) + (assetState.stocksConnected ? 147908.0 : 0.0);
+    final formattedTotal = PrivacyFormatter.obscure(
+      totalWealthValue == 0 ? '₹0' : '₹${NumberFormat('#,##,###').format(totalWealthValue)}',
+      isLocked
+    ); 
+
+    final bool showReturnsPill = assetState.mfConnected || assetState.stocksConnected;
+    String pillOneDayText = '';
+    String pillTotalText = '';
+
+    if (assetState.mfConnected && assetState.stocksConnected) {
+      pillOneDayText = '↑ ₹3,402 (0.65%) 1D change';
+      pillTotalText = '↑ ₹67,960 (13.50%) Total Returns';
+    } else if (assetState.mfConnected) {
+      pillOneDayText = '↑ ₹2,202 (0.62%) 1D change';
+      pillTotalText = '↑ ₹52,960 (17.65%) Total Returns';
+    } else if (assetState.stocksConnected) {
+      pillOneDayText = '↑ ₹1,200 (0.81%) 1D change';
+      pillTotalText = '↑ ₹15,000 (10.14%) Total Returns';
+    }
 
     if (assetState.step == AssetConnectionStep.banksLinkingProgress) {
       if (!_pulseController.isAnimating) _pulseController.repeat(reverse: true);
@@ -122,8 +147,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             pinned: true,
             delegate: _HomeHeaderDelegate(
               safeAreaTop: MediaQuery.of(context).padding.top,
+              totalWealth: formattedTotal,
+              showReturnsPill: showReturnsPill,
+              pillOneDayText: pillOneDayText,
+              pillTotalText: pillTotalText,
+              isLocked: isLocked,
               onProfileTap: () => context.push('/user-profile'),
-              onLockTap: () => context.push('/no-internet', extra: '/'),
+              onLockTap: () => ref.read(privacyProvider.notifier).state = !isLocked,
             ),
           ),
           // 1. Main content with consistent horizontal padding
@@ -140,7 +170,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 // Asset List
                 
                 if (assetState.mfConnected)
-                  _buildConnectedMfRow()
+                  _buildConnectedAssetRow(
+                    icon: Icons.signal_cellular_alt_rounded,
+                    title: 'Mutual Funds',
+                    percentage: '67.9%',
+                    amount: PrivacyFormatter.obscure('₹3,52,962', isLocked),
+                    subtitle: PrivacyFormatter.obscure('↑ ₹52.96K (17.65%) Returns', isLocked),
+                    subtitleColor: const Color(0xFF22C55E),
+                    onTap: () {
+                      ref.read(navContextProvider.notifier).state = NavContext.mf;
+                      context.go('/mf');
+                    },
+                  )
                 else
                   _buildAssetRow(
                     icon: Icons.bar_chart_rounded,
@@ -150,19 +191,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ),
                 _buildDottedDivider(),
                 
-                _buildBankAccountsRow(
-                  isLinked: assetState.banksConnected,
-                  isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
-                ),
+                if (assetState.stocksConnected)
+                  _buildConnectedAssetRow(
+                    icon: Icons.candlestick_chart_rounded,
+                    title: 'Stocks',
+                    percentage: '32.1%',
+                    amount: PrivacyFormatter.obscure('₹1,47,908', isLocked),
+                    subtitle: PrivacyFormatter.obscure('↑ ₹16.7K (12.7%) Returns', isLocked),
+                    subtitleColor: const Color(0xFF22C55E),
+                    onTap: () {
+                      context.push('/stocks');
+                    },
+                  )
+                else
+                  _buildAssetRow(
+                    icon: Icons.candlestick_chart_rounded,
+                    title: 'Stocks',
+                    buttonText: 'Import',
+                    onPressed: () => context.push('/aa-stocks-otp'),
+                  ),
                 _buildDottedDivider(),
                 
-                _buildAssetRow(
-                  icon: Icons.candlestick_chart_rounded,
-                  title: 'Stocks',
-                  buttonText: assetState.stocksConnected ? '2 Linked' : 'Import',
-                  onPressed: () => context.push('/aa-stocks-otp'),
-                  isLinked: assetState.stocksConnected,
-                ),
+                if (assetState.banksConnected)
+                  _buildConnectedAssetRow(
+                    icon: Icons.account_balance_rounded,
+                    title: 'Bank Accounts',
+                    percentage: '3.7%',
+                    amount: '₹19,544',
+                    onTap: () {
+                      context.push('/linked-bank-accounts');
+                    },
+                  )
+                else
+                  _buildBankAccountsRow(
+                    isLinked: false,
+                    isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
+                  ),
                 
                 const SizedBox(height: 40),
                 const HomePortfolioInsights(),
@@ -182,9 +246,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             child: SizedBox(height: 16),
           ),
           // 4. Edge-to-edge Portfolio Growth Graph
-          const SliverToBoxAdapter(
-            child: HomePortfolioGrowth(),
-          ),
+          if (assetState.mfConnected || assetState.stocksConnected)
+            SliverToBoxAdapter(
+              child: HomePortfolioGrowth(
+                mfConnected: assetState.mfConnected,
+                stocksConnected: assetState.stocksConnected,
+              ),
+            ),
 
           const SliverToBoxAdapter(
             child: SizedBox(height: 24),
@@ -201,13 +269,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             child: SizedBox(height: 24),
           ),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: bottomPadding + MediaQuery.of(context).size.height * 0.7),
-              child: HomeWealthFeed(
-                scrollController: _scrollController,
-                isSecondCardStacked: _isSecondCardStacked,
-              ),
-            ),
+            child: SizedBox(height: 140 + bottomPadding), // Extra padding for AppShell nav bar
           ),
         ],
       ),
@@ -216,37 +278,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Widget _buildConnectedMfRow() {
+  Widget _buildConnectedAssetRow({
+    required IconData icon,
+    required String title,
+    required String percentage,
+    required String amount,
+    String? subtitle,
+    Color subtitleColor = const Color(0xFF64748B),
+    required VoidCallback onTap,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14.0),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () {
-          ref.read(navContextProvider.notifier).state = NavContext.mf;
-          context.go('/mf');
-        },
+        onTap: onTap,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: subtitle != null ? CrossAxisAlignment.start : CrossAxisAlignment.center,
           children: [
-            const Icon(Icons.bar_chart_rounded, color: Color(0xFF0F172A), size: 24),
+            Icon(icon, color: const Color(0xFF0F172A), size: 28),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                mainAxisAlignment: subtitle != null ? MainAxisAlignment.start : MainAxisAlignment.center,
+                children: [
                   Text(
-                    'Mutual Funds',
-                    style: TextStyle(
+                    title,
+                    style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                     ),
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
-                    '98.8%',
-                    style: TextStyle(
+                    percentage,
+                    style: const TextStyle(
                       fontFamily: 'DMMono',
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -258,32 +326,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: subtitle != null ? MainAxisAlignment.start : MainAxisAlignment.center,
               children: [
                 Row(
-                  children: const [
+                  children: [
                     Text(
-                      '₹3,42,631',
-                      style: TextStyle(
+                      amount,
+                      style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 15,
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF0F172A),
                       ),
                     ),
-                    SizedBox(width: 4),
-                    Icon(Icons.chevron_right, size: 16, color: Color(0xFF64748B)),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.chevron_right, size: 18, color: Color(0xFF94A3B8)),
                   ],
                 ),
-                const SizedBox(height: 2),
-                const Text(
-                  '↑ ₹3,644 (1.07%) 1D',
-                  style: TextStyle(
-                    fontFamily: 'DMMono',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF22C55E),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontFamily: 'DMMono',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: subtitleColor,
+                    ),
                   ),
-                ),
+                ]
               ],
             ),
           ],
@@ -311,7 +382,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               style: const TextStyle(
                 fontFamily: 'DMSans',
                 color: Color(0xFF0F172A),
-                fontSize: 15,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -430,7 +501,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       child: GestureDetector(
         onTap: () {
           if (isLinked) {
-            context.push('/manage-bank-accounts');
+            context.push('/linked-bank-accounts');
           } else {
             context.push('/banks-linking');
           }
@@ -445,33 +516,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   color: Color(0xFF0F172A),
-                  fontSize: 15,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            if (isLinked)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: const Color(0xFFCBD5E1)),
-                ),
-                child: const Text(
-                  'Connected',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    color: Color(0xFF0F172A),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              )
-            else if (isLinking)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+              if (isLinked)
+                const SizedBox() // Handled by _buildConnectedAssetRow now
+              else if (isLinking)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                   AnimatedBuilder(
                     animation: _pulseAnimation,
                     builder: (context, child) {
@@ -507,15 +562,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
+                  color: const Color(0xFF0F172A),
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
                 ),
                 child: const Text(
                   'Import',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    color: Color(0xFF0F172A),
+                    color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -562,20 +616,30 @@ class _DottedLinePainter extends CustomPainter {
 
 class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
+  final String totalWealth;
+  final bool showReturnsPill;
+  final String pillOneDayText;
+  final String pillTotalText;
   final VoidCallback onProfileTap;
   final VoidCallback onLockTap;
+  final bool isLocked;
 
   _HomeHeaderDelegate({
     required this.safeAreaTop,
+    required this.totalWealth,
+    required this.showReturnsPill,
+    required this.pillOneDayText,
+    required this.pillTotalText,
     required this.onProfileTap,
     required this.onLockTap,
+    required this.isLocked,
   });
 
   @override
   double get minExtent => safeAreaTop + 84.0;
 
   @override
-  double get maxExtent => safeAreaTop + 220.0;
+  double get maxExtent => safeAreaTop + 260.0;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -586,7 +650,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     final double easedRatio = curve.transform(shrinkRatio);
 
     // Layout Interpolations
-    final double startTop = maxExtent - 84.0;
+    final double startTop = maxExtent - 124.0; // Keep the text at the same visual height (260 - 124 = 136)
     final double endTop = safeAreaTop + 18.0; // Vertically centered with 44px buttons
     final double currentTop = lerpDouble(startTop, endTop, easedRatio)!;
 
@@ -712,7 +776,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '₹4,267',
+                      totalWealth,
                       style: TextStyle(
                         fontFamily: 'SpaceGrotesk',
                         color: const Color(0xFF0F172A),
@@ -751,6 +815,22 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
 
+          // Returns Pill below the wealth number
+          if (shrinkRatio < 1.0 && showReturnsPill)
+            Positioned(
+              top: currentTop + 64.0, // Move it further down so it never covers the text
+              left: 0,
+              right: 0,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: _ReturnsPill(
+                  opacity: (1.0 - (shrinkRatio * 3.0)).clamp(0.0, 1.0),
+                  oneDayText: pillOneDayText,
+                  totalText: pillTotalText,
+                ),
+              ),
+            ),
+
           // Top Row (Profile, Lock)
           Positioned(
             top: safeAreaTop + 12.0,
@@ -776,7 +856,6 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                 ),
-                /*
                 GestureDetector(
                   onTap: onLockTap,
                   child: Container(
@@ -787,14 +866,13 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                       shape: BoxShape.circle,
                       border: Border.all(color: const Color(0xFFE2E8F0)),
                     ),
-                    child: const Icon(
-                      Icons.lock_outline_rounded,
-                      color: Color(0xFF0F172A),
+                    child: Icon(
+                      isLocked ? Icons.lock_outline_rounded : Icons.lock_open_rounded,
+                      color: const Color(0xFF0F172A),
                       size: 20,
                     ),
                   ),
                 ),
-                */
               ],
             ),
           ),
@@ -805,7 +883,113 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) {
-    return safeAreaTop != oldDelegate.safeAreaTop;
+    return safeAreaTop != oldDelegate.safeAreaTop || 
+           totalWealth != oldDelegate.totalWealth ||
+           showReturnsPill != oldDelegate.showReturnsPill ||
+           pillOneDayText != oldDelegate.pillOneDayText ||
+           pillTotalText != oldDelegate.pillTotalText;
+  }
+}
+
+class _ReturnsPill extends StatefulWidget {
+  final double opacity;
+  final String oneDayText;
+  final String totalText;
+  
+  const _ReturnsPill({
+    required this.opacity,
+    required this.oneDayText,
+    required this.totalText,
+  });
+
+  @override
+  State<_ReturnsPill> createState() => _ReturnsPillState();
+}
+
+class _ReturnsPillState extends State<_ReturnsPill> {
+  bool _showOneDay = true;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.opacity <= 0.01) return const SizedBox.shrink();
+    
+    return Opacity(
+      opacity: widget.opacity,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          setState(() {
+            _showOneDay = !_showOneDay;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 400),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, childWidget) {
+                      final isCurrent = childWidget?.key == ValueKey(_showOneDay);
+                      final angle = isCurrent 
+                          ? (1.0 - animation.value) * -pi / 2 
+                          : (1.0 - animation.value) * pi / 2;
+                      
+                      return FadeTransition(
+                        opacity: animation,
+                        child: Transform(
+                          transform: Matrix4.identity()
+                            ..setEntry(3, 2, 0.002)
+                            ..rotateX(angle),
+                          alignment: Alignment.center,
+                          child: childWidget,
+                        ),
+                      );
+                    },
+                    child: child,
+                  );
+                },
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    _showOneDay ? widget.oneDayText : widget.totalText,
+                    key: ValueKey<bool>(_showOneDay),
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF10B981),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(
+                Icons.unfold_more_rounded,
+                size: 14,
+                color: Color(0xFF94A3B8),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

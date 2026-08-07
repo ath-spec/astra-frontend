@@ -5,6 +5,7 @@ import 'widgets/mf_holdings_header.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../asset_connection/providers/asset_connection_provider.dart';
+import '../../../../core/providers/privacy_provider.dart';
 import 'widgets/connected_holdings_view.dart';
 
 class HoldingsScreen extends ConsumerStatefulWidget {
@@ -21,6 +22,7 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
   Widget build(BuildContext context) {
     // We import riverpod provider here to avoid too many file changes
     final assetState = ref.watch(assetConnectionProvider);
+    final isLocked = ref.watch(privacyProvider);
     
     if (assetState.mfConnected) {
       return const ConnectedHoldingsView();
@@ -48,6 +50,9 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
                     safeAreaTop: 0,
                     screenHeight: logicalHeight,
                     hasImportedPortfolio: _hasImportedPortfolio,
+                    isLocked: isLocked,
+                    onLockTap: () => ref.read(privacyProvider.notifier).state = !isLocked,
+                    onCartTap: () => context.push('/cart'),
                   ),
                 ),
                 SliverToBoxAdapter(

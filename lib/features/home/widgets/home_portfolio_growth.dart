@@ -4,7 +4,14 @@ import 'package:flutter/material.dart';
 import 'portfolio_interactive_chart.dart';
 
 class HomePortfolioGrowth extends StatefulWidget {
-  const HomePortfolioGrowth({super.key});
+  final bool mfConnected;
+  final bool stocksConnected;
+
+  const HomePortfolioGrowth({
+    super.key,
+    required this.mfConnected,
+    required this.stocksConnected,
+  });
 
   @override
   State<HomePortfolioGrowth> createState() => _HomePortfolioGrowthState();
@@ -17,8 +24,14 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
     final random = Random(period.hashCode);
     final now = DateTime.now();
     int count = 30;
-    double startVal = 100000;
-    double endVal = 343158;
+    double startVal = 0;
+    
+    double endVal = 0;
+    if (widget.mfConnected) endVal += 352962;
+    if (widget.stocksConnected) endVal += 147908;
+    
+    // Fallback if somehow both are false but it was rendered
+    if (endVal == 0) endVal = 343158;
     Duration step = const Duration(days: 1);
 
     switch (period) {
@@ -39,11 +52,16 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
         break;
       case 'ALL':
       default:
-        startVal = 120000;
+        startVal = endVal * 0.35; // 35% of current value
         count = 60; // months
         step = const Duration(days: 30);
         break;
     }
+    
+    // adjust startVal proportionately
+    if (period == '1M') startVal = endVal * 0.95;
+    if (period == '6M') startVal = endVal * 0.82;
+    if (period == '1Y') startVal = endVal * 0.58;
 
     final data = <ChartDataPoint>[];
     double currentVal = startVal;
@@ -59,15 +77,23 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
       final date = now.subtract(step * (count - 1 - i));
       final dateStr = _formatDate(date);
       
-      final mfValue = currentVal * 0.706;
-      final stocksValue = currentVal * 0.294;
-      final surplusValue = 0.0;
+      double mfValue = 0;
+      double stocksValue = 0;
+      
+      if (widget.mfConnected && widget.stocksConnected) {
+        mfValue = currentVal * (352962 / 500870);
+        stocksValue = currentVal * (147908 / 500870);
+      } else if (widget.mfConnected) {
+        mfValue = currentVal;
+      } else if (widget.stocksConnected) {
+        stocksValue = currentVal;
+      }
       
       data.add(ChartDataPoint(
         value: currentVal, 
         mfValue: mfValue,
         stocksValue: stocksValue,
-        surplusValue: surplusValue,
+        surplusValue: 0.0,
         dateStr: dateStr,
       ));
     }
@@ -129,7 +155,7 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
-            '₹3,43,158',
+            '₹${currentData.last.value.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
             style: TextStyle(
               fontFamily: 'SpaceGrotesk',
               fontSize: 36,
@@ -162,7 +188,7 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
           ),
         ),
         
-        const SizedBox(height: 32),
+        const SizedBox(height: 110), // Pushed down so tooltip doesn't overlap text
         
         // Chart
         Padding(

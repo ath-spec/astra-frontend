@@ -6,11 +6,17 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
   final double screenHeight;
   final bool hasImportedPortfolio;
+  final bool isLocked;
+  final VoidCallback onLockTap;
+  final VoidCallback onCartTap;
 
   HoldingsHeaderDelegate({
     required this.safeAreaTop,
     required this.screenHeight,
     this.hasImportedPortfolio = false,
+    required this.isLocked,
+    required this.onLockTap,
+    required this.onCartTap,
   });
 
   @override
@@ -140,6 +146,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
 
+          
           // The Transforming Wealth Number -> Pill
           Positioned(
             top: currentTop,
@@ -250,6 +257,51 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
               ),
             ),
           ),
+          // Top Row Buttons (Lock, Cart)
+          Positioned(
+            top: safeAreaTop + 12.0,
+            right: 24.0 * scale,
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: onLockTap,
+                  child: Container(
+                    width: 36 * scale,
+                    height: 36 * scale,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: Icon(
+                      isLocked ? Icons.lock_outline_rounded : Icons.lock_open_rounded,
+                      color: Color(0xFF0F172A),
+                      size: 18 * scale,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12 * scale),
+                GestureDetector(
+                  onTap: onCartTap,
+                  child: Container(
+                    width: 36 * scale,
+                    height: 36 * scale,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: Icon(
+                      Icons.shopping_cart_outlined,
+                      color: Color(0xFF0F172A),
+                      size: 18 * scale,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
         ],
       ),
     );

@@ -47,11 +47,7 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
             if (widget.isOnboarding) {
               context.pushReplacement('/banks-searching');
             } else {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go('/');
-              }
+              context.go('/');
             }
           }
         });
