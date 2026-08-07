@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MfWatchlistEmptyState extends StatelessWidget {
   final VoidCallback? onCtaTapped;
@@ -16,17 +17,17 @@ class MfWatchlistEmptyState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: EdgeInsets.only(
-          left: 24.0 * scale,
-          right: 24.0 * scale,
-          bottom: 80.0 * scale, // Offsets visual weight of the text
+          left: 24.0,
+          right: 24.0,
+          bottom: 80.0, // Offsets visual weight of the text
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: 350 * scale,
-              height: 220 * scale,
+              width: 350,
+              height: 220,
               child: Image.asset(
                 'lib/core/images/wishlistempty.webp',
                 fit: BoxFit.fitWidth,
@@ -40,36 +41,36 @@ class MfWatchlistEmptyState extends StatelessWidget {
                   textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 20 * scale,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF0F172A),
                     ),
                   ),
-                  SizedBox(height: 12 * scale),
+                  SizedBox(height: 12.h),
                   Text(
                     "Tap the bookmark on any fund to track its NAV and returns here - no pressure to buy.",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12 * scale,
+                      fontSize: 12.sp,
                       color: const Color(0xFF64748B),
                       height: 1.5,
                     ),
                   ),
-                  SizedBox(height: 32 * scale),
+                  SizedBox(height: 32.h),
                   GestureDetector(
                     onTap: onCtaTapped,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 24 * scale, vertical: 12 * scale),
+                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 0, 0, 0),
-                        borderRadius: BorderRadius.circular(4 * scale),
+                        borderRadius: BorderRadius.circular(4.r),
                       ),
                       child: Text(
                         "Explore All Funds".toUpperCase(),
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10 * scale,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.8,
                           color: const Color.fromARGB(255, 255, 255, 255),

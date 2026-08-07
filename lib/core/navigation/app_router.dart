@@ -30,6 +30,9 @@ import '../../features/chat/screens/chat_history_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/news/screens/news_screen.dart';
 import '../../features/learnings/screens/learnings_screen.dart';
+import '../../features/learnings/screens/modules/module_details_screen.dart';
+import '../../features/learnings/screens/modules/chapter_list_screen.dart';
+import '../../features/learnings/screens/modules/chapter_reader_screen.dart';
 import '../../features/budget/presentation/screens/budget_onboarding_intro_screen.dart';
 import '../../features/budget/presentation/screens/budget_control_screen.dart';
 import '../../features/recurring/presentation/screens/recurring_intro_screen.dart';
@@ -316,6 +319,34 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/cart',
         builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: '/module-details',
+        builder: (context, state) {
+          final module = state.extra as dynamic;
+          return ModuleDetailsScreen(module: module);
+        },
+      ),
+      GoRoute(
+        path: '/chapter-list',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return ChapterListScreen(
+            module: data['module'] as dynamic,
+            level: data['level'] as String,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/chapter-reader',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return ChapterReaderScreen(
+            module: data['module'] as dynamic,
+            chapter: data['chapter'] as dynamic,
+            allChapters: data['allChapters'] as dynamic,
+          );
+        },
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

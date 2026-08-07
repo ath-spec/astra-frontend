@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum NavContext { main, mf, explore }
+enum NavContext { main, mf, explore, learnings }
 
-/// Current nav context — main 3-tab vs MF section vs Explore section.
+/// Current nav context — main 3-tab vs MF section vs Explore section vs Learnings section.
 final navContextProvider = StateProvider<NavContext>((ref) => NavContext.main);
 
 /// Active tab index within the MF section.
@@ -12,3 +12,7 @@ final mfTabIndexProvider = StateProvider<int>((ref) => 0);
 /// Active tab index within the Explore section.
 /// 0=Stocks, 1=ETFs, 2=Crypto
 final exploreTabIndexProvider = StateProvider<int>((ref) => 0);
+
+/// Active tab index within the Learnings section.
+/// 0=Modules, 1=Library
+final learningsTabIndexProvider = StateProvider<int>((ref) => 0);

@@ -29,8 +29,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final double screenWidth = MediaQuery.sizeOf(context).width;
-    final double scale = 1.0; // Handled globally via Transform.scale
+    // scale removed — handled by flutter_screenutil globally
 
     // 0.0 when fully expanded, 1.0 when fully collapsed
     final shrinkRatio = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
@@ -48,10 +47,10 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
     final double currentSubtitleTop = lerpDouble(startSubtitleTop, endSubtitleTop, easedRatio)!;
 
     // Style Interpolations
-    final double currentFontSize = lerpDouble(26.0 * scale, 14.0 * scale, easedRatio)!;
-    final double currentBorderRadius = lerpDouble(0.0, 20.0 * scale, easedRatio)!;
-    final double currentHPad = lerpDouble(0.0, 16.0 * scale, easedRatio)!;
-    final double currentVPad = lerpDouble(0.0, 6.0 * scale, easedRatio)!;
+    final double currentFontSize = lerpDouble(26.0, 14.0, easedRatio)!;
+    final double currentBorderRadius = lerpDouble(0.0, 20.0, easedRatio)!;
+    final double currentHPad = lerpDouble(0.0, 16.0, easedRatio)!;
+    final double currentVPad = lerpDouble(0.0, 6.0, easedRatio)!;
     
     // Fade the background in slower so it looks like text first, then pill
     final double pillBgRatio = (easedRatio * 1.5).clamp(0.0, 1.0);
@@ -139,7 +138,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     color: const Color(0xFF9CA3AF),
-                    fontSize: 10 * scale,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.8,
                   ),
@@ -224,26 +223,26 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                                       children: [
                                         Icon(
                                           Icons.arrow_upward_rounded,
-                                          size: lerpDouble(14.0 * scale, 0.0, easedRatio)!,
+                                          size: lerpDouble(14.0, 0.0, easedRatio)!,
                                           color: const Color.fromARGB(255, 5, 134, 91), // Emerald 500
                                         ),
-                                        SizedBox(width: lerpDouble(4.0 * scale, 0.0, easedRatio)!),
+                                        SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
                                         Text(
                                           isLocked ? '₹ * * * *' : '₹2,491 (0.73%)',
                                           style: TextStyle(
                                             fontFamily: 'DMSans',
-                                            fontSize: lerpDouble(8.0 * scale, 0.0, easedRatio)!,
+                                            fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
                                             fontWeight: FontWeight.w600,
                                             color: const Color.fromARGB(255, 5, 134, 91),
                                             letterSpacing: 0.8,
                                           ),
                                         ),
-                                        SizedBox(width: lerpDouble(6.0 * scale, 0.0, easedRatio)!),
+                                        SizedBox(width: lerpDouble(6.0, 0.0, easedRatio)!),
                                         Text(
                                           '1D change',
                                           style: TextStyle(
                                             fontFamily: 'DMSans',
-                                            fontSize: lerpDouble(8.0 * scale, 0.0, easedRatio)!,
+                                            fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
                                             fontWeight: FontWeight.w600,
                                             color: const Color(0xFF9CA3AF),
                                           ),
@@ -269,7 +268,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                               onTap: onRefreshTap,
                               child: Container(
                                 height: lerpDouble(22.0, 0.0, easedRatio)!,
-                                padding: EdgeInsets.symmetric(horizontal: 6 * scale),
+                                padding: EdgeInsets.symmetric(horizontal: 6),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
@@ -291,15 +290,15 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                                       children: [
                                         Icon(
                                           Icons.sync_rounded,
-                                          size: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
+                                          size: lerpDouble(10.0, 0.0, easedRatio)!,
                                           color: const Color(0xFF0F172A),
                                         ),
-                                        SizedBox(width: lerpDouble(4.0 * scale, 0.0, easedRatio)!),
+                                        SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
                                         Text(
                                           'Just now',
                                           style: TextStyle(
                                             fontFamily: 'SpaceGrotesk',
-                                            fontSize: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
+                                            fontSize: lerpDouble(10.0, 0.0, easedRatio)!,
                                             fontWeight: FontWeight.w700,
                                             color: const Color(0xFF0F172A),
                                             letterSpacing: 0.5,
@@ -323,14 +322,14 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
           // Top Row Buttons (Lock, Cart)
           Positioned(
             top: safeAreaTop + 12.0,
-            right: 24.0 * scale,
+            right: 24.0,
             child: Row(
               children: [
                 GestureDetector(
                   onTap: onLockTap,
                   child: Container(
-                    width: 36 * scale,
-                    height: 36 * scale,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: const Color(0xFFF1F5F9),
                       shape: BoxShape.circle,
@@ -339,16 +338,16 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                     child: Icon(
                       isLocked ? Icons.lock_outline_rounded : Icons.lock_open_rounded,
                       color: Color(0xFF0F172A),
-                      size: 18 * scale,
+                      size: 18,
                     ),
                   ),
                 ),
-                SizedBox(width: 12 * scale),
+                SizedBox(width: 12),
                 GestureDetector(
                   onTap: onCartTap,
                   child: Container(
-                    width: 36 * scale,
-                    height: 36 * scale,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: const Color(0xFFF1F5F9),
                       shape: BoxShape.circle,
@@ -357,7 +356,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                     child: Icon(
                       Icons.shopping_cart_outlined,
                       color: Color(0xFF0F172A),
-                      size: 18 * scale,
+                      size: 18,
                     ),
                   ),
                 ),

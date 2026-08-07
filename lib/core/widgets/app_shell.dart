@@ -7,6 +7,7 @@ import '../providers/nav_context_provider.dart';
 import '../../features/navigation/widgets/main_nav_row.dart';
 import '../../features/navigation/widgets/mf_nav_row.dart';
 import '../../features/navigation/widgets/explore_nav_row.dart';
+import '../../features/navigation/widgets/learnings_nav_row.dart';
 import '../../features/navigation/widgets/nav_shared_components.dart';
 import '../../features/navigation/widgets/nav_input_pill.dart';
 import '../providers/nav_input_provider.dart';
@@ -59,6 +60,8 @@ class _AppShellState extends ConsumerState<AppShell> {
         ref.read(navContextProvider.notifier).state = NavContext.main;
       } else if (index == 1) {
         ref.read(navContextProvider.notifier).state = NavContext.mf;
+      } else if (index == 4) {
+        ref.read(navContextProvider.notifier).state = NavContext.learnings;
       }
     }
 
@@ -111,6 +114,11 @@ class _AppShellState extends ConsumerState<AppShell> {
       case NavContext.explore:
         currentPill = const ExploreNavPill(
           key: ValueKey('explore_pill'),
+        );
+        break;
+      case NavContext.learnings:
+        currentPill = const LearningsNavPill(
+          key: ValueKey('learnings_pill'),
         );
         break;
     }
@@ -191,6 +199,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                 children: const [
                   MfNavPill(),
                   ExploreNavPill(),
+                  LearningsNavPill(),
                 ],
               ),
             ),

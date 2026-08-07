@@ -70,11 +70,8 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
-          child: Stack(
-            children: [
+      body: Stack(
+        children: [
           // Content (Full screen, no safe area constraints)
           Positioned.fill(
             child: AnimatedSwitcher(
@@ -137,10 +134,8 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
           ),
         ],
       ),
-      ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildCurrentView() {
     switch (_currentStep) {

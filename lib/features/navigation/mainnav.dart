@@ -8,6 +8,7 @@ class NavigationPill extends StatefulWidget {
   final List<IconData> icons;
   final List<String> labels;
   final List<Widget Function(Color?)>? customIcons;
+  final int visibleTabsCount;
 
   const NavigationPill({
     super.key,
@@ -17,6 +18,7 @@ class NavigationPill extends StatefulWidget {
     required this.icons,
     required this.labels,
     this.customIcons,
+    this.visibleTabsCount = 3,
   });
 
   @override
@@ -125,9 +127,9 @@ class _NavigationPillState extends State<NavigationPill> {
           builder: (context, constraints) {
             // Standardize tab width based on current row's max width and floor it to prevent sub-pixel clipping in ScrollViews
             final double pillWidth = constraints.maxWidth;
-            double tabWidth = (pillWidth / 3).floorToDouble();
+            double tabWidth = (pillWidth / widget.visibleTabsCount).floorToDouble();
             
-            bool needsScroll = widget.icons.length > 3;
+            bool needsScroll = widget.icons.length > widget.visibleTabsCount;
             final double totalWidth = tabWidth * widget.icons.length;
             
             // Save state for auto-scroll logic

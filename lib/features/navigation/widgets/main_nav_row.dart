@@ -37,6 +37,7 @@ class MainNavPill extends StatelessWidget {
         Icons.school_rounded,       // Learnings
       ],
       labels: const ['Home', 'Investments', 'News', 'Learnings'],
+      visibleTabsCount: 4,
     );
   }
 }

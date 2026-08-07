@@ -237,7 +237,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 const SizedBox(height: 48),
                 const HomeQuickActions(),
                 
-                const SizedBox(height: 48),
               ]),
             ),
           ),
@@ -254,9 +253,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ),
 
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 24),
-          ),
 
           const SliverToBoxAdapter(
             child: BudgetSection(),

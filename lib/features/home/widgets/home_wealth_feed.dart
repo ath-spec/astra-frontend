@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 
@@ -119,7 +120,7 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
       children: [
         // Header
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.0 * scale),
+          padding: EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -127,21 +128,21 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
                 'Your wealth feed',
                 style: TextStyle(
                   fontFamily: 'SpaceGrotesk',
-                  fontSize: 18 * scale,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.5,
                   color: const Color(0xFF0F172A),
                 ),
               ),
-              SizedBox(height: 8 * scale),
+              SizedBox(height: 8.h),
               Row(
                 children: [
-                  SizedBox(width: 8 * scale),
+                  SizedBox(width: 8.w),
                   Text(
                     'Last updated: Today, $_currentTimeIst',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 10 * scale,
+                      fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF64748B),
                     ),
@@ -151,15 +152,15 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
             ],
           ),
         ),
-        SizedBox(height: 24 * scale),
+        SizedBox(height: 24.h),
         
         // Feed
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 24.0 * scale),
+          padding: EdgeInsets.symmetric(horizontal: 24.0),
           itemCount: _newsItems.length,
-          separatorBuilder: (context, index) => SizedBox(height: 24 * scale),
+          separatorBuilder: (context, index) => SizedBox(height: 24.h),
           itemBuilder: (context, index) {
             final item = _newsItems[index];
             return _WealthFeedCard(
@@ -269,7 +270,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
             _currentOverlap = overlap; // Cache for post frame callback
             
             // The next card arrives when overlap equals this card's height + the 24px separator
-            final double distanceToNextCard = (_cardHeight! + 24.0 * scale) - overlap;
+            final double distanceToNextCard = (_cardHeight! + 24.0) - overlap;
             
             // Fade out the current card ONLY when the next one is right about to cover it
             if (distanceToNextCard < 60.0) {
@@ -317,13 +318,13 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(4 * scale),
+            borderRadius: BorderRadius.circular(4.r),
             border: Border.all(color: const Color(0xFFF1F5F9)),
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFF0F172A).withOpacity(0.04),
                 offset: const Offset(0, 4),
-                blurRadius: 16 * scale,
+                blurRadius: 16,
               ),
             ],
           ),
@@ -332,7 +333,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
             children: [
               // Image Section
               ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(4 * scale)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(4.r)),
                 child: AspectRatio(
                   aspectRatio: 16 / 10,
                   child: Image.asset(
@@ -343,7 +344,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
               ),
                // Content Section
               Padding(
-                padding: EdgeInsets.all(16.0 * scale),
+                padding: EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -352,26 +353,26 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       children: widget.tags.map((tag) {
                         final isTrending = tag.toLowerCase().contains('trending') || tag.toLowerCase().contains('hot');
                         return Padding(
-                          padding: EdgeInsets.only(right: 8.0 * scale),
+                          padding: EdgeInsets.only(right: 8.0),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8 * scale, vertical: 4 * scale),
+                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(4 * scale),
+                              borderRadius: BorderRadius.circular(4.r),
                               border: Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 if (isTrending) ...[
-                                  Icon(Icons.local_fire_department_rounded, size: 12 * scale, color: const Color(0xFFEF4444)),
-                                  SizedBox(width: 4 * scale),
+                                  Icon(Icons.local_fire_department_rounded, size: 12, color: const Color(0xFFEF4444)),
+                                  SizedBox(width: 4.w),
                                 ],
                                 Text(
                                   tag.replaceAll('•', '').trim(),
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 10 * scale,
+                                    fontSize: 10,
                                     fontWeight: FontWeight.w600,
                                     color: isTrending ? const Color(0xFFEF4444) : const Color(0xFF64748B),
                                   ),
@@ -382,27 +383,27 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                         );
                       }).toList(),
                     ),
-                    SizedBox(height: 12 * scale),
+                    SizedBox(height: 12.h),
                     
                     // Title
                     Text(
                       widget.title,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14 * scale,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF0F172A),
                         height: 1.3,
                       ),
                     ),
-                    SizedBox(height: 8 * scale),
+                    SizedBox(height: 8.h),
                     
                     // Description
                     Text(
                       widget.description,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10 * scale,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: const Color(0xFF475569),
                         height: 1.5,
@@ -410,7 +411,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 16 * scale),
+                    SizedBox(height: 16.h),
                     
                     // Footer (Source and Read More)
                     Row(
@@ -421,7 +422,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                           'Source: ${widget.source}',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 10 * scale,
+                            fontSize: 10,
                             fontWeight: FontWeight.w500,
                             color: const Color(0xFF94A3B8),
                           ),
@@ -429,10 +430,10 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                         
                         // Read More Button
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16 * scale, vertical: 8 * scale),
+                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20 * scale),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(color: const Color(0xFFE2E8F0)),
                           ),
                           child: Row(
@@ -442,15 +443,15 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                                 'Read summary',
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
-                                  fontSize: 10 * scale,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xFF0F172A),
                                 ),
                               ),
-                              SizedBox(width: 4 * scale),
+                              SizedBox(width: 4.w),
                               Icon(
                                 Icons.chevron_right_rounded,
-                                size: 16 * scale,
+                                size: 16,
                                 color: const Color(0xFF0F172A),
                               ),
                             ],

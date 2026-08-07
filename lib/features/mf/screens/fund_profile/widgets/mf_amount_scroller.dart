@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
 
 class MfAmountScrollerWidget extends StatefulWidget {
@@ -176,11 +177,11 @@ class _MfAmountScrollerWidgetState extends State<MfAmountScrollerWidget> {
                       child: Opacity(
                         opacity: opacity,
                         child: Container(
-                          width: 1.5,
-                          height: baseHeight * scale, // Scale height dynamically based on distance
+                          width: 1.5.w,
+                          height: baseHeight, // Scale height dynamically based on distance
                           decoration: BoxDecoration(
                             color: color,
-                            borderRadius: BorderRadius.circular(1),
+                            borderRadius: BorderRadius.circular(1.r),
                           ),
                         ),
                       ),
@@ -193,11 +194,11 @@ class _MfAmountScrollerWidgetState extends State<MfAmountScrollerWidget> {
           
           // Center Indicator (The active marker)
           Container(
-            width: 3,
+            width: 3.w,
             height: 34,
             decoration: BoxDecoration(
               color: const Color(0xFF0F172A),
-              borderRadius: BorderRadius.circular(1.5),
+              borderRadius: BorderRadius.circular(1.5.r),
             ),
           ),
           
@@ -205,7 +206,7 @@ class _MfAmountScrollerWidgetState extends State<MfAmountScrollerWidget> {
           Positioned(
             bottom: 40,
             child: Container(
-              width: 5,
+              width: 5.w,
               height: 5,
               decoration: const BoxDecoration(
                 color: Color(0xFF0F172A),
@@ -232,7 +233,7 @@ class _MfAmountScrollerWidgetState extends State<MfAmountScrollerWidget> {
                       ),
                     ),
                   ),
-                  const Spacer(),
+                  Spacer(),
                   Container(
                     width: screenWidth * 0.25,
                     decoration: BoxDecoration(
