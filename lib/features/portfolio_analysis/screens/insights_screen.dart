@@ -1251,7 +1251,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
     _targetFadeAnim = Tween<double>(begin: 0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.0, 0.3, curve: Curves.easeIn),
+        curve: const Interval(0.0, 0.3, curve: Curves.easeOutCubic),
       ),
     );
 
@@ -1385,6 +1385,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                               builder: (context, child) {
                                 final barWidth = 60 * s;
                                 final fullHeight = 240 * s;
+                                final stackWidth = MediaQuery.sizeOf(context).width - 48.0 * s;
                                 final fillHeight =
                                     fullHeight *
                                     0.15 *
@@ -1401,125 +1402,6 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                       alignment: Alignment.bottomCenter,
                                       clipBehavior: Clip.none,
                                       children: [
-                                        // Target Area (Dashed lines and background on the right)
-                                        Positioned(
-                                          left:
-                                              (MediaQuery.sizeOf(
-                                                    context,
-                                                  ).width /
-                                                  2) +
-                                              (barWidth / 2) +
-                                              4 * s,
-                                          bottom:
-                                              fullHeight *
-                                              0.45, // Target region start
-                                          child: Opacity(
-                                            opacity: _targetFadeAnim.value,
-                                            child: SizedBox(
-                                              height:
-                                                  fullHeight *
-                                                  0.35, // Target region height
-                                              width: 120 * s,
-                                              child: Stack(
-                                                children: [
-                                                  // Soft glow/background
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
-                                                        colors: [
-                                                          const Color(
-                                                            0xFFF3E8FF,
-                                                          ).withOpacity(0.8),
-                                                          Colors.white
-                                                              .withOpacity(0.0),
-                                                        ],
-                                                        begin: Alignment
-                                                            .centerLeft,
-                                                        end: Alignment
-                                                            .centerRight,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  // Top dashed line
-                                                  Positioned(
-                                                    top: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    child: CustomPaint(
-                                                      painter:
-                                                          _DashedLinePainter(
-                                                            color: const Color(
-                                                              0xFF60A5FA,
-                                                            ),
-                                                          ),
-                                                      size: Size(
-                                                        double.infinity,
-                                                        1 * s,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  // Bottom dashed line
-                                                  Positioned(
-                                                    bottom: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    child: CustomPaint(
-                                                      painter:
-                                                          _DashedLinePainter(
-                                                            color: const Color(
-                                                              0xFF60A5FA,
-                                                            ),
-                                                          ),
-                                                      size: Size(
-                                                        double.infinity,
-                                                        1 * s,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  // Target text
-                                                  Center(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          'YOUR TARGET',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'DMSans',
-                                                            fontSize: 10 * s,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            letterSpacing: 0.5,
-                                                            color: const Color(
-                                                              0xFF94A3B8,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 4 * s),
-                                                        Text(
-                                                          '20%-30%',
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'DMSans',
-                                                            fontSize: 14 * s,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: const Color(
-                                                              0xFFE11D48,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
                                         // Main Empty Bar (Crisp 3D isometric flat design)
                                         Positioned(
                                           bottom: 0,
@@ -1537,7 +1419,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                                   color: const Color(
                                                     0xFFCBD5E1,
                                                   ),
-                                                  offset: Offset(4 * s, 0),
+                                                  offset: Offset(8 * s, 0),
                                                   blurRadius:
                                                       0, // Sharp 3D edge right side
                                                   spreadRadius: 0,
@@ -1571,7 +1453,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                                   color: const Color(
                                                     0xFF7E22CE,
                                                   ),
-                                                  offset: Offset(4 * s, 0),
+                                                  offset: Offset(8 * s, 0),
                                                   blurRadius:
                                                       0, // Sharp 3D edge right side for filled part
                                                   spreadRadius: 0,
@@ -1581,19 +1463,103 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                           ),
                                         ),
 
+                                                                      // Target Area (Dashed lines and background on the right)
+                                        Positioned(
+                                          left: (stackWidth / 2) - (barWidth / 2),
+                                          bottom: fullHeight * 0.65, // Target region start
+                                          child: Opacity(
+                                            opacity: _targetFadeAnim.value,
+                                            child: SizedBox(
+                                              height: fullHeight * 0.35, // Target region height
+                                              width: barWidth + 12 * s + 120 * s,
+                                              child: Stack(
+                                                children: [
+
+                                                  // Soft glow/background
+                                                  Positioned(
+                                                    left: barWidth + 8 * s,
+                                                    right: 0,
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        gradient: LinearGradient(
+                                                          colors: [
+                                                            const Color(0xFFF3E8FF).withOpacity(0.8),
+                                                            Colors.white.withOpacity(0.0),
+                                                          ],
+                                                          begin: Alignment.centerLeft,
+                                                          end: Alignment.centerRight,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  // Top dashed line
+                                                  Positioned(
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    child: CustomPaint(
+                                                      painter: _DashedLinePainter(color: const Color(0xFF60A5FA)),
+                                                      size: Size(double.infinity, 1 * s),
+                                                    ),
+                                                  ),
+                                                  // Bottom dashed line
+                                                  Positioned(
+                                                    bottom: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    child: CustomPaint(
+                                                      painter: _DashedLinePainter(color: const Color(0xFF60A5FA)),
+                                                      size: Size(double.infinity, 1 * s),
+                                                    ),
+                                                  ),
+                                                  // Target text
+                                                  Positioned(
+                                                    left: barWidth + 12 * s,
+                                                    right: 0,
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    child: Center(
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Text(
+                                                            'YOUR TARGET',
+                                                            style: TextStyle(
+                                                              fontFamily: 'DMSans',
+                                                              fontSize: 10 * s,
+                                                              fontWeight: FontWeight.w600,
+                                                              letterSpacing: 0.5,
+                                                              color: const Color(0xFF94A3B8),
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 4 * s),
+                                                          Text(
+                                                            '20%-30%',
+                                                            style: TextStyle(
+                                                              fontFamily: 'DMSans',
+                                                              fontSize: 14 * s,
+                                                              fontWeight: FontWeight.w600,
+                                                              color: const Color(0xFFE11D48),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
                                         // Current Callout Bubble & Line
                                         Positioned(
-                                          right:
-                                              (MediaQuery.sizeOf(
-                                                    context,
-                                                  ).width /
-                                                  2) +
-                                              (barWidth / 2) -
-                                              (1.0 *
-                                                  s), // Align exactly with left edge of bar
+                                          right: (stackWidth / 2) + (barWidth / 2) - (1.0 * s), // Align exactly with left edge of bar
                                           bottom:
                                               currentHeight -
-                                              (18 *
+                                              (22 *
                                                   s), // Center vertically with the top of the fill
                                           child: Opacity(
                                             opacity:
@@ -1782,7 +1748,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                     'DID YOU KNOW?',
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
-                                      fontSize: 10 * s,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 1.0,
                                       color: const Color(0xFF94A3B8),
@@ -1798,18 +1764,11 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                 ),
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Color(0xFFF3E8FF),
                                   borderRadius: BorderRadius.circular(8 * s),
                                   border: Border.all(
-                                    color: const Color(0xFFFEF08A),
+                                    color: Color(0xFFF3E8FF),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.02),
-                                      blurRadius: 10 * s,
-                                      offset: Offset(0, 4 * s),
-                                    ),
-                                  ],
                                 ),
                                 child: TypewriterText(
                                   text:
@@ -1861,7 +1820,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                   children: [
                                     const TextSpan(text: 'Add '),
                                     TextSpan(
-                                      text: '₹86.28K',
+                                      text: '₹ 86.28K',
                                       style: TextStyle(
                                         color: const Color(
                                           0xFF10B981,
@@ -1968,7 +1927,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                           children: [
                             const TextSpan(text: 'Add '),
                             TextSpan(
-                              text: '₹86.28K',
+                              text: '₹ 86.28K',
                               style: TextStyle(
                                 color: const Color(0xFF10B981), // Crisp green
                               ),
@@ -2023,18 +1982,11 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8 * s),
         gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
           colors: [Color(0xFFF3E8FF), Colors.white],
         ),
         border: Border.all(color: const Color(0xFFFAF5FF)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 4 * s,
-            offset: Offset(0, 2 * s),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
