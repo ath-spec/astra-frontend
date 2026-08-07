@@ -789,8 +789,19 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
               child: IgnorePointer(
                 ignoring: _isCTAVisible,
                 child: Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.fromLTRB(24 * s, 16 * s, 24 * s, 24 * s),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.0),
+                        Colors.white,
+                        Colors.white,
+                      ],
+                      stops: const [0.0, 0.4, 1.0],
+                    ),
+                  ),
+                  padding: EdgeInsets.fromLTRB(24 * s, 32 * s, 24 * s, 24 * s),
                   child: SafeArea(
                     top: false,
                     child: Column(
@@ -822,7 +833,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                               'Harvest gains now',
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 12 * s,
+                                fontSize: 14 * s,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
@@ -1888,11 +1899,21 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
               child: IgnorePointer(
                 ignoring: _isCTAVisible,
                 child: Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.fromLTRB(24 * s, 16 * s, 24 * s, 24 * s),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.0),
+                        Colors.white,
+                        Colors.white,
+                      ],
+                      stops: const [0.0, 0.4, 1.0],
+                    ),
+                  ),
+                  padding: EdgeInsets.fromLTRB(24 * s, 32 * s, 24 * s, 24 * s),
                   child: SafeArea(
-                    top: false,
-                    child: Column(
+                               child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         RichText(
@@ -1906,7 +1927,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                               height: 1.3,
                             ),
                             children: [
-                              const TextSpan(text: 'Investing '),
+                              const TextSpan(text: 'Add '),
                               TextSpan(
                                 text: '₹86.28K',
                                 style: TextStyle(
@@ -1914,8 +1935,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                 ),
                               ),
                               const TextSpan(
-                                text:
-                                    ' in index will get you to a healthy index allocation of 20%',
+                                text: ' to index to reach healthy allocation of 20%',
                               ),
                             ],
                           ),
