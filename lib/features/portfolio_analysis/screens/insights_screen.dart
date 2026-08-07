@@ -382,7 +382,6 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                                 fontSize: 22,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white, // Masked
-                                height: 1.2,
                               ),
                             ),
                           ),
@@ -681,10 +680,20 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                                 ),
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 231, 251, 250),
+                                  color: const Color.fromARGB(
+                                    255,
+                                    231,
+                                    251,
+                                    250,
+                                  ),
                                   borderRadius: BorderRadius.circular(8 * s),
                                   border: Border.all(
-                                    color: const Color.fromARGB(255, 138, 231, 254),
+                                    color: const Color.fromARGB(
+                                      255,
+                                      138,
+                                      231,
+                                      254,
+                                    ),
                                   ),
                                 ),
                                 child: TypewriterText(
@@ -1296,8 +1305,12 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
         Positioned.fill(
           child: NotificationListener<ScrollNotification>(
             onNotification: (scrollInfo) {
-              final inlineBox = _inlineButtonKey.currentContext?.findRenderObject() as RenderBox?;
-              final stickyBox = _stickyButtonKey.currentContext?.findRenderObject() as RenderBox?;
+              final inlineBox =
+                  _inlineButtonKey.currentContext?.findRenderObject()
+                      as RenderBox?;
+              final stickyBox =
+                  _stickyButtonKey.currentContext?.findRenderObject()
+                      as RenderBox?;
               if (inlineBox != null && stickyBox != null) {
                 final inlinePos = inlineBox.localToGlobal(Offset.zero);
                 final stickyPos = stickyBox.localToGlobal(Offset.zero);
@@ -1345,33 +1358,36 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                           ),
                           SizedBox(height: 32 * s),
 
-                          // Actionable Insight Title
-                          RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
+                          // Main Title
+                          ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              colors: [Color.fromARGB(255, 69, 51, 234), Color.fromARGB(255, 132, 152, 252)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ).createShader(bounds),
+                            child: Text(
+                              'Add passive funds for\nefficient, low-cost growth',
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 14 * s,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF64748B), // Sleek grey
-                                height: 1.5,
+                                fontSize: 24 * s,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                height: 1.2,
+                                letterSpacing: -0.5,
                               ),
-                              children: [
-                                const TextSpan(text: 'Add '),
-                                TextSpan(
-                                  text: '₹ 86,281',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(
-                                      0xFF10B981,
-                                    ), // Crisp green
-                                  ),
-                                ),
-                                const TextSpan(
-                                  text:
-                                      ' to increase your index exposure to\n20%',
-                                ),
-                              ],
+                            ),
+                          ),
+                          SizedBox(height: 16 * s),
+                          Text(
+                            'Your portfolio has low exposure to index\nfunds',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 14 * s,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF64748B),
+                              height: 1.5,
                             ),
                           ),
                           SizedBox(height: 32 * s),
@@ -1385,7 +1401,8 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                               builder: (context, child) {
                                 final barWidth = 60 * s;
                                 final fullHeight = 240 * s;
-                                final stackWidth = MediaQuery.sizeOf(context).width - 48.0 * s;
+                                final stackWidth =
+                                    MediaQuery.sizeOf(context).width - 48.0 * s;
                                 final fillHeight =
                                     fullHeight *
                                     0.15 *
@@ -1463,18 +1480,23 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                           ),
                                         ),
 
-                                                                      // Target Area (Dashed lines and background on the right)
+                                        // Target Area (Dashed lines and background on the right)
                                         Positioned(
-                                          left: (stackWidth / 2) - (barWidth / 2),
-                                          bottom: fullHeight * 0.65, // Target region start
+                                          left:
+                                              (stackWidth / 2) - (barWidth / 2),
+                                          bottom:
+                                              fullHeight *
+                                              0.65, // Target region start
                                           child: Opacity(
                                             opacity: _targetFadeAnim.value,
                                             child: SizedBox(
-                                              height: fullHeight * 0.35, // Target region height
-                                              width: barWidth + 12 * s + 120 * s,
+                                              height:
+                                                  fullHeight *
+                                                  0.35, // Target region height
+                                              width:
+                                                  barWidth + 12 * s + 120 * s,
                                               child: Stack(
                                                 children: [
-
                                                   // Soft glow/background
                                                   Positioned(
                                                     left: barWidth + 8 * s,
@@ -1485,11 +1507,18 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                                       decoration: BoxDecoration(
                                                         gradient: LinearGradient(
                                                           colors: [
-                                                            const Color(0xFFF3E8FF).withOpacity(0.8),
-                                                            Colors.white.withOpacity(0.0),
+                                                            const Color(
+                                                              0xFFF3E8FF,
+                                                            ).withOpacity(0.8),
+                                                            Colors.white
+                                                                .withOpacity(
+                                                                  0.0,
+                                                                ),
                                                           ],
-                                                          begin: Alignment.centerLeft,
-                                                          end: Alignment.centerRight,
+                                                          begin: Alignment
+                                                              .centerLeft,
+                                                          end: Alignment
+                                                              .centerRight,
                                                         ),
                                                       ),
                                                     ),
@@ -1500,8 +1529,16 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                                     left: 0,
                                                     right: 0,
                                                     child: CustomPaint(
-                                                      painter: _DashedLinePainter(color: const Color(0xFF60A5FA)),
-                                                      size: Size(double.infinity, 1 * s),
+                                                      painter:
+                                                          _DashedLinePainter(
+                                                            color: const Color(
+                                                              0xFF60A5FA,
+                                                            ),
+                                                          ),
+                                                      size: Size(
+                                                        double.infinity,
+                                                        1 * s,
+                                                      ),
                                                     ),
                                                   ),
                                                   // Bottom dashed line
@@ -1510,8 +1547,16 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                                     left: 0,
                                                     right: 0,
                                                     child: CustomPaint(
-                                                      painter: _DashedLinePainter(color: const Color(0xFF60A5FA)),
-                                                      size: Size(double.infinity, 1 * s),
+                                                      painter:
+                                                          _DashedLinePainter(
+                                                            color: const Color(
+                                                              0xFF60A5FA,
+                                                            ),
+                                                          ),
+                                                      size: Size(
+                                                        double.infinity,
+                                                        1 * s,
+                                                      ),
                                                     ),
                                                   ),
                                                   // Target text
@@ -1522,26 +1567,43 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                                     bottom: 0,
                                                     child: Center(
                                                       child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
                                                         children: [
                                                           Text(
                                                             'YOUR TARGET',
                                                             style: TextStyle(
-                                                              fontFamily: 'DMSans',
+                                                              fontFamily:
+                                                                  'DMSans',
                                                               fontSize: 10 * s,
-                                                              fontWeight: FontWeight.w600,
-                                                              letterSpacing: 0.5,
-                                                              color: const Color(0xFF94A3B8),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              letterSpacing:
+                                                                  0.5,
+                                                              color:
+                                                                  const Color(
+                                                                    0xFF94A3B8,
+                                                                  ),
                                                             ),
                                                           ),
-                                                          SizedBox(height: 4 * s),
+                                                          SizedBox(
+                                                            height: 4 * s,
+                                                          ),
                                                           Text(
                                                             '20%-30%',
                                                             style: TextStyle(
-                                                              fontFamily: 'DMSans',
+                                                              fontFamily:
+                                                                  'DMSans',
                                                               fontSize: 14 * s,
-                                                              fontWeight: FontWeight.w600,
-                                                              color: const Color(0xFFE11D48),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  const Color(
+                                                                    0xFFE11D48,
+                                                                  ),
                                                             ),
                                                           ),
                                                         ],
@@ -1556,7 +1618,11 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
 
                                         // Current Callout Bubble & Line
                                         Positioned(
-                                          right: (stackWidth / 2) + (barWidth / 2) - (1.0 * s), // Align exactly with left edge of bar
+                                          right:
+                                              (stackWidth / 2) +
+                                              (barWidth / 2) -
+                                              (1.0 *
+                                                  s), // Align exactly with left edge of bar
                                           bottom:
                                               currentHeight -
                                               (22 *
@@ -1766,9 +1832,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                 decoration: BoxDecoration(
                                   color: Color(0xFFF3E8FF),
                                   borderRadius: BorderRadius.circular(8 * s),
-                                  border: Border.all(
-                                    color: Color(0xFFF3E8FF),
-                                  ),
+                                  border: Border.all(color: Color(0xFFF3E8FF)),
                                 ),
                                 child: TypewriterText(
                                   text:
@@ -1818,9 +1882,9 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                     height: 1.3,
                                   ),
                                   children: [
-                                    const TextSpan(text: 'Add '),
+                                    const TextSpan(text: 'Inve '),
                                     TextSpan(
-                                      text: '₹ 86.28K',
+                                      text: '₹ 1.23L',
                                       style: TextStyle(
                                         color: const Color(
                                           0xFF10B981,
