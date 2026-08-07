@@ -314,8 +314,12 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
         Positioned.fill(
           child: NotificationListener<ScrollNotification>(
             onNotification: (scrollInfo) {
-              final inlineBox = _inlineButtonKey.currentContext?.findRenderObject() as RenderBox?;
-              final stickyBox = _stickyButtonKey.currentContext?.findRenderObject() as RenderBox?;
+              final inlineBox =
+                  _inlineButtonKey.currentContext?.findRenderObject()
+                      as RenderBox?;
+              final stickyBox =
+                  _stickyButtonKey.currentContext?.findRenderObject()
+                      as RenderBox?;
               if (inlineBox != null && stickyBox != null) {
                 final inlinePos = inlineBox.localToGlobal(Offset.zero);
                 final stickyPos = stickyBox.localToGlobal(Offset.zero);
@@ -327,470 +331,466 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
               return false;
             },
             child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: 150 * s),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: MediaQuery.sizeOf(context).height * 0.4,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFF0FDF4), Colors.white],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+              padding: EdgeInsets.only(bottom: 46 * s),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: MediaQuery.sizeOf(context).height * 0.4,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFFF0FDF4), Colors.white],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.0 * s),
-                    child: Column(
-                      children: [
-                        SizedBox(height: 140 * s),
-                        // 3D Illustration Placeholder / Drawing
-                        SizedBox(
-                          height: 120 * s,
-                          width: 160 * s,
-                          child: Image.asset(
-                            'lib/core/images/insight1.webp',
-                            fit: BoxFit.contain,
+                  SafeArea(
+                    bottom: false,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.0 * s),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 140 * s),
+                          // 3D Illustration Placeholder / Drawing
+                          SizedBox(
+                            height: 120 * s,
+                            width: 160 * s,
+                            child: Image.asset(
+                              'lib/core/images/insight1.webp',
+                              fit: BoxFit.contain,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 32 * s),
+                          SizedBox(height: 32 * s),
 
-                        // Gradient Title
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            colors: [Color(0xFF0F766E), Color(0xFF0D9488)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ).createShader(bounds),
-                          child: Text(
-                            'Save tax on your gains\n(Tax Harvesting)',
+                          // Gradient Title
+                          ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              colors: [Color(0xFF0F766E), Color(0xFF0D9488)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ).createShader(bounds),
+                            child: Text(
+                              'Save tax on your gains\n(Tax Harvesting)',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white, // Masked
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16 * s),
+
+                          Text(
+                            'Some of your long-term gains are within\nthe tax-free limit. You can book them now\nand reinvest right away.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white, // Masked
-                              height: 1.2,
+                              fontSize: 14 * s,
+                              color: const Color(0xFF64748B),
+                              height: 1.5,
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16 * s),
+                          SizedBox(height: 32 * s),
 
-                        Text(
-                          'Some of your long-term gains are within\nthe tax-free limit. You can book them now\nand reinvest right away.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 14 * s,
-                            color: const Color(0xFF64748B),
-                            height: 1.5,
-                          ),
-                        ),
-                        SizedBox(height: 32 * s),
-
-                        Text(
-                          'AVAILABLE GAINS STOCK',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10 * s,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0,
-                            color: const Color(0xFF94A3B8),
-                          ),
-                        ),
-                        SizedBox(height: 8 * s),
-
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            colors: [Color(0xFF0F766E), Color(0xFF14B8A6)],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds),
-                          child: Text(
-                            '₹11,984',
+                          Text(
+                            'AVAILABLE GAINS STOCK',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 30,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
+                              fontSize: 10 * s,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.0,
+                              color: const Color(0xFF94A3B8),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 4 * s),
-                        Text(
-                          'Within your annual ₹1.25L LTCG limit',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 12 * s,
-                            color: const Color(0xFF64748B),
+                          SizedBox(height: 8 * s),
+
+                          ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              colors: [Color(0xFF0F766E), Color(0xFF14B8A6)],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ).createShader(bounds),
+                            child: Text(
+                              '₹ 11,984',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 30,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        ),
+                          SizedBox(height: 4 * s),
+                          Text(
+                            'Within your annual ₹1.25L LTCG limit',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 12 * s,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
 
-                        SizedBox(height: 32 * s),
+                          SizedBox(height: 32 * s),
 
-                        // Sleek 3D Animated Bar Graph
-                        SizedBox(
-                          height: 120 * s,
-                          child: AnimatedBuilder(
-                            animation: _animController,
-                            builder: (context, child) {
-                              final barHeight = 44 * s;
-                              final fullWidth =
-                                  MediaQuery.sizeOf(context).width -
-                                  (48 * s); // padding
-                              final fillWidth =
-                                  (fullWidth - (3 * s)) *
-                                  0.25 *
-                                  _barFillAnim.value; // ~25% fill
-                              final calloutWidth = 90 * s;
+                          // Sleek 3D Animated Bar Graph
+                          SizedBox(
+                            height: 120 * s,
+                            child: AnimatedBuilder(
+                              animation: _animController,
+                              builder: (context, child) {
+                                final barHeight = 44 * s;
+                                final fullWidth =
+                                    MediaQuery.sizeOf(context).width -
+                                    (48 * s); // padding
+                                final fillWidth =
+                                    (fullWidth - (3 * s)) *
+                                    0.25 *
+                                    _barFillAnim.value; // ~25% fill
+                                final calloutWidth = 90 * s;
 
-                              return Stack(
-                                alignment: Alignment.topLeft,
-                                clipBehavior: Clip.none,
-                                children: [
-                                  // True 3D Solid Bar
-                                  SizedBox(
-                                    width: fullWidth,
-                                    height:
-                                        barHeight +
-                                        (4 *
-                                            s), // account for 3D bottom extrusion
-                                    child: CustomPaint(
-                                      painter: _Horizontal3DBarPainter(
-                                        fillPercentage:
-                                            0.25 * _barFillAnim.value,
-                                        scale: s,
+                                return Stack(
+                                  alignment: Alignment.topLeft,
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    // True 3D Solid Bar
+                                    SizedBox(
+                                      width: fullWidth,
+                                      height:
+                                          barHeight +
+                                          (4 *
+                                              s), // account for 3D bottom extrusion
+                                      child: CustomPaint(
+                                        painter: _Horizontal3DBarPainter(
+                                          fillPercentage:
+                                              0.25 * _barFillAnim.value,
+                                          scale: s,
+                                        ),
                                       ),
                                     ),
-                                  ),
 
-                                  // Connecting line from bar to callout
-                                  Positioned(
-                                    left: fillWidth,
-                                    top:
-                                        barHeight +
-                                        3 * s, // Connect exactly to bottom edge of 3D shadow
-                                    child: Opacity(
-                                      opacity:
-                                          (_calloutScaleAnim.value < 0.95
-                                                  ? 0.0
-                                                  : (_calloutScaleAnim.value -
-                                                            0.95) *
-                                                        20)
-                                              .clamp(0.0, 1.0),
-                                      child: Container(
-                                        width: 1.5 * s,
-                                        height: 8 * s,
-                                        color: const Color(0xFF0891B2),
+                                    // Connecting line from bar to callout
+                                    Positioned(
+                                      left: fillWidth,
+                                      top:
+                                          barHeight +
+                                          3 * s, // Connect exactly to bottom edge of 3D shadow
+                                      child: Opacity(
+                                        opacity:
+                                            (_calloutScaleAnim.value < 0.95
+                                                    ? 0.0
+                                                    : (_calloutScaleAnim.value -
+                                                              0.95) *
+                                                          20)
+                                                .clamp(0.0, 1.0),
+                                        child: Container(
+                                          width: 1.5 * s,
+                                          height: 8 * s,
+                                          color: const Color(0xFF0891B2),
+                                        ),
                                       ),
                                     ),
-                                  ),
 
-                                  // Callout Bubble
-                                  Positioned(
-                                    left:
-                                        fillWidth -
-                                        (calloutWidth / 2) +
-                                        (1.5 *
-                                            s /
-                                            2), // Align exact center of bubble with wire
-                                    top:
-                                        barHeight +
-                                        (4 * s) +
-                                        (8 * s), // Bar + dy + wire
-                                    child: Opacity(
-                                      opacity:
-                                          (_calloutScaleAnim.value < 0.95
-                                                  ? 0.0
-                                                  : (_calloutScaleAnim.value -
-                                                            0.95) *
-                                                        20)
-                                              .clamp(0.0, 1.0),
-                                      child: Transform.scale(
-                                        scale: _calloutScaleAnim.value,
-                                        alignment: Alignment.topCenter,
-                                        child: CustomPaint(
-                                          painter: _CalloutBubblePainter(
-                                            scale: s,
-                                            borderColor: const Color(
-                                              0xFF06B6D4,
+                                    // Callout Bubble
+                                    Positioned(
+                                      left:
+                                          fillWidth -
+                                          (calloutWidth / 2) +
+                                          (1.5 *
+                                              s /
+                                              2), // Align exact center of bubble with wire
+                                      top:
+                                          barHeight +
+                                          (4 * s) +
+                                          (8 * s), // Bar + dy + wire
+                                      child: Opacity(
+                                        opacity:
+                                            (_calloutScaleAnim.value < 0.95
+                                                    ? 0.0
+                                                    : (_calloutScaleAnim.value -
+                                                              0.95) *
+                                                          20)
+                                                .clamp(0.0, 1.0),
+                                        child: Transform.scale(
+                                          scale: _calloutScaleAnim.value,
+                                          alignment: Alignment.topCenter,
+                                          child: CustomPaint(
+                                            painter: _CalloutBubblePainter(
+                                              scale: s,
+                                              borderColor: const Color(
+                                                0xFF06B6D4,
+                                              ),
+                                              backgroundColor: Colors.white,
                                             ),
-                                            backgroundColor: Colors.white,
-                                          ),
-                                          child: SizedBox(
-                                            width: calloutWidth,
-                                            height:
-                                                48 *
-                                                s, // Enough height for the bubble and notch
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  height: 6 * s,
-                                                ), // Offset for notch
-                                                Text(
-                                                  'HARVESTABLE',
-                                                  style: TextStyle(
-                                                    fontFamily: 'DMSans',
-                                                    fontSize: 10 * s,
-                                                    fontWeight: FontWeight.w600,
-                                                    letterSpacing: 0.5,
-                                                    color: const Color(
-                                                      0xFF64748B,
-                                                    ), // Sleek gray
+                                            child: SizedBox(
+                                              width: calloutWidth,
+                                              height:
+                                                  48 *
+                                                  s, // Enough height for the bubble and notch
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 6 * s,
+                                                  ), // Offset for notch
+                                                  Text(
+                                                    'HARVESTABLE',
+                                                    style: TextStyle(
+                                                      fontFamily: 'DMSans',
+                                                      fontSize: 10 * s,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      letterSpacing: 0.5,
+                                                      color: const Color(
+                                                        0xFF64748B,
+                                                      ), // Sleek gray
+                                                    ),
                                                   ),
-                                                ),
-                                                SizedBox(height: 2 * s),
-                                                Text(
-                                                  '9%',
-                                                  style: TextStyle(
-                                                    fontFamily: 'DMSans',
-                                                    fontSize: 12 * s,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: const Color(
-                                                      0xFF0891B2,
-                                                    ), // Sleek cyan
+                                                  SizedBox(height: 2 * s),
+                                                  Text(
+                                                    '9%',
+                                                    style: TextStyle(
+                                                      fontFamily: 'DMSans',
+                                                      fontSize: 12 * s,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: const Color(
+                                                        0xFF0891B2,
+                                                      ), // Sleek cyan
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
+                                  ],
+                                );
+                              },
+                            ),
                           ),
-                        ),
 
-                        SizedBox(height: 48 * s),
+                          SizedBox(height: 48 * s),
 
-                        // NEW SECTIONS
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.auto_awesome,
-                                size: 16 * s,
-                                color: const Color(0xFF0891B2),
-                              ),
-                              SizedBox(width: 8 * s),
-                              Text(
-                                'Why should you harvest now?',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 14 * s,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF0891B2),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 16 * s),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          clipBehavior: Clip.none,
-                          child: IntrinsicHeight(
+                          // NEW SECTIONS
+                          Align(
+                            alignment: Alignment.centerLeft,
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                _buildBenefitCard(
-                                  s,
-                                  Icons.check_circle_outline,
-                                  'Use this year\'s LTCG limit',
-                                  'If you do not book ₹1.25L gains, you lose the limit for this year.',
-                                ),
-                                SizedBox(width: 16 * s),
-                                _buildBenefitCard(
-                                  s,
-                                  Icons.show_chart,
-                                  'Stay invested',
-                                  'You buy back the same funds instantly. Your wealth continues to compound.',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 32 * s),
-
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Here are the eligible holdings',
-                            style: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 14 * s,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 16 * s),
-                        _buildHoldingItem(s),
-                        SizedBox(height: 32 * s),
-
-                        // DID YOU KNOW
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
                                   Icons.auto_awesome,
-                                  size: 14 * s,
-                                  color: const Color(0xFF94A3B8),
+                                  size: 16 * s,
+                                  color: const Color(0xFF0891B2),
                                 ),
-                                SizedBox(width: 6 * s),
+                                SizedBox(width: 8 * s),
                                 Text(
-                                  'DID YOU KNOW?',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 10 * s,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.0,
-                                    color: const Color(0xFF94A3B8),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8 * s),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16 * s,
-                                vertical: 10 * s,
-                              ),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8 * s),
-                                border: Border.all(
-                                  color: const Color(0xFFFEF08A),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 10 * s,
-                                    offset: Offset(0, 4 * s),
-                                  ),
-                                ],
-                              ),
-                              child: TypewriterText(
-                                text:
-                                    'The ₹1.25L tax-free LTCG limit resets every financial year. Unused limits cannot be carried forward.',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 12 * s,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 48 * s),
-
-                        // Inline CTA (above disclaimer)
-                        Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                            Text(
-                              'NEXT STEP',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 10 * s,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1.5,
-                                color: const Color(0xFF14B8A6),
-                              ),
-                            ),
-                            SizedBox(height: 8 * s),
-                            Text(
-                              'Use your LTCG limit before\nthe year ends',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 18 * s,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF0F766E),
-                                height: 1.3,
-                              ),
-                            ),
-                            SizedBox(height: 12 * s),
-                            Text(
-                              'Choose eligible holdings, harvest gains within\nyour tax bracket, and reinvest with a higher\ntax basis.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 12 * s,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF64748B),
-                                height: 1.5,
-                              ),
-                            ),
-                            SizedBox(height: 24 * s),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 56 * s,
-                              child: ElevatedButton(
-                                key: _inlineButtonKey,
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF0F172A),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4 * s),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: Text(
-                                  'Harvest gains now',
+                                  'Why should you harvest now?',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
                                     fontSize: 14 * s,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                                    color: const Color(0xFF0891B2),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 16 * s),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            clipBehavior: Clip.none,
+                            child: IntrinsicHeight(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _buildBenefitCard(
+                                    s,
+                                    Icons.check_circle_outline,
+                                    'Use this year\'s LTCG limit',
+                                    'If you do not book ₹1.25L gains, you lose the limit for this year.',
+                                  ),
+                                  SizedBox(width: 16 * s),
+                                  _buildBenefitCard(
+                                    s,
+                                    Icons.show_chart,
+                                    'Stay invested',
+                                    'You buy back the same funds instantly. Your wealth continues to compound.',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 32 * s),
+
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Here are the eligible holdings',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 14 * s,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16 * s),
+                          _buildHoldingItem(s),
+                          SizedBox(height: 32 * s),
+
+                          // DID YOU KNOW
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.auto_awesome,
+                                    size: 14 * s,
+                                    color: const Color(0xFF94A3B8),
+                                  ),
+                                  SizedBox(width: 6 * s),
+                                  Text(
+                                    'DID YOU KNOW?',
+                                    style: TextStyle(
+                                      fontFamily: 'DMSans',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.0,
+                                      color: const Color(0xFF94A3B8),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8 * s),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16 * s,
+                                  vertical: 10 * s,
+                                ),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(255, 231, 251, 250),
+                                  borderRadius: BorderRadius.circular(8 * s),
+                                  border: Border.all(
+                                    color: const Color.fromARGB(255, 138, 231, 254),
+                                  ),
+                                ),
+                                child: TypewriterText(
+                                  text:
+                                      'The ₹1.25L tax-free LTCG limit resets every financial year. Unused limits cannot be carried forward.',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 12 * s,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.4,
                                   ),
                                 ),
                               ),
-                            ),
                             ],
                           ),
-                        SizedBox(height: 32 * s),
+                          SizedBox(height: 48 * s),
 
-                        // Disclaimer
-                        Text(
-                          'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10 * s,
-                            color: const Color(0xFF94A3B8),
-                            height: 1.5,
+                          // Inline CTA (above disclaimer)
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'NEXT STEP',
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 10 * s,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.5,
+                                  color: const Color(0xFF14B8A6),
+                                ),
+                              ),
+                              SizedBox(height: 8 * s),
+                              Text(
+                                'Use your LTCG limit before\nthe year ends',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF0F766E),
+                                  height: 1.3,
+                                ),
+                              ),
+                              SizedBox(height: 12 * s),
+                              Text(
+                                'Choose eligible holdings, harvest gains within\nyour tax bracket, and reinvest with a higher\ntax basis.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 12 * s,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF64748B),
+                                  height: 1.5,
+                                ),
+                              ),
+                              SizedBox(height: 24 * s),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 56 * s,
+                                child: ElevatedButton(
+                                  key: _inlineButtonKey,
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF0F172A),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        4 * s,
+                                      ),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: Text(
+                                    'Harvest gains now',
+                                    style: TextStyle(
+                                      fontFamily: 'DMSans',
+                                      fontSize: 14 * s,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        SizedBox(height: 24 * s),
-                      ],
+                          SizedBox(height: 42 * s),
+
+                          // Disclaimer
+                          Text(
+                            'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              color: const Color(0xFF94A3B8),
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
 
         // Sticky CTA Bottom (Fades out when scrolled to bottom)
         Positioned(
@@ -804,65 +804,65 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
             child: IgnorePointer(
               ignoring: _isCTAVisible,
               child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.0),
-                        Colors.white,
-                        Colors.white,
-                      ],
-                      stops: const [0.0, 0.4, 1.0],
-                    ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.0),
+                      Colors.white,
+                      Colors.white,
+                    ],
+                    stops: const [0.0, 0.4, 1.0],
                   ),
-                  padding: EdgeInsets.fromLTRB(24 * s, 32 * s, 24 * s, 24 * s),
-                  child: SafeArea(
-                    top: false,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Optimize your tax liability',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10 * s,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF0D9488),
+                ),
+                padding: EdgeInsets.fromLTRB(24 * s, 32 * s, 24 * s, 24 * s),
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Optimize your tax liability',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 10 * s,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF0D9488),
+                        ),
+                      ),
+                      SizedBox(height: 12 * s),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56 * s,
+                        child: ElevatedButton(
+                          key: _stickyButtonKey,
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0F172A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4 * s),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            'Harvest gains now',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 14 * s,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                        SizedBox(height: 12 * s),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56 * s,
-                          child: ElevatedButton(
-                            key: _stickyButtonKey,
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0F172A),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4 * s),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              'Harvest gains now',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 14 * s,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
+        ),
       ],
     );
   }
@@ -925,7 +925,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
   }
 
   Widget _buildHoldingItem(double s) {
-    final logoSize = 40.0 * s;
+    final logoSize = 30.0 * s;
     final badgeSize = 16.0 * s;
 
     return GestureDetector(
@@ -939,9 +939,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 4 * s, vertical: 8 * s),
-        decoration: const BoxDecoration(
-          color: Colors.transparent,
-        ),
+        decoration: const BoxDecoration(color: Colors.transparent),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -959,13 +957,6 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                       color: const Color(0xFFF1F5F9),
                       width: 1.5 * s,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 12 * s,
-                        offset: Offset(0, 4 * s),
-                      ),
-                    ],
                   ),
                   child: Center(
                     child: Column(
@@ -975,8 +966,8 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                           'CANARA',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 5.5 * s,
-                            fontWeight: FontWeight.w800,
+                            fontSize: 5.5,
+                            fontWeight: FontWeight.w600,
                             color: const Color(0xFF06B6D4),
                             letterSpacing: 0.5,
                           ),
@@ -985,8 +976,8 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                           'ROBECO',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 5.5 * s,
-                            fontWeight: FontWeight.w800,
+                            fontSize: 5.5,
+                            fontWeight: FontWeight.w600,
                             color: const Color(0xFF0F172A),
                             letterSpacing: 0.5,
                           ),
@@ -1039,7 +1030,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                           'Canara Robeco Large Cap Fund',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 14 * s,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF475569),
                           ),
@@ -1048,10 +1039,10 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                       ),
                       SizedBox(width: 8 * s),
                       Text(
-                        '₹14,435',
+                        '₹ 14,435',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14 * s,
+                          fontSize: 12,
                           fontWeight: FontWeight.w800,
                           color: const Color(0xFF0F172A),
                         ),
@@ -1065,10 +1056,10 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                     children: [
                       Expanded(
                         child: Text(
-                          'Amount to book ₹1,98,784',
+                          'Amount to book ₹ 1,98,784',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12 * s,
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: const Color(0xFF94A3B8),
                           ),
@@ -1079,7 +1070,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                         'Tax-Free Gain (LTCG)',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 12 * s,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: const Color(0xFF94A3B8),
                         ),
@@ -1096,7 +1087,6 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
     );
   }
 }
-
 
 class _TaxBriefcasePainter extends CustomPainter {
   final double scale;
@@ -1306,324 +1296,195 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
         Positioned.fill(
           child: NotificationListener<ScrollNotification>(
             onNotification: (scrollInfo) {
-              if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 260 * s) {
-                if (!_isCTAVisible) setState(() => _isCTAVisible = true);
-              } else {
-                if (_isCTAVisible) setState(() => _isCTAVisible = false);
+              final inlineBox = _inlineButtonKey.currentContext?.findRenderObject() as RenderBox?;
+              final stickyBox = _stickyButtonKey.currentContext?.findRenderObject() as RenderBox?;
+              if (inlineBox != null && stickyBox != null) {
+                final inlinePos = inlineBox.localToGlobal(Offset.zero);
+                final stickyPos = stickyBox.localToGlobal(Offset.zero);
+                final shouldHideSticky = inlinePos.dy <= stickyPos.dy;
+                if (_isCTAVisible != shouldHideSticky) {
+                  setState(() => _isCTAVisible = shouldHideSticky);
+                }
               }
               return false;
             },
             child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: 150 * s),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: MediaQuery.sizeOf(context).height * 0.4,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFAF5FF), Colors.white],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+              padding: EdgeInsets.only(bottom: 46 * s),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: MediaQuery.sizeOf(context).height * 0.4,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFFFAF5FF), Colors.white],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.0 * s),
-                    child: Column(
-                      children: [
-                        SizedBox(height: 140 * s),
-                        // 3D Illustration Placeholder / Drawing
-                        SizedBox(
-                          height: 120 * s,
-                          width: 160 * s,
-                          child: Image.asset(
-                            'lib/core/images/insight2.webp',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        SizedBox(height: 32 * s),
-
-                        // Actionable Insight Title
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 14 * s,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF64748B), // Sleek grey
-                              height: 1.5,
+                  SafeArea(
+                    bottom: false,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.0 * s),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 140 * s),
+                          // 3D Illustration Placeholder / Drawing
+                          SizedBox(
+                            height: 120 * s,
+                            width: 160 * s,
+                            child: Image.asset(
+                              'lib/core/images/insight2.webp',
+                              fit: BoxFit.contain,
                             ),
-                            children: [
-                              const TextSpan(text: 'Add '),
-                              TextSpan(
-                                text: '₹86,281',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF10B981), // Crisp green
-                                ),
-                              ),
-                              const TextSpan(
-                                text:
-                                    ' to increase your index exposure to\n20%',
-                              ),
-                            ],
                           ),
-                        ),
-                        SizedBox(height: 32 * s),
-                        SizedBox(height: 32 * s),
+                          SizedBox(height: 32 * s),
 
-                        // Sleek 3D Animated Vertical Bar Graph
-                        SizedBox(
-                          height: 240 * s,
-                          child: AnimatedBuilder(
-                            animation: _animController,
-                            builder: (context, child) {
-                              final barWidth = 60 * s;
-                              final fullHeight = 240 * s;
-                              final fillHeight =
-                                  fullHeight *
-                                  0.15 *
-                                  _barFillAnim.value; // ~15% fill
-                              final calloutWidth = 90 * s;
-                              final currentHeight =
-                                  fillHeight; // How high the purple bar goes from the bottom
+                          // Actionable Insight Title
+                          RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 14 * s,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF64748B), // Sleek grey
+                                height: 1.5,
+                              ),
+                              children: [
+                                const TextSpan(text: 'Add '),
+                                TextSpan(
+                                  text: '₹ 86,281',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(
+                                      0xFF10B981,
+                                    ), // Crisp green
+                                  ),
+                                ),
+                                const TextSpan(
+                                  text:
+                                      ' to increase your index exposure to\n20%',
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 32 * s),
+                          SizedBox(height: 32 * s),
 
-                              return Center(
-                                child: SizedBox(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  height: fullHeight,
-                                  child: Stack(
-                                    alignment: Alignment.bottomCenter,
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      // Target Area (Dashed lines and background on the right)
-                                      Positioned(
-                                        left:
-                                            (MediaQuery.sizeOf(context).width /
-                                                2) +
-                                            (barWidth / 2) +
-                                            4 * s,
-                                        bottom:
-                                            fullHeight *
-                                            0.45, // Target region start
-                                        child: Opacity(
-                                          opacity: _targetFadeAnim.value,
-                                          child: SizedBox(
-                                            height:
-                                                fullHeight *
-                                                0.35, // Target region height
-                                            width: 120 * s,
-                                            child: Stack(
-                                              children: [
-                                                // Soft glow/background
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      colors: [
-                                                        const Color(
-                                                          0xFFF3E8FF,
-                                                        ).withOpacity(0.8),
-                                                        Colors.white
-                                                            .withOpacity(0.0),
-                                                      ],
-                                                      begin:
-                                                          Alignment.centerLeft,
-                                                      end:
-                                                          Alignment.centerRight,
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Top dashed line
-                                                Positioned(
-                                                  top: 0,
-                                                  left: 0,
-                                                  right: 0,
-                                                  child: CustomPaint(
-                                                    painter: _DashedLinePainter(
-                                                      color: const Color(
-                                                        0xFF60A5FA,
+                          // Sleek 3D Animated Vertical Bar Graph
+                          SizedBox(
+                            height: 240 * s,
+                            child: AnimatedBuilder(
+                              animation: _animController,
+                              builder: (context, child) {
+                                final barWidth = 60 * s;
+                                final fullHeight = 240 * s;
+                                final fillHeight =
+                                    fullHeight *
+                                    0.15 *
+                                    _barFillAnim.value; // ~15% fill
+                                final calloutWidth = 90 * s;
+                                final currentHeight =
+                                    fillHeight; // How high the purple bar goes from the bottom
+
+                                return Center(
+                                  child: SizedBox(
+                                    width: MediaQuery.sizeOf(context).width,
+                                    height: fullHeight,
+                                    child: Stack(
+                                      alignment: Alignment.bottomCenter,
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        // Target Area (Dashed lines and background on the right)
+                                        Positioned(
+                                          left:
+                                              (MediaQuery.sizeOf(
+                                                    context,
+                                                  ).width /
+                                                  2) +
+                                              (barWidth / 2) +
+                                              4 * s,
+                                          bottom:
+                                              fullHeight *
+                                              0.45, // Target region start
+                                          child: Opacity(
+                                            opacity: _targetFadeAnim.value,
+                                            child: SizedBox(
+                                              height:
+                                                  fullHeight *
+                                                  0.35, // Target region height
+                                              width: 120 * s,
+                                              child: Stack(
+                                                children: [
+                                                  // Soft glow/background
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                        colors: [
+                                                          const Color(
+                                                            0xFFF3E8FF,
+                                                          ).withOpacity(0.8),
+                                                          Colors.white
+                                                              .withOpacity(0.0),
+                                                        ],
+                                                        begin: Alignment
+                                                            .centerLeft,
+                                                        end: Alignment
+                                                            .centerRight,
                                                       ),
                                                     ),
-                                                    size: Size(
-                                                      double.infinity,
-                                                      1 * s,
-                                                    ),
                                                   ),
-                                                ),
-                                                // Bottom dashed line
-                                                Positioned(
-                                                  bottom: 0,
-                                                  left: 0,
-                                                  right: 0,
-                                                  child: CustomPaint(
-                                                    painter: _DashedLinePainter(
-                                                      color: const Color(
-                                                        0xFF60A5FA,
-                                                      ),
-                                                    ),
-                                                    size: Size(
-                                                      double.infinity,
-                                                      1 * s,
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Target text
-                                                Center(
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        'YOUR TARGET',
-                                                        style: TextStyle(
-                                                          fontFamily: 'DMSans',
-                                                          fontSize: 10 * s,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          letterSpacing: 0.5,
-                                                          color: const Color(
-                                                            0xFF94A3B8,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 4 * s),
-                                                      Text(
-                                                        '20%-30%',
-                                                        style: TextStyle(
-                                                          fontFamily: 'DMSans',
-                                                          fontSize: 14 * s,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: const Color(
-                                                            0xFFE11D48,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Main Empty Bar (Crisp 3D isometric flat design)
-                                      Positioned(
-                                        bottom: 0,
-                                        child: Container(
-                                          width: barWidth,
-                                          height: fullHeight,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFF8FAFC),
-                                            border: Border.all(
-                                              color: const Color(0xFF94A3B8),
-                                              width: 1.0 * s,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: const Color(0xFFCBD5E1),
-                                                offset: Offset(4 * s, 0),
-                                                blurRadius:
-                                                    0, // Sharp 3D edge right side
-                                                spreadRadius: 0,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Filled Purple Bar
-                                      Positioned(
-                                        bottom: 0,
-                                        child: Container(
-                                          width: barWidth,
-                                          height: fillHeight,
-                                          decoration: BoxDecoration(
-                                            gradient: const LinearGradient(
-                                              colors: [
-                                                Color(0xFFC084FC),
-                                                Color(0xFF9333EA),
-                                              ], // Sleek purple gradient
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                            ),
-                                            border: Border.all(
-                                              color: const Color(0xFF7E22CE),
-                                              width: 1.0 * s,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: const Color(0xFF7E22CE),
-                                                offset: Offset(4 * s, 0),
-                                                blurRadius:
-                                                    0, // Sharp 3D edge right side for filled part
-                                                spreadRadius: 0,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Current Callout Bubble & Line
-                                      Positioned(
-                                        right:
-                                            (MediaQuery.sizeOf(context).width /
-                                                2) +
-                                            (barWidth / 2) -
-                                            (1.0 *
-                                                s), // Align exactly with left edge of bar
-                                        bottom:
-                                            currentHeight -
-                                            (18 *
-                                                s), // Center vertically with the top of the fill
-                                        child: Opacity(
-                                          opacity:
-                                              (_calloutScaleAnim.value < 0.95
-                                                      ? 0.0
-                                                      : (_calloutScaleAnim
-                                                                    .value -
-                                                                0.95) *
-                                                            20)
-                                                  .clamp(0.0, 1.0),
-                                          child: Transform.scale(
-                                            scale: _calloutScaleAnim.value,
-                                            alignment: Alignment.centerRight,
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                CustomPaint(
-                                                  painter:
-                                                      _HorizontalCalloutBubblePainter(
-                                                        scale: s,
-                                                        borderColor:
-                                                            const Color(
-                                                              0xFF7E22CE,
+                                                  // Top dashed line
+                                                  Positioned(
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    child: CustomPaint(
+                                                      painter:
+                                                          _DashedLinePainter(
+                                                            color: const Color(
+                                                              0xFF60A5FA,
                                                             ),
-                                                        backgroundColor:
-                                                            Colors.white,
+                                                          ),
+                                                      size: Size(
+                                                        double.infinity,
+                                                        1 * s,
                                                       ),
-                                                  child: SizedBox(
-                                                    width: calloutWidth,
-                                                    height:
-                                                        44 *
-                                                        s, // Enough height for the bubble
+                                                    ),
+                                                  ),
+                                                  // Bottom dashed line
+                                                  Positioned(
+                                                    bottom: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    child: CustomPaint(
+                                                      painter:
+                                                          _DashedLinePainter(
+                                                            color: const Color(
+                                                              0xFF60A5FA,
+                                                            ),
+                                                          ),
+                                                      size: Size(
+                                                        double.infinity,
+                                                        1 * s,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  // Target text
+                                                  Center(
                                                     child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
                                                       children: [
                                                         Text(
-                                                          'CURRENT',
+                                                          'YOUR TARGET',
                                                           style: TextStyle(
                                                             fontFamily:
                                                                 'DMSans',
@@ -1632,201 +1493,354 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                                                 FontWeight.w600,
                                                             letterSpacing: 0.5,
                                                             color: const Color(
-                                                              0xFF64748B,
-                                                            ), // Sleek gray
+                                                              0xFF94A3B8,
+                                                            ),
                                                           ),
                                                         ),
-                                                        SizedBox(height: 2 * s),
+                                                        SizedBox(height: 4 * s),
                                                         Text(
-                                                          '9.0%', // Changed from 0.0 to match the 9% animation
+                                                          '20%-30%',
                                                           style: TextStyle(
                                                             fontFamily:
                                                                 'DMSans',
-                                                            fontSize: 12 * s,
+                                                            fontSize: 14 * s,
                                                             fontWeight:
                                                                 FontWeight.w600,
                                                             color: const Color(
-                                                              0xFF7E22CE,
-                                                            ), // Sleek purple
+                                                              0xFFE11D48,
+                                                            ),
                                                           ),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                                // Connecting line to the bar
-                                                Container(
-                                                  width:
-                                                      32 *
-                                                      s, // slightly shorter wire
-                                                  height: 1.5 * s,
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        // Main Empty Bar (Crisp 3D isometric flat design)
+                                        Positioned(
+                                          bottom: 0,
+                                          child: Container(
+                                            width: barWidth,
+                                            height: fullHeight,
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFF8FAFC),
+                                              border: Border.all(
+                                                color: const Color(0xFF94A3B8),
+                                                width: 1.0 * s,
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
                                                   color: const Color(
-                                                    0xFF7E22CE,
+                                                    0xFFCBD5E1,
                                                   ),
+                                                  offset: Offset(4 * s, 0),
+                                                  blurRadius:
+                                                      0, // Sharp 3D edge right side
+                                                  spreadRadius: 0,
                                                 ),
                                               ],
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+
+                                        // Filled Purple Bar
+                                        Positioned(
+                                          bottom: 0,
+                                          child: Container(
+                                            width: barWidth,
+                                            height: fillHeight,
+                                            decoration: BoxDecoration(
+                                              gradient: const LinearGradient(
+                                                colors: [
+                                                  Color(0xFFC084FC),
+                                                  Color(0xFF9333EA),
+                                                ], // Sleek purple gradient
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                              ),
+                                              border: Border.all(
+                                                color: const Color(0xFF7E22CE),
+                                                width: 1.0 * s,
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: const Color(
+                                                    0xFF7E22CE,
+                                                  ),
+                                                  offset: Offset(4 * s, 0),
+                                                  blurRadius:
+                                                      0, // Sharp 3D edge right side for filled part
+                                                  spreadRadius: 0,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+
+                                        // Current Callout Bubble & Line
+                                        Positioned(
+                                          right:
+                                              (MediaQuery.sizeOf(
+                                                    context,
+                                                  ).width /
+                                                  2) +
+                                              (barWidth / 2) -
+                                              (1.0 *
+                                                  s), // Align exactly with left edge of bar
+                                          bottom:
+                                              currentHeight -
+                                              (18 *
+                                                  s), // Center vertically with the top of the fill
+                                          child: Opacity(
+                                            opacity:
+                                                (_calloutScaleAnim.value < 0.95
+                                                        ? 0.0
+                                                        : (_calloutScaleAnim
+                                                                      .value -
+                                                                  0.95) *
+                                                              20)
+                                                    .clamp(0.0, 1.0),
+                                            child: Transform.scale(
+                                              scale: _calloutScaleAnim.value,
+                                              alignment: Alignment.centerRight,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  CustomPaint(
+                                                    painter:
+                                                        _HorizontalCalloutBubblePainter(
+                                                          scale: s,
+                                                          borderColor:
+                                                              const Color(
+                                                                0xFF7E22CE,
+                                                              ),
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                        ),
+                                                    child: SizedBox(
+                                                      width: calloutWidth,
+                                                      height:
+                                                          44 *
+                                                          s, // Enough height for the bubble
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            'CURRENT',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'DMSans',
+                                                              fontSize: 10 * s,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              letterSpacing:
+                                                                  0.5,
+                                                              color: const Color(
+                                                                0xFF64748B,
+                                                              ), // Sleek gray
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 2 * s,
+                                                          ),
+                                                          Text(
+                                                            '9.0%', // Changed from 0.0 to match the 9% animation
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'DMSans',
+                                                              fontSize: 12 * s,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color: const Color(
+                                                                0xFF7E22CE,
+                                                              ), // Sleek purple
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  // Connecting line to the bar
+                                                  Container(
+                                                    width:
+                                                        32 *
+                                                        s, // slightly shorter wire
+                                                    height: 1.5 * s,
+                                                    color: const Color(
+                                                      0xFF7E22CE,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+
+                          SizedBox(height: 16 * s),
+
+                          Text(
+                            'INDEX FUND PORTFOLIO',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10 * s,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.0,
+                              color: const Color(0xFF94A3B8),
+                            ),
+                          ),
+                          SizedBox(height: 4 * s),
+                          Text(
+                            '₹0',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 14 * s,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 48 * s),
+
+                          // NEW SECTIONS
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.auto_awesome,
+                                  size: 16 * s,
+                                  color: const Color(0xFF6B46C1),
+                                ),
+                                SizedBox(width: 8 * s),
+                                Text(
+                                  'Why invest in index funds',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 14 * s,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF6B46C1),
                                   ),
                                 ),
-                              );
-                            },
+                              ],
+                            ),
                           ),
-                        ),
-
-                        SizedBox(height: 16 * s),
-
-                        Text(
-                          'INDEX FUND PORTFOLIO',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10 * s,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0,
-                            color: const Color(0xFF94A3B8),
-                          ),
-                        ),
-                        SizedBox(height: 4 * s),
-                        Text(
-                          '₹0',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 14 * s,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(height: 48 * s),
-
-                        // NEW SECTIONS
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.auto_awesome,
-                                size: 16 * s,
-                                color: const Color(0xFF6B46C1),
+                          SizedBox(height: 16 * s),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            clipBehavior: Clip.none,
+                            child: IntrinsicHeight(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _buildBenefitCard(
+                                    s,
+                                    Icons.trending_up,
+                                    'Consistent returns',
+                                    'Index funds track the market reliably without performance surprises.',
+                                  ),
+                                  SizedBox(width: 16 * s),
+                                  _buildBenefitCard(
+                                    s,
+                                    Icons.account_balance_wallet,
+                                    'Low cost',
+                                    'Passive funds have minimal fees, helping you maximize your returns.',
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 8 * s),
-                              Text(
-                                'Why invest in index funds',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 14 * s,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF6B46C1),
+                            ),
+                          ),
+                          SizedBox(height: 32 * s),
+
+                          // DID YOU KNOW
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.auto_awesome,
+                                    size: 14 * s,
+                                    color: const Color(0xFF94A3B8),
+                                  ),
+                                  SizedBox(width: 6 * s),
+                                  Text(
+                                    'DID YOU KNOW?',
+                                    style: TextStyle(
+                                      fontFamily: 'DMSans',
+                                      fontSize: 10 * s,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.0,
+                                      color: const Color(0xFF94A3B8),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8 * s),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16 * s,
+                                  vertical: 10 * s,
+                                ),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8 * s),
+                                  border: Border.all(
+                                    color: const Color(0xFFFEF08A),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.02),
+                                      blurRadius: 10 * s,
+                                      offset: Offset(0, 4 * s),
+                                    ),
+                                  ],
+                                ),
+                                child: TypewriterText(
+                                  text:
+                                      'Only ~26% largecap and ~12% mid / smallcap funds beat their index over 10 years',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 12 * s,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.4,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        SizedBox(height: 16 * s),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          clipBehavior: Clip.none,
-                          child: IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                _buildBenefitCard(
-                                  s,
-                                  Icons.trending_up,
-                                  'Consistent returns',
-                                  'Index funds track the market reliably without performance surprises.',
-                                ),
-                                SizedBox(width: 16 * s),
-                                _buildBenefitCard(
-                                  s,
-                                  Icons.account_balance_wallet,
-                                  'Low cost',
-                                  'Passive funds have minimal fees, helping you maximize your returns.',
-                                ),
-                              ],
+                          SizedBox(height: 48 * s),
+
+                          Text(
+                            'WHAT SHOULD YOU DO?',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10 * s,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.0,
+                              color: const Color(0xFF6B46C1),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 32 * s),
+                          SizedBox(height: 32 * s),
 
-                        // DID YOU KNOW
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.auto_awesome,
-                                  size: 14 * s,
-                                  color: const Color(0xFF94A3B8),
-                                ),
-                                SizedBox(width: 6 * s),
-                                Text(
-                                  'DID YOU KNOW?',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 10 * s,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.0,
-                                    color: const Color(0xFF94A3B8),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8 * s),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16 * s,
-                                vertical: 10 * s,
-                              ),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8 * s),
-                                border: Border.all(
-                                  color: const Color(0xFFFEF08A),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 10 * s,
-                                    offset: Offset(0, 4 * s),
-                                  ),
-                                ],
-                              ),
-                              child: TypewriterText(
-                                text:
-                                    'Only ~26% largecap and ~12% mid / smallcap funds beat their index over 10 years',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 12 * s,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 48 * s),
-
-                        Text(
-                          'WHAT SHOULD YOU DO?',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10 * s,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0,
-                            color: const Color(0xFF6B46C1),
-                          ),
-                        ),
-                        SizedBox(height: 32 * s),
-
-                        // Inline CTA at end of scroll
-                        Column(
+                          // Inline CTA at end of scroll
+                          Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               RichText(
@@ -1889,28 +1903,28 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                               ),
                             ],
                           ),
-                        SizedBox(height: 32 * s),
+                          SizedBox(height: 32 * s),
 
-                        // Disclaimer (Footer)
-                        Text(
-                          'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 10 * s,
-                            color: const Color(0xFF94A3B8),
-                            height: 1.5,
+                          // Disclaimer (Footer)
+                          Text(
+                            'This information is provided for informational purposes only and does not constitute investment advice, a recommendation, or an offer to buy or sell any securities. It is based on standardized methods and may not reflect your individual financial circumstances or risk profile. Consider consulting a financial advisor before making any investment decisions.',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10 * s,
+                              color: const Color(0xFF94A3B8),
+                              height: 1.5,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 24 * s),
-                      ],
+                          SizedBox(height: 24 * s),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
 
         // Sticky CTA Bottom (Fades out when scrolled to bottom)
         Positioned(
@@ -1938,7 +1952,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                 ),
                 padding: EdgeInsets.fromLTRB(24 * s, 32 * s, 24 * s, 24 * s),
                 child: SafeArea(
-                             child: Column(
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       RichText(
@@ -1960,7 +1974,8 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                               ),
                             ),
                             const TextSpan(
-                              text: ' to index to reach healthy allocation of 20%',
+                              text:
+                                  ' to index to reach healthy allocation of 20%',
                             ),
                           ],
                         ),
