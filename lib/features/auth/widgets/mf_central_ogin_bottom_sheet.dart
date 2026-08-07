@@ -65,7 +65,7 @@ class _MfCentralLoginBottomSheetState extends State<MfCentralLoginBottomSheet> {
           padding: const EdgeInsets.only(top: 12, bottom: 24, left: 24, right: 24),
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.85,
+              maxHeight: MediaQuery.sizeOf(context).height * 0.85,
             ),
             child: SingleChildScrollView(
               child: Column(

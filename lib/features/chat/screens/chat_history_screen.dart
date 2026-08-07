@@ -103,8 +103,8 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-    final topPadding = MediaQuery.of(context).padding.top;
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
+    final topPadding = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
       backgroundColor: Colors.white,

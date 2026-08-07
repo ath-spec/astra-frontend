@@ -9,7 +9,7 @@ class SeeHowItWorksOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = MediaQuery.of(context).size.height * 0.92;
+    final maxHeight = MediaQuery.sizeOf(context).height * 0.92;
 
     return Container(
       constraints: BoxConstraints(maxHeight: maxHeight),
@@ -305,7 +305,7 @@ class SeeHowItWorksOverlay extends StatelessWidget {
               left: 24,
               right: 24,
               top: 16,
-              bottom: MediaQuery.of(context).padding.bottom + 16,
+              bottom: MediaQuery.paddingOf(context).bottom + 16,
             ),
             decoration: BoxDecoration(
               color: const Color(0xFF0D1017),

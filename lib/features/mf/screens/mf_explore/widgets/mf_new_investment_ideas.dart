@@ -30,7 +30,7 @@ class MfNewInvestmentIdeas extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
+                width: MediaQuery.sizeOf(context).width * 0.8,
                 child: MfFundListCard(
                   margin: const EdgeInsets.only(left: 16.0, right: 8.0),
                   borderColor: HSLColor.fromColor(Colors.white).withLightness((1.0 - 0.12).clamp(0.0, 1.0)).toColor(),
@@ -82,7 +82,7 @@ class MfNewInvestmentIdeas extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
+                width: MediaQuery.sizeOf(context).width * 0.8,
                 child: MfFundListCard(
                   margin: const EdgeInsets.only(left: 8.0, right: 16.0),
                   borderColor: HSLColor.fromColor(Colors.white).withLightness((1.0 - 0.12).clamp(0.0, 1.0)).toColor(),

@@ -50,7 +50,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
     SizeConfig().init(context);
     final String status = widget.payment['status']?.toString().toLowerCase() ?? 'active';
     final bool isActive = status != 'cancelled' && status != 'paused';
-    final double topPadding = MediaQuery.of(context).padding.top;
+    final double topPadding = MediaQuery.paddingOf(context).top;
     
     // Animation thresholds for sticky header title fade
     final double titleFadeStart = getProportionateScreenHeight(40);

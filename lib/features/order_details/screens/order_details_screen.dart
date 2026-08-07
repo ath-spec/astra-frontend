@@ -7,7 +7,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
         return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

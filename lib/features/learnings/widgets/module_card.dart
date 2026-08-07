@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/learning_module.dart';
 
 class ModuleCard extends StatefulWidget {
@@ -74,11 +75,11 @@ class _ModuleCardState extends State<ModuleCard> {
                       padding: const EdgeInsets.only(left: 0),
                       child: Text(
                         widget.module.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF1E293B),
+                          color: const Color(0xFF1E293B),
                           height: 1.2,
                         ),
                       ),
@@ -90,11 +91,11 @@ class _ModuleCardState extends State<ModuleCard> {
                   widget.module.description,
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xFF64748B),
+                    color: const Color(0xFF64748B),
                     height: 1.5,
                   ),
                 ),

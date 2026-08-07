@@ -39,7 +39,7 @@ class _EditNumberOverlayState extends State<EditNumberOverlay> {
     return Padding(
       // Lift sheet above keyboard
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: MediaQuery.viewInsetsOf(context).bottom,
       ),
       child: Container(
         decoration: const BoxDecoration(
@@ -50,7 +50,7 @@ class _EditNumberOverlayState extends State<EditNumberOverlay> {
           top: 12,
           left: 24,
           right: 24,
-          bottom: MediaQuery.of(context).padding.bottom + 24,
+          bottom: MediaQuery.paddingOf(context).bottom + 24,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

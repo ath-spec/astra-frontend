@@ -17,7 +17,7 @@ class ModuleDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leadingWidth: 120,
+        leadingWidth: 200,
         leading: GestureDetector(
           onTap: () => context.pop(),
           child: Row(
@@ -25,13 +25,16 @@ class ModuleDetailsScreen extends StatelessWidget {
               const SizedBox(width: 16),
               const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E40AF), size: 18),
               const SizedBox(width: 8),
-              Text(
-                'Module ${module.id}',
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0F172A),
+              Expanded(
+                child: Text(
+                  'Module ${module.id}',
+                  style: const TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF0F172A),
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

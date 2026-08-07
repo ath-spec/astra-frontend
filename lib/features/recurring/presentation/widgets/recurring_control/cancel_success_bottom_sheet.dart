@@ -154,7 +154,7 @@ class CancelSuccessBottomSheet extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+            SizedBox(height: MediaQuery.paddingOf(context).bottom + 8),
           ],
         ),
       ),

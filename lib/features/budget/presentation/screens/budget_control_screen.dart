@@ -180,7 +180,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
             // Back Button Overlay
             Positioned(
               left: 16,
-              top: MediaQuery.of(context).padding.top + 8,
+              top: MediaQuery.paddingOf(context).top + 8,
               child: ZeyroIconButton(
                 eventName: 'budget_control_screen_back_tapped',
                 icon: const Icon(

@@ -14,7 +14,7 @@ class WhyPanOverlay extends StatelessWidget {
       ),
       padding: EdgeInsets.only(
         top: 12,
-        bottom: MediaQuery.of(context).padding.bottom,
+        bottom: MediaQuery.paddingOf(context).bottom,
       ),
       child: SingleChildScrollView(
         child: Column(

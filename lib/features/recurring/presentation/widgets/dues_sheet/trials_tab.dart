@@ -23,7 +23,7 @@ class TrialsTab extends StatelessWidget {
         controller: scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: MediaQuery.sizeOf(context).height * 0.4,
           alignment: Alignment.center,
           child: Text(
             "No trial subscriptions",
@@ -44,7 +44,7 @@ class TrialsTab extends StatelessWidget {
         left: getProportionateScreenWidth(20),
         right: getProportionateScreenWidth(20),
         top: getProportionateScreenHeight(8),
-        bottom: MediaQuery.of(context).padding.bottom + getProportionateScreenHeight(8),
+        bottom: MediaQuery.paddingOf(context).bottom + getProportionateScreenHeight(8),
       ),
       itemCount: payments.length,
       separatorBuilder: (context, index) =>

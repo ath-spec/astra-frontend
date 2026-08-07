@@ -53,8 +53,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   void _goToPreviousPage() {
     if (_currentPageIndex > 0) {
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutCubic,
       );
     }
   }
@@ -62,8 +62,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   void _goToNextPage() {
     if (_currentPageIndex < widget.chapter.pages.length - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutCubic,
       );
     }
   }
@@ -285,7 +285,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                       onTap: () {
                         Navigator.pop(context); // Close bottom sheet
                         if (!isCurrent) {
-                          context.pushReplacement('/chapter-reader', extra: {
+                          context.pushReplacement('/learnings/chapter-reader', extra: {
                             'module': widget.module,
                             'chapter': ch,
                             'allChapters': widget.allChapters,
@@ -444,11 +444,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                                 setState(() {
                                   _currentPageIndex = targetPage;
                                 });
-                                _pageController.animateToPage(
-                                  targetPage,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
+                                _pageController.jumpToPage(targetPage);
                               }
                             },
                           ),
@@ -517,34 +513,51 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
           const SizedBox(height: 32),
           
           // Image Placeholder
-          Container(
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: _isDarkMode ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Center(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: widget.module.themeColor.withOpacity(_isDarkMode ? 0.3 : 0.15),
-                      shape: BoxShape.circle,
+          if (page.imagePath != null || widget.chapter.imagePath != null)
+            AspectRatio(
+              aspectRatio: 1.5,
+              child: Container(
+                width: double.infinity,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: _isDarkMode ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Image.asset(
+                  page.imagePath ?? widget.chapter.imagePath!,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            )
+          else
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: _isDarkMode ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: widget.module.themeColor.withOpacity(_isDarkMode ? 0.3 : 0.15),
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                  Icon(
-                    widget.chapter.icon,
-                    size: 64,
-                    color: widget.module.themeColor.withOpacity(0.8),
-                  ),
-                ],
+                    Icon(
+                      widget.chapter.icon,
+                      size: 64,
+                      color: widget.module.themeColor.withOpacity(0.8),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
           const SizedBox(height: 32),
           
           // Content

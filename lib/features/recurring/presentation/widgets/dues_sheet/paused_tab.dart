@@ -24,7 +24,7 @@ class CanceledTab extends StatelessWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         child: Container(
           // Ensure the empty area is large enough to catch drag gestures
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: MediaQuery.sizeOf(context).height * 0.4,
           alignment: Alignment.center,
           child: Text(
             "No paused subscriptions",
@@ -45,7 +45,7 @@ class CanceledTab extends StatelessWidget {
         left: getProportionateScreenWidth(20),
         right: getProportionateScreenWidth(20),
         top: getProportionateScreenHeight(8),
-        bottom: MediaQuery.of(context).padding.bottom + getProportionateScreenHeight(8),
+        bottom: MediaQuery.paddingOf(context).bottom + getProportionateScreenHeight(8),
       ),
       itemCount: payments.length,
       separatorBuilder: (context, index) =>

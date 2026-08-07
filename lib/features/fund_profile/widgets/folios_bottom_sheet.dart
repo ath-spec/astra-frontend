@@ -6,7 +6,7 @@ class FoliosBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
         return Container(
       decoration: BoxDecoration(
         color: Colors.white,

@@ -5,7 +5,7 @@ class MfFeesTaxesBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
 
     return Container(
       decoration: const BoxDecoration(

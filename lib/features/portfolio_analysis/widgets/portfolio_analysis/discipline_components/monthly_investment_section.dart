@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'generic_info_sheet.dart';
-import 'package:fl_chart/fl_chart.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
-import 'package:flutter/services.dart';
+import '../../../../../core/widgets/rotating_shimmer_border.dart';
 import 'dart:math' as math;
 import 'dart:async';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MonthlyInvestmentSection extends StatefulWidget {
   const MonthlyInvestmentSection({super.key});
@@ -28,14 +28,14 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: Duration(milliseconds: 1200),
     );
     _animation = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOutCubic,
     );
 
-    Future.delayed(const Duration(milliseconds: 400), () {
+    Future.delayed(Duration(milliseconds: 400), () {
       if (mounted) _controller.forward();
     });
   }
@@ -83,17 +83,17 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Text(
+              Text(
                 'Monthly Net Investment',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
@@ -104,7 +104,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                     context: context,
                     isScrollControlled: true,
                     backgroundColor: Colors.transparent,
-                    builder: (context) => const GenericInfoSheet(
+                    builder: (context) => GenericInfoSheet(
                       title: 'What is Monthly Investment?',
                       paragraphs: [
                         'This shows how your net investments have changed month to month over the last 12 months.',
@@ -114,7 +114,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                   );
                 },
                 behavior: HitTestBehavior.opaque,
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Icon(
                     Icons.info_outline,
@@ -125,16 +125,16 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
-            children: const [
+            children: [
               Text(
                 '₹4,001',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 20,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
@@ -144,23 +144,23 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                 'average invested per month',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 10,
+                  fontSize: 10.sp,
                   color: Color(0xFF64748B),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          const Text(
+          SizedBox(height: 12),
+          Text(
             'Steady investing reduces the impact of\nmarket swings over time.',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 10,
+              fontSize: 10.sp,
               height: 1.5,
               color: Color(0xFF64748B),
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
 
           // The Graph Area
           AspectRatio(
@@ -192,7 +192,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
             ),
           ),
 
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
 
           // Pro Tip Section
           Row(
@@ -200,7 +200,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
               AnimatedGradientShimmer(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Icon(
                       Icons.auto_awesome_rounded,
                       size: 18,
@@ -211,7 +211,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                       'PRO TIP BY BEHAVIOUR AGENT',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 2.0,
                         color: Colors.white,
@@ -220,35 +220,32 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Container(
                   height: 1,
-                  color: const Color(0xFFE2E8F0),
+                  color: Color(0xFFE2E8F0),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: const TypewriterText(
-              text: 'Gaps in investing flow your investing rhythm has some breaks. keeping it steady will grow your money faster.',
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 10,
-                height: 1.5,
-                color: Color(0xFF64748B),
+          SizedBox(height: 12),
+          RotatingShimmerBorder(
+            borderRadius: BorderRadius.circular(4),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: TypewriterText(
+                text: 'Gaps in investing flow your investing rhythm has some breaks. keeping it steady will grow your money faster.',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 12.sp,
+                  height: 1.5,
+                  color: Color(0xFF64748B),
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 48),
         ],
       ),
     );
@@ -275,7 +272,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
 
     // Background Grid lines
     final gridPaint = Paint()
-      ..color = const Color(0xFFF1F5F9)
+      ..color = Color(0xFFF1F5F9)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1 * scale;
 
@@ -292,7 +289,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
 
     // Zero Baseline (Dotted)
     final zeroPaint = Paint()
-      ..color = const Color(0xFF94A3B8)
+      ..color = Color(0xFF94A3B8)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1 * scale;
     _drawDashedLine(
@@ -311,7 +308,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
         style: TextStyle(
           fontFamily: 'DMSans',
           fontSize: 10 * scale,
-          color: const Color(0xFF94A3B8),
+          color: Color(0xFF94A3B8),
         ),
       );
       textPainter.layout();
@@ -397,7 +394,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       ..close();
 
     final fillPaint = Paint()
-      ..color = const Color(0xFFF1F5F9)
+      ..color = Color(0xFFF1F5F9)
       ..style = PaintingStyle.fill;
     canvas.drawPath(fillPath, fillPaint);
 
@@ -420,9 +417,9 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       );
       final pillPaint = Paint()..color = Colors.white;
       final pillBorderPaint = Paint()
-        ..color = const Color(0xFF38A169)
+        ..color = Color(0xFF38A169)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1 * scale;
+        ..strokeWidth = 0.5 * scale;
 
       canvas.drawRRect(avgPillRect, pillPaint);
       canvas.drawRRect(avgPillRect, pillBorderPaint);
@@ -431,9 +428,9 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
         text: '₹4K AVG',
         style: TextStyle(
           fontFamily: 'DMSans',
-          fontSize: 10 * scale,
+          fontSize: 8.5 * scale,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF38A169),
+          color: Color(0xFF38A169),
         ),
       );
       textPainter.layout();
@@ -474,7 +471,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
         Offset(pt.dx, tooltipBaseY),
         Offset(pt.dx, size.height - (20 * scale)),
         Paint()
-          ..color = const Color(0xFF94A3B8)
+          ..color = Color(0xFF94A3B8)
           ..strokeWidth = 1 * scale,
       );
 
@@ -604,7 +601,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       text: value,
       style: TextStyle(
         fontFamily: 'DMSans',
-        fontSize: 10 * scale,
+        fontSize: 8.5 * scale,
         fontWeight: FontWeight.w700,
         color: Colors.black,
       ),
@@ -616,9 +613,9 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       text: title,
       style: TextStyle(
         fontFamily: 'DMSans',
-        fontSize: 9 * scale,
+        fontSize: 7.5 * scale,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF64748B),
+        color: Color(0xFF64748B),
       ),
     );
     textPainter.layout();
@@ -641,7 +638,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       Paint()
         ..color = Colors.black
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5 * scale,
+        ..strokeWidth = 0.5 * scale,
     );
 
     // Title
@@ -649,9 +646,9 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       text: title,
       style: TextStyle(
         fontFamily: 'DMSans',
-        fontSize: 9 * scale,
+        fontSize: 7.5 * scale,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF64748B),
+        color: Color(0xFF64748B),
       ),
     );
     textPainter.layout();
@@ -665,7 +662,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       text: value,
       style: TextStyle(
         fontFamily: 'DMSans',
-        fontSize: 10 * scale,
+        fontSize: 8.5 * scale,
         fontWeight: FontWeight.w700,
         color: Colors.black,
       ),
@@ -689,7 +686,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       Paint()
         ..color = Colors.black
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5 * scale,
+        ..strokeWidth = 0.5 * scale,
     );
     canvas.drawPath(
       pPath,
@@ -709,8 +706,8 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
     Size size,
     double scale,
   ) {
-    final boxWidth = 160.0 * scale;
-    final boxHeight = 90.0 * scale;
+    final boxWidth = 145.0 * scale;
+    final boxHeight = 68.0 * scale;
 
     double left = point.dx - boxWidth / 2;
     if (left < 0) left = 0;
@@ -727,17 +724,17 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       Paint()
         ..color = Colors.black
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5 * scale,
+        ..strokeWidth = 0.5 * scale,
     );
 
     // Bottom shaded section for Net
     final shadedRect = Rect.fromLTWH(
       left,
-      top + boxHeight - (28 * scale),
+      top + boxHeight - (20 * scale),
       boxWidth,
-      28 * scale,
+      20 * scale,
     );
-    canvas.drawRect(shadedRect, Paint()..color = const Color(0xFFF1F5F9));
+    canvas.drawRect(shadedRect, Paint()..color = Color(0xFFF1F5F9));
     // Redraw border over shade
     canvas.drawRRect(rrect, Paint()..color = Colors.transparent);
     canvas.drawRRect(
@@ -745,7 +742,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       Paint()
         ..color = Colors.black
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5 * scale,
+        ..strokeWidth = 0.5 * scale,
     );
 
     // Pointer
@@ -758,12 +755,12 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       Paint()
         ..color = Colors.black
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5 * scale,
+        ..strokeWidth = 0.5 * scale,
     );
     canvas.drawPath(
       pPath,
       Paint()
-        ..color = const Color(0xFFF1F5F9)
+        ..color = Color(0xFFF1F5F9)
         ..style = PaintingStyle.fill,
     );
 
@@ -774,9 +771,9 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
         text: label,
         style: TextStyle(
           fontFamily: 'DMSans',
-          fontSize: 10 * scale,
+          fontSize: 8.5 * scale,
           fontWeight: boldLabel ? FontWeight.w700 : FontWeight.w600,
-          color: const Color(0xFF0F172A),
+          color: Color(0xFF0F172A),
         ),
       );
       textPainter.layout();
@@ -786,9 +783,9 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
         text: value,
         style: TextStyle(
           fontFamily: 'DMSans',
-          fontSize: 10 * scale,
+          fontSize: 8.5 * scale,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF0F172A),
+          color: Color(0xFF0F172A),
         ),
       );
       textPainter.layout();
@@ -803,25 +800,25 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       text: title,
       style: TextStyle(
         fontFamily: 'DMSans',
-        fontSize: 9 * scale,
+        fontSize: 7.5 * scale,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF64748B),
+        color: Color(0xFF64748B),
       ),
     );
     textPainter.layout();
-    textPainter.paint(canvas, Offset(left + (12 * scale), top + (10 * scale)));
+    textPainter.paint(canvas, Offset(left + (12 * scale), top + (6 * scale)));
 
-    drawRow('BUY', buy, top + (30 * scale), true);
-    drawRow('SELL', sell, top + (46 * scale), true);
+    drawRow('BUY', buy, top + (22 * scale), true);
+    drawRow('SELL', sell, top + (34 * scale), true);
 
     // Net Row with circle icon
     canvas.drawCircle(
-      Offset(left + (16 * scale), top + boxHeight - (14 * scale)),
+      Offset(left + (16 * scale), top + boxHeight - (10 * scale)),
       3 * scale,
       Paint()..color = Colors.white,
     );
     canvas.drawCircle(
-      Offset(left + (16 * scale), top + boxHeight - (14 * scale)),
+      Offset(left + (16 * scale), top + boxHeight - (10 * scale)),
       3 * scale,
       Paint()
         ..color = Colors.black
@@ -833,24 +830,24 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       text: 'NET',
       style: TextStyle(
         fontFamily: 'DMSans',
-        fontSize: 10 * scale,
+        fontSize: 8.5 * scale,
         fontWeight: FontWeight.w700,
-        color: const Color(0xFF0F172A),
+        color: Color(0xFF0F172A),
       ),
     );
     textPainter.layout();
     textPainter.paint(
       canvas,
-      Offset(left + (26 * scale), top + boxHeight - (20 * scale)),
+      Offset(left + (26 * scale), top + boxHeight - (16 * scale)),
     );
 
     textPainter.text = TextSpan(
       text: net,
       style: TextStyle(
         fontFamily: 'DMSans',
-        fontSize: 10 * scale,
+        fontSize: 8.5 * scale,
         fontWeight: FontWeight.w700,
-        color: const Color(0xFF0F172A),
+        color: Color(0xFF0F172A),
       ),
     );
     textPainter.layout();
@@ -858,7 +855,7 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       canvas,
       Offset(
         left + boxWidth - (12 * scale) - textPainter.width,
-        top + boxHeight - (20 * scale),
+        top + boxHeight - (16 * scale),
       ),
     );
   }

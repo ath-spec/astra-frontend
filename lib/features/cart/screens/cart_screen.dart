@@ -14,7 +14,7 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final scale = MediaQuery.of(context).size.width / 375.0;
+    final scale = MediaQuery.sizeOf(context).width / 375.0;
 
     return Scaffold(
       backgroundColor: Colors.white,

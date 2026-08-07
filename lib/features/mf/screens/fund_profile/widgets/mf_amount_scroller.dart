@@ -118,7 +118,7 @@ class _MfAmountScrollerWidgetState extends State<MfAmountScrollerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
     // Perfect padding ensures the first and last items can reach exactly the center
     final horizontalPadding = (screenWidth / 2) - (_tickSpacing / 2);
 

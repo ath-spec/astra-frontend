@@ -287,7 +287,7 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
     required double imageBottomFraction,
     VoidCallback? onTap,
   }) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final cardWidth = screenWidth * 0.35;
     
     // Fixed sizes for consistency across all screen sizes (industry standard)

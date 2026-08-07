@@ -84,7 +84,7 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
                     }
                   },
                   onVerticalDragUpdate: (details) {
-                    final screenHeight = MediaQuery.of(context).size.height;
+                    final screenHeight = MediaQuery.sizeOf(context).height;
                     final delta = details.primaryDelta! / screenHeight;
                     final currentSize = widget.controller.size;
                     final newSize = (currentSize - delta).clamp(0.5, 0.92);

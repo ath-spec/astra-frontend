@@ -57,7 +57,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
         }
       },
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.9,
+        height: MediaQuery.sizeOf(context).height * 0.9,
         decoration: BoxDecoration(
           color: const Color(0xFFFBF8E7),
           borderRadius: BorderRadius.only(
@@ -87,7 +87,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
                 _buildSettingsSection(),
                 SizedBox(height: getProportionateScreenHeight(24)),
                 _buildActionButtons(context, isActive),
-                SizedBox(height: MediaQuery.of(context).padding.bottom + 32),
+                SizedBox(height: MediaQuery.paddingOf(context).bottom + 32),
               ],
             ),
           ),

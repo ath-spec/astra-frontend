@@ -34,8 +34,8 @@ class MfExploreScreen extends ConsumerWidget {
           SliverPersistentHeader(
             pinned: true,
             delegate: _MfExploreHeaderDelegate(
-              safeAreaTop: MediaQuery.of(context).padding.top,
-              screenHeight: MediaQuery.of(context).size.height,
+              safeAreaTop: MediaQuery.paddingOf(context).top,
+              screenHeight: MediaQuery.sizeOf(context).height,
               onBackTap: () {
                 if (context.canPop()) {
                   context.pop();

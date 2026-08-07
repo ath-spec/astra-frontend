@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../widgets/portfolio_analysis/discipline_tab.dart';
 import '../widgets/portfolio_analysis/allocation_tab.dart';
@@ -65,7 +66,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
                       title,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         fontWeight: fontWeight,
                         color: color,
                       ),
@@ -82,7 +83,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -102,28 +103,16 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
                     child: Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFF1F5F9)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.02),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
                       child: const Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 24),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Center(
                       child: Text(
                         'ANALYSIS',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 2.0,
                           color: Color(0xFF64748B),

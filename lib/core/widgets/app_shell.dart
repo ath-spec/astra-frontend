@@ -161,7 +161,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: 120 + MediaQuery.of(context).padding.bottom,
+                height: 120 + MediaQuery.paddingOf(context).bottom,
                 child: IgnorePointer(
                   child: Stack(
                     children: [
@@ -239,7 +239,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                 curve: Curves.easeOutCubic,
                 left: 16,
                 right: 16,
-                bottom: 12 + MediaQuery.of(context).padding.bottom,
+                bottom: 12 + MediaQuery.paddingOf(context).bottom,
                 child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

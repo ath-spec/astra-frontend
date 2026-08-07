@@ -38,7 +38,7 @@ class LinkedBankAccountsScreen extends ConsumerWidget {
             // Top App Bar
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.06, 
+                horizontal: MediaQuery.sizeOf(context).width * 0.06, 
                 vertical: 16,
               ),
               child: Row(
@@ -142,7 +142,7 @@ class LinkedBankAccountsScreen extends ConsumerWidget {
             Expanded(
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.06),
+                padding: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).width * 0.06),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -13,7 +13,7 @@ class YourFundProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // We will use MediaQuery to get relative but stick strictly to requested font sizes.
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
         return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
       body: SafeArea(

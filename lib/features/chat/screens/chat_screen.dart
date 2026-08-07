@@ -26,7 +26,7 @@ class ChatScreen extends ConsumerWidget {
               top: 0,
               left: 0,
               right: 0,
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.sizeOf(context).height,
               child: const _AnimatedGradientBackground(),
             ),
 
@@ -54,9 +54,9 @@ class ChatScreen extends ConsumerWidget {
                       Positioned(
                         left: 0,
                         right: 0,
-                        bottom: MediaQuery.of(context).viewInsets.bottom > 0
-                            ? MediaQuery.of(context).viewInsets.bottom
-                            : MediaQuery.of(context).padding.bottom,
+                        bottom: MediaQuery.viewInsetsOf(context).bottom > 0
+                            ? MediaQuery.viewInsetsOf(context).bottom
+                            : MediaQuery.paddingOf(context).bottom,
                         child: const ChatInputField(),
                       ),
                     ],

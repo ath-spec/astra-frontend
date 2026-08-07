@@ -20,7 +20,7 @@ class ChatAppBar extends ConsumerWidget {
         child: Container(
           color: Colors.transparent,
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 8,
+        top: MediaQuery.paddingOf(context).top + 8,
         bottom: 8,
         left: 8,
         right: 8,

@@ -52,7 +52,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
   @override
   Widget build(BuildContext context) {
     // Dynamic scaling capped at 420
-    final screenWidth = math.min(MediaQuery.of(context).size.width, 420.0);
+    final screenWidth = math.min(MediaQuery.sizeOf(context).width, 420.0);
     final scale = screenWidth / 390.0;
 
     return Scaffold(
@@ -315,7 +315,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                   top: 0,
                   left: 0,
                   right: 0,
-                  height: MediaQuery.of(context).size.height * 0.4,
+                  height: MediaQuery.sizeOf(context).height * 0.4,
                   child: Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -424,7 +424,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                         builder: (context, child) {
                           final barHeight = 44 * s;
                           final fullWidth =
-                              MediaQuery.of(context).size.width -
+                              MediaQuery.sizeOf(context).width -
                               (48 * s); // padding
                           final fillWidth =
                               (fullWidth - (3 * s)) *
@@ -946,8 +946,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
@@ -958,7 +957,6 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF475569),
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       SizedBox(width: 8 * s),
@@ -1223,7 +1221,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                   top: 0,
                   left: 0,
                   right: 0,
-                  height: MediaQuery.of(context).size.height * 0.4,
+                  height: MediaQuery.sizeOf(context).height * 0.4,
                   child: Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -1294,7 +1292,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
 
                           return Center(
                             child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
+                              width: MediaQuery.sizeOf(context).width,
                               height: fullHeight,
                               child: Stack(
                                 alignment: Alignment.bottomCenter,
@@ -1303,7 +1301,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                   // Target Area (Dashed lines and background on the right)
                                   Positioned(
                                     left:
-                                        (MediaQuery.of(context).size.width /
+                                        (MediaQuery.sizeOf(context).width /
                                             2) +
                                         (barWidth / 2) +
                                         4 * s,
@@ -1472,7 +1470,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                   // Current Callout Bubble & Line
                                   Positioned(
                                     right:
-                                        (MediaQuery.of(context).size.width /
+                                        (MediaQuery.sizeOf(context).width /
                                             2) +
                                         (barWidth / 2) -
                                         (1.0 *

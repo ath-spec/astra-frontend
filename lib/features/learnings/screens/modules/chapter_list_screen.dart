@@ -28,15 +28,22 @@ class ChapterListScreen extends StatelessWidget {
           child: Row(
             children: [
               const SizedBox(width: 16),
-              const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E40AF), size: 18),
+              const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color(0xFF1E40AF),
+                size: 18,
+              ),
               const SizedBox(width: 8),
-              Text(
-                'Module ${module.id} • $level',
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0F172A),
+              Expanded(
+                child: Text(
+                  'Module ${module.id} • $level',
+                  style: const TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF0F172A),
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -50,7 +57,8 @@ class ChapterListScreen extends StatelessWidget {
             animation: LearningProgressService.instance,
             builder: (context, child) {
               final chapters = getMockChapters(module.id, level);
-              final levelProgress = LearningProgressService.instance.getLevelProgress(chapters);
+              final levelProgress = LearningProgressService.instance
+                  .getLevelProgress(chapters);
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,34 +67,39 @@ class ChapterListScreen extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                     child: _buildHeader(levelProgress),
                   ),
-              const SizedBox(height: 32),
-              
-                  // Horizontal Scrollable Cards
-                  SizedBox(
-                    height: 380,
+                  const SizedBox(height: 32),
+
+                  Flexible(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 500),
                     child: ListView.separated(
                       padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
                       scrollDirection: Axis.horizontal,
                       itemCount: chapters.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 16),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 16),
                       itemBuilder: (context, index) {
                         final chapter = chapters[index];
                         return GestureDetector(
                           onTap: () {
-                            context.push('/learnings/chapter-reader', extra: {
-                              'module': module,
-                              'chapter': chapter,
-                              'allChapters': chapters,
-                            });
+                            context.push(
+                              '/learnings/chapter-reader',
+                              extra: {
+                                'module': module,
+                                'chapter': chapter,
+                                'allChapters': chapters,
+                              },
+                            );
                           },
                           child: _buildChapterCard(context, chapter),
                         );
                       },
                     ),
                   ),
+                ),
                 ],
               );
-            }
+            },
           ),
         ),
       ),
@@ -106,9 +119,7 @@ class ChapterListScreen extends StatelessWidget {
               top: 0,
               bottom: 0,
               width: 56,
-              child: Container(
-                color: module.themeColor.withOpacity(0.12),
-              ),
+              child: Container(color: module.themeColor.withOpacity(0.12)),
             ),
             // Vertical bar
             Positioned(
@@ -209,15 +220,15 @@ class ChapterListScreen extends StatelessWidget {
 
   Widget _buildChapterCard(BuildContext context, Chapter chapter) {
     // Width is 80% of screen to allow peeking next card
-    final cardWidth = MediaQuery.of(context).size.width > 800 
+    final cardWidth = MediaQuery.sizeOf(context).width > 800
         ? 400.0 // Fixed max width on web/tablet
-        : MediaQuery.of(context).size.width * 0.8;
+        : MediaQuery.sizeOf(context).width * 0.85;
 
     return Container(
       width: cardWidth,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
         boxShadow: [
           BoxShadow(
@@ -232,49 +243,56 @@ class ChapterListScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Illustration Placeholder Area
-          Container(
-            height: 180,
-            width: double.infinity,
-            color: const Color(0xFFF1F5F9), // Soft placeholder background
-            child: Stack(
-              children: [
-                // Abstract background shapes
-                Positioned(
-                  top: 20,
-                  left: 30,
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: module.themeColor.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
+          AspectRatio(
+            aspectRatio: 1.5,
+            child: Container(
+              width: double.infinity,
+              color: const Color(0xFFF1F5F9), // Soft placeholder background
+              child: chapter.imagePath != null
+                  ? Image.asset(
+                      chapter.imagePath!,
+                      fit: BoxFit.contain,
+                    )
+                  : Stack(
+                    children: [
+                      // Abstract background shapes
+                      Positioned(
+                        top: 20,
+                        left: 30,
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: module.themeColor.withOpacity(0.2),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: -40,
+                        right: -20,
+                        child: Container(
+                          width: 140,
+                          height: 140,
+                          decoration: BoxDecoration(
+                            color: module.themeColor.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                      // Center Icon
+                      Center(
+                        child: Icon(
+                          chapter.icon,
+                          size: 64,
+                          color: module.themeColor.withOpacity(0.6),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Positioned(
-                  bottom: -40,
-                  right: -20,
-                  child: Container(
-                    width: 140,
-                    height: 140,
-                    decoration: BoxDecoration(
-                      color: module.themeColor.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                // Center Icon
-                Center(
-                  child: Icon(
-                    chapter.icon,
-                    size: 64,
-                    color: module.themeColor.withOpacity(0.6),
-                  ),
-                ),
-              ],
             ),
           ),
-          
+
           // Content Area
           Expanded(
             child: Padding(
@@ -286,7 +304,7 @@ class ChapterListScreen extends StatelessWidget {
                     chapter.title,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14,
+                      fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
@@ -299,7 +317,7 @@ class ChapterListScreen extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10,
+                        fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: Color(0xFF64748B),
                         height: 1.5,
@@ -314,7 +332,7 @@ class ChapterListScreen extends StatelessWidget {
                         chapter.readTime,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF94A3B8),
                         ),
@@ -323,7 +341,7 @@ class ChapterListScreen extends StatelessWidget {
                         '${chapter.cardsCount} cards',
                         style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF94A3B8),
                         ),

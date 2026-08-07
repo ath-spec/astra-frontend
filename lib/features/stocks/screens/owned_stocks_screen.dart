@@ -152,7 +152,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
           SliverPersistentHeader(
             pinned: true,
             delegate: StocksHeaderDelegate(
-              safeAreaTop: MediaQuery.of(context).padding.top,
+              safeAreaTop: MediaQuery.paddingOf(context).top,
               totalAmount: PrivacyFormatter.obscure('₹1,47,908', isLocked),
               todayChange: PrivacyFormatter.obscure('↑ ₹5,635 (3.96%) today', isLocked),
               onBackTap: () {
@@ -258,7 +258,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
 
           // Holdings Content
           SliverPadding(
-            padding: EdgeInsets.fromLTRB(24, 0, 24, 40 + MediaQuery.of(context).padding.bottom),
+            padding: EdgeInsets.fromLTRB(24, 0, 24, 40 + MediaQuery.paddingOf(context).bottom),
             sliver: _viewMode == ViewMode.table
                 ? SliverToBoxAdapter(
                     child: _buildUnifiedTable(filteredStocks, isLocked),

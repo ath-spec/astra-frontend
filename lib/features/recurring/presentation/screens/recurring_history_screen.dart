@@ -39,7 +39,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    final double topPadding = MediaQuery.of(context).padding.top;
+    final double topPadding = MediaQuery.paddingOf(context).top;
 
     // Animation thresholds for sticky header title fade
     final double titleFadeStart = getProportionateScreenHeight(40);
@@ -60,7 +60,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                 getProportionateScreenWidth(20),
                 topPadding + getProportionateScreenHeight(80),
                 getProportionateScreenWidth(20),
-                MediaQuery.of(context).padding.bottom +
+                MediaQuery.paddingOf(context).bottom +
                     getProportionateScreenHeight(24),
               ),
               children: [

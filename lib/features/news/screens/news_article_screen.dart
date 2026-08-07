@@ -61,7 +61,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
   Widget build(BuildContext context) {
     final bodyText = getArticleBody(widget.title);
     final paragraphs = bodyText.split('\n\n').where((p) => p.trim().isNotEmpty).toList();
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final isWide = screenWidth > 700;
 
     return Scaffold(

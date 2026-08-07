@@ -11,10 +11,12 @@ final List<Chapter> mockBeginnerChapters = [
     readTime: '11 min read',
     cardsCount: 11,
     icon: Icons.insights_rounded,
+    imagePath: 'lib/core/images/need_to_invest.webp',
     pages: [
       ChapterPage(
         id: 'p1_1',
         title: 'Why should I invest?',
+        imagePath: 'lib/core/images/why_invist.webp',
         contents: [
           ChapterTextContent(
             'Before we address the above question, let us understand what would happen if one chooses not to invest. Assume you earn Rs.50,000/- per month, and you spend Rs.30,000/- towards your day-to-day living; this can include expenses like housing, food, transport, shopping, medical, etc. The balance of Rs.20,000/- is your monthly surplus.',
@@ -30,6 +32,7 @@ final List<Chapter> mockBeginnerChapters = [
       ChapterPage(
         id: 'p1_2',
         title: 'The Math',
+        imagePath: 'lib/core/images/the_math.webp',
         contents: [
           ChapterTextContent(
             'Going by the assumptions in the previous card, here is what the cash balance will look like in 20 years.',
@@ -45,6 +48,12 @@ final List<Chapter> mockBeginnerChapters = [
               ['10', '1,414,769', '719,642', '695,127'],
               ['20', '3,669,301', '1,553,584', '2,115,717'],
             ],
+          ),
+          ChapterTextContent(
+            'If one were to analyze these numbers, one would soon realize this is a scary situation. A few things are quite obvious –\n\n1.  After 20 years of hard work, you have accumulated Rs.1.7Crs.\n\n2.  Since your expenses are fixed, your lifestyle has not changed over the years, and you probably even suppressed your lifelong aspirations – a better home, car, vacations, etc.\n\n3.  After you retire, assuming the expenses will continue to grow at 8%, the retirement corpus of Rs.1.7Crs is good enough to sail you through roughly 8 years of post-retirement life. 8th year onwards, you will be in a tight spot with literally no savings left to back you up.',
+          ),
+          ChapterTextContent(
+            'What would you do after you run out of money in 8 years? How do you fund your life? Is there a way to ensure that you collect a more considerable sum at the end of 20 years?',
           ),
         ],
       ),
@@ -165,6 +174,7 @@ final List<Chapter> mockBeginnerChapters = [
     readTime: '12 min read',
     cardsCount: 9,
     icon: Icons.account_balance_rounded,
+    imagePath: 'lib/core/images/regulators_chapter.webp',
     pages: [
       ChapterPage(
         id: 'p2_1',
@@ -200,6 +210,7 @@ final List<Chapter> mockBeginnerChapters = [
     readTime: '15 min read',
     cardsCount: 8,
     icon: Icons.rocket_launch_rounded,
+    imagePath: 'lib/core/images/ipo_market_chapter.webp',
     pages: [
       ChapterPage(
         id: 'p3_1',

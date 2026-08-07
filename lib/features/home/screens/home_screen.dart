@@ -73,7 +73,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final assetState = ref.watch(assetConnectionProvider);
     final isLocked = ref.watch(privacyProvider);
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
 
     final double totalWealthValue = (assetState.mfConnected ? 352962.0 : 0.0) + (assetState.stocksConnected ? 147908.0 : 0.0);
     final formattedTotal = PrivacyFormatter.obscure(
@@ -146,7 +146,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           SliverPersistentHeader(
             pinned: true,
             delegate: _HomeHeaderDelegate(
-              safeAreaTop: MediaQuery.of(context).padding.top,
+              safeAreaTop: MediaQuery.paddingOf(context).top,
               totalWealth: formattedTotal,
               showReturnsPill: showReturnsPill,
               pillOneDayText: pillOneDayText,

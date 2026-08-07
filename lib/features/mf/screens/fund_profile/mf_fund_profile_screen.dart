@@ -52,7 +52,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
     final processedData = _processDataForPeriod(baseData, _selectedPeriod);
     
     // Calculate responsive chart height
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery.sizeOf(context).height;
     final chartHeight = (screenHeight * 0.18).clamp(120.0, 200.0);
 
     return Scaffold(
@@ -776,7 +776,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
   }
 
   Widget _buildBottomActionBar(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
     
     return Container(
       padding: EdgeInsets.only(

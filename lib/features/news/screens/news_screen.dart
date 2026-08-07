@@ -43,7 +43,7 @@ class _NewsScreenState extends State<NewsScreen> {
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.7), // Allow last card to scroll to top
+              padding: EdgeInsets.only(bottom: MediaQuery.sizeOf(context).height * 0.7), // Allow last card to scroll to top
               child: HomeWealthFeed(
                 scrollController: _scrollController,
                 isSecondCardStacked: _isSecondCardStacked,

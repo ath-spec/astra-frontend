@@ -7,7 +7,7 @@ class OrdersBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
         return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -16,7 +16,7 @@ class OrdersBottomSheet extends StatelessWidget {
           topRight: Radius.circular(16.r),
         ),
       ),
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
+      constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.9),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

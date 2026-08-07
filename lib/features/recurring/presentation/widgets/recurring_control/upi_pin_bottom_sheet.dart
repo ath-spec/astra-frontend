@@ -144,7 +144,7 @@ class _UpiPinBottomSheetState extends State<UpiPinBottomSheet> {
                 return _buildKey("${index + 1}");
               },
             ),
-            SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
+            SizedBox(height: MediaQuery.paddingOf(context).bottom + 16),
           ],
         ),
       ),

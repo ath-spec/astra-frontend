@@ -7,6 +7,7 @@ class Chapter {
   final String readTime;
   final int cardsCount;
   final IconData icon;
+  final String? imagePath;
   final List<ChapterPage> pages;
 
   const Chapter({
@@ -16,6 +17,7 @@ class Chapter {
     required this.readTime,
     required this.cardsCount,
     required this.icon,
+    this.imagePath,
     required this.pages,
   });
 }
@@ -23,11 +25,13 @@ class Chapter {
 class ChapterPage {
   final String id;
   final String title;
+  final String? imagePath;
   final List<ChapterContent> contents;
 
   const ChapterPage({
     required this.id,
     required this.title,
+    this.imagePath,
     required this.contents,
   });
 }

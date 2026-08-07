@@ -333,7 +333,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
                   // Bottom spacing
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: MediaQuery.of(context).padding.bottom + 40,
+                      height: MediaQuery.paddingOf(context).bottom + 40,
                     ),
                   ),
                 ],

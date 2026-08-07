@@ -16,7 +16,7 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
         final isPosRet = item.returns >= 0;
     final isPos1D = item.oneDayChange >= 0;
     final lifetimeXirr = item.xirr - 0.53; // Mocked slightly lower than current XIRR for realism

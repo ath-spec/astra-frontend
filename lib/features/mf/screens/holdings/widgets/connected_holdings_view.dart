@@ -176,7 +176,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
               builder: (context) => GestureDetector(
                 onTap: () => Navigator.of(context).pop(),
                 child: Container(
-                  height: MediaQuery.of(context).size.height,
+                  height: MediaQuery.sizeOf(context).height,
                   color: Colors.transparent,
                   child: Center(
                     child: GestureDetector(
@@ -478,7 +478,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
     return Container(
       color: const Color(0xFFF9FAFB),
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top,
+        top: MediaQuery.paddingOf(context).top,
         bottom: 8.h,
       ),
       child: Column(

@@ -114,7 +114,7 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
 
   @override
   Widget build(BuildContext context) {
-    double scale = (MediaQuery.of(context).size.width / 393.0).clamp(0.8, 1.2);
+    double scale = (MediaQuery.sizeOf(context).width / 393.0).clamp(0.8, 1.2);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,8 +248,8 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
       if (mounted && _currentOverlap < 10.0) _updateLayoutInfo();
     });
 
-    double scale = (MediaQuery.of(context).size.width / 393.0).clamp(0.8, 1.2);
-    final topSafeArea = MediaQuery.of(context).padding.top;
+    double scale = (MediaQuery.sizeOf(context).width / 393.0).clamp(0.8, 1.2);
+    final topSafeArea = MediaQuery.paddingOf(context).top;
     final double pinOffset = topSafeArea + 90.0; // No stagger, stack perfectly on top
 
     return SizedBox(
@@ -306,7 +306,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
   }
 
   Widget _buildCardContent() {
-    double scale = (MediaQuery.of(context).size.width / 393.0).clamp(0.8, 1.2);
+    double scale = (MediaQuery.sizeOf(context).width / 393.0).clamp(0.8, 1.2);
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),

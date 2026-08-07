@@ -10,42 +10,7 @@ class VideosTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Search Bar
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.search, color: const Color(0xFF94A3B8), size: 20),
-                const SizedBox(width: 8),
-                const Expanded(
-                  child: Text(
-                    'Search',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 14,
-                      color: Color(0xFF94A3B8),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        
+
         // List of Video Modules
         Expanded(
           child: LayoutBuilder(

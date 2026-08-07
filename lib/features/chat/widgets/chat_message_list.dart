@@ -72,7 +72,7 @@ class _ChatMessageListState extends ConsumerState<ChatMessageList> {
           SliverPadding(
             padding: EdgeInsets.fromLTRB(
               20,
-              MediaQuery.of(context).padding.top + 80,
+              MediaQuery.paddingOf(context).top + 80,
               20,
               100,
             ),

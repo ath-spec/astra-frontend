@@ -209,7 +209,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
       duration: const Duration(milliseconds: 250),
       curve: _snappyEaseOut,
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.35,
+        height: MediaQuery.sizeOf(context).height * 0.35,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),

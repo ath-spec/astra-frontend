@@ -244,7 +244,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
   Widget build(BuildContext context) {
     SizeConfig().init(context);
 
-    final topPadding = MediaQuery.of(context).padding.top;
+    final topPadding = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -319,7 +319,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
                   onVerticalDragUpdate: (details) {
                     if (_isYearlyView) return;
 
-                    final screenHeight = MediaQuery.of(context).size.height;
+                    final screenHeight = MediaQuery.sizeOf(context).height;
                     final delta = details.primaryDelta! / screenHeight;
                     final currentSize = _sheetController.size;
 
@@ -588,7 +588,7 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
               // Floating Today Pill Overlay
               if (_isYearlyView)
                 Positioned(
-                  bottom: MediaQuery.of(context).padding.bottom + getProportionateScreenHeight(20),
+                  bottom: MediaQuery.paddingOf(context).bottom + getProportionateScreenHeight(20),
                   left: getProportionateScreenWidth(24),
                   child: _buildTodayPill(),
                 ),

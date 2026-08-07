@@ -53,7 +53,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
       color: Colors.transparent,
       child: Container(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
         ),
         decoration: BoxDecoration(
           color: const Color(0xFFFBF8E7),
@@ -101,7 +101,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
                     _buildActionButtons(context),
                   ] else
                     _buildSuccessContent(),
-                  SizedBox(height: MediaQuery.of(context).padding.bottom + 32),
+                  SizedBox(height: MediaQuery.paddingOf(context).bottom + 32),
                 ],
               ),
             ),
