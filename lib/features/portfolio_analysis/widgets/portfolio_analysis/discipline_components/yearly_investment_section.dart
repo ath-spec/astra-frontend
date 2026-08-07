@@ -70,7 +70,7 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
                   'Yearly Investment',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14,
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
@@ -110,7 +110,7 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
                     text: '₹-33,265 ',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                       letterSpacing: -1.0,
@@ -219,14 +219,14 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
             ),
             const SizedBox(height: 16),
             // Pro Tip Card
-            AnimatedGradientShimmer(
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: AnimatedGradientShimmer(
                 child: const TypewriterText(
                   text: 'Momentum is strong your yearly investment pattern shows positive growth trajectory. consistency is building wealth steadily.',
                   style: TextStyle(

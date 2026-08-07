@@ -222,20 +222,20 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
               Expanded(
                 child: Container(
                   height: 1,
-                  color: Color(0xFFE2E8F0),
+                  color: Color.fromARGB(255, 249, 249, 249),
                 ),
               ),
             ],
           ),
           SizedBox(height: 12),
-          AnimatedGradientShimmer(
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(4),
-              ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: AnimatedGradientShimmer(
               child: TypewriterText(
                 text: 'Gaps in investing flow your investing rhythm has some breaks. keeping it steady will grow your money faster.',
                 style: TextStyle(

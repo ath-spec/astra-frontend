@@ -1,3 +1,4 @@
+import 'package:visibility_detector/visibility_detector.dart';
 import 'package:flutter/material.dart';
 import 'generic_info_sheet.dart';
 
@@ -83,7 +84,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection>
                   text: '0% ',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
@@ -186,15 +187,7 @@ class _SipAutomationSectionState extends State<SipAutomationSection>
                 ],
               ),
               const SizedBox(height: 8),
-              const Text(
-                'NA',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0F172A),
-                ),
-              ),
+              const _AnimatedPercentageBar(percentage: 0.58),
             ],
           ),
 
@@ -586,5 +579,100 @@ class _SipTrendPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _SipTrendPainter oldDelegate) {
     return oldDelegate.progress != progress;
+  }
+}
+
+class _AnimatedPercentageBar extends StatefulWidget {
+  final double percentage;
+  const _AnimatedPercentageBar({required this.percentage});
+
+  @override
+  State<_AnimatedPercentageBar> createState() => _AnimatedPercentageBarState();
+}
+
+class _AnimatedPercentageBarState extends State<_AnimatedPercentageBar>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: const Cubic(0.23, 1.0, 0.32, 1.0),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return VisibilityDetector(
+      key: const Key('animated-percentage-bar'),
+      onVisibilityChanged: (info) {
+        if (info.visibleFraction > 0.1 && !_isVisible) {
+          _isVisible = true;
+          _controller.forward();
+        }
+      },
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          final currentPercent = _animation.value * widget.percentage;
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final maxWidth = constraints.maxWidth;
+              return SizedBox(
+                height: 24,
+                width: maxWidth,
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    Container(
+                      width: maxWidth,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                    Container(
+                      width: maxWidth * currentPercent,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF38A169),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                    Positioned(
+                      left: (maxWidth * currentPercent) + 8,
+                      child: Text(
+                        '${(currentPercent * 100).toInt()}%',
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 }

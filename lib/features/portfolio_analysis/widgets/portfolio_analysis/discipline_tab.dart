@@ -30,15 +30,15 @@ class _DisciplineTabState extends State<DisciplineTab> with AutomaticKeepAliveCl
             children: [
               const DisciplineGaugeSection(),
               const DisciplineFactorsCard(),
-              standardGap,
+              const SizedBox(height: 56),
               const MonthlyInvestmentSection(),
-              standardGap,
+              const SizedBox(height: 56),
               const SipDisciplineGrid(),
-              standardGap,
+              const SizedBox(height: 56),
               const SipAutomationSection(),
-              standardGap,
+              const SizedBox(height: 56),
               const YearlyInvestmentSection(),
-              standardGap,
+              const SizedBox(height: 56),
 
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),

@@ -58,7 +58,7 @@ class SipDisciplineGrid extends StatelessWidget {
                   text: '0 of 0',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                     letterSpacing: -1.0,
