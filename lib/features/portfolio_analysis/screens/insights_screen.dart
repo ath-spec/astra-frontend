@@ -649,54 +649,54 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                           SizedBox(height: 32 * s),
 
                           // DID YOU KNOW
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.auto_awesome,
-                                    size: 14 * s,
-                                    color: const Color(0xFF94A3B8),
-                                  ),
-                                  SizedBox(width: 6 * s),
-                                  Text(
-                                    'DID YOU KNOW?',
-                                    style: TextStyle(
-                                      fontFamily: 'DMSans',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1.0,
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16 * s,
+                              vertical: 10 * s,
+                            ),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(
+                                255,
+                                231,
+                                251,
+                                250,
+                              ),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: const Color.fromARGB(
+                                  255,
+                                  138,
+                                  231,
+                                  254,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.auto_awesome,
+                                      size: 14 * s,
                                       color: const Color(0xFF94A3B8),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8 * s),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16 * s,
-                                  vertical: 10 * s,
-                                ),
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(
-                                    255,
-                                    231,
-                                    251,
-                                    250,
-                                  ),
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(
-                                    color: const Color.fromARGB(
-                                      255,
-                                      138,
-                                      231,
-                                      254,
+                                    SizedBox(width: 6 * s),
+                                    Text(
+                                      'DID YOU KNOW?',
+                                      style: TextStyle(
+                                        fontFamily: 'DMSans',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 1.0,
+                                        color: const Color(0xFF94A3B8),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                                child: TypewriterText(
+                                SizedBox(height: 8 * s),
+                                TypewriterText(
                                   text:
                                       'The ₹1.25L tax-free LTCG limit resets every financial year. Unused limits cannot be carried forward.',
                                   style: TextStyle(
@@ -707,8 +707,8 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                                     height: 1.4,
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           SizedBox(height: 48 * s),
 
@@ -1799,42 +1799,42 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                           SizedBox(height: 32 * s),
 
                           // DID YOU KNOW
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.auto_awesome,
-                                    size: 14 * s,
-                                    color: const Color(0xFF94A3B8),
-                                  ),
-                                  SizedBox(width: 6 * s),
-                                  Text(
-                                    'DID YOU KNOW?',
-                                    style: TextStyle(
-                                      fontFamily: 'DMSans',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1.0,
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16 * s,
+                              vertical: 10 * s,
+                            ),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 245, 232),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: Color.fromARGB(255, 255, 250, 232)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.auto_awesome,
+                                      size: 14 * s,
                                       color: const Color(0xFF94A3B8),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8 * s),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16 * s,
-                                  vertical: 10 * s,
+                                    SizedBox(width: 6 * s),
+                                    Text(
+                                      'DID YOU KNOW?',
+                                      style: TextStyle(
+                                        fontFamily: 'DMSans',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 1.0,
+                                        color: const Color(0xFF94A3B8),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 255, 245, 232),
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(color: Color.fromARGB(255, 255, 250, 232)),
-                                ),
-                                child: TypewriterText(
+                                SizedBox(height: 8 * s),
+                                TypewriterText(
                                   text:
                                       'Only ~26% largecap and ~12% mid / smallcap funds beat their index over 10 years',
                                   style: TextStyle(
@@ -1845,8 +1845,8 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                     height: 1.4,
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           SizedBox(height: 48 * s),
 
