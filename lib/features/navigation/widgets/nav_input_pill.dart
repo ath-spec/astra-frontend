@@ -203,7 +203,6 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
     if (text.isEmpty) return;
 
     // Send the first message
-    ref.invalidate(chatNotifierProvider);
     ref.read(chatNotifierProvider.notifier).sendMessage(_userMessage);
     
     // Slight delay to allow first message to process before sending second
@@ -353,7 +352,13 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                       children: [
                         if (!isTyping) ...[
                           GestureDetector(
-                            onTap: () => _focusNode.requestFocus(),
+                            onTap: () {
+                              if (_focusNode.hasFocus) {
+                                _focusNode.unfocus();
+                              } else {
+                                _focusNode.requestFocus();
+                              }
+                            },
                             behavior: HitTestBehavior.opaque,
                             child: const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10),
@@ -449,6 +454,27 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
           ),
           const SizedBox(height: 16),
           
+          // User Bubble
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                _userMessage,
+                style: const TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 14,
+                  color: Color(0xFF0F172A),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          
           // AI Response Area
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -471,12 +497,14 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                         ),
                       ),
               ),
+              if (_currentState == NavInputState.replied)
+                const Icon(Icons.volume_up_outlined, size: 18, color: Color(0xFF444746)),
             ],
           ),
           
-          // Second Input Field
           if (_currentState == NavInputState.replied) ...[
             const SizedBox(height: 16),
+            // Second Input Field seamlessly integrated
             TextField(
               controller: _secondController,
               focusNode: _secondFocusNode,
@@ -505,52 +533,72 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                 fontSize: 14,
                 color: Color(0xFF0F172A),
               ),
+              onSubmitted: (_) => _handleSecondSubmit(),
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ],
+          const SizedBox(height: 16),
+          
+          // Bottom Row (Exactly like initial state)
+          SizedBox(
+            height: 48,
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                // Interaction Pill for follow up
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildPillIconButton(
-                        icon: Icons.mic_none_rounded,
-                        onTap: () {
-                          _secondController.text = "Tell me more about this.";
-                          _secondFocusNode.requestFocus();
-                        },
-                        isActive: true,
-                        activeColor: const Color(0xFFE2E8F0),
-                      ),
-                    ],
+                // Centered Interaction Pill
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 250),
+                  curve: _snappyEaseOut,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8F0FE), // Google blue-ish pill background
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _secondController.text = "Tell me more about this.";
+                            _secondFocusNode.requestFocus();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFFD3E3FD), // Deeper blue for active mic
+                            ),
+                            child: const Icon(Icons.mic_none_rounded, size: 20, color: Color(0xFF041E49)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                // Send Button
-                GestureDetector(
-                  onTap: _handleSecondSubmit,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFF1E293B),
-                    ),
-                    child: const Icon(
-                      Icons.arrow_upward_rounded,
-                      color: Colors.white,
-                      size: 20,
+                
+                // Send Button on the right
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: AnimatedOpacity(
+                    opacity: _currentState == NavInputState.replied ? 1.0 : 0.5,
+                    duration: const Duration(milliseconds: 200),
+                    child: GestureDetector(
+                      onTap: _currentState == NavInputState.replied ? _handleSecondSubmit : null,
+                      behavior: HitTestBehavior.opaque,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.send_outlined,
+                          color: Color(0xFF1E293B),
+                          size: 24,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-          ],
+          ),
         ],
       ),
     );
