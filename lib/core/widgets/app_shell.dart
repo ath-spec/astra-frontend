@@ -254,18 +254,13 @@ class _AppShellState extends ConsumerState<AppShell> {
                                 child: FadeTransition(opacity: animation, child: child),
                               );
                             },
-                            child: isInputMode
+                            child: navContext == NavContext.main || isInputMode
                                 ? const SizedBox.shrink(key: ValueKey('no_home'))
-                                : (navContext == NavContext.main
-                                    ? const SizedBox(
-                                        key: ValueKey('home_placeholder'),
-                                        width: 50.0, // Matches width of home circle + padding (38+12)
-                                      )
-                                    : Padding(
-                                        key: const ValueKey('has_home'),
-                                        padding: const EdgeInsets.only(right: 12.0),
-                                        child: buildHomeCircle(() => _onPillTap(0)),
-                                      )),
+                                : Padding(
+                                    key: const ValueKey('has_home'),
+                                    padding: const EdgeInsets.only(right: 12.0),
+                                    child: buildHomeCircle(() => _onPillTap(0)),
+                                  ),
                           ),
                           Expanded(
                             child: AnimatedSwitcher(
@@ -281,6 +276,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                                 );
                                 return ScaleTransition(
                                   scale: scaleAnimation,
+                                  alignment: navContext == NavContext.main ? Alignment.centerLeft : Alignment.center,
                                   child: FadeTransition(
                                     opacity: animation,
                                     child: child,
