@@ -270,11 +270,17 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
                         index: 2,
                         icon: Icons.person_outline_rounded,
                         title: 'Account Details',
+                        onTap: () {
+                          context.push('/account-details');
+                        },
                       ),
                       _buildMenuItem(
                         index: 3,
                         icon: Icons.person_add_alt_1_outlined,
                         title: 'Nominee List',
+                        onTap: () {
+                          context.push('/nominee-list');
+                        },
                       ),
                       _buildMenuItem(
                         index: 4,
@@ -294,9 +300,12 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
                         title: 'Bank & Mandate',
                       ),
                       _buildMenuItem(
-                        index: 6,
-                        icon: Icons.analytics_outlined,
-                        title: 'Mutual Funds Reports',
+                        index: 5,
+                        icon: Icons.article_outlined,
+                        title: 'Mutual Fund Reports',
+                        onTap: () {
+                          context.push('/mf-report');
+                        },
                       ),
                       _buildMenuItem(
                         index: 7,

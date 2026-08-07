@@ -175,6 +175,9 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                 }
               },
               isLocked: isLocked,
+              onLockTap: () {
+                ref.read(privacyProvider.notifier).state = !isLocked;
+              },
             ),
           ),
           

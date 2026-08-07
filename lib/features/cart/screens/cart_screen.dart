@@ -33,18 +33,6 @@ class _CartScreenState extends State<CartScreen> {
                     child: Container(
                       width: 44 * scale,
                       height: 44 * scale,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFF1F5F9)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.02),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         color: const Color(0xFF0F172A),
@@ -57,7 +45,7 @@ class _CartScreenState extends State<CartScreen> {
                     'Cart',
                     style: TextStyle(
                       fontFamily: 'SpaceGrotesk',
-                      fontSize: 32 * scale,
+                      fontSize: 20 * scale,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF0F172A),
                       letterSpacing: -1.0,

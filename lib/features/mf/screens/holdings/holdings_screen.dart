@@ -51,8 +51,11 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
                     screenHeight: logicalHeight,
                     hasImportedPortfolio: _hasImportedPortfolio,
                     isLocked: isLocked,
-                    onLockTap: () => ref.read(privacyProvider.notifier).state = !isLocked,
+                    onLockTap: () {
+                      ref.read(privacyProvider.notifier).state = !isLocked;
+                    },
                     onCartTap: () => context.push('/cart'),
+                    onRefreshTap: () => context.push('/mf-fetch-confirm'),
                   ),
                 ),
                 SliverToBoxAdapter(

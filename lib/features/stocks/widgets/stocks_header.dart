@@ -11,6 +11,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
   final VoidCallback onRefreshTap;
   final VoidCallback onAddAccountsTap;
   final bool isLocked;
+  final VoidCallback onLockTap;
 
   StocksHeaderDelegate({
     required this.safeAreaTop,
@@ -21,6 +22,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.onRefreshTap,
     required this.onAddAccountsTap,
     required this.isLocked,
+    required this.onLockTap,
   });
 
   @override
@@ -244,6 +246,24 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                 Row(
                   children: [
                     GestureDetector(
+                      onTap: onLockTap,
+                      child: Container(
+                        width: 36 * scale,
+                        height: 36 * scale,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: Icon(
+                          isLocked ? Icons.lock_outline_rounded : Icons.lock_open_rounded,
+                          color: const Color(0xFF0F172A),
+                          size: 18 * scale,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12 * scale),
+                    GestureDetector(
                       onTap: onAddAccountsTap,
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 8 * scale),
@@ -290,6 +310,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant StocksHeaderDelegate oldDelegate) {
     return safeAreaTop != oldDelegate.safeAreaTop || 
            totalAmount != oldDelegate.totalAmount ||
-           todayChange != oldDelegate.todayChange;
+           todayChange != oldDelegate.todayChange ||
+           isLocked != oldDelegate.isLocked;
   }
 }

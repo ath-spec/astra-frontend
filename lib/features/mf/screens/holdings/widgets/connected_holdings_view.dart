@@ -143,7 +143,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
     return '₹${value.toStringAsFixed(0)}';
   }
 
-  Widget _buildTopCard() {
+  Widget _buildTopCard(bool isLocked) {
     return AnimatedBuilder(
       animation: _numberAnimation,
       builder: (context, child) {
@@ -248,7 +248,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          formatLargeNumber(investedVal),
+                          isLocked ? '₹ * * * *' : formatLargeNumber(investedVal),
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
@@ -271,7 +271,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '${xirrVal.toStringAsFixed(2)}%',
+                          isLocked ? '* * *' : '${xirrVal.toStringAsFixed(2)}%',
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
@@ -294,7 +294,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '+${formatLargeNumber(returnsVal)} (15.04%)',
+                          isLocked ? '₹ * * * *' : '+${formatLargeNumber(returnsVal)} (15.04%)',
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
@@ -630,8 +630,11 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     screenHeight: logicalHeight,
                     hasImportedPortfolio: true,
                     isLocked: isLocked,
-                    onLockTap: () => ref.read(privacyProvider.notifier).state = !isLocked,
+                    onLockTap: () {
+                      ref.read(privacyProvider.notifier).state = !isLocked;
+                    },
                     onCartTap: () => context.push('/cart'),
+                    onRefreshTap: () => context.push('/mf-fetch-confirm'),
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -640,7 +643,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 16),
-                        child: _buildTopCard(),
+                        child: _buildTopCard(isLocked),
                       ),
 
                       _buildHeaderRow(),
@@ -697,18 +700,21 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                       displayHoldings: _displayHoldings,
                       formatCurrency: formatCurrency,
                       formatLargeNumber: formatLargeNumber,
+                      isLocked: isLocked,
                     ),
                   if (_viewType == 1)
                     DetailedHoldingsList(
                       displayHoldings: _displayHoldings,
                       formatCurrency: formatCurrency,
                       formatLargeNumber: formatLargeNumber,
+                      isLocked: isLocked,
                     ),
                   if (_viewType == 2)
                     TableHoldingsList(
                       displayHoldings: _displayHoldings,
                       formatCurrency: formatCurrency,
                       formatLargeNumber: formatLargeNumber,
+                      isLocked: isLocked,
                     ),
                 ],
 

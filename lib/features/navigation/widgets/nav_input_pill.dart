@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -6,307 +7,41 @@ import '../../../core/providers/nav_input_provider.dart';
 import '../../chat/providers/chat_provider.dart';
 import 'border_beam.dart';
 
-class NavInputPill extends ConsumerStatefulWidget {
-  final VoidCallback onSend;
+enum NavInputState { initial, typing, generating, streaming, replied }
 
-  const NavInputPill({
-    super.key,
-    required this.onSend,
-  });
+// Emil's custom easing curve for snappy UI
+const Curve _snappyEaseOut = Cubic(0.23, 1.0, 0.32, 1.0);
 
-  @override
-  ConsumerState<NavInputPill> createState() => _NavInputPillState();
-}
-
-class _NavInputPillState extends ConsumerState<NavInputPill> {
-  final TextEditingController _controller = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-  bool _hasText = false;
+class _SlidingGradientTransform extends GradientTransform {
+  final double slidePercent;
+  const _SlidingGradientTransform(this.slidePercent);
 
   @override
-  void initState() {
-    super.initState();
-    _controller.addListener(() {
-      final hasText = _controller.text.trim().isNotEmpty;
-      if (hasText != _hasText) {
-        setState(() {
-          _hasText = hasText;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-
-  List<Map<String, dynamic>> _getPromptsForPath() {
-    final router = GoRouter.of(context);
-    final String path = router.routerDelegate.currentConfiguration.uri.path;
-    
-    if (path.startsWith('/stocks') || path.startsWith('/owned-stocks') || path.startsWith('/mf-portfolio')) {
-      return [
-        {'icon': Icons.trending_up, 'text': 'Why is Mazagon Dock up?'},
-        {'icon': Icons.analytics_outlined, 'text': 'Analyze my sector allocation'},
-        {'icon': Icons.compare_arrows_rounded, 'text': 'Should I hold or sell?'},
-      ];
-    }
-    if (path.startsWith('/news')) {
-      return [
-        {'icon': Icons.newspaper_rounded, 'text': 'Summarize today\'s news'},
-        {'icon': Icons.show_chart, 'text': 'How does this affect my portfolio?'},
-      ];
-    }
-    if (path.startsWith('/budget') || path.startsWith('/recurring')) {
-      return [
-        {'icon': Icons.money_off_rounded, 'text': 'How can I reduce expenses?'},
-        {'icon': Icons.credit_card_rounded, 'text': 'Find my largest subscriptions'},
-      ];
-    }
-    if (path.startsWith('/bank') || path.startsWith('/linked-banks')) {
-      return [
-        {'icon': Icons.account_balance_rounded, 'text': 'Analyze my bank balances'},
-        {'icon': Icons.history_rounded, 'text': 'Show recent large transactions'},
-      ];
-    }
-    return [
-      {'icon': Icons.query_stats_rounded, 'text': 'Analyze my portfolio'},
-      {'icon': Icons.account_balance_wallet_outlined, 'text': 'What\'s my net worth?'},
-      {'icon': Icons.shield_outlined, 'text': 'Suggest tax saving strategies'},
-    ];
-  }
-
-  void _handlePromptTap(String text) {
-    _controller.text = text;
-    _handleSubmit();
-  }
-
-  void _handleSubmit() {
-    final text = _controller.text.trim();
-    if (text.isEmpty) return;
-
-    // Clear the chat state to ensure we always start a brand new chat
-    ref.invalidate(chatNotifierProvider);
-
-    // Send the message to the freshly created chat state
-    ref.read(chatNotifierProvider.notifier).sendMessage(text);
-    
-    // Close the input mode
-    ref.read(navInputModeProvider.notifier).state = false;
-    
-    // Notify parent to route to chat branch
-    widget.onSend();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget pillContent = AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Theme(
-        data: Theme.of(context).copyWith(
-          textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Color(0xFF1E293B),
-            selectionColor: Color(0x331E293B),
-            selectionHandleColor: Color(0xFF1E293B),
-          ),
-        ),
-        child: TextField(
-          controller: _controller,
-          focusNode: _focusNode,
-          autofocus: true,
-          minLines: 1,
-          maxLines: 5,
-          keyboardType: TextInputType.multiline,
-          textInputAction: TextInputAction.newline,
-          cursorColor: const Color(0xFF1E293B),
-          style: const TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 14,
-            color: Color(0xFF1E293B),
-            fontWeight: FontWeight.w400,
-          ),
-          decoration: InputDecoration(
-            hintText: 'Ask ASTRA',
-            hintStyle: const TextStyle(
-              fontFamily: 'DMSans',
-              color: Color(0xFFCBD5E1),
-              fontSize: 14,
-              fontWeight: FontWeight.w300,
-            ),
-            contentPadding: const EdgeInsets.only(left: 20.0, right: 8.0, top: 12.0, bottom: 12.0),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide.none,
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide.none,
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
-              borderSide: BorderSide.none,
-            ),
-            suffixIcon: Padding(
-              padding: const EdgeInsets.only(right: 8.0, bottom: 6.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    transitionBuilder: (child, animation) {
-                      return ScaleTransition(scale: animation, child: child);
-                    },
-                    child: _hasText
-                        ? GestureDetector(
-                            key: const ValueKey('send'),
-                            onTap: _handleSubmit,
-                            child: Container(
-                              width: 32,
-                              height: 32,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFF1E293B),
-                              ),
-                              child: const Icon(
-                                Icons.arrow_upward_rounded,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                            ),
-                          )
-                        : GestureDetector(
-                            key: const ValueKey('mic'),
-                            onTap: () {
-                              _focusNode.requestFocus();
-                            },
-                            child: Container(
-                              width: 32,
-                              height: 32,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFFF1F5F9),
-                              ),
-                              child: const Icon(
-                                Icons.mic_none_rounded,
-                                color: Color(0xFF475569),
-                                size: 18,
-                              ),
-                            ),
-                          ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    final mainContent = BorderBeam(
-      duration: 5,
-      borderWidth: 2.0,
-      staticBorderColor: Colors.transparent,
-      borderRadius: BorderRadius.circular(4),
-      child: pillContent,
-    );
-
-    final prompts = _getPromptsForPath();
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          clipBehavior: Clip.none,
-          child: Row(
-            children: [
-              for (int i = 0; i < prompts.length; i++) ...[
-                _ContextualChip(
-                  icon: prompts[i]['icon'] as IconData,
-                  text: prompts[i]['text'] as String,
-                  index: i,
-                  onTap: () => _handlePromptTap(prompts[i]['text'] as String),
-                ),
-                if (i < prompts.length - 1) const SizedBox(width: 8),
-              ]
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        mainContent,
-      ],
-    );
-
+  Matrix4? transform(Rect bounds, {TextDirection? textDirection}) {
+    final translateX = bounds.width * (2 * slidePercent - 1);
+    return Matrix4.translationValues(translateX, 0.0, 0.0);
   }
 }
 
-
-class _ContextualChip extends StatefulWidget {
-  final IconData icon;
+class _AnimatedGradientText extends StatefulWidget {
   final String text;
-  final VoidCallback onTap;
-  final int index;
-
-  const _ContextualChip({
-    required this.icon,
-    required this.text,
-    required this.onTap,
-    required this.index,
-  });
+  final double fontSize;
+  const _AnimatedGradientText({required this.text, this.fontSize = 12});
 
   @override
-  State<_ContextualChip> createState() => _ContextualChipState();
+  State<_AnimatedGradientText> createState() => _AnimatedGradientTextState();
 }
 
-class _ContextualChipState extends State<_ContextualChip> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _scaleAnimation;
-  late final Animation<double> _opacityAnimation;
-  bool _isPressed = false;
+class _AnimatedGradientTextState extends State<_AnimatedGradientText> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Cubic(0.23, 1.0, 0.32, 1.0))
-    );
-    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut)
-    );
-
-    Future.delayed(Duration(milliseconds: widget.index * 60), () {
-      if (mounted) _controller.forward();
-    });
+      duration: const Duration(milliseconds: 2500),
+    )..repeat();
   }
 
   @override
@@ -320,48 +55,517 @@ class _ContextualChipState extends State<_ContextualChip> with SingleTickerProvi
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        return Opacity(
-          opacity: _opacityAnimation.value,
-          child: Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
+        return ShaderMask(
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) => LinearGradient(
+            colors: const [
+              Color(0xFF031E6B),
+              Color(0xFF5BA1F7),
+              Color(0xFF031E6B),
+            ],
+            stops: const [0.3, 0.5, 0.7],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            tileMode: TileMode.clamp,
+            transform: _SlidingGradientTransform(_controller.value),
+          ).createShader(bounds),
+          child: Text(
+            widget.text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'SpaceGrotesk',
+              fontSize: widget.fontSize,
+              height: 1.1,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.5,
+            ),
           ),
         );
       },
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) {
-          setState(() => _isPressed = false);
-          widget.onTap();
-        },
-        onTapCancel: () => setState(() => _isPressed = false),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          curve: const Cubic(0.23, 1.0, 0.32, 1.0),
-          transform: Matrix4.identity()..scale(_isPressed ? 0.97 : 1.0),
-          transformAlignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF1F5F9),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+    );
+  }
+}
+
+class NavInputPill extends ConsumerStatefulWidget {
+  final VoidCallback onSend;
+
+  const NavInputPill({
+    super.key,
+    required this.onSend,
+  });
+
+  @override
+  ConsumerState<NavInputPill> createState() => _NavInputPillState();
+}
+
+class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProviderStateMixin {
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  
+  final TextEditingController _secondController = TextEditingController();
+  final FocusNode _secondFocusNode = FocusNode();
+
+  NavInputState _currentState = NavInputState.initial;
+  String _userMessage = "";
+  
+  String _aiResponse = "I can certainly help you with that! Let's analyze your portfolio first.";
+  String _streamedResponse = "";
+  Timer? _streamTimer;
+
+  // Shimmer animation for generating state
+  late AnimationController _shimmerController;
+  late Animation<double> _shimmerAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onTextChanged);
+    
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    
+    _shimmerAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
+      CurvedAnimation(parent: _shimmerController, curve: Curves.easeInOut),
+    );
+  }
+  
+  void _onTextChanged() {
+    if (_currentState == NavInputState.initial || _currentState == NavInputState.typing) {
+      final hasText = _controller.text.trim().isNotEmpty;
+      if (hasText && _currentState == NavInputState.initial) {
+        setState(() => _currentState = NavInputState.typing);
+      } else if (!hasText && _currentState == NavInputState.typing) {
+        setState(() => _currentState = NavInputState.initial);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    _secondController.dispose();
+    _secondFocusNode.dispose();
+    _streamTimer?.cancel();
+    _shimmerController.dispose();
+    super.dispose();
+  }
+
+  void _handleFirstSubmit() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+
+    setState(() {
+      _userMessage = text;
+      _currentState = NavInputState.generating;
+    });
+
+    // Simulate network delay then start streaming
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) {
+        setState(() => _currentState = NavInputState.streaming);
+        _startStreaming();
+      }
+    });
+  }
+
+  void _startStreaming() {
+    _streamedResponse = "";
+    int currentIndex = 0;
+    _streamTimer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      if (currentIndex < _aiResponse.length) {
+        setState(() {
+          _streamedResponse += _aiResponse[currentIndex];
+        });
+        currentIndex++;
+      } else {
+        timer.cancel();
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            setState(() {
+              _currentState = NavInputState.replied;
+              _secondFocusNode.requestFocus();
+            });
+          }
+        });
+      }
+    });
+  }
+
+  void _handleSecondSubmit() {
+    final text = _secondController.text.trim();
+    if (text.isEmpty) return;
+
+    // Send the first message
+    ref.invalidate(chatNotifierProvider);
+    ref.read(chatNotifierProvider.notifier).sendMessage(_userMessage);
+    
+    // Slight delay to allow first message to process before sending second
+    Future.delayed(const Duration(milliseconds: 100), () {
+      ref.read(chatNotifierProvider.notifier).sendMessage(text);
+    });
+
+    // Close input mode
+    ref.read(navInputModeProvider.notifier).state = false;
+    
+    // Notify parent to route to chat branch
+    widget.onSend();
+  }
+
+  void _insertDummyText() {
+    // Example functional button interaction
+    _controller.text = "How is my portfolio doing?";
+    _focusNode.requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget content;
+    
+    if (_currentState == NavInputState.initial || _currentState == NavInputState.typing) {
+      content = _buildInputState();
+    } else {
+      content = _buildChatState();
+    }
+
+    final mainContent = AnimatedSize(
+      duration: const Duration(milliseconds: 250),
+      curve: _snappyEaseOut,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          switchInCurve: _snappyEaseOut,
+          switchOutCurve: _snappyEaseOut.flipped,
+          child: content,
+        ),
+      ),
+    );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        BorderBeam(
+          duration: 5,
+          borderWidth: 2.0,
+          staticBorderColor: Colors.transparent,
+          borderRadius: BorderRadius.circular(24),
+          child: mainContent,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInputState() {
+    final isTyping = _currentState == NavInputState.typing;
+    return Padding(
+      key: const ValueKey('input_state'),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(widget.icon, size: 14, color: const Color(0xFF475569)),
+              Icon(Icons.auto_awesome, size: 14, color: const Color(0xFF5BA1F7)),
               const SizedBox(width: 6),
-              Text(
-                widget.text,
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF0F172A),
+              const _AnimatedGradientText(text: 'ASTRA', fontSize: 12),
+            ],
+          ),
+          const SizedBox(height: 12),
+          
+          // Main Input
+          TextField(
+            controller: _controller,
+            focusNode: _focusNode,
+            autofocus: true,
+            minLines: 1,
+            maxLines: 5,
+            keyboardType: TextInputType.multiline,
+            textInputAction: TextInputAction.newline,
+            cursorColor: const Color(0xFF1E293B),
+            style: const TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 16,
+              color: Color(0xFF1E293B),
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: const InputDecoration(
+              hintText: 'Type, talk, or share a photo',
+              hintStyle: TextStyle(
+                fontFamily: 'DMSans',
+                color: Color(0xFFCBD5E1),
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+              ),
+              contentPadding: EdgeInsets.zero,
+              border: InputBorder.none,
+              isDense: true,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          // Bottom Row
+          SizedBox(
+            height: 48,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Centered Interaction Pill
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 250),
+                  curve: _snappyEaseOut,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8F0FE), // Google blue-ish pill background
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!isTyping) ...[
+                          GestureDetector(
+                            onTap: () => _focusNode.requestFocus(),
+                            behavior: HitTestBehavior.opaque,
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Icon(Icons.keyboard_alt_outlined, size: 20, color: Color(0xFF444746)),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                        ],
+                        GestureDetector(
+                          onTap: _insertDummyText,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFFD3E3FD), // Deeper blue for active mic
+                            ),
+                            child: const Icon(Icons.mic_none_rounded, size: 20, color: Color(0xFF041E49)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
+                
+                // Send Button on the right
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: AnimatedOpacity(
+                    opacity: isTyping ? 1.0 : 0.5,
+                    duration: const Duration(milliseconds: 200),
+                    child: GestureDetector(
+                      onTap: isTyping ? _handleFirstSubmit : null,
+                      behavior: HitTestBehavior.opaque,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.send_outlined,
+                          color: Color(0xFF1E293B),
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPillIconButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    bool isActive = false,
+    Color activeColor = const Color(0xFFE2E8F0),
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isActive ? activeColor : Colors.transparent,
+        ),
+        child: Icon(
+          icon,
+          size: 18,
+          color: const Color(0xFF0F172A),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChatState() {
+    return Padding(
+      key: const ValueKey('chat_state'),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Top row: Logo
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.auto_awesome, size: 14, color: const Color(0xFF5BA1F7)),
+              const SizedBox(width: 6),
+              const _AnimatedGradientText(text: 'ASTRA', fontSize: 12),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // AI Response Area
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 2.0),
+                child: Icon(Icons.auto_awesome, size: 16, color: Color(0xFF5BA1F7)),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _currentState == NavInputState.generating
+                    ? _buildGeneratingShimmer()
+                    : Text(
+                        _currentState == NavInputState.streaming ? _streamedResponse : _aiResponse,
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 14,
+                          color: Color(0xFF0F172A),
+                          height: 1.4,
+                        ),
+                      ),
               ),
             ],
           ),
-        ),
+          
+          // Second Input Field
+          if (_currentState == NavInputState.replied) ...[
+            const SizedBox(height: 16),
+            TextField(
+              controller: _secondController,
+              focusNode: _secondFocusNode,
+              minLines: 1,
+              maxLines: 4,
+              keyboardType: TextInputType.multiline,
+              textInputAction: TextInputAction.newline,
+              decoration: const InputDecoration(
+                hintText: 'Ask a follow up...',
+                hintStyle: TextStyle(
+                  fontFamily: 'DMSans',
+                  color: Color(0xFFCBD5E1),
+                  fontSize: 14,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 14,
+                color: Color(0xFF0F172A),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Interaction Pill for follow up
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildPillIconButton(
+                        icon: Icons.mic_none_rounded,
+                        onTap: () {
+                          _secondController.text = "Tell me more about this.";
+                          _secondFocusNode.requestFocus();
+                        },
+                        isActive: true,
+                        activeColor: const Color(0xFFE2E8F0),
+                      ),
+                    ],
+                  ),
+                ),
+                // Send Button
+                GestureDetector(
+                  onTap: _handleSecondSubmit,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFF1E293B),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_upward_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGeneratingShimmer() {
+    return FadeTransition(
+      opacity: _shimmerAnimation,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 12,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE2E8F0),
+              borderRadius: BorderRadius.circular(6),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            height: 12,
+            width: 200,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE2E8F0),
+              borderRadius: BorderRadius.circular(6),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -9,6 +9,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final bool isLocked;
   final VoidCallback onLockTap;
   final VoidCallback onCartTap;
+  final VoidCallback onRefreshTap;
 
   HoldingsHeaderDelegate({
     required this.safeAreaTop,
@@ -17,6 +18,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.isLocked,
     required this.onLockTap,
     required this.onCartTap,
+    required this.onRefreshTap,
   });
 
   @override
@@ -175,6 +177,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                     ),
                     child: _OdometerText(
                       targetValue: hasImportedPortfolio ? 343158 : 0,
+                      isLocked: isLocked,
                       style: TextStyle(
                         fontFamily: 'DMSans',
                         color: const Color(0xFF0F172A),
@@ -226,10 +229,10 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                                         ),
                                         SizedBox(width: lerpDouble(4.0 * scale, 0.0, easedRatio)!),
                                         Text(
-                                          '₹2,491 (0.73%)',
+                                          isLocked ? '₹ * * * *' : '₹2,491 (0.73%)',
                                           style: TextStyle(
                                             fontFamily: 'DMSans',
-                                            fontSize: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
+                                            fontSize: lerpDouble(8.0 * scale, 0.0, easedRatio)!,
                                             fontWeight: FontWeight.w600,
                                             color: const Color.fromARGB(255, 5, 134, 91),
                                             letterSpacing: 0.8,
@@ -240,7 +243,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                                           '1D change',
                                           style: TextStyle(
                                             fontFamily: 'DMSans',
-                                            fontSize: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
+                                            fontSize: lerpDouble(8.0 * scale, 0.0, easedRatio)!,
                                             fontWeight: FontWeight.w600,
                                             color: const Color(0xFF9CA3AF),
                                           ),
@@ -253,10 +256,70 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                             ),
                           ),
                     ),
+                  if (shrinkRatio < 1.0)
+                    Opacity(
+                      opacity: (1.0 - (shrinkRatio * 3.0)).clamp(0.0, 1.0),
+                      child: Padding(
+                        padding: EdgeInsets.only(top: lerpDouble(8.0, 0.0, easedRatio)!),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: onRefreshTap,
+                              child: Container(
+                                height: lerpDouble(22.0, 0.0, easedRatio)!,
+                                padding: EdgeInsets.symmetric(horizontal: 6 * scale),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.03),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRect(
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    heightFactor: lerpDouble(1.0, 0.0, easedRatio)!,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.sync_rounded,
+                                          size: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
+                                          color: const Color(0xFF0F172A),
+                                        ),
+                                        SizedBox(width: lerpDouble(4.0 * scale, 0.0, easedRatio)!),
+                                        Text(
+                                          'Just now',
+                                          style: TextStyle(
+                                            fontFamily: 'SpaceGrotesk',
+                                            fontSize: lerpDouble(10.0 * scale, 0.0, easedRatio)!,
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFF0F172A),
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
           ),
+
           // Top Row Buttons (Lock, Cart)
           Positioned(
             top: safeAreaTop + 12.0,
@@ -311,7 +374,8 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant HoldingsHeaderDelegate oldDelegate) {
     return safeAreaTop != oldDelegate.safeAreaTop || 
            screenHeight != oldDelegate.screenHeight ||
-           hasImportedPortfolio != oldDelegate.hasImportedPortfolio;
+           hasImportedPortfolio != oldDelegate.hasImportedPortfolio ||
+           isLocked != oldDelegate.isLocked;
   }
 }
 
@@ -320,8 +384,9 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
 class _OdometerText extends StatefulWidget {
   final int targetValue;
   final TextStyle style;
+  final bool isLocked;
 
-  const _OdometerText({required this.targetValue, required this.style});
+  const _OdometerText({required this.targetValue, required this.style, this.isLocked = false});
 
   @override
   State<_OdometerText> createState() => _OdometerTextState();
@@ -390,6 +455,9 @@ class _OdometerTextState extends State<_OdometerText> with SingleTickerProviderS
       builder: (context, child) {
         String formatted;
         int intVal = _animation.value.round();
+        if (widget.isLocked) {
+          return Text('₹ * * * *', style: widget.style);
+        }
         if (intVal == 0) {
           formatted = '0';
         } else {

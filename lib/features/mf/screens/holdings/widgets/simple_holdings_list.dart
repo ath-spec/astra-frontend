@@ -6,12 +6,14 @@ import '../../../../fund_profile/screens/your_fund_profile_screen.dart';
 class SimpleHoldingsList extends StatelessWidget {
   final List<HoldingItem> displayHoldings;
   final NumberFormat formatCurrency;
+  final bool isLocked;
   final String Function(double) formatLargeNumber;
 
   const SimpleHoldingsList({
     super.key,
     required this.displayHoldings,
     required this.formatCurrency,
+    this.isLocked = false,
     required this.formatLargeNumber,
   });
 
@@ -81,12 +83,12 @@ class SimpleHoldingsList extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              formatCurrency.format(item.current),
+                              isLocked ? '₹ * * * *' : formatCurrency.format(item.current),
                               style: const TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              formatCurrency.format(item.invested),
+                              isLocked ? '₹ * * * *' : formatCurrency.format(item.invested),
                               style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF9CA3AF)),
                             ),
                           ],

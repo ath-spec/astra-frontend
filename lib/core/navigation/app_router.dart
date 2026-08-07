@@ -35,6 +35,10 @@ import '../../features/recurring/presentation/screens/recurring_intro_screen.dar
 import '../../features/recurring/presentation/screens/recurring_control_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
+import '../../features/profile/screens/account_details_screen.dart';
+import '../../features/profile/screens/nominee_list_screen.dart';
+import '../../features/profile/screens/mf_report_screen.dart';
+import '../../features/profile/screens/mf_report_list_screen.dart';
 import '../../features/asset_connection/screens/manage_bank_accounts_screen.dart';
 import '../../features/asset_connection/screens/linked_bank_accounts_screen.dart';
 import '../../features/asset_connection/screens/bank_account_details_screen.dart';
@@ -43,7 +47,7 @@ import 'package:astra_frontend/features/portfolio_analysis/screens/portfolio_ana
 import 'package:astra_frontend/features/portfolio_analysis/screens/insights_screen.dart';
 import '../../features/mf/screens/mf_container_screen.dart';
 import '../../features/stocks/screens/owned_stocks_screen.dart';
-import '../../features/stocks/screens/cart_screen.dart';
+import '../../features/cart/screens/cart_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/corner_fade_reveal_transition.dart';
 
@@ -270,6 +274,25 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const UserProfileScreen(),
       ),
       GoRoute(
+        path: '/account-details',
+        builder: (context, state) => const AccountDetailsScreen(),
+      ),
+      GoRoute(
+        path: '/nominee-list',
+        builder: (context, state) => const NomineeListScreen(),
+      ),
+      GoRoute(
+        path: '/mf-report',
+        builder: (context, state) => const MfReportScreen(),
+      ),
+      GoRoute(
+        path: '/mf-report-list',
+        builder: (context, state) {
+          final title = state.extra as String? ?? 'REPORT';
+          return MfReportListScreen(title: title);
+        },
+      ),
+      GoRoute(
         path: '/analysis-walkthrough',
         builder: (context, state) => const AnalysisWalkScreen(),
       ),
@@ -288,6 +311,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final initialInsight = initialInsightStr != null ? int.tryParse(initialInsightStr) ?? 0 : 0;
           return InsightsScreen(initialInsight: initialInsight);
         },
+      ),
+      GoRoute(
+        path: '/cart',
+        builder: (context, state) => const CartScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

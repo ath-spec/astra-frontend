@@ -6,12 +6,14 @@ import '../../../../fund_profile/screens/your_fund_profile_screen.dart';
 class TableHoldingsList extends StatelessWidget {
   final List<HoldingItem> displayHoldings;
   final NumberFormat formatCurrency;
+  final bool isLocked;
   final String Function(double) formatLargeNumber;
 
   const TableHoldingsList({
     super.key,
     required this.displayHoldings,
     required this.formatCurrency,
+    this.isLocked = false,
     required this.formatLargeNumber,
   });
 
