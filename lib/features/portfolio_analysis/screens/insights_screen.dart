@@ -370,7 +370,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                           // Gradient Title
                           ShaderMask(
                             shaderCallback: (bounds) => const LinearGradient(
-                              colors: [Color(0xFF0F766E), Color(0xFF0D9488)],
+                              colors: [Color(0xFF0F766E), Color.fromARGB(255, 16, 220, 203)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ).createShader(bounds),
@@ -727,15 +727,22 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                                 ),
                               ),
                               SizedBox(height: 8 * s),
-                              Text(
-                                'Use your LTCG limit before\nthe year ends',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF0F766E),
-                                  height: 1.3,
+                              ShaderMask(
+                                shaderCallback: (bounds) => const LinearGradient(
+                                  colors: [Color(0xFF0F766E), Color.fromARGB(255, 16, 220, 203)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ).createShader(bounds),
+                                child: const Text(
+                                  'Use your LTCG limit before\nthe year ends',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                    height: 1.3,
+                                  ),
                                 ),
                               ),
                               SizedBox(height: 12 * s),
