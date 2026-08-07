@@ -90,9 +90,11 @@ class _AnalysisIntroViewState extends State<AnalysisIntroView> {
                 borderRadius: BorderRadius.circular(4),
                 color: Colors.black,
               ),
-              child: Center(
-                child: Text(
-                  'Show My ${widget.title} \u2192',
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(
+                    'Show My ${widget.title}',
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 14,
@@ -101,6 +103,15 @@ class _AnalysisIntroViewState extends State<AnalysisIntroView> {
                     letterSpacing: 0.5,
                   ),
                 ),
+                const Positioned(
+                  right: 20,
+                    child: Icon(
+                      Icons.arrow_forward_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

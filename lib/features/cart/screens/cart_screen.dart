@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class CartScreen extends StatefulWidget {
@@ -23,7 +24,7 @@ class _CartScreenState extends State<CartScreen> {
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.only(left: 24 * scale, top: 16 * scale, right: 24 * scale),
+              padding: EdgeInsets.only(left: 24.w, top: 16.h, right: 24.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -31,21 +32,21 @@ class _CartScreenState extends State<CartScreen> {
                     onTap: () => context.pop(),
                     behavior: HitTestBehavior.opaque,
                     child: Container(
-                      width: 44 * scale,
-                      height: 44 * scale,
+                      width: 44.w,
+                      height: 44,
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         color: const Color(0xFF0F172A),
-                        size: 20 * scale,
+                        size: 20,
                       ),
                     ),
                   ),
-                  SizedBox(height: 24 * scale),
+                  SizedBox(height: 24.h),
                   Text(
                     'Cart',
                     style: TextStyle(
                       fontFamily: 'SpaceGrotesk',
-                      fontSize: 20 * scale,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF0F172A),
                       letterSpacing: -1.0,
@@ -59,14 +60,14 @@ class _CartScreenState extends State<CartScreen> {
             Expanded(
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 40 * scale),
+                  padding: EdgeInsets.symmetric(horizontal: 40),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Image
                       Container(
-                        width: 240 * scale,
-                        height: 240 * scale,
+                        width: 240,
+                        height: 240,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: const Color(0xFFF8FAFC),
@@ -75,18 +76,18 @@ class _CartScreenState extends State<CartScreen> {
                         child: Center(
                           child: Image.asset(
                             'lib/core/images/empty_cart.png',
-                            width: 200 * scale,
-                            height: 200 * scale,
+                            width: 200,
+                            height: 200,
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) => Icon(
                               Icons.shopping_cart_outlined,
-                              size: 80 * scale,
+                              size: 80,
                               color: const Color(0xFFCBD5E1),
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 32 * scale),
+                      SizedBox(height: 32.h),
                       
                       // Texts
                       Text(
@@ -94,25 +95,25 @@ class _CartScreenState extends State<CartScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14 * scale,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF0F172A),
                           letterSpacing: -0.5,
                         ),
                       ),
-                      SizedBox(height: 12 * scale),
+                      SizedBox(height: 12.h),
                       Text(
                         'Funds you add to your cart will show up\nhere, ready to invest.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10 * scale,
+                          fontSize: 10,
                           fontWeight: FontWeight.w400,
                           color: const Color(0xFF64748B),
                           height: 1.5,
                         ),
                       ),
-                      SizedBox(height: 32 * scale),
+                      SizedBox(height: 32.h),
 
                       // Explore Button
                       GestureDetector(
@@ -132,14 +133,14 @@ class _CartScreenState extends State<CartScreen> {
                           curve: const Cubic(0.23, 1, 0.32, 1),
                           transform: Matrix4.identity()..scale(_isExplorePressed ? 0.97 : 1.0),
                           transformAlignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 24 * scale, vertical: 14 * scale),
+                          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Color(0xFF334155), Color(0xFF0F172A)],
                             ),
-                            borderRadius: BorderRadius.circular(32 * scale),
+                            borderRadius: BorderRadius.circular(32.r),
                             boxShadow: [
                               BoxShadow(
                                 color: const Color(0xFF0F172A).withOpacity(0.2),
@@ -155,17 +156,17 @@ class _CartScreenState extends State<CartScreen> {
                                 'EXPLORE ALL FUNDS',
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
-                                  fontSize: 12 * scale,
+                                  fontSize: 12.sp,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
                                   letterSpacing: 1.0,
                                 ),
                               ),
-                              SizedBox(width: 8 * scale),
+                              SizedBox(width: 8.w),
                               Icon(
                                 Icons.chevron_right_rounded,
                                 color: Colors.white,
-                                size: 16 * scale,
+                                size: 16,
                               ),
                             ],
                           ),

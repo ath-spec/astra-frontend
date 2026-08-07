@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import '../../../core/utils/privacy_formatter.dart';
 
@@ -74,11 +75,11 @@ class _StockCardState extends State<StockCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: curve,
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: EdgeInsets.fromLTRB(16 * scale, 16 * scale, 16 * scale, 12 * scale),
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(4.r),
           border: Border.all(color: const Color(0xFFF1F5F9)),
           boxShadow: [
             BoxShadow(
@@ -109,14 +110,14 @@ class _StockCardState extends State<StockCard> {
                       widget.stock.name.substring(0, 1).toUpperCase(),
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF0F172A),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +131,7 @@ class _StockCardState extends State<StockCard> {
                           color: Color(0xFF0F172A),
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       AnimatedCrossFade(
                         duration: const Duration(milliseconds: 300),
                         firstCurve: curve,
@@ -181,7 +182,7 @@ class _StockCardState extends State<StockCard> {
                     PrivacyFormatter.obscure(_currencyFormat.format(widget.stock.currentVal), widget.isLocked),
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                     ),
@@ -196,7 +197,7 @@ class _StockCardState extends State<StockCard> {
               child: showExpanded
                   ? Column(
                       children: [
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -218,7 +219,7 @@ class _StockCardState extends State<StockCard> {
                         ),
                       ],
                     )
-                  : const SizedBox(width: double.infinity, height: 0),
+                  : SizedBox(width: double.infinity, height: 0),
             ),
           ],
         ),
@@ -249,12 +250,12 @@ class _StockCardState extends State<StockCard> {
               color: Color(0xFF64748B),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           Text(
             value,
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 12,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w700,
               color: Color(0xFF0F172A),
             ),

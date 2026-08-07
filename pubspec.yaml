@@ -50,6 +50,7 @@ dependencies:
   timeago: ^3.7.1
   visibility_detector: ^0.4.0+2
   speech_to_text: ^7.4.0
+  flutter_screenutil: ^5.9.3
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class MfCentralCasScreen extends StatefulWidget {
@@ -64,18 +65,18 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w700,
             color: Color(0xFF0F172A),
           ),
           textAlign: TextAlign.left,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           subtitle,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'DMSans',
             fontSize: 10,
             fontWeight: FontWeight.w400,
@@ -83,13 +84,13 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
           ),
           textAlign: TextAlign.left,
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(4.r),
             border: Border.all(color: const Color(0xFFE2E8F0)),
           ),
           child: Row(
@@ -97,14 +98,14 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
             children: [
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF0F172A),
                 ),
               ),
-              const Icon(Icons.unfold_more, size: 16, color: Color(0xFF0F172A)),
+              Icon(Icons.unfold_more, size: 16, color: Color(0xFF0F172A)),
             ],
           ),
         ),
@@ -114,25 +115,18 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final padding = MediaQuery.of(context).padding;
-    final double scale = size.width / 375.0; // Base width is 375
-    final double logicalHeight = (size.height - padding.top - padding.bottom) / scale;
-
-    return Scaffold(
+                    return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: SafeArea(
-        child: Transform.scale(
-          scale: scale,
-          alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: 375,
-            height: logicalHeight,
+        child: Builder(
+          builder: (context) => SizedBox(
+            width: double.infinity,
+            height: double.infinity,
             child: Column(
           children: [
             // App Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -143,13 +137,13 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                       }
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: const Icon(Icons.arrow_back_ios_new, size: 16, color: Color(0xFF0F172A)),
+                      padding: EdgeInsets.all(10),
+                      child: Icon(Icons.arrow_back_ios_new, size: 16, color: Color(0xFF0F172A)),
                     ),
                   ),
                   TextButton(
                     onPressed: _onSkip,
-                    child: const Text(
+                    child: Text(
                       'Skip',
                       style: TextStyle(
                         fontFamily: 'DMSans',
@@ -166,10 +160,10 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(
                   children: [
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     // Logo Section
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -181,14 +175,14 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24.h),
                     
                     // Main Card
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(4.r),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
@@ -204,20 +198,20 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                           Container(
                             width: double.infinity,
                             color: const Color(0xFF533B9E),
-                            padding: const EdgeInsets.all(20),
+                            padding: EdgeInsets.all(20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Text(
                                   'MF Central',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
                                   ),
                                 ),
-                                SizedBox(height: 4),
+                                SizedBox(height: 4.h),
                                 Text(
                                   'Secure CAS Document Processing',
                                   style: TextStyle(
@@ -234,22 +228,22 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                           Container(
                             width: double.infinity,
                             color: const Color(0xFFF3E8FF),
-                            padding: const EdgeInsets.all(20),
+                            padding: EdgeInsets.all(20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Text(
                                   'Generate QR Code for\nCAS Request',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF0F172A),
                                     height: 1.2,
                                     letterSpacing: -0.5,
                                   ),
                                 ),
-                                SizedBox(height: 16),
+                                SizedBox(height: 16.h),
                                 Text(
                                   'We have successfully verified that your PAN and mobile number exists in Mutual Fund Industry. Please configure your CAS preferences below.',
                                   style: TextStyle(
@@ -266,25 +260,25 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                           
                           // Form Area
                           Padding(
-                            padding: const EdgeInsets.all(20),
+                            padding: EdgeInsets.all(20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'What type of data can be shared?',
                                       style: TextStyle(
                                         fontFamily: 'DMSans',
-                                        fontSize: 12,
+                                        fontSize: 12.sp,
                                         fontWeight: FontWeight.w700,
                                         color: Color(0xFF0F172A),
                                       ),
                                       textAlign: TextAlign.left,
                                     ),
-                                    const SizedBox(height: 8),
-                                    const Text(
+                                    SizedBox(height: 8.h),
+                                    Text(
                                       'Choose the investment categories to include\n(select one)',
                                       style: TextStyle(
                                         fontFamily: 'DMSans',
@@ -294,24 +288,24 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                                       ),
                                       textAlign: TextAlign.left,
                                     ),
-                                    const SizedBox(height: 16),
+                                    SizedBox(height: 16.h),
                                     Container(
                                       width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(4),
+                                        borderRadius: BorderRadius.circular(4.r),
                                         border: Border.all(color: const Color(0xFFE2E8F0)),
                                       ),
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton<String>(
                                           value: _typeData,
-                                          icon: const Icon(Icons.unfold_more, size: 16, color: Color(0xFF0F172A)),
+                                          icon: Icon(Icons.unfold_more, size: 16, color: Color(0xFF0F172A)),
                                           isExpanded: true,
                                           isDense: true,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontFamily: 'DMSans',
-                                            fontSize: 12,
+                                            fontSize: 12.sp,
                                             fontWeight: FontWeight.w500,
                                             color: Color(0xFF0F172A),
                                           ),
@@ -334,22 +328,22 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 32),
+                                SizedBox(height: 32.h),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'What extent of data can be shared?',
                                       style: TextStyle(
                                         fontFamily: 'DMSans',
-                                        fontSize: 12,
+                                        fontSize: 12.sp,
                                         fontWeight: FontWeight.w700,
                                         color: Color(0xFF0F172A),
                                       ),
                                       textAlign: TextAlign.left,
                                     ),
-                                    const SizedBox(height: 8),
-                                    const Text(
+                                    SizedBox(height: 8.h),
+                                    Text(
                                       'Select the types of information you want to include',
                                       style: TextStyle(
                                         fontFamily: 'DMSans',
@@ -359,24 +353,24 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                                       ),
                                       textAlign: TextAlign.left,
                                     ),
-                                    const SizedBox(height: 16),
+                                    SizedBox(height: 16.h),
                                     Container(
                                       width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(4),
+                                        borderRadius: BorderRadius.circular(4.r),
                                         border: Border.all(color: const Color(0xFFE2E8F0)),
                                       ),
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton<String>(
                                           value: _extentData,
-                                          icon: const Icon(Icons.unfold_more, size: 16, color: Color(0xFF0F172A)),
+                                          icon: Icon(Icons.unfold_more, size: 16, color: Color(0xFF0F172A)),
                                           isExpanded: true,
                                           isDense: true,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontFamily: 'DMSans',
-                                            fontSize: 12,
+                                            fontSize: 12.sp,
                                             fontWeight: FontWeight.w500,
                                             color: Color(0xFF0F172A),
                                           ),
@@ -399,18 +393,18 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 32),
-                                const Text(
+                                SizedBox(height: 32.h),
+                                Text(
                                   'Select the AMCs you want to include',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF0F172A),
                                   ),
                                   textAlign: TextAlign.left,
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: 16.h),
                                 // Checkboxes
                                 Theme(
                                   data: ThemeData(
@@ -433,7 +427,7 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                                               ),
                                             ),
                                           ),
-                                          const Text(
+                                          Text(
                                             'Select All AMCs',
                                             style: TextStyle(
                                               fontFamily: 'DMSans',
@@ -444,7 +438,7 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 8),
+                                      SizedBox(height: 8.h),
                                       GridView.builder(
                                         shrinkWrap: true,
                                         physics: const NeverScrollableScrollPhysics(),
@@ -476,7 +470,7 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                                               Expanded(
                                                 child: Text(
                                                   _amcs[index],
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontFamily: 'DMSans',
                                                     fontSize: 10,
                                                     fontWeight: FontWeight.w500,
@@ -491,7 +485,7 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 32),
+                                SizedBox(height: 32.h),
                                 // Generate CTA
                                 Center(
                                   child: ElevatedButton(
@@ -501,28 +495,28 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                                       foregroundColor: Colors.white,
                                       minimumSize: const Size(180, 44),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
+                                        borderRadius: BorderRadius.circular(4.r),
                                       ),
                                       elevation: 0,
                                     ),
-                                    child: const Text(
+                                    child: Text(
                                       'Generate QR Code',
                                       style: TextStyle(
                                         fontFamily: 'DMSans',
-                                        fontSize: 12,
+                                        fontSize: 12.sp,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: 8.h),
                               ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.h),
                   ],
                 ),
               ),
@@ -531,10 +525,10 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
             // Bottom Fixed Section
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 24),
+              padding: EdgeInsets.symmetric(vertical: 24.h),
               color: Colors.white,
               child: Column(
-                children: const [
+                children: [
                   Text(
                     'STEP 2 OF 2',
                     style: TextStyle(
@@ -545,12 +539,12 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                       color: Color(0xFF22C55E),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     "Tap 'Generate QR code'",
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                     ),

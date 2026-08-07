@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
@@ -51,12 +52,7 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final padding = MediaQuery.of(context).padding;
-    final double scale = size.width / 375.0; // Base width is 375
-    final double logicalHeight = (size.height - padding.top - padding.bottom) / scale;
-
-    return Scaffold(
+                    return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
       body: GestureDetector(
         onHorizontalDragEnd: (details) {
@@ -65,33 +61,31 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
           }
         },
         child: SafeArea(
-          child: Transform.scale(
-            scale: scale,
-            alignment: Alignment.topLeft,
-            child: SizedBox(
-              width: 375,
-              height: logicalHeight,
+          child: Builder(
+            builder: (context) => SizedBox(
+              width: double.infinity,
+              height: double.infinity,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
                 child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
-              const SizedBox(height: 32),
+              SizedBox(height: 32.h),
               
               // Title
-              const Text(
+              Text(
                 'Fetching your funds...',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
                   letterSpacing: -0.5,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               
               // Skeleton Loader
               AnimatedBuilder(
@@ -100,10 +94,10 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                   return Opacity(
                     opacity: 0.5 + (_pulseController.value * 0.5),
                     child: Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16.w),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(4.r),
                         border: Border.all(
                           color: const Color(0xFFE2E8F0),
                           style: BorderStyle.solid,
@@ -119,14 +113,14 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                       child: Row(
                         children: [
                           Container(
-                            width: 32,
+                            width: 32.w,
                             height: 32,
                             decoration: const BoxDecoration(
                               color: Color(0xFFF1F5F9),
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          SizedBox(width: 16.w),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,16 +130,16 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                                   height: 12,
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFF1F5F9),
-                                    borderRadius: BorderRadius.circular(4),
+                                    borderRadius: BorderRadius.circular(4.r),
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: 8.h),
                                 Container(
                                   width: 180,
                                   height: 12,
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFF1F5F9),
-                                    borderRadius: BorderRadius.circular(4),
+                                    borderRadius: BorderRadius.circular(4.r),
                                   ),
                                 ),
                               ],
@@ -156,7 +150,7 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                             height: 12,
                             decoration: BoxDecoration(
                               color: const Color(0xFFF1F5F9),
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(4.r),
                             ),
                           ),
                         ],
@@ -165,20 +159,20 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                   );
                 },
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32.h),
               
               // Warning text
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const _AnimatedHourglass(),
-                  const SizedBox(width: 12),
-                  const Expanded(
+                  SizedBox(width: 12.w),
+                  Expanded(
                     child: Text(
                       'This process can take upto 10 mins. Proceed to connecting Stocks.',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
                         color: Color(0xFF64748B),
                         height: 1.4,
@@ -187,36 +181,36 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32.h),
               
               // Proceed Button
               GestureDetector(
                 onTap: _onProceed,
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(4.r),
                     color: const Color(0xFF0F172A),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Proceed',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32.h),
               
               // Footer
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text(
                     'powered by MFC',
                     style: TextStyle(
@@ -226,13 +220,13 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                       color: Color(0xFF64748B),
                     ),
                   ),
-                  SizedBox(width: 4),
+                  SizedBox(width: 4.w),
                   Icon(Icons.touch_app, size: 16, color: Color(0xFF0F172A)),
                   Text(
                     'mf central',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                       letterSpacing: -0.5,
@@ -287,7 +281,7 @@ class _AnimatedHourglassState extends State<_AnimatedHourglass> with SingleTicke
           final curve = Curves.easeInOutCubic.transform(progress);
           return Transform.rotate(
             angle: curve * 3.141592653589793, // 180 degrees
-            child: const Icon(Icons.hourglass_bottom, color: Color(0xFFF97316), size: 18),
+            child: Icon(Icons.hourglass_bottom, color: Color(0xFFF97316), size: 18),
           );
         } else {
           // Phase 2: Sand falling (crossfade from top-heavy to bottom-heavy)
@@ -297,11 +291,11 @@ class _AnimatedHourglassState extends State<_AnimatedHourglass> with SingleTicke
             children: [
               Opacity(
                 opacity: 1.0 - progress,
-                child: const Icon(Icons.hourglass_top, color: Color(0xFFF97316), size: 18),
+                child: Icon(Icons.hourglass_top, color: Color(0xFFF97316), size: 18),
               ),
               Opacity(
                 opacity: progress,
-                child: const Icon(Icons.hourglass_bottom, color: Color(0xFFF97316), size: 18),
+                child: Icon(Icons.hourglass_bottom, color: Color(0xFFF97316), size: 18),
               ),
             ],
           );

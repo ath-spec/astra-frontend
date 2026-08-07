@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/error/global_error_handler.dart';
 import 'core/navigation/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,27 +48,18 @@ class AstraApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
 
-    return MaterialApp.router(
-      title: 'Astra',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      routerConfig: router,
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
       builder: (context, child) {
-        // Calculate a responsive scale factor based on screen width
-        final width = MediaQuery.sizeOf(context).width;
-        // Cap the width at 420 since the UI has a ConstrainedBox
-        final effectiveWidth = width > 420 ? 420.0 : width;
-        // Base width is 390 (standard iPhone). Allow scaling down to 80% and up to 110%.
-        final scale = (effectiveWidth / 390.0).clamp(0.8, 1.1);
-
-        // Apply this scale factor globally to all text in the app
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(scale),
-          ),
-          child: child!,
+        return MaterialApp.router(
+          title: 'Astra',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+          routerConfig: router,
         );
       },
     );

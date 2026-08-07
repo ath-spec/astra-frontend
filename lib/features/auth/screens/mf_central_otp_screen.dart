@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
@@ -50,16 +51,16 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
 
   Widget _buildSecurityListItem({required IconData icon, required Color iconColor, required String text}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: 16.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, size: 18, color: iconColor),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
@@ -75,29 +76,22 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final padding = MediaQuery.of(context).padding;
-    final double scale = size.width / 375.0; // Base width is 375
-    final double logicalHeight = (size.height - padding.top - padding.bottom) / scale;
-
-    return Scaffold(
+                    return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9), // Light grey background
       resizeToAvoidBottomInset: false, // Prevents choppy layout rebuilds
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => FocusScope.of(context).unfocus(),
         child: SafeArea(
-          child: Transform.scale(
-          scale: scale,
-          alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: 375,
-            height: logicalHeight,
+          child: Builder(
+          builder: (context) => SizedBox(
+            width: double.infinity,
+            height: double.infinity,
             child: Column(
           children: [
             // App Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -108,13 +102,13 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                       }
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: const Icon(Icons.arrow_back_ios_new, size: 16, color: Color(0xFF0F172A)),
+                      padding: EdgeInsets.all(10),
+                      child: Icon(Icons.arrow_back_ios_new, size: 16, color: Color(0xFF0F172A)),
                     ),
                   ),
                   TextButton(
                     onPressed: _onSkip,
-                    child: const Text(
+                    child: Text(
                       'Skip',
                       style: TextStyle(
                         fontFamily: 'DMSans',
@@ -132,13 +126,13 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: (MediaQuery.viewInsetsOf(context).bottom / scale) + 24,
+                  left: 16.w,
+                  right: 16.w,
+                  bottom: (MediaQuery.viewInsetsOf(context).bottom) + 24,
                 ),
                 child: Column(
                   children: [
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     // Logo Section
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -150,28 +144,28 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.h),
                     
                     // Info Card
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16.w),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(4.r),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.info_outline, color: Color(0xFF3B82F6), size: 20),
-                          const SizedBox(width: 12),
-                          const Expanded(
+                          Icon(Icons.info_outline, color: Color(0xFF3B82F6), size: 20),
+                          SizedBox(width: 12.w),
+                          Expanded(
                             child: Text(
                               'Data being fetched for:\nPersonal Finance Management',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF3B82F6),
                                 height: 1.4,
@@ -181,41 +175,41 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     
                     // OTP Card
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(24.w),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(4.r),
                       ),
                       child: Column(
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Icon(Icons.security, color: Color(0xFF9333EA), size: 18),
-                              SizedBox(width: 8),
+                              SizedBox(width: 8.w),
                               Text(
                                 'Enter your 6-digit OTP',
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
                                   color: Color(0xFF0F172A),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                           // OTP Input Fields
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(6, (index) {
                               return SizedBox(
-                                width: 42,
+                                width: 42.w,
                                 height: 46,
                                 child: TextField(
                                   controller: _otpControllers[index],
@@ -238,9 +232,9 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                                     }
                                   },
                                   onChanged: (value) => _onOtpChanged(value, index),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFF0F172A),
                                   ),
@@ -248,19 +242,19 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                                     counterText: "",
                                     contentPadding: EdgeInsets.zero,
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                                      borderRadius: BorderRadius.circular(4.r),
+                                      borderSide: BorderSide(color: Color(0xFFE2E8F0)),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                      borderSide: const BorderSide(color: Color(0xFFA855F7), width: 2),
+                                      borderRadius: BorderRadius.circular(4.r),
+                                      borderSide: BorderSide(color: Color(0xFFA855F7), width: 2.w),
                                     ),
                                   ),
                                 ),
                               );
                             }),
                           ),
-                          const SizedBox(height: 32),
+                          SizedBox(height: 32.h),
                           // Authenticate Button
                           ElevatedButton(
                             onPressed: _onAuthenticate,
@@ -269,15 +263,15 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                               foregroundColor: Colors.white,
                               minimumSize: const Size(double.infinity, 52),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: BorderRadius.circular(4.r),
                               ),
                               elevation: 0,
                             ),
-                            child: const Text(
+                            child: Text(
                               'Authenticate with OTP',
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -285,30 +279,30 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     
                     // Security Card
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(24.w),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(4.r),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Icon(Icons.verified_user, color: Color(0xFF1D4ED8), size: 24),
-                              SizedBox(width: 12),
+                              SizedBox(width: 12.w),
                               Expanded(
                                 child: Text(
                                   'Secure Authentication for Portfolio Access',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF1D4ED8),
                                     height: 1.3,
@@ -317,7 +311,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                           _buildSecurityListItem(
                             icon: Icons.info,
                             iconColor: const Color(0xFFEF4444),
@@ -346,7 +340,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.h),
                   ],
                 ),
               ),
@@ -355,10 +349,10 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
             // Bottom Fixed Section
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 24),
+              padding: EdgeInsets.symmetric(vertical: 24.h),
               color: Colors.white,
               child: Column(
-                children: const [
+                children: [
                   Text(
                     'STEP 1 OF 2',
                     style: TextStyle(
@@ -369,12 +363,12 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                       color: Color(0xFF22C55E),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     'Enter OTP',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                     ),

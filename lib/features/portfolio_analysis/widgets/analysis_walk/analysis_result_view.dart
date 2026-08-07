@@ -108,9 +108,9 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
 
   String get _buttonText {
     if (widget.type == ResultType.performance) {
-      return 'Explore Analysis \u2192';
+      return 'Explore Analysis';
     }
-    return 'Next \u2192';
+    return 'Next';
   }
 
   @override
@@ -257,9 +257,11 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
                 borderRadius: BorderRadius.circular(4),
                 color: Colors.black,
               ),
-              child: Center(
-                child: Text(
-                  _buttonText,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(
+                    _buttonText,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 14,
@@ -268,6 +270,15 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
                     letterSpacing: 0.5,
                   ),
                 ),
+                const Positioned(
+                  right: 20,
+                    child: Icon(
+                      Icons.arrow_forward_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
