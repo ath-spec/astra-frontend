@@ -88,7 +88,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                       'What does Discipline mean?',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF0F172A),
                       ),
@@ -151,53 +151,63 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
 
   Widget _buildTargetIcon() {
     return Center(
-      child: Container(
-        width: 160,
-        height: 160,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [
-              Colors.black.withOpacity(0.04),
-              Colors.black.withOpacity(0.01),
-              Colors.transparent,
-            ],
-            stops: const [0.2, 0.6, 1.0],
+      child: SizedBox(
+        height: 120,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Faint outer circle
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.transparent,
+              border: Border.all(
+                color: const Color(0xFFF1F5F9),
+                width: 2,
+              ),
+            ),
           ),
-        ),
-        child: Center(
-          child: Container(
-            width: 72,
-            height: 72,
+          // Inner circle
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.transparent,
+              border: Border.all(
+                color: const Color(0xFFF1F5F9),
+                width: 2,
+              ),
+            ),
+          ),
+          // Core Icon with shadow
+          Container(
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 16,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 4),
-                ),
-                BoxShadow(
-                  color: Colors.white,
-                  blurRadius: 4,
-                  spreadRadius: 2,
-                  offset: const Offset(0, -2),
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: const Center(
               child: Icon(
                 Icons.track_changes_outlined,
-                size: 32,
-                color: Color(0xFF334155),
+                size: 24,
+                color: Color(0xFF0F172A),
               ),
             ),
           ),
-        ),
+        ],
       ),
-    );
+    ));
   }
 
   Widget _buildSection(String title, String subtitle, String body) {
@@ -208,7 +218,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
           title,
           style: const TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 13,
+            fontSize: 14,
             fontWeight: FontWeight.w700,
             color: Color(0xFF0F172A),
           ),
@@ -372,31 +382,37 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                       alignment: Alignment.centerLeft,
                       child: Transform.translate(
                         offset: Offset(
-                          leftOffset + (segmentWidth / 2) - 36,
+                          leftOffset,
                           10 * (1 - labelAnim),
                         ),
-                        child: Opacity(
-                          opacity: labelOpacity,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: const Color(0xFF14B8A6),
-                              ),
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                            child: const Text(
-                              'CURRENT',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1.0,
-                                color: Color(0xFF14B8A6),
+                        child: SizedBox(
+                          width: segmentWidth,
+                          child: Center(
+                            child: Opacity(
+                              opacity: labelOpacity,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: const Color(0xFF14B8A6),
+                                  ),
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                                child: const Text(
+                                  'CURRENT',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.5,
+                                    color: Color(0xFF14B8A6),
+                                  ),
+                                ),
                               ),
                             ),
                           ),

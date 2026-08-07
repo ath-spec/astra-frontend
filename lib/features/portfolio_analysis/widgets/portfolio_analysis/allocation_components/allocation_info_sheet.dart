@@ -87,41 +87,62 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Graphic
+                  // Circular Graphic
                   SizedBox(
-                    height: 180,
-                    width: double.infinity,
-                    child: CustomPaint(
-                      painter: _ConcentricCirclesPainter(),
-                      child: Center(
-                        child: Container(
-                          width: 64,
-                          height: 64,
+                    height: 120,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Faint outer circle
+                        Container(
+                          width: 120,
+                          height: 120,
                           decoration: BoxDecoration(
-                            color: Colors.white,
                             shape: BoxShape.circle,
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: const Color(0xFFF1F5F9),
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        // Inner circle
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: const Color(0xFFF1F5F9),
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        // Core Icon with shadow
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.05),
-                                blurRadius: 20,
-                                spreadRadius: 5,
-                              ),
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
                                 blurRadius: 10,
-                                offset: const Offset(0, 4),
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
                           child: const Center(
                             child: Icon(
                               Icons.view_in_ar_outlined,
-                              size: 32,
+                              size: 24,
                               color: Color(0xFF0F172A),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                   
@@ -395,20 +416,21 @@ class _AllocationInfoSheetState extends State<AllocationInfoSheet> with SingleTi
                     opacity: _animation.value,
                     child: Center(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(color: activeColor),
-                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFF14B8A6)),
+                          borderRadius: BorderRadius.circular(2),
                         ),
-                        child: Text(
+                        child: const Text(
                           'CURRENT',
+                          maxLines: 1,
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.0,
-                            color: activeColor,
+                            fontSize: 8,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                            color: Color(0xFF14B8A6),
                           ),
                         ),
                       ),
@@ -450,23 +472,3 @@ class _DashedLinePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class _ConcentricCirclesPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height);
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..color = const Color(0xFFF1F5F9)
-      ..strokeWidth = 60; // Thick soft bands
-      
-    // Draw semi-circles from bottom center
-    for (int i = 1; i <= 3; i++) {
-      canvas.drawCircle(center, 60.0 * i, paint);
-      // Fade color for outer rings
-      paint.color = paint.color.withOpacity(0.5 / i);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}

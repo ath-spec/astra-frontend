@@ -66,7 +66,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
                       title,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12.sp,
+                        fontSize: 14,
                         fontWeight: fontWeight,
                         color: color,
                       ),
@@ -103,7 +103,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
                     'ANALYSIS',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 2.0,
                       color: Color(0xFF64748B),
@@ -214,7 +214,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
                   title,
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14.sp,
+                    fontSize: 18,
                     fontWeight: fontWeight,
                     color: color,
                   ),
@@ -250,7 +250,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
                       'ANALYSIS',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12.sp,
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 2.0,
                         color: Color(0xFF64748B),

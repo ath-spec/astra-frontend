@@ -139,13 +139,6 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
                           child: const Center(
                             child: Icon(
@@ -166,7 +159,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                     'What is Performance?',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14,
+                      fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
@@ -180,7 +173,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10,
+                        fontSize: 12,
                         height: 1.6,
                         color: Color(0xFF64748B),
                       ),
@@ -207,7 +200,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                           'Factors that contribute to performance',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 14,
+                            fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF0F172A),
                           ),
@@ -222,7 +215,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                           text: const TextSpan(
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 10,
+                              fontSize: 12,
                               height: 1.5,
                               color: Color(0xFF64748B),
                             ),
@@ -270,7 +263,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                   title,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
@@ -280,7 +273,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                   description,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 10,
+                    fontSize: 12,
                     height: 1.5,
                     color: Color(0xFF64748B),
                   ),
@@ -400,7 +393,7 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                       if (index != 0)
                         Positioned(
                           left: 0,
-                          top: -6,
+                          top: -28,
                           bottom: -32,
                           child: CustomPaint(
                             size: const Size(1, 48),
@@ -419,24 +412,25 @@ class _PerformanceInfoSheetState extends State<PerformanceInfoSheet>
                                 opacity: pillOpacityAnimation.value,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
+                                    horizontal: 4,
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: const Color(0xFF38A169),
+                                      color: const Color(0xFF14B8A6),
                                     ),
-                                    borderRadius: BorderRadius.circular(4),
+                                    borderRadius: BorderRadius.circular(2),
                                   ),
                                   child: const Text(
                                     'CURRENT',
+                                    maxLines: 1,
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1.0,
-                                      color: Color(0xFF38A169),
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.5,
+                                      color: Color(0xFF14B8A6),
                                     ),
                                   ),
                                 ),
