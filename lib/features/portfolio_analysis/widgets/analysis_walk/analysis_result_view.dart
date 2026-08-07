@@ -331,25 +331,13 @@ class _LargeGaugePainter extends CustomPainter {
       final start = math.pi + (i * segmentSweep);
       if (currentAngle > i * segmentSweep) {
         final sweep = math.min(segmentSweep, currentAngle - (i * segmentSweep));
-        // Only use round caps for the very start of the first segment and the very end of the current progress
-        // to prevent overlapping round caps from creating a "double line" or seam inside the gauge.
         final paint = Paint()
           ..color = activeColors[i]
           ..style = PaintingStyle.stroke
           ..strokeWidth = strokeW
-          ..strokeCap = StrokeCap.butt;
+          ..strokeCap = StrokeCap.round; // All caps are round!
           
         canvas.drawArc(rect, start, sweep, false, paint);
-        
-        // Add round cap at the start of the first segment
-        if (i == 0) {
-          canvas.drawArc(rect, start, 0.01, false, Paint()..color = activeColors[0]..style = PaintingStyle.stroke..strokeWidth = strokeW..strokeCap = StrokeCap.round);
-        }
-        
-        // Add round cap at the leading edge of the progress
-        if (sweep == currentAngle - (i * segmentSweep)) {
-           canvas.drawArc(rect, start + sweep - 0.01, 0.01, false, Paint()..color = activeColors[i]..style = PaintingStyle.stroke..strokeWidth = strokeW..strokeCap = StrokeCap.round);
-        }
       }
     }
   }
