@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../../core/widgets/animated_gradient_text.dart';
+import '../../../../../core/widgets/typewriter_text.dart';
 
 class AllocationSuggestionsSection extends StatelessWidget {
   const AllocationSuggestionsSection({super.key});
@@ -32,25 +34,32 @@ class AllocationSuggestionsSection extends StatelessWidget {
           const SizedBox(height: 32),
           
           Row(
-            children: const [
-              Icon(
-                Icons.auto_awesome_rounded,
-                size: 14,
-                color: Color(0xFF94A3B8),
-              ),
-              SizedBox(width: 4),
-              Text(
-                'INSIGHTS BY PORTFOLIO AGENT',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2.0,
-                  color: Color(0xFF94A3B8),
+            children: [
+              AnimatedGradientShimmer(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'INSIGHTS BY PORTFOLIO AGENT',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 2.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(width: 8),
-              Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+              const SizedBox(width: 8),
+              const Expanded(child: Divider(color: Color(0xFFE2E8F0))),
             ],
           ),
           const SizedBox(height: 24),

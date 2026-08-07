@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../core/widgets/typewriter_text.dart';
 import 'dart:math' as math;
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../../models/portfolio_analysis_models.dart';
@@ -177,42 +179,40 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
           ),
         ),
         const SizedBox(height: 32),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.0),
-          child: Text.rich(
-            TextSpan(
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 10,
-                height: 1.5,
-                color: Color(0xFF94A3B8),
-              ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: ShaderMask(
+            blendMode: BlendMode.srcIn,
+            shaderCallback: (bounds) => LinearGradient(
+              colors: widget.level.gradientColors,
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ).createShader(bounds),
+            child: const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const WidgetSpan(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 4.0),
-                    child: Icon(
-                      Icons.auto_awesome_rounded,
-                      size: 12,
-                      color: Color(0xFF94A3B8),
+                Padding(
+                  padding: EdgeInsets.only(top: 2.0, right: 6.0),
+                  child: Icon(
+                    Icons.auto_awesome_rounded,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                ),
+                Expanded(
+                  child: TypewriterText(
+                    text: 'Your portfolio is earning well above what most Very Aggressive investors see. Your investment decisions are clearly paying off.',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      height: 1.5,
+                      color: Colors.white,
                     ),
                   ),
-                  alignment: PlaceholderAlignment.middle,
-                ),
-                const TextSpan(text: 'Your portfolio is earning '),
-                const TextSpan(
-                  text: 'well above what most Very Aggressive investors see. ',
-                  style: TextStyle(
-                    color: Color(0xFF0F172A),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const TextSpan(
-                  text: 'Your investment decisions are clearly paying off.',
                 ),
               ],
             ),
-            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 40),

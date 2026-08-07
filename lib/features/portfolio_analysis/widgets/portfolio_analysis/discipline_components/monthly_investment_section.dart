@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'generic_info_sheet.dart';
+import 'package:fl_chart/fl_chart.dart';
+import '../../../../../core/widgets/animated_gradient_text.dart';
+import '../../../../../core/widgets/typewriter_text.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'dart:async';
@@ -194,20 +197,27 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
           // Pro Tip Section
           Row(
             children: [
-              const Icon(
-                Icons.auto_awesome_rounded,
-                size: 14,
-                color: Color(0xFF94A3B8),
-              ),
-              const SizedBox(width: 4),
-              const Text(
-                'PRO TIP BY BEHAVIOUR AGENT',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2.0,
-                  color: Color(0xFF94A3B8),
+              AnimatedGradientShimmer(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'PRO TIP BY BEHAVIOUR AGENT',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 2.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 12),
@@ -222,33 +232,19 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
           const SizedBox(height: 12),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            child: RichText(
-              text: const TextSpan(
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  height: 1.5,
-                  color: Color(0xFF64748B),
-                ),
-                children: [
-                  TextSpan(
-                    text: 'Gaps in investing flow ',
-                    style: TextStyle(
-                      color: Color(0xFF0F172A),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  TextSpan(
-                    text:
-                        'your investing rhythm has some breaks. keeping it steady will grow your money faster.',
-                  ),
-                ],
+            child: const TypewriterText(
+              text: 'Gaps in investing flow your investing rhythm has some breaks. keeping it steady will grow your money faster.',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 10,
+                height: 1.5,
+                color: Color(0xFF64748B),
               ),
             ),
           ),

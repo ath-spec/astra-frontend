@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../../../../core/widgets/animated_gradient_text.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../../../portfolio_analysis/widgets/portfolio_analysis/allocation_components/spider_chart_info_sheet.dart';
 import '../../../../../core/responsive/size_config.dart';
@@ -81,25 +82,37 @@ class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProvid
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Icon(
-                Icons.auto_awesome_rounded,
-                size: 14,
-                color: Color(0xFF94A3B8),
-              ),
-              SizedBox(width: 4),
-              Text(
-                'INSIGHTS BY DISCOVER AGENT',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2.0,
-                  color: Color(0xFF94A3B8),
+            children: [
+              AnimatedGradientShimmer(
+                colors: const [
+                  Color(0xFF031E6B),
+                  Color(0xFF5BA1F7),
+                  Color(0xFF031E6B),
+                ],
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 14,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'INSIGHTS BY DISCOVER AGENT',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 2.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(width: 8),
-              Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+              const SizedBox(width: 8),
+              const Expanded(child: Divider(color: Color(0xFFE2E8F0))),
             ],
           ),
           const SizedBox(height: 16),

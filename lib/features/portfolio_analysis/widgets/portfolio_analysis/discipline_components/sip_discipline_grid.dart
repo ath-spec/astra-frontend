@@ -119,69 +119,6 @@ class SipDisciplineGrid extends StatelessWidget {
           const SizedBox(height: 40),
           // 2x6 Grid
           _buildMonthGrid(context),
-          const SizedBox(height: 32),
-          // Bottom Banner
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF7ED), // Light orange
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: const Color(0xFFFBD38D)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFF0F172A)),
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.bolt, size: 12, color: Color(0xFFD69E2E)),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Text(
-                    'Some SIPs placed through other apps may not be\nvisible here.',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F172A),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) => const GenericInfoSheet(
-                        title: 'Missing SIPs?',
-                        paragraphs: [
-                          'SIPs placed through other platforms, offline channels, or directly with the AMC may not appear here.',
-                          'To get a complete view of your SIP discipline, ensure all your investment accounts and folios are connected and updated.',
-                        ],
-                      ),
-                    );
-                  },
-                  behavior: HitTestBehavior.opaque,
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.info_outline,
-                      size: 14,
-                      color: Color(0xFF64748B),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
           const SizedBox(height: 48),
         ],
       ),

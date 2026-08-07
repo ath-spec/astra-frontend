@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/physics.dart';
+import '../../../../../core/widgets/typewriter_text.dart';
 import 'dart:math' as math;
 import '../../../models/portfolio_analysis_models.dart';
 import 'allocation_info_sheet.dart';
@@ -171,37 +173,40 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
           ),
         ),
         const SizedBox(height: 32),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.0),
-          child: Text.rich(
-            TextSpan(
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 10,
-                height: 1.5,
-                color: Color(0xFF64748B),
-              ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: ShaderMask(
+            blendMode: BlendMode.srcIn,
+            shaderCallback: (bounds) => LinearGradient(
+              colors: widget.level.gradientColors,
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ).createShader(bounds),
+            child: const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const WidgetSpan(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 4.0),
-                    child: Icon(
-                      Icons.auto_awesome_rounded,
-                      size: 12,
-                      color: Color(0xFF64748B),
+                Padding(
+                  padding: EdgeInsets.only(top: 2.0, right: 6.0),
+                  child: Icon(
+                    Icons.auto_awesome_rounded,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                ),
+                Expanded(
+                  child: TypewriterText(
+                    text: 'You have almost no stable, low-risk assets in your portfolio. You\'re fully riding market momentum, with all your wealth geared towards growth.',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      height: 1.5,
+                      color: Colors.white,
                     ),
                   ),
-                  alignment: PlaceholderAlignment.middle,
-                ),
-                const TextSpan(text: 'You have almost no stable, low-risk assets in your portfolio. ',
-                 style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),),
-                const TextSpan(
-                  text: 'You\'re fully riding market momentum, with all your wealth geared towards growth.',
-                  style: TextStyle(color: Color(0xFF94A3B8)),
                 ),
               ],
             ),
-            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 40),

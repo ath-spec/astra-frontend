@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/widgets/animated_gradient_text.dart';
+import '../../../../../core/widgets/typewriter_text.dart';
 import 'package:flutter/physics.dart';
 import 'dart:math' as math;
 import 'package:visibility_detector/visibility_detector.dart';
@@ -196,25 +198,32 @@ class _MutualFundPerformanceSectionState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
-                  Icon(
-                    Icons.auto_awesome_rounded,
-                    size: 14,
-                    color: Color(0xFF94A3B8),
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    'INSIGHTS BY ANALYTICS AGENT',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                      color: Color(0xFF94A3B8),
+                children: [
+                  AnimatedGradientShimmer(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(
+                          Icons.auto_awesome_rounded,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'INSIGHTS BY ANALYTICS AGENT',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(width: 8),
-                  Expanded(
+                  const SizedBox(width: 8),
+                  const Expanded(
                     child: Divider(
                       color: Color(0xFFE2E8F0),
                       thickness: 1,
@@ -226,33 +235,19 @@ class _MutualFundPerformanceSectionState
               const SizedBox(height: 12),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF8FAFC),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: const Color(0xFFE2E8F0)),
                 ),
-                child: RichText(
-                  text: const TextSpan(
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 10,
-                      height: 1.5,
-                      color: Color(0xFF64748B),
-                    ),
-                    children: [
-                      TextSpan(
-                        text: 'Winning streak ',
-                        style: TextStyle(
-                          color: Color(0xFF0F172A),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      TextSpan(
-                        text:
-                            'most of your funds are ahead of the benchmark. momentum is strong.',
-                      ),
-                    ],
+                child: TypewriterText(
+                  text: 'Winning streak most of your funds are ahead of the benchmark. momentum is strong.',
+                  style: const TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 10,
+                    height: 1.5,
+                    color: Color(0xFF64748B),
                   ),
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../models/portfolio_analysis_models.dart';
 import 'discipline_info_sheet.dart';
+import '../../../../../core/widgets/typewriter_text.dart';
 
 class DisciplineGaugeSection extends StatefulWidget {
   final DisciplineLevel level;
@@ -167,42 +168,40 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
           ),
         ),
         const SizedBox(height: 32),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.0),
-          child: Text.rich(
-            TextSpan(
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 10,
-                height: 1.5,
-                color: Color(0xFF64748B),
-              ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: ShaderMask(
+            blendMode: BlendMode.srcIn,
+            shaderCallback: (bounds) => LinearGradient(
+              colors: widget.level.gradientColors,
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ).createShader(bounds),
+            child: const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const WidgetSpan(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 4.0),
-                    child: Icon(
-                      Icons.auto_awesome_rounded,
-                      size: 12,
-                      color: Color(0xFF64748B),
-                    ),
+                Padding(
+                  padding: EdgeInsets.only(top: 2.0, right: 6.0),
+                  child: Icon(
+                    Icons.auto_awesome_rounded,
+                    size: 18,
+                    color: Colors.white,
                   ),
-                  alignment: PlaceholderAlignment.middle,
                 ),
-                const TextSpan(
-                  text: 'Small withdrawals and some active months, ',
-                ),
-                const TextSpan(
-                  text:
-                      'but the habit needs to show up more consistently to move the score higher.',
-                  style: TextStyle(
-                    color: Color(0xFF0F172A),
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: TypewriterText(
+                    text: 'Small withdrawals and some active months, but the habit needs to show up more consistently to move the score higher.',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      height: 1.5,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
             ),
-            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: 40),

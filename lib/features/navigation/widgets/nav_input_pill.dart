@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/nav_input_provider.dart';
 import '../../chat/providers/chat_provider.dart';
 import '../../../core/providers/speech_provider.dart';
+import '../../../core/widgets/animated_gradient_text.dart';
 import 'border_beam.dart';
 import 'voice_animation.dart';
 
@@ -13,80 +14,6 @@ enum NavInputState { initial, typing, generating, streaming, replied }
 
 // Emil's custom easing curve for snappy UI
 const Curve _snappyEaseOut = Cubic(0.23, 1.0, 0.32, 1.0);
-
-class _SlidingGradientTransform extends GradientTransform {
-  final double slidePercent;
-  const _SlidingGradientTransform(this.slidePercent);
-
-  @override
-  Matrix4? transform(Rect bounds, {TextDirection? textDirection}) {
-    final translateX = bounds.width * (2 * slidePercent - 1);
-    return Matrix4.translationValues(translateX, 0.0, 0.0);
-  }
-}
-
-class _AnimatedGradientText extends StatefulWidget {
-  final String text;
-  final double fontSize;
-  const _AnimatedGradientText({required this.text, this.fontSize = 12});
-
-  @override
-  State<_AnimatedGradientText> createState() => _AnimatedGradientTextState();
-}
-
-class _AnimatedGradientTextState extends State<_AnimatedGradientText> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2500),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return ShaderMask(
-          blendMode: BlendMode.srcIn,
-          shaderCallback: (bounds) => LinearGradient(
-            colors: const [
-              Color(0xFF031E6B),
-              Color(0xFF5BA1F7),
-              Color(0xFF031E6B),
-            ],
-            stops: const [0.3, 0.5, 0.7],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            tileMode: TileMode.clamp,
-            transform: _SlidingGradientTransform(_controller.value),
-          ).createShader(bounds),
-          child: Text(
-            widget.text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'SpaceGrotesk',
-              fontSize: widget.fontSize,
-              height: 1.1,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
 
 class NavInputPill extends ConsumerStatefulWidget {
   final VoidCallback onSend;
@@ -322,9 +249,27 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.auto_awesome, size: 14, color: const Color(0xFF5BA1F7)),
-              const SizedBox(width: 6),
-              const _AnimatedGradientText(text: 'ASTRA', fontSize: 12),
+              AnimatedGradientShimmer(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.auto_awesome, size: 14, color: Colors.white),
+                    SizedBox(width: 6),
+                    Text(
+                      'ASTRA',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
+                        fontSize: 12,
+                        height: 1.1,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -484,9 +429,27 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.auto_awesome, size: 14, color: const Color(0xFF5BA1F7)),
-              const SizedBox(width: 6),
-              const _AnimatedGradientText(text: 'ASTRA', fontSize: 12),
+              AnimatedGradientShimmer(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.auto_awesome, size: 14, color: Colors.white),
+                    SizedBox(width: 6),
+                    Text(
+                      'ASTRA',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
+                        fontSize: 14,
+                        height: 1.1,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),

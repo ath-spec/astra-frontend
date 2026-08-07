@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/widgets/animated_gradient_text.dart';
+import '../../../../../core/widgets/typewriter_text.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../../../../core/responsive/size_config.dart';
 import 'portfolio_genome_chart.dart';
@@ -72,30 +74,37 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
             const SizedBox(height: 48),
 
             Row(
-              children: const [
-                Icon(
-                  Icons.auto_awesome_rounded,
-                  size: 14,
-                  color: Color(0xFF94A3B8),
-                ),
-                SizedBox(width: 4),
-                Text(
-                  'INSIGHTS BY PORTFOLIO AGENT',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 2.0,
-                    color: Color(0xFF94A3B8),
+              children: [
+                AnimatedGradientShimmer(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'INSIGHTS BY PORTFOLIO AGENT',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(width: 8),
-                Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+                const SizedBox(width: 8),
+                const Expanded(child: Divider(color: Color(0xFFE2E8F0))),
               ],
             ),
             const SizedBox(height: 24),
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFFF8FAFC),
                 border: Border.all(color: const Color(0xFFE2E8F0)),
@@ -104,33 +113,13 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text.rich(
-                    TextSpan(
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: getProportionateScreenWidth(10),
-                        height: 1.5,
-                        color: const Color(0xFF64748B),
-                      ),
-                      children: const [
-                        TextSpan(
-                          text: 'Your portfolio has a strong tilt towards ',
-                        ),
-                        TextSpan(
-                          text: 'Financial Services (34%) and Cyclical sectors. ',
-                          style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w600),
-                        ),
-                        TextSpan(
-                          text: 'While great for growth during economic expansions, this creates a ',
-                        ),
-                        TextSpan(
-                          text: 'blind spot in defensive sectors',
-                          style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w600),
-                        ),
-                        TextSpan(
-                          text: ' like Healthcare or Utilities. This means your portfolio is highly sensitive to interest rate changes and economic cycles, lacking stability during market downturns.',
-                        ),
-                      ],
+                  TypewriterText(
+                    text: 'Your portfolio has a strong tilt towards Financial Services (34%) and Cyclical sectors. While great for growth during economic expansions, this creates a blind spot in defensive sectors like Healthcare or Utilities. This means your portfolio is highly sensitive to interest rate changes and economic cycles, lacking stability during market downturns.',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: getProportionateScreenWidth(10),
+                      height: 1.5,
+                      color: const Color(0xFF64748B),
                     ),
                   ),
                   const SizedBox(height: 32),

@@ -10,6 +10,7 @@ import '../../features/navigation/widgets/explore_nav_row.dart';
 import '../../features/navigation/widgets/nav_shared_components.dart';
 import '../../features/navigation/widgets/nav_input_pill.dart';
 import '../providers/nav_input_provider.dart';
+import '../providers/speech_provider.dart';
 
 class AppShell extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -122,6 +123,7 @@ class _AppShellState extends ConsumerState<AppShell> {
         if (isInputMode) {
           FocusScope.of(context).unfocus();
           ref.read(navInputModeProvider.notifier).state = false;
+          ref.read(speechProvider.notifier).stopListening();
         } else if (currentIndex == 2) {
           widget.navigationShell.goBranch(_previousIndex);
         } else {
@@ -198,6 +200,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                   onTap: () {
                     FocusScope.of(context).unfocus();
                     ref.read(navInputModeProvider.notifier).state = false;
+                    ref.read(speechProvider.notifier).stopListening();
                   },
                   child: Container(color: Colors.transparent),
                 ),
