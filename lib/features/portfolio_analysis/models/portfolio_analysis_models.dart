@@ -57,6 +57,19 @@ enum DisciplineLevel {
         return 1.0;
     }
   }
+
+  int get activeSegments {
+    switch (this) {
+      case DisciplineLevel.poor:
+        return 1;
+      case DisciplineLevel.moderate:
+        return 2;
+      case DisciplineLevel.good:
+        return 4;
+      case DisciplineLevel.excellent:
+        return 5;
+    }
+  }
 }
 
 enum AllocationLevel {

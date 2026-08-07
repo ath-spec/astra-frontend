@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
 import '../../portfolio_analysis/models/portfolio_analysis_models.dart';
 
-final ValueNotifier<bool> hasSeenAnalysisWalkthrough = ValueNotifier<bool>(false);
+final ValueNotifier<bool> hasSeenAnalysisWalkthrough = ValueNotifier<bool>(
+  false,
+);
 
 class HomePortfolioAnalysis extends StatelessWidget {
   const HomePortfolioAnalysis({super.key});
@@ -37,12 +39,10 @@ class HomePortfolioAnalysis extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            hasSeen
-                ? _buildUnlockedView(context)
-                : _buildLockedView(context),
+            hasSeen ? _buildUnlockedView(context) : _buildLockedView(context),
           ],
         );
-      }
+      },
     );
   }
 
@@ -124,7 +124,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
                   child: _buildLockedCard(
                     title: 'Allocation',
                     icon: Icons.layers_outlined,
-                    color: const Color(0xFF9F7AEA), // Purple
+                    color: const Color(0xFF6B46C1), // Matches AllocationLevel.veryAggressive.activeColor
                     brailleDots: '⠓⠕⠗⠍',
                   ),
                 ),
@@ -278,13 +278,6 @@ class HomePortfolioAnalysis extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: const Color(0xFFE2E8F0)),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF0F172A).withOpacity(0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
           children: [
@@ -388,45 +381,42 @@ class _LockedSemiCircleGaugePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height * 2);
+    final center = Offset(size.width / 2, size.height);
+    final radius = size.width / 2;
+    const startAngle = math.pi;
+    const sweepAngle = math.pi;
+    const numSegments = 5;
+    const segmentSweep = sweepAngle / numSegments;
 
-    // Background track (light grey)
-    final trackPaint = Paint()
-      ..color = const Color(0xFFF1F5F9)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6.0
-      ..strokeCap = StrokeCap.round;
+    final innerRadius = radius - 5;
+    final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
 
-    // Draw background arc
-    canvas.drawArc(
-      rect,
-      math.pi, // start from 180 degrees (left)
-      math.pi, // sweep 180 degrees (to right)
-      false,
-      trackPaint,
-    );
+    // Grey background arc
+    canvas.drawArc(innerRect, startAngle, sweepAngle, false,
+      Paint()
+        ..color = const Color(0xFFE2E8F0)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..strokeCap = StrokeCap.round);
 
-    // Foreground track (colored)
-    final gradient = SweepGradient(
-      colors: [color.withOpacity(0.3), color],
-      stops: const [0.0, 1.0],
-      startAngle: math.pi,
-      endAngle: math.pi * 2,
-    );
-
-    final foregroundPaint = Paint()
-      ..shader = gradient.createShader(rect)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6.0
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawArc(rect, math.pi, math.pi * 0.7, false, foregroundPaint);
+    // Show 3 filled segments (preview state), drawn right-to-left for overlapping caps
+    for (int i = 2; i >= 0; i--) {
+      final start = startAngle + (i * segmentSweep);
+      canvas.drawArc(innerRect, start, segmentSweep, false,
+        Paint()
+          ..color = color.withOpacity(0.4 + (i * 0.2))
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6
+          ..strokeCap = StrokeCap.round);
+    }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+// Exact miniature of _DisciplineGaugePainter:
+// grey bg + multi-shade blue segments drawn right-to-left with overlapping round caps
 class _MiniDisciplinePainter extends CustomPainter {
   final DisciplineLevel level;
   _MiniDisciplinePainter({required this.level});
@@ -435,38 +425,56 @@ class _MiniDisciplinePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height);
     final radius = size.width / 2;
+    const startAngle = math.pi;
+    const sweepAngle = math.pi;
+    const numSegments = 5;
+    const segmentSweep = sweepAngle / numSegments;
 
-    // Outer track
-    final outerPaint = Paint()
-      ..color = const Color(0xFFE2E8F0)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3
-      ..strokeCap = StrokeCap.round;
+    final innerRadius = radius - 5;
+    final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
 
-    final outerRect = Rect.fromCircle(center: center, radius: radius);
-    canvas.drawArc(outerRect, math.pi, math.pi, false, outerPaint);
+    // Grey background arc (round caps like the real gauge)
+    canvas.drawArc(innerRect, startAngle, sweepAngle, false,
+      Paint()
+        ..color = const Color(0xFFE2E8F0)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..strokeCap = StrokeCap.round);
 
-    // Inner track
-    final innerPaint = Paint()
-      ..color = level.color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 5
-      ..strokeCap = StrokeCap.round;
+    // Same multi-shade blue colors as the real discipline gauge
+    const activeColors = [
+      Color(0xFFBCE3FF), // 1. Lightest Blue
+      Color(0xFF65B4FF), // 2. Light Blue
+      Color(0xFF2796FF), // 3. Blue (Moderate)
+      Color(0xFF0278D9), // 4. Dark Blue (Good)
+      Color(0xFF015294), // 5. Darkest Blue (Excellent)
+    ];
 
-    final innerRect = Rect.fromCircle(center: center, radius: radius - 6);
-    canvas.drawArc(
-      innerRect,
-      math.pi,
-      math.pi * level.score,
-      false,
-      innerPaint,
-    );
+    int targetSegments = 1;
+    final score = level.score;
+    if (score > 0.3) targetSegments = 2;
+    if (score >= 0.7) targetSegments = 3;
+    if (score >= 0.85) targetSegments = 4;
+    if (score >= 1.0) targetSegments = 5;
+
+    // Draw right-to-left so left segments' caps sit on top (matches real gauge)
+    for (int i = targetSegments - 1; i >= 0; i--) {
+      final start = startAngle + (i * segmentSweep);
+      canvas.drawArc(innerRect, start, segmentSweep, false,
+        Paint()
+          ..color = activeColors[i]
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6
+          ..strokeCap = StrokeCap.round);
+    }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
+// Exact miniature of _AllocationGaugePainter:
+// grey bg + single active segment + white gap lines
 class _MiniAllocationPainter extends CustomPainter {
   final AllocationLevel level;
   _MiniAllocationPainter({required this.level});
@@ -475,47 +483,48 @@ class _MiniAllocationPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height);
     final radius = size.width / 2;
-
-    final innerRect = Rect.fromCircle(center: center, radius: radius - 3);
-
+    const startAngle = math.pi;
+    const sweepAngle = math.pi;
     const numSegments = 5;
-    final gapAngle = 0.1;
-    final sweepAngle = math.pi;
-    final segmentSweep =
-        (sweepAngle - (gapAngle * (numSegments - 1))) / numSegments;
+    const segmentSweep = sweepAngle / numSegments;
 
-    for (int i = 0; i < numSegments; i++) {
-      final segmentStart = math.pi + (i * (segmentSweep + gapAngle));
-      final paint = Paint()
+    final innerRadius = radius - 5;
+    final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
+
+    // Grey background arc
+    canvas.drawArc(innerRect, startAngle, sweepAngle, false,
+      Paint()
+        ..color = const Color(0xFFE2E8F0)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 6
-        ..strokeCap = StrokeCap.butt;
+        ..strokeCap = StrokeCap.round);
 
-      if (i < level.activeSegments) {
-        paint.color = level.activeColor;
-      } else {
-        paint.color = const Color(0xFFE2E8F0);
-      }
+    // Single active segment (same as real allocation gauge)
+    final activeIndex = level.activeSegments - 1;
+    final activeStart = startAngle + (activeIndex * segmentSweep);
+    canvas.drawArc(innerRect, activeStart, segmentSweep, false,
+      Paint()
+        ..color = level.activeColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..strokeCap = StrokeCap.butt);
 
-      canvas.drawArc(innerRect, segmentStart, segmentSweep, false, paint);
+    // White gap lines between segments
+    final gapPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.butt;
 
-      // Caps
-      if (i == 0)
-        canvas.drawArc(
-          innerRect,
-          segmentStart,
-          0.01,
-          false,
-          paint..strokeCap = StrokeCap.round,
-        );
-      if (i == 4)
-        canvas.drawArc(
-          innerRect,
-          segmentStart + segmentSweep - 0.01,
-          0.01,
-          false,
-          paint..strokeCap = StrokeCap.round,
-        );
+    for (int i = 1; i < numSegments; i++) {
+      final angle = startAngle + (i * segmentSweep);
+      final dx = math.cos(angle);
+      final dy = math.sin(angle);
+      canvas.drawLine(
+        center + Offset(dx * (innerRadius - 5), dy * (innerRadius - 5)),
+        center + Offset(dx * (innerRadius + 5), dy * (innerRadius + 5)),
+        gapPaint,
+      );
     }
   }
 
@@ -523,6 +532,8 @@ class _MiniAllocationPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
+// Exact miniature of _PerformanceGaugePainter:
+// grey bg + multi-shade green segments drawn right-to-left with overlapping round caps
 class _MiniPerformancePainter extends CustomPainter {
   final PerformanceLevel level;
   _MiniPerformancePainter({required this.level});
@@ -531,64 +542,47 @@ class _MiniPerformancePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height);
     final radius = size.width / 2;
-
-    final innerRect = Rect.fromCircle(center: center, radius: radius - 3);
-
+    const startAngle = math.pi;
+    const sweepAngle = math.pi;
     const numSegments = 5;
-    final gapAngle = 0.1;
-    final sweepAngle = math.pi;
-    final segmentSweep =
-        (sweepAngle - (gapAngle * (numSegments - 1))) / numSegments;
+    const segmentSweep = sweepAngle / numSegments;
 
-    final activeColors = [
-      const Color(0xFFBBE5B3),
-      const Color(0xFF86EFAC),
-      const Color(0xFF4ADE80),
-      const Color(0xFF22C55E),
-      const Color(0xFF16A34A),
-    ];
+    final innerRadius = radius - 5;
+    final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
 
-    for (int i = 0; i < numSegments; i++) {
-      final segmentStart = math.pi + (i * (segmentSweep + gapAngle));
-      final paint = Paint()
+    // Grey background arc
+    canvas.drawArc(innerRect, startAngle, sweepAngle, false,
+      Paint()
+        ..color = const Color(0xFFE2E8F0)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 6
-        ..strokeCap = StrokeCap.butt;
+        ..strokeCap = StrokeCap.round);
 
-      if (i < level.activeSegments) {
-        if (level == PerformanceLevel.veryStrong) {
-          paint.color = activeColors[i]; // Use gradient for very strong
-        } else {
-          paint.color = level.activeColor.withOpacity(
-            (i + 1) / level.activeSegments,
-          );
-        }
-      } else {
-        paint.color = const Color(0xFFE2E8F0);
-      }
+    // Same multi-shade green colors as real performance gauge
+    const activeColors = [
+      Color(0xFFBBE5B3),
+      Color(0xFF86EFAC),
+      Color(0xFF4ADE80),
+      Color(0xFF22C55E),
+      Color(0xFF16A34A),
+    ];
 
-      canvas.drawArc(innerRect, segmentStart, segmentSweep, false, paint);
+    final targetSegments = level.activeSegments;
 
-      // Caps
-      if (i == 0)
-        canvas.drawArc(
-          innerRect,
-          segmentStart,
-          0.01,
-          false,
-          paint..strokeCap = StrokeCap.round,
-        );
-      if (i == 4)
-        canvas.drawArc(
-          innerRect,
-          segmentStart + segmentSweep - 0.01,
-          0.01,
-          false,
-          paint..strokeCap = StrokeCap.round,
-        );
+    // Draw right-to-left so left segments' caps sit on top (matches real gauge)
+    for (int i = targetSegments - 1; i >= 0; i--) {
+      final start = startAngle + (i * segmentSweep);
+      canvas.drawArc(innerRect, start, segmentSweep, false,
+        Paint()
+          ..color = activeColors[i]
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6
+          ..strokeCap = StrokeCap.round);
     }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+
+

@@ -222,7 +222,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
               Expanded(
                 child: Container(
                   height: 1,
-                  color: Color.fromARGB(255, 249, 249, 249),
+                  color: const Color(0xFFE2E8F0),
                 ),
               ),
             ],

@@ -32,7 +32,7 @@ class LearningsScreen extends ConsumerWidget {
                         'Learnings',
                         style: TextStyle(
                           fontFamily: 'SpaceGrotesk',
-                          fontSize: 20,
+                          fontSize: 24,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -1.0,
                           color: Color(0xFF0F172A),

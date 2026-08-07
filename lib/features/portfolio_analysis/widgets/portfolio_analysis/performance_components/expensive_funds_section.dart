@@ -227,17 +227,18 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
+              color: const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            child: TypewriterText(
-              text: 'Fees aren\'t eating into your gains every rupee is compounding efficiently for you.',
-              style: const TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 12,
-                height: 1.5,
-                color: Color(0xFF64748B),
+            child: const AnimatedGradientShimmer(
+              child: TypewriterText(
+                text: 'Fees aren\'t eating into your gains every rupee is compounding efficiently for you.',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 12,
+                  height: 1.5,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),

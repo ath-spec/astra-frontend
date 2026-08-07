@@ -77,7 +77,7 @@ class _ModuleCardState extends State<ModuleCard> {
                         widget.module.title,
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF1E293B),
                           height: 1.2,
@@ -93,7 +93,7 @@ class _ModuleCardState extends State<ModuleCard> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 13.sp,
+                    fontSize: 13,
                     fontWeight: FontWeight.w400,
                     color: const Color(0xFF64748B),
                     height: 1.5,

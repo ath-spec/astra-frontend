@@ -106,20 +106,21 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
+                color: const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TypewriterText(
-                    text: 'Your portfolio has a strong tilt towards Financial Services (34%) and Cyclical sectors. While great for growth during economic expansions, this creates a blind spot in defensive sectors like Healthcare or Utilities. This means your portfolio is highly sensitive to interest rate changes and economic cycles, lacking stability during market downturns.',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 12,
-                      height: 1.5,
-                      color: const Color(0xFF64748B),
+                  const AnimatedGradientShimmer(
+                    child: TypewriterText(
+                      text: 'Your portfolio has a strong tilt towards Financial Services (34%) and Cyclical sectors. While great for growth during economic expansions, this creates a blind spot in defensive sectors like Healthcare or Utilities. This means your portfolio is highly sensitive to interest rate changes and economic cycles, lacking stability during market downturns.',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 12,
+                        height: 1.5,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 32),
