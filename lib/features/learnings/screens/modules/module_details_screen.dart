@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../models/learning_module.dart';
 import '../../models/chapter_models.dart';
 import '../../models/mock_chapters.dart';
+import '../../services/learning_progress_service.dart';
 
 class ModuleDetailsScreen extends StatelessWidget {
   final LearningModule module;
@@ -70,8 +71,9 @@ class ModuleDetailsScreen extends StatelessWidget {
                 const SizedBox(height: 40),
                 
                 // Chapter Levels
-                Builder(
-                  builder: (context) {
+                AnimatedBuilder(
+                  animation: LearningProgressService.instance,
+                  builder: (context, child) {
                     final beginnerChapters = getMockChapters(module.id, 'Beginner');
                     final intermediateChapters = getMockChapters(module.id, 'Intermediate');
                     final advanceChapters = getMockChapters(module.id, 'Advance');
@@ -89,24 +91,24 @@ class ModuleDetailsScreen extends StatelessWidget {
                           level: 'Beginner',
                           chapters: beginnerChapters.length,
                           readTimeMinutes: getReadTime(beginnerChapters),
-                          progressPercent: module.id == 1 ? 18 : 0,
-                          onTap: () => context.push('/chapter-list', extra: {'module': module, 'level': 'Beginner'}),
+                          progressPercent: LearningProgressService.instance.getLevelProgress(beginnerChapters),
+                          onTap: () => context.push('/learnings/chapter-list', extra: {'module': module, 'level': 'Beginner'}),
                         ),
                         const SizedBox(height: 24),
                         ChapterLevelCard(
                           level: 'Intermediate',
                           chapters: intermediateChapters.length,
                           readTimeMinutes: getReadTime(intermediateChapters),
-                          progressPercent: 0,
-                          onTap: () => context.push('/chapter-list', extra: {'module': module, 'level': 'Intermediate'}),
+                          progressPercent: LearningProgressService.instance.getLevelProgress(intermediateChapters),
+                          onTap: () => context.push('/learnings/chapter-list', extra: {'module': module, 'level': 'Intermediate'}),
                         ),
                         const SizedBox(height: 24),
                         ChapterLevelCard(
                           level: 'Advance',
                           chapters: advanceChapters.length,
                           readTimeMinutes: getReadTime(advanceChapters),
-                          progressPercent: 0,
-                          onTap: () => context.push('/chapter-list', extra: {'module': module, 'level': 'Advance'}),
+                          progressPercent: LearningProgressService.instance.getLevelProgress(advanceChapters),
+                          onTap: () => context.push('/learnings/chapter-list', extra: {'module': module, 'level': 'Advance'}),
                         ),
                       ],
                     );

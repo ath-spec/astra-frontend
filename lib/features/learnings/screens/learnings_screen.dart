@@ -16,7 +16,7 @@ class LearningsScreen extends ConsumerWidget {
       backgroundColor: const Color(0xFFF9FAFB),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

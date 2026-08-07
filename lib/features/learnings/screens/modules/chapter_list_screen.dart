@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../models/learning_module.dart';
 import '../../models/chapter_models.dart';
 import '../../models/mock_chapters.dart';
+import '../../services/learning_progress_service.dart';
 
 class ChapterListScreen extends StatelessWidget {
   final LearningModule module;
@@ -45,21 +46,25 @@ class ChapterListScreen extends StatelessWidget {
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                child: _buildHeader(),
-              ),
+          child: AnimatedBuilder(
+            animation: LearningProgressService.instance,
+            builder: (context, child) {
+              final chapters = getMockChapters(module.id, level);
+              final levelProgress = LearningProgressService.instance.getLevelProgress(chapters);
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: _buildHeader(levelProgress),
+                  ),
               const SizedBox(height: 32),
               
-              // Horizontal Scrollable Cards
-              Expanded(
-                child: Builder(
-                  builder: (context) {
-                    final chapters = getMockChapters(module.id, level);
-                    return ListView.separated(
+                  // Horizontal Scrollable Cards
+                  SizedBox(
+                    height: 380,
+                    child: ListView.separated(
                       padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
                       scrollDirection: Axis.horizontal,
                       itemCount: chapters.length,
@@ -68,7 +73,7 @@ class ChapterListScreen extends StatelessWidget {
                         final chapter = chapters[index];
                         return GestureDetector(
                           onTap: () {
-                            context.push('/chapter-reader', extra: {
+                            context.push('/learnings/chapter-reader', extra: {
                               'module': module,
                               'chapter': chapter,
                               'allChapters': chapters,
@@ -77,18 +82,18 @@ class ChapterListScreen extends StatelessWidget {
                           child: _buildChapterCard(context, chapter),
                         );
                       },
-                    );
-                  }
-                ),
-              ),
-            ],
+                    ),
+                  ),
+                ],
+              );
+            }
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(int progressPercent) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,7 +130,7 @@ class ChapterListScreen extends StatelessWidget {
               module.title,
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF0F172A),
                 height: 1.2,
@@ -137,14 +142,14 @@ class ChapterListScreen extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _buildZeroProgress(),
+            _buildProgress(progressPercent),
             const SizedBox(width: 16),
             const Expanded(
               child: Text(
                 'To fully complete this level, read all chapters and attempt all questions',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: Color(0xFF334155),
                   height: 1.4,
@@ -157,18 +162,18 @@ class ChapterListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildZeroProgress() {
+  Widget _buildProgress(int percent) {
     return SizedBox(
       width: 44,
       height: 44,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          const CircularProgressIndicator(
-            value: 0.0,
+          CircularProgressIndicator(
+            value: percent / 100.0,
             strokeWidth: 3,
-            backgroundColor: Color(0xFFF1F5F9),
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE2E8F0)),
+            backgroundColor: const Color(0xFFF1F5F9),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2563EB)),
           ),
           Center(
             child: Row(
@@ -176,11 +181,11 @@ class ChapterListScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
               children: [
-                const Text(
-                  '00',
-                  style: TextStyle(
+                Text(
+                  percent.toString().padLeft(2, '0'),
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF0F172A),
                   ),
@@ -281,7 +286,7 @@ class ChapterListScreen extends StatelessWidget {
                     chapter.title,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 20,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
@@ -294,7 +299,7 @@ class ChapterListScreen extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 15,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: Color(0xFF64748B),
                         height: 1.5,
@@ -309,7 +314,7 @@ class ChapterListScreen extends StatelessWidget {
                         chapter.readTime,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 13,
+                          fontSize: 10,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF94A3B8),
                         ),
@@ -318,7 +323,7 @@ class ChapterListScreen extends StatelessWidget {
                         '${chapter.cardsCount} cards',
                         style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 13,
+                          fontSize: 10,
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF94A3B8),
                         ),

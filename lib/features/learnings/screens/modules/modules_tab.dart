@@ -140,7 +140,7 @@ class _ModulesTabState extends State<ModulesTab> {
                     itemBuilder: (context, index) {
                       return ModuleCard(
                         module: filteredModules[index],
-                        onTap: () => context.push('/module-details', extra: filteredModules[index]),
+                        onTap: () => context.push('/learnings/module-details', extra: filteredModules[index]),
                       );
                     },
                   );
@@ -159,7 +159,7 @@ class _ModulesTabState extends State<ModulesTab> {
                   itemBuilder: (context, index) {
                     return ModuleCard(
                       module: filteredModules[index],
-                      onTap: () => context.push('/module-details', extra: filteredModules[index]),
+                      onTap: () => context.push('/learnings/module-details', extra: filteredModules[index]),
                     );
                   },
                 );

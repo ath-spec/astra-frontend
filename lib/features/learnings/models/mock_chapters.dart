@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'chapter_models.dart';
+import 'mock_content_dictionary.dart';
 
+// --- Hardcoded Module 1 Beginner Content (Requested by User) ---
 final List<Chapter> mockBeginnerChapters = [
   const Chapter(
     id: 'c1',
@@ -182,14 +184,13 @@ final List<Chapter> mockBeginnerChapters = [
           ),
         ],
       ),
-      // Mocking remaining 7 pages for length
-      ChapterPage(id: 'p2_3', title: 'Depositories (NSDL & CDSL)', contents: [ChapterTextContent('Details about depositories...')]),
-      ChapterPage(id: 'p2_4', title: 'Depository Participants', contents: [ChapterTextContent('Details about DPs...')]),
-      ChapterPage(id: 'p2_5', title: 'Stock Brokers', contents: [ChapterTextContent('Details about stock brokers...')]),
-      ChapterPage(id: 'p2_6', title: 'Clearing Corporations', contents: [ChapterTextContent('Details about clearing corporations...')]),
-      ChapterPage(id: 'p2_7', title: 'Banks in the Ecosystem', contents: [ChapterTextContent('Details about banks...')]),
-      ChapterPage(id: 'p2_8', title: 'KYC Agencies', contents: [ChapterTextContent('Details about KYC...')]),
-      ChapterPage(id: 'p2_9', title: 'Summary', contents: [ChapterTextContent('Summary of the market ecosystem.')]),
+      ChapterPage(id: 'p2_3', title: 'Depositories (NSDL & CDSL)', contents: [ChapterTextContent('Depositories hold your financial securities in a dematerialized (electronic) form, eliminating the risk of physical share certificates.')]),
+      ChapterPage(id: 'p2_4', title: 'Depository Participants', contents: [ChapterTextContent('A Depository Participant (DP) acts as an agent between the depository and the investor. You open your Demat account through a DP.')]),
+      ChapterPage(id: 'p2_5', title: 'Stock Brokers', contents: [ChapterTextContent('A stock broker acts as an intermediary who executes your buy and sell orders on the stock exchange. They provide the trading platform.')]),
+      ChapterPage(id: 'p2_6', title: 'Clearing Corporations', contents: [ChapterTextContent('Clearing corporations ensure that trades are settled properly. They guarantee that buyers receive their shares and sellers receive their money.')]),
+      ChapterPage(id: 'p2_7', title: 'Banks in the Ecosystem', contents: [ChapterTextContent('Banks facilitate the transfer of funds. A trading account must be linked to a bank account to allow seamless inflow and outflow of capital.')]),
+      ChapterPage(id: 'p2_8', title: 'KYC Agencies', contents: [ChapterTextContent('Know Your Customer (KYC) agencies verify the identity and address of investors before they can open Demat or trading accounts.')]),
+      ChapterPage(id: 'p2_9', title: 'Summary', contents: [ChapterTextContent('The stock market is a highly regulated ecosystem comprising multiple entities that ensure your investments are safe, transparent, and efficiently executed.')]),
     ],
   ),
   const Chapter(
@@ -209,55 +210,163 @@ final List<Chapter> mockBeginnerChapters = [
           ),
         ],
       ),
-      // Mocking remaining 7 pages
-      ChapterPage(id: 'p3_2', title: 'Why companies go public?', contents: [ChapterTextContent('Capital raising, exit strategy, etc.')]),
-      ChapterPage(id: 'p3_3', title: 'The IPO Process', contents: [ChapterTextContent('Filing DRHP, roadshows, pricing.')]),
-      ChapterPage(id: 'p3_4', title: 'Fixed Price vs Book Building', contents: [ChapterTextContent('Pricing mechanisms for IPOs.')]),
-      ChapterPage(id: 'p3_5', title: 'Understanding the DRHP', contents: [ChapterTextContent('How to read the prospectus.')]),
-      ChapterPage(id: 'p3_6', title: 'Allotment Process', contents: [ChapterTextContent('How shares are allotted.')]),
-      ChapterPage(id: 'p3_7', title: 'Listing Day', contents: [ChapterTextContent('What happens on listing day.')]),
-      ChapterPage(id: 'p3_8', title: 'Summary', contents: [ChapterTextContent('Summary of the IPO market.')]),
+      ChapterPage(id: 'p3_2', title: 'Why companies go public?', contents: [ChapterTextContent('Companies issue IPOs to raise massive capital for expansion, pay off existing debts, or provide an exit strategy for early-stage investors like venture capitalists.')]),
+      ChapterPage(id: 'p3_3', title: 'The IPO Process', contents: [ChapterTextContent('The process begins with hiring an investment bank, filing a Draft Red Herring Prospectus (DRHP) with SEBI, marketing the IPO (roadshows), and finalizing the price band.')]),
+      ChapterPage(id: 'p3_4', title: 'Fixed Price vs Book Building', contents: [ChapterTextContent('In a Fixed Price issue, the company sets a specific price for its shares. In a Book Building issue, a price band is offered, and investors bid within that band. The final cut-off price is determined by demand.')]),
+      ChapterPage(id: 'p3_5', title: 'Understanding the DRHP', contents: [ChapterTextContent('The DRHP is the most critical document for an investor. It contains details about the company\'s business operations, financials, promoters, objective of the issue, and potential risks.')]),
+      ChapterPage(id: 'p3_6', title: 'Allotment Process', contents: [ChapterTextContent('Once the bidding closes, shares are allotted based on the oversubscription rate. If heavily oversubscribed, allotment may happen via a lottery system.')]),
+      ChapterPage(id: 'p3_7', title: 'Listing Day', contents: [ChapterTextContent('On listing day, the shares officially begin trading on the stock exchange. If the demand is high, the stock might list at a "premium" to the issue price.')]),
+      ChapterPage(id: 'p3_8', title: 'Summary', contents: [ChapterTextContent('IPOs offer a chance to invest in companies early in their public journey, but they require careful analysis of the DRHP and an understanding of market sentiment.')]),
     ],
   ),
 ];
 
+// --- Dynamic Content Generator for all other Modules and Levels ---
+
+const Map<int, Map<String, List<String>>> moduleTopics = {
+  1: { // Stock Market Basics
+    'Beginner': ['Need to invest', 'Financial Regulators & Intermediaries', 'The IPO Market'],
+    'Intermediate': ['Corporate Actions (Dividends, Splits, Bonus)', 'Understanding Trading Terminals', 'Clearing and Settlement Process'],
+    'Advance': ['Market Indices Deep Dive (Nifty, Sensex)', 'Impact of Macroeconomics on Markets', 'Trading Psychology and Discipline'],
+  },
+  2: { // Technical Analysis
+    'Beginner': ['Introduction to Charting', 'Line vs Bar vs Candlestick Charts', 'Understanding Trendlines'],
+    'Intermediate': ['Single Candlestick Patterns', 'Multiple Candlestick Patterns', 'Support & Resistance Principles', 'Volume Analysis'],
+    'Advance': ['Moving Averages (SMA & EMA)', 'Oscillators (RSI & MACD)', 'Dow Theory in Practice', 'Fibonacci Retracements'],
+  },
+  3: { // Futures Trading
+    'Beginner': ['What are Forwards and Futures?', 'Understanding the Futures Contract', 'Margin Mechanisms'],
+    'Intermediate': ['Leverage and Payoff profiles', 'Futures Pricing (Cost of Carry)', 'Hedging with Futures'],
+    'Advance': ['Arbitrage Opportunities', 'Rolling over Futures', 'Short Squeezes & Open Interest Analysis'],
+  },
+  4: { // Options Trading
+    'Beginner': ['Introduction to Call & Put Options', 'Moneyness (ITM, ATM, OTM)', 'Option Buyer vs Seller'],
+    'Intermediate': ['The Option Premium (Intrinsic vs Time Value)', 'Understanding Implied Volatility (IV)', 'Basic Option Payoffs'],
+    'Advance': ['The Option Greeks (Delta, Gamma, Theta, Vega)', 'Option Pricing Models', 'Put-Call Parity'],
+  },
+  5: { // Fundamental Analysis
+    'Beginner': ['What is Fundamental Analysis?', 'Understanding the Annual Report', 'The Balance Sheet Basics'],
+    'Intermediate': ['The Profit and Loss Statement (P&L)', 'Cash Flow Statements', 'Financial Ratio Analysis (PE, PB, ROE)'],
+    'Advance': ['Discounted Cash Flow (DCF) Valuation', 'Analyzing Management Quality', 'Economic Moats & Competitive Advantage'],
+  },
+  6: { // Option Strategies
+    'Beginner': ['Covered Call Strategy', 'Cash Secured Put', 'Bull Call Spread'],
+    'Intermediate': ['Bear Put Spread', 'Straddles and Strangles', 'Iron Condor Strategy'],
+    'Advance': ['Butterfly Spreads', 'Calendar Spreads', 'Ratio Spreads and Adjustments'],
+  },
+  7: { // Currency, Commodity, Govt Sec
+    'Beginner': ['Introduction to Forex Trading', 'Commodities Market (MCX)', 'What are Government Bonds?'],
+    'Intermediate': ['Currency Pairs and Pips', 'Trading Gold, Silver, and Crude Oil', 'Yield Curves'],
+    'Advance': ['Macro Factors affecting Currencies', 'Contango and Backwardation in Commodities', 'Interest Rate Futures'],
+  }
+};
+
 List<Chapter> getMockChapters(int moduleId, String level) {
+  // Return the detailed hardcoded data for Module 1 Beginner
   if (moduleId == 1 && level == 'Beginner') {
     return mockBeginnerChapters;
   }
 
-  // Generate generic mock chapters for other modules/levels
+  // Look up actual topics for the given module and level
+  final moduleData = moduleTopics[moduleId] ?? {
+    'Beginner': ['Introduction to Module $moduleId', 'Basic Concepts of Module $moduleId', 'Core Principles'],
+    'Intermediate': ['Intermediate Strategies', 'Practical Application', 'Risk Management'],
+    'Advance': ['Advanced Frameworks', 'Algorithmic Execution', 'Masterclass Summary'],
+  };
+
+  final topicList = moduleData[level] ?? moduleData['Beginner']!;
+
+  // Generate a Chapter for each topic
   return List.generate(
-    4,
-    (index) => Chapter(
-      id: 'm${moduleId}_${level.toLowerCase()}_c$index',
-      title: 'Chapter ${index + 1}: $level Concepts',
-      description: 'This is a mock chapter for Module $moduleId at the $level level. It covers essential topics and strategies.',
-      readTime: '${10 + index * 2} min read',
-      cardsCount: 5 + index,
-      icon: _getIconForIndex(index),
-      pages: List.generate(
-        5 + index,
-        (pageIndex) => ChapterPage(
-          id: 'm${moduleId}_${level.toLowerCase()}_c${index}_p$pageIndex',
-          title: 'Topic ${pageIndex + 1}',
-          contents: [
-            ChapterTextContent(
-              'This is the detailed content for Topic ${pageIndex + 1} in Chapter ${index + 1} of the $level level for Module $moduleId.',
-            ),
-            if (pageIndex % 2 == 1) // Add a dummy table to alternating pages
-              ChapterTableContent(
-                headers: ['Concept', 'Detail', 'Impact'],
-                rows: [
-                  ['Alpha', 'Value 1', 'High'],
-                  ['Beta', 'Value 2', 'Medium'],
-                  ['Gamma', 'Value 3', 'Low'],
-                ],
-              ),
-          ],
+    topicList.length,
+    (index) {
+      final topicName = topicList[index];
+      
+      return Chapter(
+        id: 'm${moduleId}_${level.toLowerCase()}_c$index',
+        title: '${index + 1}. $topicName',
+        description: 'Dive deep into $topicName. This chapter explores the critical aspects, strategies, and nuances required to master this topic at the $level level.',
+        readTime: '${8 + (index * 2)} min read',
+        cardsCount: topicRealContent.containsKey(topicName) ? topicRealContent[topicName]!.length + 1 : 4 + index,
+        icon: _getIconForIndex(moduleId + index),
+        pages: List.generate(
+          topicRealContent.containsKey(topicName) ? topicRealContent[topicName]!.length + 1 : 4 + index,
+          (pageIndex) {
+            
+            // Check if we have real written content for this topic
+            final realContent = topicRealContent[topicName];
+            
+            if (realContent != null) {
+              if (pageIndex < realContent.length) {
+                // Use the real paragraphs
+                return ChapterPage(
+                  id: 'm${moduleId}_${level.toLowerCase()}_c${index}_p$pageIndex',
+                  title: pageIndex == 0 ? 'Introduction' : 'Deep Dive',
+                  contents: [
+                    ChapterTextContent(realContent[pageIndex]),
+                  ],
+                );
+              } else {
+                // Final summary page
+                return ChapterPage(
+                  id: 'm${moduleId}_${level.toLowerCase()}_c${index}_p$pageIndex',
+                  title: 'Summary',
+                  contents: [
+                    ChapterTextContent('This concludes the lesson on $topicName. Ensure you understand these core principles before advancing.'),
+                    if (topicName.contains('Math') || topicName.contains('Analysis') || topicName.contains('Valuation'))
+                      ChapterTableContent(
+                        headers: ['Metric', 'Baseline', 'Target'],
+                        rows: [
+                          ['Volatility', '12%', '8%'],
+                          ['Expected Return', '10%', '15%'],
+                        ],
+                      ),
+                  ],
+                );
+              }
+            }
+
+            // Fallback to generic contextual section titles
+            final sectionTitles = [
+              'Introduction to $topicName',
+              'Key Components',
+              'The Math & Framework',
+              'Real-world Examples',
+              'Common Pitfalls',
+              'Advanced Strategies',
+              'Conclusion'
+            ];
+            
+            final sectionTitle = pageIndex < sectionTitles.length 
+                ? sectionTitles[pageIndex] 
+                : 'Section ${pageIndex + 1}';
+
+            return ChapterPage(
+              id: 'm${moduleId}_${level.toLowerCase()}_c${index}_p$pageIndex',
+              title: sectionTitle,
+              contents: [
+                ChapterTextContent(
+                  'In this section, we analyze $sectionTitle within the context of $topicName. Understanding this concept is pivotal for investors operating at the $level level.',
+                ),
+                ChapterTextContent(
+                  'Financial markets are dynamic, and applying the principles of $topicName requires discipline, proper risk management, and continuous learning.',
+                ),
+                if (pageIndex == 2) // Add a realistic-looking table to the "Math & Framework" section
+                  ChapterTableContent(
+                    headers: ['Metric', 'Baseline', 'Target'],
+                    rows: [
+                      ['Volatility', '12%', '8%'],
+                      ['Expected Return', '10%', '15%'],
+                      ['Drawdown Limit', '20%', '10%'],
+                      ['Win Rate', '45%', '60%'],
+                    ],
+                  ),
+              ],
+            );
+          },
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 
@@ -268,6 +377,9 @@ IconData _getIconForIndex(int index) {
     Icons.pie_chart_rounded,
     Icons.timeline_rounded,
     Icons.show_chart_rounded,
+    Icons.query_stats_rounded,
+    Icons.waterfall_chart_rounded,
+    Icons.analytics_rounded,
   ];
   return icons[index % icons.length];
 }

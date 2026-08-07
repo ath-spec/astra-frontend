@@ -97,6 +97,17 @@ class _AppShellState extends ConsumerState<AppShell> {
     // horizontally while the entire nav bar drops down vertically (which creates a diagonal glitch).
     final displayIndex = currentIndex == 2 ? _previousIndex : currentIndex;
 
+    // Hide nav pill on deep sub-screens (e.g. chapter reader, video reader, module details)
+    // GoRouterState.of(context).uri is reactive — AppShell rebuilds on every route change
+    final currentUri = GoRouterState.of(context).uri.toString();
+    final isOnSubScreen = currentUri.contains('/learnings/') ||
+        currentUri.contains('/chapter-reader') ||
+        currentUri.contains('/video-reader') ||
+        currentUri.contains('/module-details') ||
+        currentUri.contains('/chapter-list');
+
+    final effectiveNavVisible = _navVisible && !isOnSubScreen;
+
     Widget currentPill;
     switch (navContext) {
       case NavContext.main:
@@ -145,7 +156,7 @@ class _AppShellState extends ConsumerState<AppShell> {
             widget.navigationShell,
 
             // Global bottom blur behind the floating nav pill
-            if (_navVisible)
+            if (effectiveNavVisible)
               Positioned(
                 left: 0,
                 right: 0,
@@ -222,7 +233,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                 ),
               ),
             ),
-            if (_navVisible)
+            if (effectiveNavVisible)
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeOutCubic,

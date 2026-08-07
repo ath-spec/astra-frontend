@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/learning_module.dart';
 import '../../models/chapter_models.dart';
+import '../../services/learning_progress_service.dart';
 
 class ChapterReaderScreen extends StatefulWidget {
   final LearningModule module;
@@ -30,7 +31,17 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _pageController = PageController(initialPage: _currentPageIndex);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _markCurrentPageComplete();
+    });
+  }
+
+  void _markCurrentPageComplete() {
+    if (widget.chapter.pages.isNotEmpty) {
+      final page = widget.chapter.pages[_currentPageIndex];
+      LearningProgressService.instance.markPageComplete(widget.chapter.id, page.id);
+    }
   }
 
   @override
@@ -374,6 +385,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                           setState(() {
                             _currentPageIndex = index;
                           });
+                          _markCurrentPageComplete();
                         },
                         itemCount: widget.chapter.pages.length,
                         itemBuilder: (context, index) {
@@ -390,50 +402,57 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
               if (_showSlider)
                 Positioned(
                   bottom: 80, // Positioned above the bottom nav
-                  left: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: bgColor,
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 360),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: bgColor,
+                          borderRadius: BorderRadius.circular(100),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 16,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                          border: Border.all(
+                            color: _isDarkMode ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                            width: 1,
+                          ),
                         ),
-                      ],
-                      border: Border.all(
-                        color: _isDarkMode ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-                        width: 1,
-                      ),
-                    ),
-                    child: SliderTheme(
-                      data: SliderThemeData(
-                        trackHeight: 4,
-                        activeTrackColor: const Color(0xFF2563EB),
-                        inactiveTrackColor: _isDarkMode ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-                        thumbColor: const Color(0xFF2563EB),
-                        overlayColor: const Color(0xFF2563EB).withOpacity(0.2),
-                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-                      ),
-                      child: Slider(
-                        value: _currentPageIndex.toDouble(),
-                        min: 0,
-                        max: (widget.chapter.pages.length - 1).toDouble(),
-                        divisions: (widget.chapter.pages.length - 1) > 0 ? widget.chapter.pages.length - 1 : 1,
-                        onChanged: (value) {
-                          final targetPage = value.round();
-                          setState(() {
-                            _currentPageIndex = targetPage;
-                          });
-                          _pageController.animateToPage(
-                            targetPage,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        },
+                        child: SliderTheme(
+                          data: SliderThemeData(
+                            trackHeight: 4,
+                            activeTrackColor: const Color(0xFF2563EB),
+                            inactiveTrackColor: _isDarkMode ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                            thumbColor: const Color(0xFF2563EB),
+                            overlayColor: const Color(0xFF2563EB).withOpacity(0.2),
+                            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+                          ),
+                          child: Slider(
+                            value: _currentPageIndex.toDouble(),
+                            min: 0,
+                            max: (widget.chapter.pages.length - 1).toDouble(),
+                            divisions: (widget.chapter.pages.length - 1) > 0 ? widget.chapter.pages.length - 1 : 1,
+                            onChanged: (value) {
+                              final targetPage = value.round();
+                              if (targetPage != _currentPageIndex) {
+                                setState(() {
+                                  _currentPageIndex = targetPage;
+                                });
+                                _pageController.animateToPage(
+                                  targetPage,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
+                            },
+                          ),
+                        ),
                       ),
                     ),
                   ),
