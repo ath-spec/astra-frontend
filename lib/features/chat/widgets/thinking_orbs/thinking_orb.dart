@@ -5,6 +5,7 @@ import 'engine/lattice.dart';
 import 'engine/morph.dart';
 import 'engine/orbits.dart';
 import 'engine/ribbon.dart';
+import 'engine/connecting.dart';
 
 class ThinkingOrb extends StatefulWidget {
   final double size;
@@ -118,6 +119,9 @@ class _OrbPainter extends CustomPainter {
         break;
       case 'morph':
         drawMorph(canvas, size.width, t, isDark, opts);
+        break;
+      case 'connecting':
+        drawConnecting(canvas, size.width, t, isDark, opts);
         break;
     }
   }

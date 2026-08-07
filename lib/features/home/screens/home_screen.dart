@@ -316,7 +316,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     percentage,
                     style: const TextStyle(
                       fontFamily: 'DMMono',
-                      fontSize: 12,
+                      fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFF64748B),
                     ),
@@ -348,10 +348,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   Text(
                     subtitle,
                     style: TextStyle(
-                      fontFamily: 'DMMono',
-                      fontSize: 12,
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: subtitleColor,
+                      letterSpacing: 0,
                     ),
                   ),
                 ]

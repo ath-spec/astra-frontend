@@ -121,5 +121,11 @@ final Map<String, ModeOpts> baseProfiles = {
     'rDot': 0.021,
     'iconD': 1,
     'rMin': 0.25
+  }),
+  'connecting': ModeOpts({
+    'rBase': 1.8,
+    'rDepth': 2.5,
+    'rsPow': 0.6,
+    'rMin': 0.4
   })
 };

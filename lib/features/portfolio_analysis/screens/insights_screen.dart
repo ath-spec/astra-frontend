@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'dart:math' as math;
+import '../../../core/widgets/typewriter_text.dart';
 import '../../fund_profile/screens/your_fund_profile_screen.dart';
 
 class InsightsScreen extends StatefulWidget {
@@ -554,14 +555,21 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                     // NEW SECTIONS
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Why should you harvest now?',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 14 * s,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.auto_awesome, size: 16 * s, color:const Color(0xFF0891B2)),
+                          SizedBox(width: 8 * s),
+                          Text(
+                            'Why should you harvest now?',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 14 * s,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF0891B2),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(height: 16 * s),
@@ -608,70 +616,55 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                     SizedBox(height: 32 * s),
 
                     // DID YOU KNOW
-                    Container(
-                      padding: EdgeInsets.all(16 * s),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8 * s),
-                        border: Border.all(
-                          color: const Color(0xFFFEF08A),
-                        ), // Light yellow border
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.02),
-                            blurRadius: 10 * s,
-                            offset: Offset(0, 4 * s),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(8 * s),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: const Color(0xFF6B46C1),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.auto_awesome, size: 14 * s, color: const Color(0xFF94A3B8)),
+                            SizedBox(width: 6 * s),
+                            Text(
+                              'DID YOU KNOW?',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 10 * s,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.0,
+                                color: const Color(0xFF94A3B8),
                               ),
                             ),
-                            child: Icon(
-                              Icons.info_outline,
-                              color: const Color(0xFF6B46C1),
-                              size: 16 * s,
+                          ],
+                        ),
+                        SizedBox(height: 8 * s),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 10 * s),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8 * s),
+                            border: Border.all(
+                              color: const Color(0xFFFEF08A),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 10 * s,
+                                offset: Offset(0, 4 * s),
+                              ),
+                            ],
+                          ),
+                          child: TypewriterText(
+                            text: 'The ₹1.25L tax-free LTCG limit resets every financial year. Unused limits cannot be carried forward.',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 12 * s,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w500,
+                              height: 1.4,
                             ),
                           ),
-                          SizedBox(width: 12 * s),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'DID YOU KNOW?',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 10 * s,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.0,
-                                    color: const Color(0xFF94A3B8),
-                                  ),
-                                ),
-                                SizedBox(height: 4 * s),
-                                Text(
-                                  'The ₹1.25L tax-free LTCG limit resets every financial year. Unused limits cannot be carried forward.',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 12 * s,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 48 * s),
 
@@ -1600,14 +1593,21 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                     // NEW SECTIONS
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Why invest in index funds',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 14 * s,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.auto_awesome, size: 16 * s, color: const Color(0xFF6B46C1)),
+                          SizedBox(width: 8 * s),
+                          Text(
+                            'Why invest in index funds',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 14 * s,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF6B46C1),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(height: 16 * s),
@@ -1638,70 +1638,55 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                     SizedBox(height: 32 * s),
 
                     // DID YOU KNOW
-                    Container(
-                      padding: EdgeInsets.all(16 * s),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8 * s),
-                        border: Border.all(
-                          color: const Color(0xFFFEF08A),
-                        ), // Light yellow border
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.02),
-                            blurRadius: 10 * s,
-                            offset: Offset(0, 4 * s),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(8 * s),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: const Color(0xFF6B46C1),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.auto_awesome, size: 14 * s, color: const Color(0xFF94A3B8)),
+                            SizedBox(width: 6 * s),
+                            Text(
+                              'DID YOU KNOW?',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 10 * s,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.0,
+                                color: const Color(0xFF94A3B8),
                               ),
                             ),
-                            child: Icon(
-                              Icons.info_outline,
-                              color: const Color(0xFF6B46C1),
-                              size: 16 * s,
+                          ],
+                        ),
+                        SizedBox(height: 8 * s),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 10 * s),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8 * s),
+                            border: Border.all(
+                              color: const Color(0xFFFEF08A),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 10 * s,
+                                offset: Offset(0, 4 * s),
+                              ),
+                            ],
+                          ),
+                          child: TypewriterText(
+                            text: 'Only ~26% largecap and ~12% mid / smallcap funds beat their index over 10 years',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 12 * s,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w500,
+                              height: 1.4,
                             ),
                           ),
-                          SizedBox(width: 12 * s),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'DID YOU KNOW?',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 10 * s,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.0,
-                                    color: const Color(0xFF94A3B8),
-                                  ),
-                                ),
-                                SizedBox(height: 4 * s),
-                                Text(
-                                  'Only ~26% largecap and ~12% mid / smallcap funds beat their index over 10 years',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 12 * s,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 48 * s),
 
