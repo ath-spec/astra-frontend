@@ -35,7 +35,7 @@ class DemoAIService {
         data: {
           'astra_user_id': phone, 
           'phone_number': phone,
-          'otp': '1234',
+          'otp': '123456',
           'name': name,
         },
       );
@@ -99,7 +99,7 @@ class DemoAIService {
         data: {
           'astra_user_id': phone, 
           'phone_number': phone, 
-          'otp': '1234', 
+          'otp': '123456', 
           'name': name, 
           'banks': banks
         },
