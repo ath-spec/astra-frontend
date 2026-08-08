@@ -31,52 +31,59 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
     super.dispose();
   }
 
-  Widget _buildTabButton(int index, String title, IconData icon) {
-    return Expanded(
-      child: AnimatedBuilder(
-        animation: _tabController.animation!,
-        builder: (context, child) {
-          final value = _tabController.animation!.value;
-          final diff = (value - index).abs();
-          
-          final color = ColorTween(
-            begin: Colors.black,
-            end: const Color(0xFFCBD5E1),
-          ).transform(diff.clamp(0.0, 1.0))!;
-          
-          final fontWeight = diff < 0.5 ? FontWeight.w600 : FontWeight.w500;
+  Widget _buildTabButton(int index, String title, IconData icon, double screenWidth) {
+    return AnimatedBuilder(
+      animation: _tabController.animation!,
+      builder: (context, child) {
+        final value = _tabController.animation!.value;
+        final diff = index - value; // Distance from center
+        final absDiff = diff.abs();
+        
+        // Center is 0. Push inactive tabs to the left/right based on screen width.
+        // For web/landscape we might need a smaller spacing, but screenWidth * 0.35 works well for mobile.
+        // Let's cap spacing at a reasonable maximum so it doesn't fly off screen on ultrawide monitors.
+        final spacing = (screenWidth * 0.35).clamp(120.0, 200.0);
+        final translateX = diff * spacing;
+        
+        // Keep original color and font weight logic
+        final color = ColorTween(
+          begin: Colors.black,
+          end: const Color(0xFFCBD5E1),
+        ).transform(absDiff.clamp(0.0, 1.0))!;
+        
+        final fontWeight = absDiff < 0.5 ? FontWeight.w600 : FontWeight.w500;
 
-          return InkWell(
+        return Transform.translate(
+          offset: Offset(translateX, 0),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () {
-              _tabController.animateTo(index);
+              // Custom ease-out curve for snappy responsiveness
+              _tabController.animateTo(index, duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic);
             },
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icon, size: 16, color: color),
-                    const SizedBox(width: 6),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 14,
-                        fontWeight: fontWeight,
-                        color: color,
-                      ),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 18, color: color),
+                  const SizedBox(width: 8),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 16,
+                      fontWeight: fontWeight,
+                      color: color,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -114,29 +121,30 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
             ],
           ),
         ),
-        // Custom Tab Bar with Smooth Sliding
+        // Custom Carousel Tab Bar (Emil Design)
         GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onHorizontalDragEnd: (details) {
             if (details.primaryVelocity == null) return;
             if (details.primaryVelocity! < -300) {
               if (_tabController.index < 2) {
-                _tabController.animateTo(_tabController.index + 1);
+                _tabController.animateTo(_tabController.index + 1, duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic);
               }
             } else if (details.primaryVelocity! > 300) {
               if (_tabController.index > 0) {
-                _tabController.animateTo(_tabController.index - 1);
+                _tabController.animateTo(_tabController.index - 1, duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic);
               }
             }
           },
           child: SizedBox(
             height: 48,
             width: screenWidth,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                _buildTabButton(0, 'Discipline', Icons.adjust),
-                _buildTabButton(1, 'Allocation', Icons.view_in_ar_outlined),
-                _buildTabButton(2, 'Performance', Icons.change_history),
+                _buildTabButton(0, 'Discipline', Icons.adjust, screenWidth),
+                _buildTabButton(1, 'Allocation', Icons.view_in_ar_outlined, screenWidth),
+                _buildTabButton(2, 'Performance', Icons.change_history, screenWidth),
               ],
             ),
           ),
@@ -161,105 +169,6 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
     );
   }
 
-  Widget _buildRailTabButton(int index, String title, IconData icon) {
-    return AnimatedBuilder(
-      animation: _tabController.animation!,
-      builder: (context, child) {
-        final isSelected = _tabController.index == index;
-        final color = isSelected ? Colors.black : const Color(0xFFCBD5E1);
-        final fontWeight = isSelected ? FontWeight.w600 : FontWeight.w500;
-
-        return InkWell(
-          onTap: () {
-            _tabController.animateTo(index);
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.white : Colors.transparent,
-              border: Border(
-                right: BorderSide(
-                  color: isSelected ? Colors.black : Colors.transparent,
-                  width: 3,
-                ),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(icon, size: 20, color: color),
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 18,
-                    fontWeight: fontWeight,
-                    color: color,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildLandscapeLayout(BuildContext context) {
-    return Row(
-      children: [
-        // Navigation Rail on the Left
-        Container(
-          width: 200,
-          color: const Color(0xFFF8FAFC),
-          child: Column(
-            children: [
-              // Top Bar for rail
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: const Icon(Icons.arrow_back, color: Colors.black, size: 24),
-                    ),
-                    const SizedBox(width: 16),
-                    Text(
-                      'ANALYSIS',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 2.0,
-                        color: Color(0xFF64748B),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              // Tab buttons vertically
-              _buildRailTabButton(0, 'Discipline', Icons.adjust),
-              _buildRailTabButton(1, 'Allocation', Icons.view_in_ar_outlined),
-              _buildRailTabButton(2, 'Performance', Icons.change_history),
-            ],
-          ),
-        ),
-        // Main content on the Right
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: const [
-              DisciplineTab(),
-              AllocationTab(),
-              PerformanceTab(),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
@@ -270,14 +179,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1200),
-            child: OrientationBuilder(
-              builder: (context, orientation) {
-                if (orientation == Orientation.landscape) {
-                  return _buildLandscapeLayout(context);
-                }
-                return _buildPortraitLayout(context, screenWidth);
-              },
-            ),
+            child: _buildPortraitLayout(context, screenWidth),
           ),
         ),
       ),
