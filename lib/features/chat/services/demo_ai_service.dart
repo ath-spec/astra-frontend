@@ -26,7 +26,7 @@ class DemoAIService {
     ];
 
     try {
-      final baseUrl = 'https://astra.zeyro.in'; // Live Railway URL
+      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
       final appAuthToken = dotenv.env['APP_AUTH_TOKEN'] ?? '';
       
       // 1. Fetch JWT Token
