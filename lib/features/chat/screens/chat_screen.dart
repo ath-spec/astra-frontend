@@ -14,6 +14,14 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(chatNotifierProvider.notifier).initializeHistory();
+    });
+  }
+
+  @override
   void dispose() {
     // If the user navigates away (e.g. presses back), immediately stop any ongoing AI audio.
     // Use Future.microtask or read directly if safe. We use the service/notifier to stop it.

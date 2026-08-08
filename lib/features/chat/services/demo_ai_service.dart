@@ -16,14 +16,12 @@ class DemoAIService {
   String get systemPrompt => dotenv.env['AI_SYSTEM_PROMPT'] ?? 'You are a helpful assistant.';
 
   Future<String> getChatResponse(List<Map<String, String>> messageHistory, {String? systemPromptOverride, required String phone, required String name}) async {
-    final combinedPrompt = systemPromptOverride != null 
-        ? '$systemPrompt\n\n$systemPromptOverride'
-        : systemPrompt;
-        
-    final messages = [
-      {'role': 'system', 'content': combinedPrompt},
-      ...messageHistory,
-    ];
+    final messages = [...messageHistory];
+    
+    // If there's an override (like from nav_input_pill), inject it at the end to guide the AI strongly
+    if (systemPromptOverride != null) {
+      messages.add({'role': 'system', 'content': systemPromptOverride});
+    }
 
     try {
       final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
@@ -78,6 +76,31 @@ class DemoAIService {
       throw Exception("The server is experiencing issues. Please try again later.");
     } catch (e) {
       throw Exception("An unexpected error occurred.");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchChatHistory({required String phone, required String name}) async {
+    try {
+      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
+      
+      // Get Token first
+      final authResponse = await _dio.post(
+        '$baseUrl/api/auth/token',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+        data: {'astra_user_id': phone, 'phone_number': phone, 'name': name},
+      );
+      final jwtToken = authResponse.data['token'];
+
+      // Get History
+      final historyResponse = await _dio.get(
+        '$baseUrl/api/chat/history',
+        options: Options(headers: {'Authorization': 'Bearer $jwtToken'}),
+      );
+      
+      final messages = historyResponse.data['messages'] as List<dynamic>;
+      return messages.map((m) => m as Map<String, dynamic>).toList();
+    } catch (e) {
+      return [];
     }
   }
 

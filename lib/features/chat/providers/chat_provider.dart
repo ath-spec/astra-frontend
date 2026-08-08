@@ -73,6 +73,46 @@ class ChatNotifier extends _$ChatNotifier {
     }
   }
 
+  Future<void> initializeHistory() async {
+    if (state.isNotEmpty) return; // Already loaded
+
+    ref.read(isProcessingProvider.notifier).setProcessing(true);
+    
+    final authState = ref.read(authProvider);
+    String phone = '+919876543210';
+    String name = 'Judge';
+    
+    if (authState is AuthAuthenticated) {
+      phone = authState.user.email.replaceAll('@astra.dev', '');
+      name = authState.user.name;
+    }
+
+    final historyRaw = await _aiService.fetchChatHistory(phone: phone, name: name);
+    
+    List<ChatMessage> historyMessages = [];
+    for (var msg in historyRaw) {
+      final role = msg['role'] as String;
+      final content = msg['content'] as String;
+      
+      // We skip system messages in the UI
+      if (role == 'system') continue;
+      
+      historyMessages.add(ChatMessage(
+        id: _uuid.v4(),
+        text: content,
+        isUser: role == 'user',
+        timestamp: DateTime.now(), // Fallback
+      ));
+    }
+    
+    if (historyMessages.isNotEmpty) {
+      state = historyMessages;
+      _saveSession();
+    }
+    
+    ref.read(isProcessingProvider.notifier).setProcessing(false);
+  }
+
   void addMessages(List<ChatMessage> messages) {
     state = [...state, ...messages];
     _saveSession();
