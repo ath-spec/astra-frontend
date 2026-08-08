@@ -67,7 +67,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: getProportionateScreenWidth(20),
+                    fontSize: getProportionateScreenWidth(24),
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                     height: 1.1,
@@ -121,7 +121,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
                   elevation: 0,
                 ),
                 child: Text(
-                  'get started',
+                  'Get started',
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 15,
@@ -134,10 +134,10 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
             SizedBox(height: getProportionateScreenHeight(10)),
             // Disclosures/Helper text
             Text(
-              "achieve inner peace",
+              "Achieve inner peace",
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: FontWeight.w400,
                 color: Colors.grey,
               ),
