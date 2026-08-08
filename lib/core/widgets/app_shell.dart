@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/chat/providers/chat_provider.dart';
@@ -135,14 +136,17 @@ class _AppShellState extends ConsumerState<AppShell> {
     }
 
     return PopScope(
-      canPop: currentIndex == 0 && !isInputMode,
-      onPopInvokedWithResult: (didPop, result) {
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         
         if (isInputMode) {
           FocusScope.of(context).unfocus();
           ref.read(navInputModeProvider.notifier).state = false;
           ref.read(speechProvider.notifier).stopListening();
+        } else if (currentIndex == 0) {
+          // Prevent predictive back gesture bug by manually popping the app
+          await SystemNavigator.pop();
         } else if (currentIndex == 2) {
           widget.navigationShell.goBranch(_previousIndex);
         } else {

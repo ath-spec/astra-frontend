@@ -114,7 +114,7 @@ class VideosTab extends StatelessWidget {
                         module.title,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 12,
+                          fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF0F172A),
                         ),
@@ -124,7 +124,7 @@ class VideosTab extends StatelessWidget {
                         '${module.duration} • ${module.videoCount} Videos',
                         style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10,
+                          fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: Color(0xFF64748B),
                         ),

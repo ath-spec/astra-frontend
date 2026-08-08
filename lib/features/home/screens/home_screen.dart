@@ -9,6 +9,7 @@ import '../../asset_connection/providers/asset_connection_provider.dart';
 import '../../../core/providers/nav_context_provider.dart';
 import '../../../core/providers/privacy_provider.dart';
 import '../../../core/utils/privacy_formatter.dart';
+import '../../auth/providers/auth_provider.dart';
 
 import '../widgets/home_portfolio_insights.dart';
 import '../widgets/home_quick_actions.dart';
@@ -73,7 +74,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final assetState = ref.watch(assetConnectionProvider);
     final isLocked = ref.watch(privacyProvider);
+    final authState = ref.watch(authProvider);
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
+    
+    final String userName = authState is AuthAuthenticated ? authState.user.name.toUpperCase() : 'USER';
 
     final double totalWealthValue = (assetState.mfConnected ? 352962.0 : 0.0) + (assetState.stocksConnected ? 147908.0 : 0.0);
     final formattedTotal = PrivacyFormatter.obscure(
@@ -148,6 +152,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             delegate: _HomeHeaderDelegate(
               safeAreaTop: MediaQuery.paddingOf(context).top,
               totalWealth: formattedTotal,
+              userName: userName,
               showReturnsPill: showReturnsPill,
               pillOneDayText: pillOneDayText,
               pillTotalText: pillTotalText,
@@ -614,6 +619,7 @@ class _DottedLinePainter extends CustomPainter {
 class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
   final String totalWealth;
+  final String userName;
   final bool showReturnsPill;
   final String pillOneDayText;
   final String pillTotalText;
@@ -624,6 +630,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   _HomeHeaderDelegate({
     required this.safeAreaTop,
     required this.totalWealth,
+    required this.userName,
     required this.showReturnsPill,
     required this.pillOneDayText,
     required this.pillTotalText,
@@ -731,10 +738,10 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
             right: 0,
             child: Opacity(
               opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0), // Fades out quickly
-              child: const Center(
+              child: Center(
                 child: Text(
-                  "ABHIMANYU'S WEALTH",
-                  style: TextStyle(
+                  "$userName'S WEALTH",
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     color: Color(0xFF64748B),
                     fontSize: 11,

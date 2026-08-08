@@ -81,7 +81,7 @@ class _VideoReaderScreenState extends State<VideoReaderScreen> {
                 '${_currentVideoIndex + 1}/${widget.module.videos.length}',
                 style: const TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 16,
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
                 ),
@@ -228,7 +228,7 @@ class _VideoReaderScreenState extends State<VideoReaderScreen> {
               chapter.title,
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
                 color: const Color(0xFF0F172A),
               ),

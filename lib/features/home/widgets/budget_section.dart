@@ -131,8 +131,8 @@ class _BudgetCard extends StatelessWidget {
                     padding: EdgeInsets.only(
                       left: constraints.maxWidth * 0.4 + 10,
                       right: 18,
-                      top: 10,
-                      bottom: 10,
+                      top: 12,
+                      bottom: 12,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,6 +148,7 @@ class _BudgetCard extends StatelessWidget {
                             color: Colors.black,
                           ),
                         ),
+                        const SizedBox(height: 4),
                         const Text(
                           'AI sets up your budget and helps you track progress all month long',
                           style: TextStyle(
@@ -156,10 +157,12 @@ class _BudgetCard extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                             color: Colors.black54,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 12),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               colors: [Color(0xFF27272A), Color(0xFF09090B)],
