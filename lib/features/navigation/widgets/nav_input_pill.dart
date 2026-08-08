@@ -14,6 +14,7 @@ import '../../chat/models/chat_message.dart';
 import '../../chat/services/demo_ai_service.dart';
 import '../../../core/widgets/typewriter_markdown.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../../auth/providers/auth_provider.dart';
 
 enum NavInputState { initial, typing, generating, streaming, replied }
 
@@ -111,8 +112,19 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
       
       final messages = [...historyMessages, {'role': 'user', 'content': text}];
 
+      final authState = ref.read(authProvider);
+      String phone = '+919876543210';
+      String name = 'Judge';
+      
+      if (authState is AuthAuthenticated) {
+        phone = authState.user.email.replaceAll('@astra.dev', '');
+        name = authState.user.name;
+      }
+
       final response = await _aiService.getChatResponse(
         messages,
+        phone: phone,
+        name: name,
         systemPromptOverride: dotenv.env['NAV_PILL_PROMPT_OVERRIDE'] ?? 'You are ASTRA. Keep your answer VERY CONCISE (max 1-2 sentences).',
       );
 
