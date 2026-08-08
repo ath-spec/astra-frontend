@@ -35,6 +35,10 @@ flutter config --enable-web
 echo "Fetching Dependencies..."
 flutter pub get
 
+echo "Generating .env file from Netlify Environment Variables..."
+# This ensures flutter_dotenv has the required .env file at runtime
+echo "API_BASE_URL=$API_BASE_URL" > .env
+
 echo "Building Production Web Bundle..."
 flutter build web --release
 
