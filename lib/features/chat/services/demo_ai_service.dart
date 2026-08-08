@@ -5,12 +5,12 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DemoAIService {
-  String get groqApiKey => dotenv.env['GROQ_API_KEY'] ?? 'YOUR_GROQ_API_KEY';
-  String get elevenLabsApiKey => dotenv.env['ELEVENLABS_API_KEY'] ?? 'YOUR_ELEVENLABS_API_KEY';
   static const String elevenLabsVoiceId = '21m00Tcm4TlvDq8ikWAM'; // Rachel voice
   
   final Dio _dio = Dio();
   final AudioPlayer audioPlayer = AudioPlayer();
+  
+  String? _cachedJwtToken;
   
   Future<String> getChatResponse(List<Map<String, String>> messageHistory, {bool isNavPill = false, required String phone, required String name}) async {
     final messages = [...messageHistory];
@@ -35,6 +35,7 @@ class DemoAIService {
       );
 
       final jwtToken = authResponse.data['token'];
+      _cachedJwtToken = jwtToken; // Cache the token for TTS requests
 
       // 2. Call the chat endpoint securely with the JWT
       final response = await _dio.post(
@@ -87,6 +88,7 @@ class DemoAIService {
         data: {'astra_user_id': phone, 'phone_number': phone, 'name': name, 'banks': banks},
       );
       final jwtToken = authResponse.data['token'];
+      _cachedJwtToken = jwtToken; // Cache the token for TTS requests
 
       // Get History
       final historyResponse = await _dio.get(
@@ -101,8 +103,6 @@ class DemoAIService {
     }
   }
 
-  String get sarvamApiKey => dotenv.env['SARVAM_API_KEY'] ?? 'YOUR_SARVAM_API_KEY';
-
   int _speechId = 0;
 
   void stopSpeaking() {
@@ -111,29 +111,27 @@ class DemoAIService {
   }
 
   Future<void> speak(String text) async {
-    if (sarvamApiKey == 'YOUR_SARVAM_API_KEY') {
-      print('Skipping TTS, no API key');
+    if (_cachedJwtToken == null) {
+      print('Skipping TTS: No JWT token available. Must authenticate first.');
       return;
     }
-    
+
     final currentSpeechId = ++_speechId;
     
     try {
-      final url = 'https://api.sarvam.ai/text-to-speech';
+      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
+      final url = '$baseUrl/api/tts';
       
       final response = await _dio.post(
         url,
         options: Options(
           headers: {
-            'api-subscription-key': sarvamApiKey,
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer $_cachedJwtToken',
           },
         ),
         data: {
-          'inputs': [text],
-          'target_language_code': 'en-IN',
-          'speaker': 'shubh',
-          'model': 'bulbul:v3'
+          'text': text,
         },
       );
 
