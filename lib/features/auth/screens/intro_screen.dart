@@ -260,8 +260,8 @@ class _IntroScreenState extends State<IntroScreen>
                                           width: double.infinity,
                                           height: double.infinity,
                                           child: FittedBox(
-                                            fit: BoxFit.cover,
-                                            alignment: Alignment.topCenter,
+                                            fit: BoxFit.contain,
+                                            alignment: Alignment.center,
                                             child: SizedBox(
                                                 width: _videoController
                                                     .value

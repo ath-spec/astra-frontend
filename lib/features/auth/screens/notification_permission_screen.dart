@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -32,7 +33,13 @@ class _NotificationPermissionScreenState extends State<NotificationPermissionScr
   }
 
   Future<void> _submit() async {
-    await Permission.notification.request();
+    try {
+      if (!kIsWeb) {
+        await Permission.notification.request();
+      }
+    } catch (e) {
+      debugPrint('Permission request error: $e');
+    }
 
     if (mounted) {
       context.pushReplacement('/name');

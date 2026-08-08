@@ -108,14 +108,28 @@ class _MutualFundPerformanceSectionState
                 if (_chartKey.currentContext != null && _scrollPosition != null) {
                   try {
                     final RenderBox renderBox = _chartKey.currentContext!.findRenderObject() as RenderBox;
-                    final position = renderBox.localToGlobal(Offset.zero).dy;
-                    final screenHeight = MediaQuery.of(context).size.height;
+                    final scrollableState = Scrollable.maybeOf(context);
+                    
+                    double position = 0.0;
+                    double viewportHeight = MediaQuery.of(context).size.height;
+                    
+                    if (scrollableState != null) {
+                      final scrollableBox = scrollableState.context.findRenderObject() as RenderBox?;
+                      if (scrollableBox != null) {
+                        position = renderBox.localToGlobal(Offset.zero, ancestor: scrollableBox).dy;
+                        viewportHeight = scrollableBox.size.height;
+                      } else {
+                        position = renderBox.localToGlobal(Offset.zero).dy;
+                      }
+                    } else {
+                      position = renderBox.localToGlobal(Offset.zero).dy;
+                    }
                     
                     // Scrollytelling mapping:
                     // Start animating when the top of the chart reaches 80% down the screen
                     // Finish animating when the top of the chart reaches 40% down the screen
-                    final startY = screenHeight * 0.8;
-                    final endY = screenHeight * 0.4;
+                    final startY = viewportHeight * 0.8;
+                    final endY = viewportHeight * 0.4;
                     
                     progress = (startY - position) / (startY - endY);
                     
