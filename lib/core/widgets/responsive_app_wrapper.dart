@@ -112,60 +112,6 @@ class ResponsiveAppWrapper extends StatelessWidget {
                                   child: child, // The actual Flutter App
                                 ),
                               ),
-
-                              // --- DYNAMIC ISLAND ---
-                              Align(
-                                alignment: Alignment.topCenter,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 10),
-                                  width: 120,
-                                  height: 35,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(24), // Pill shape
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // Front Camera Lens
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 12),
-                                        child: Container(
-                                          width: 14,
-                                          height: 14,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF111111),
-                                            shape: BoxShape.circle,
-                                            border: Border.all(color: const Color(0xFF262626), width: 1.5),
-                                          ),
-                                          child: Center(
-                                            child: Container(
-                                              width: 5,
-                                              height: 5,
-                                              decoration: const BoxDecoration(
-                                                color: Color(0xFF0F264A), // Lens reflection tint
-                                                shape: BoxShape.circle,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      // FaceID Sensor
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 22),
-                                        child: Container(
-                                          width: 10,
-                                          height: 10,
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFF1A1A1A),
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                         ),
