@@ -135,7 +135,7 @@ class DisciplineFactorsCard extends StatelessWidget {
         );
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

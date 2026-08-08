@@ -28,7 +28,7 @@ class AllTab extends StatelessWidget {
           child: Text(
             "No subscriptions found",
             style: TextStyle(fontFamily: 'DMSans', 
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withValues(alpha: 0.4),
               fontSize: getProportionateScreenWidth(14),
             ),
           ),

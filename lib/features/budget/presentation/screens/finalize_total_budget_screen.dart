@@ -294,7 +294,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                           ),
                           child: Text("Finalize your budget",
                             style: TextStyle(fontFamily: 'DMSans', 
-                              fontSize: getProportionateScreenWidth(18),
+                              fontSize: getProportionateScreenWidth(20),
                               fontWeight: FontWeight.w600,
                               color: BudgetColors.black,
                             ),
@@ -314,7 +314,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                 ? "Since we dont have any data on you we would suggest using the standard 50-30-20 rule."
                                 : "Based on your ${_formatCompact(_income)} income, here's your ideal spending range.",
                             style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                              fontSize: 12,
+                              fontSize: 14,
                               color: BudgetColors.grey7,
                             ),
                             textAlign: TextAlign.left,
@@ -343,7 +343,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                             children: [
                               Text("Monthly budget",
                                 style: TextStyle(fontFamily: 'DMSans', 
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   color: BudgetColors.black,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -371,7 +371,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                     LengthLimitingTextInputFormatter(8),
                                   ],
                                   style: TextStyle(fontFamily: 'DMSans', 
-                                    fontSize: 28,
+                                    fontSize: 30,
                                     fontWeight: FontWeight.w600,
                                     color: BudgetColors.black,
                                   ),
@@ -387,7 +387,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                     contentPadding: EdgeInsets.zero,
                                     prefixText: '₹',
                                     prefixStyle: TextStyle(
-                                      fontSize: 28,
+                                      fontSize: 30,
                                       fontWeight: FontWeight.w600,
                                       color: BudgetColors.black,
                                     ),
@@ -437,7 +437,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                 const SizedBox(height: 40),
                                 Text("Stay within ${_formatCompact(_suggestedBudget * 0.9)} - ${_formatCompact(_suggestedBudget * 1.1)} to stay on track.",
                                   style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     color: const Color.fromARGB(255, 150, 150, 150),
                                   ),
                                 ),
@@ -484,7 +484,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                           const SizedBox(width: 8),
                                           Text("Budget conflict",
                                             style: TextStyle(fontFamily: 'DMSans', 
-                                              fontSize: 14,
+                                              fontSize: 16,
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 1,
                                               color: const Color(0xFFB71C1C),
@@ -498,7 +498,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                             ? "Your new budget covers your protected bills, but doesn't leave enough room for your other categories. you are short by ₹${_conflictError!.amount.toStringAsFixed(0)}."
                                             : "You have a conflict in your budget allocation.",
                                         style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                                          fontSize: 13,
+                                          fontSize: 14,
                                           color: const Color(0xFFB71C1C),
                                           height: 1.5,
                                         ),
@@ -508,10 +508,10 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                         Text(
                                           _conflictError!.type == 'scalable_floor_exceeded'
                                             ? (_conflictError!.conflicts.length > 1
-                                                ? "Flexible categories: " + _conflictError!.conflicts.map((c) => c.replaceAll('_', ' ').toLowerCase()).join(', ')
+                                                ? "Flexible categories: ${_conflictError!.conflicts.map((c) => c.replaceAll('_', ' ').toLowerCase()).join(', ')}"
                                                 : "Flexible category: " + _conflictError!.conflicts.first.replaceAll('_', ' ').toLowerCase())
                                             : (_conflictError!.conflicts.length > 1
-                                                ? "Fixed categories: " + _conflictError!.conflicts.map((c) => c.replaceAll('_', ' ').toLowerCase()).join(', ')
+                                                ? "Fixed categories: ${_conflictError!.conflicts.map((c) => c.replaceAll('_', ' ').toLowerCase()).join(', ')}"
                                                 : "Fixed category: " + _conflictError!.conflicts.first.replaceAll('_', ' ').toLowerCase()),
                                           style: TextStyle(fontFamily: 'DMSans', 
                                             fontSize: 13,
@@ -542,7 +542,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                     Text("Your potential savings",
                                       textAlign: TextAlign.left,
                                       style: TextStyle(fontFamily: 'DMSans', 
-                                        fontSize: 14,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 1,
                                         color: _getTextColor(),
@@ -585,7 +585,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                             FocusManager.instance.primaryFocus?.unfocus();
                             if (_currentBudget <= 0) {
                               ScaffoldMessenger.of(context)..hideCurrentSnackBar()..showSnackBar(
-        const SnackBar(behavior: SnackBarBehavior.floating, duration: const Duration(milliseconds: 1500), 
+        const SnackBar(behavior: SnackBarBehavior.floating, duration: Duration(milliseconds: 1500), 
                                   content: Text("Budget cannot be zero"),
                                   backgroundColor: Color(0xFFB71C1C),
                                 ),
@@ -707,7 +707,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       elevation: 4,
-                      shadowColor: BudgetColors.black.withOpacity(0.3),
+                      shadowColor: BudgetColors.black.withValues(alpha: 0.3),
                     ),
                     child: _isLoading
                         ? const SizedBox(
@@ -896,7 +896,7 @@ class _BudgetDialState extends State<_BudgetDial> {
                         bottomLeft: Radius.circular(4),
                       ),
                       gradient: LinearGradient(
-                        colors: [BudgetColors.white, BudgetColors.white.withOpacity(0.0)],
+                        colors: [BudgetColors.white, BudgetColors.white.withValues(alpha: 0.0)],
                       ),
                     ),
                   ),
@@ -908,7 +908,7 @@ class _BudgetDialState extends State<_BudgetDial> {
                         bottomRight: Radius.circular(4),
                       ),
                       gradient: LinearGradient(
-                        colors: [BudgetColors.white.withOpacity(0.0), BudgetColors.white],
+                        colors: [BudgetColors.white.withValues(alpha: 0.0), BudgetColors.white],
                       ),
                     ),
                   ),
@@ -939,7 +939,7 @@ class _BudgetDialState extends State<_BudgetDial> {
                       color: BudgetColors.black,
                       boxShadow: [
                         BoxShadow(
-                          color: BudgetColors.black.withOpacity(0.2),
+                          color: BudgetColors.black.withValues(alpha: 0.2),
                           blurRadius: 8,
                           spreadRadius: 2,
                         ),

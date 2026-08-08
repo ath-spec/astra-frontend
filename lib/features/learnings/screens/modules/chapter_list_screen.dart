@@ -119,7 +119,7 @@ class ChapterListScreen extends StatelessWidget {
               top: 0,
               bottom: 0,
               width: 56,
-              child: Container(color: module.themeColor.withOpacity(0.12)),
+              child: Container(color: module.themeColor.withValues(alpha: 0.12)),
             ),
             // Vertical bar
             Positioned(
@@ -232,7 +232,7 @@ class ChapterListScreen extends StatelessWidget {
         border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -263,7 +263,7 @@ class ChapterListScreen extends StatelessWidget {
                           width: 60,
                           height: 60,
                           decoration: BoxDecoration(
-                            color: module.themeColor.withOpacity(0.2),
+                            color: module.themeColor.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -275,7 +275,7 @@ class ChapterListScreen extends StatelessWidget {
                           width: 140,
                           height: 140,
                           decoration: BoxDecoration(
-                            color: module.themeColor.withOpacity(0.1),
+                            color: module.themeColor.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -285,7 +285,7 @@ class ChapterListScreen extends StatelessWidget {
                         child: Icon(
                           chapter.icon,
                           size: 64,
-                          color: module.themeColor.withOpacity(0.6),
+                          color: module.themeColor.withValues(alpha: 0.6),
                         ),
                       ),
                     ],

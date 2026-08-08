@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 /// AppTheme defines a vibrant, premium design system with modern typography,
 /// harmonious color palettes, and sleek light/dark mode styling.
@@ -151,6 +152,12 @@ class AppTheme {
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(color: textSecondaryLight),
       ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
     );
   }
 
@@ -231,6 +238,12 @@ class AppTheme {
           borderSide: const BorderSide(color: accent, width: 1.5),
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(color: textSecondaryDark),
+      ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
       ),
     );
   }

@@ -104,7 +104,7 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -246,7 +246,7 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
 }
 
 class _AnimatedHourglass extends StatefulWidget {
-  const _AnimatedHourglass({super.key});
+  const _AnimatedHourglass();
 
   @override
   State<_AnimatedHourglass> createState() => _AnimatedHourglassState();

@@ -39,10 +39,10 @@ PathBuilder polyPath(List<List<double>> verts) {
   };
 }
 
-final PathBuilder _circle = (double f) {
+List<double> _circle(double f) {
   final a = -pi / 2 + f * 2 * pi;
   return [cos(a) * 0.24, sin(a) * 0.24];
-};
+}
 
 final PathBuilder _triangle = polyPath([
   [0.0, -0.26],

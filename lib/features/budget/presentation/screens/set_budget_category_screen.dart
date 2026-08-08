@@ -30,7 +30,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
   );
 
   List<CategoryItem> _categories = [];
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   void initState() {
@@ -175,7 +175,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                   ),
                   child: Text("Set up category budgets",
                     style: TextStyle(fontFamily: 'DMSans', 
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: BudgetColors.black,
                     ),
@@ -188,7 +188,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                     horizontal: getProportionateScreenWidth(24),
                   ),
                   child: Text("We've set up a few budgets to get you started. you can change these at any time.",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', fontSize: 12, color: BudgetColors.grey7),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', fontSize: 14, color: BudgetColors.grey7),
                     textAlign: TextAlign.left,
                   ),
                 ),
@@ -206,7 +206,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                       ), // Space for floating buttons
                       itemCount: _categories.length,
                       separatorBuilder: (context, index) => Divider(
-                        color: BudgetColors.black.withOpacity(0.05),
+                        color: BudgetColors.black.withValues(alpha: 0.05),
                         height: 32,
                       ),
                       itemBuilder: (context, index) {
@@ -214,13 +214,13 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                         return InkWell(
                           onTap: () => _toggleCategorySet(cat),
                           highlightColor: Colors.transparent,
-                          splashColor: BudgetColors.black.withOpacity(0.02),
+                          splashColor: BudgetColors.black.withValues(alpha: 0.02),
                           child: Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: cat.iconColor.withOpacity(0.1),
+                                  color: cat.iconColor.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -237,7 +237,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                                     Text(
                                       cat.title,
                                       style: TextStyle(fontFamily: 'DMSans', 
-                                        fontSize: 14,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                         color: BudgetColors.black,
                                       ),
@@ -247,13 +247,13 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
                                       children: [
                                         const Icon(
                                           Icons.auto_awesome,
-                                          size: 10,
+                                          size: 12,
                                           color: BudgetColors.grey7,
                                         ),
                                         const SizedBox(width: 4),
                                         Text("Suggested: ${currencyFormat.format(cat.suggestedAmount)}/mo",
                                           style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                                            fontSize: 10,
+                                            fontSize: 12,
                                             color: BudgetColors.grey7,
                                           ),
                                         ),

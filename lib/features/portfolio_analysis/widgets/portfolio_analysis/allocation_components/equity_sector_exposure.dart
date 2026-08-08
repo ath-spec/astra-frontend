@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
 import 'package:visibility_detector/visibility_detector.dart';
-import '../../../../../core/responsive/size_config.dart';
 import 'portfolio_genome_chart.dart';
 
 class EquitySectorExposureSection extends StatefulWidget {

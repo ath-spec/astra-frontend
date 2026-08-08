@@ -44,7 +44,7 @@ class AddRecurringScreen extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Divider(
-                                color: Colors.black.withOpacity(0.06),
+                                color: Colors.black.withValues(alpha: 0.06),
                               ),
                             ),
                             Padding(
@@ -58,13 +58,13 @@ class AddRecurringScreen extends StatelessWidget {
                                   fontSize: getProportionateScreenWidth(9),
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 1.0,
-                                  color: Colors.black.withOpacity(0.3),
+                                  color: Colors.black.withValues(alpha: 0.3),
                                 ),
                               ),
                             ),
                             Expanded(
                               child: Divider(
-                                color: Colors.black.withOpacity(0.06),
+                                color: Colors.black.withValues(alpha: 0.06),
                               ),
                             ),
                           ],
@@ -247,7 +247,7 @@ class AddRecurringScreen extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'DMSans',
               fontSize: getProportionateScreenWidth(11),
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               height: 1.3,
             ),
           ),
@@ -279,7 +279,7 @@ class AddRecurringScreen extends StatelessWidget {
               Icon(
                 Icons.lock_outline_rounded,
                 size: 10,
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
               ),
               SizedBox(width: getProportionateScreenWidth(4)),
               Text(
@@ -287,7 +287,7 @@ class AddRecurringScreen extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: getProportionateScreenWidth(8),
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -329,7 +329,7 @@ class AddRecurringScreen extends StatelessWidget {
                     fontFamily: 'DMSans',
                     fontSize: getProportionateScreenWidth(9),
                     fontWeight: FontWeight.w600,
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                   ),
                 ),
               ],
@@ -357,7 +357,7 @@ class AddRecurringScreen extends StatelessWidget {
         style: TextStyle(
           fontFamily: 'DMSans',
           fontSize: getProportionateScreenWidth(12),
-          color: Colors.black.withOpacity(0.4),
+          color: Colors.black.withValues(alpha: 0.4),
         ),
       ),
     );

@@ -91,7 +91,7 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
             children: [
               GestureDetector(
                 onTap: () => context.pop(),
-                child: Container(
+                child: SizedBox(
                   width: 40,
                   height: 40,
                   child: const Icon(Icons.keyboard_arrow_down, color: Colors.black, size: 24),

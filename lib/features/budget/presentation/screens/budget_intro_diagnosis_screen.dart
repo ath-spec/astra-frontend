@@ -37,7 +37,7 @@ class _BudgetIntroDiagnosisScreenState
 
     if (state.isLoadingDiagnosis) {
       return const Scaffold(
-        backgroundColor: const Color(0xFFFFFFFF),
+        backgroundColor: Color(0xFFFFFFFF),
         body: Center(child: CircularProgressIndicator(color: BudgetColors.black)),
       );
     }
@@ -93,7 +93,7 @@ class _BudgetIntroDiagnosisScreenState
                         ),
                         child: Text("Here's what we gathered",
                           style: TextStyle(fontFamily: 'DMSans', 
-                            fontSize: (18),
+                            fontSize: (20),
                             fontWeight: FontWeight.w600,
                             color: BudgetColors.black,
                             letterSpacing: 1,
@@ -115,7 +115,7 @@ class _BudgetIntroDiagnosisScreenState
                               : "We reviewed your income and spending from the past 6 months.",
                           textAlign: TextAlign.left,
                           style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                            fontSize: (12),
+                            fontSize: (14),
                             color: BudgetColors.grey7,
                           ),
                         ),
@@ -185,7 +185,7 @@ class _BudgetIntroDiagnosisScreenState
                           padding: EdgeInsets.all((20)),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFFF4F4),
-                            border: Border.all(color: BudgetColors.errorText.withOpacity(0.3), width: 1.5),
+                            border: Border.all(color: BudgetColors.errorText.withValues(alpha: 0.3), width: 1.5),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Column(
@@ -199,7 +199,7 @@ class _BudgetIntroDiagnosisScreenState
                               SizedBox(height: (12)),
                               Text("No data available",
                                 style: TextStyle(fontFamily: 'DMSans', 
-                                  fontSize: (14),
+                                  fontSize: (16),
                                   fontWeight: FontWeight.w600,
                                   color: BudgetColors.foreground,
                                 ),
@@ -208,7 +208,7 @@ class _BudgetIntroDiagnosisScreenState
                               Text("Zeyro has no data on you at the moment. please connect your accounts to get accurate results.",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                                  fontSize: (12),
+                                  fontSize: (14),
                                   color: BudgetColors.grey7,
                                   height: 1.4,
                                 ),
@@ -227,7 +227,7 @@ class _BudgetIntroDiagnosisScreenState
                       ),
                       child: Container(
                         height: 1,
-                        color: BudgetColors.midGrey.withOpacity(0.3),
+                        color: BudgetColors.midGrey.withValues(alpha: 0.3),
                         width: double.infinity,
                       ),
                     ),
@@ -243,7 +243,7 @@ class _BudgetIntroDiagnosisScreenState
                         alignment: Alignment.centerLeft,
                         child: Text("Our diagnosis",
                           style: TextStyle(fontFamily: 'DMSans', 
-                            fontSize: (14),
+                            fontSize: (16),
                             fontWeight: FontWeight.w600,
                             letterSpacing: 1,
                             color: BudgetColors.grey7,
@@ -294,7 +294,7 @@ class _BudgetIntroDiagnosisScreenState
                           children: [
                             Text("What this means",
                               style: TextStyle(fontFamily: 'DMSans', 
-                                fontSize: (12),
+                                fontSize: (14),
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1,
                                 color: BudgetColors.black,
@@ -394,7 +394,7 @@ class _BudgetIntroDiagnosisScreenState
         Text("Avg.",
           textAlign: TextAlign.center,
           style: TextStyle(fontFamily: 'DMSans', 
-            fontSize: (12),
+            fontSize: (14),
             color: BudgetColors.black,
             fontWeight: FontWeight.w500,
           ),
@@ -440,7 +440,7 @@ class _BudgetIntroDiagnosisScreenState
           Text(
             title,
             style: TextStyle(fontFamily: 'DMSans', 
-              fontSize: (12),
+              fontSize: (14),
               fontWeight: FontWeight.w600,
               color: BudgetColors.black,
             ),
@@ -451,7 +451,7 @@ class _BudgetIntroDiagnosisScreenState
               child: Text(
                 (body),
                 style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                  fontSize: (10),
+                  fontSize: (12),
                   height: 1.4,
                   color: BudgetColors.grey7,
                 ),

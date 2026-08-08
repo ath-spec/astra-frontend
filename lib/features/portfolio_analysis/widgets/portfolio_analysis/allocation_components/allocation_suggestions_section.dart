@@ -115,7 +115,7 @@ class AllocationSuggestionsSection extends StatelessWidget {
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -163,7 +163,7 @@ class AllocationSuggestionsSection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -209,7 +209,7 @@ class _TargetIsometricPainter extends CustomPainter {
     
     // For simplicity, just drawing the filled target box with an outline
     final targetPaint = Paint()
-      ..color = const Color(0xFFF3E8FF).withOpacity(0.5)
+      ..color = const Color(0xFFF3E8FF).withValues(alpha: 0.5)
       ..style = PaintingStyle.fill;
     final targetOutlinePaint = Paint()
       ..color = const Color(0xFFB794F4)
@@ -301,7 +301,7 @@ class _HarvestableIsometricPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     final glassFill = Paint()
-      ..color = const Color(0xFFF0FDF4).withOpacity(0.5)
+      ..color = const Color(0xFFF0FDF4).withValues(alpha: 0.5)
       ..style = PaintingStyle.fill;
 
     // Full glass block

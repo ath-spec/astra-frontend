@@ -21,7 +21,7 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  double _lastHapticValue = 0;
+  final double _lastHapticValue = 0;
 
   bool _hasAnimated = false;
 
@@ -33,8 +33,9 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
       duration: const Duration(milliseconds: 1500),
     );
     int targetSegments = 1;
-    if (widget.level.score >= 0.5 && widget.level.score < 0.8)
+    if (widget.level.score >= 0.5 && widget.level.score < 0.8) {
       targetSegments = 2;
+    }
     if (widget.level.score >= 0.8) targetSegments = 3;
 
     int hapticCount = 0;
@@ -130,8 +131,9 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
             if (widget.level == DisciplineLevel.poor) index = 1; // Low
             if (widget.level == DisciplineLevel.moderate) index = 2; // Fair
             if (widget.level == DisciplineLevel.good) index = 3; // Good
-            if (widget.level == DisciplineLevel.excellent)
+            if (widget.level == DisciplineLevel.excellent) {
               index = 4; // Excellent
+            }
 
             showModalBottomSheet(
               context: context,

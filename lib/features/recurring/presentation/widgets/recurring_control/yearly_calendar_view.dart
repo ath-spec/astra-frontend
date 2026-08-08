@@ -128,7 +128,7 @@ class _YearlyCalendarViewWidgetState extends State<YearlyCalendarViewWidget> {
 
           SizedBox(height: getProportionateScreenHeight(32)),
           Divider(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             height: 1.0,
             thickness: 1.0,
           ),
@@ -177,7 +177,7 @@ class _YearlyCalendarViewWidgetState extends State<YearlyCalendarViewWidget> {
                     month: month,
                     isCurrentMonth: isCurrentMonth,
                     todayDay: now.day,
-                    textColor: Colors.black.withOpacity(0.8),
+                    textColor: Colors.black.withValues(alpha: 0.8),
                     todayColor: const Color(0xFFFF3B30),
                   ),
                 ),

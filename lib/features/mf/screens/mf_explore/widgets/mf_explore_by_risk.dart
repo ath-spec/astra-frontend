@@ -65,7 +65,7 @@ class _MfExploreByRiskState extends State<MfExploreByRisk> {
             activeTrackColor: const Color(0xFF8B5CF6), // Softer purple
             inactiveTrackColor: const Color(0xFFF1F5F9),
             thumbColor: Colors.white,
-            overlayColor: const Color(0xFF8B5CF6).withOpacity(0.1),
+            overlayColor: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
             trackHeight: 4.0,
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10.0, elevation: 4.0),
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 20.0),
@@ -144,13 +144,13 @@ class _MfExploreByRiskState extends State<MfExploreByRisk> {
         color: isActive ? const Color(0xFFF5F3FF) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isActive ? const Color(0xFF8B5CF6).withOpacity(0.5) : const Color(0xFFF1F5F9),
+          color: isActive ? const Color(0xFF8B5CF6).withValues(alpha: 0.5) : const Color(0xFFF1F5F9),
           width: 1.0,
         ),
         boxShadow: isActive
             ? [
                 BoxShadow(
-                  color: const Color(0xFF8B5CF6).withOpacity(0.08),
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.08),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),
@@ -190,7 +190,7 @@ class _MfExploreByRiskState extends State<MfExploreByRisk> {
               fontFamily: 'DMSans',
               fontSize: 8,
               fontWeight: FontWeight.w600,
-              color: isActive ? const Color(0xFF8B5CF6).withOpacity(0.8) : const Color(0xFF94A3B8),
+              color: isActive ? const Color(0xFF8B5CF6).withValues(alpha: 0.8) : const Color(0xFF94A3B8),
               height: 1.2,
             ),
           ),

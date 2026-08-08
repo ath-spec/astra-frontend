@@ -24,14 +24,14 @@ class BorderBeam extends StatefulWidget {
   final EdgeInsetsGeometry padding;
 
   const BorderBeam({
-    Key? key,
+    super.key,
     required this.child,
     this.duration = 3.7, // ~3.7s is the dark-theme pulse cycle in Magic UI
     this.borderWidth = 1.5,
     this.staticBorderColor = Colors.transparent, 
     this.borderRadius = const BorderRadius.all(Radius.circular(16)),
     this.padding = EdgeInsets.zero,
-  }) : super(key: key);
+  });
 
   @override
   _BorderBeamState createState() => _BorderBeamState();
@@ -148,7 +148,7 @@ class _BorderBeamPainter extends CustomPainter {
     final transform = GradientRotation(hueProgress * 2 * math.pi);
 
     // 1. Bloom Layer (Highly blurred, spills far outside)
-    final bloomColors = colors.map((c) => c.withOpacity(0.35 * masterOpacity)).toList();
+    final bloomColors = colors.map((c) => c.withValues(alpha: 0.35 * masterOpacity)).toList();
     final bloomPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = borderWidth * 4.0 // Thicker to create a wide halo
@@ -162,7 +162,7 @@ class _BorderBeamPainter extends CustomPainter {
     canvas.drawRRect(rrect, bloomPaint);
 
     // 2. Core Glow Layer (Moderately blurred)
-    final coreColors = colors.map((c) => c.withOpacity(0.7 * masterOpacity)).toList();
+    final coreColors = colors.map((c) => c.withValues(alpha: 0.7 * masterOpacity)).toList();
     final corePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = borderWidth * 1.5
@@ -176,7 +176,7 @@ class _BorderBeamPainter extends CustomPainter {
     canvas.drawRRect(rrect, corePaint);
 
     // 3. Crisp Stroke Layer
-    final strokeColors = colors.map((c) => c.withOpacity(1.0 * masterOpacity)).toList();
+    final strokeColors = colors.map((c) => c.withValues(alpha: 1.0 * masterOpacity)).toList();
     final strokePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = borderWidth

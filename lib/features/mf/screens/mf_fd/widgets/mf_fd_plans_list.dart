@@ -143,7 +143,7 @@ class _MfFdPlansListState extends State<MfFdPlansList> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 4),
           )
@@ -181,7 +181,7 @@ class _MfFdPlansListState extends State<MfFdPlansList> {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: logoColor.withOpacity(0.1),
+                    color: logoColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Icon(Icons.account_balance, color: logoColor, size: 20),

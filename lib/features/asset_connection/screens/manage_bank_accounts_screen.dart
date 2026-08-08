@@ -288,8 +288,9 @@ class ManageBankAccountsScreen extends ConsumerWidget {
   String? _getBankLogoAsset(String bankName) {
     final name = bankName.toLowerCase();
     
-    if (name.contains('hdfc')) return 'lib/core/images/hdfc_logo.webp';
-    else if (name.contains('icici')) return 'lib/core/images/icici.webp';
+    if (name.contains('hdfc')) {
+      return 'lib/core/images/hdfc_logo.webp';
+    } else if (name.contains('icici')) return 'lib/core/images/icici.webp';
     else if (name.contains('state bank') || name.contains('sbi')) return 'lib/core/images/sbi_logo.webp';
     else if (name.contains('axis')) return 'lib/core/images/axis_logo.webp';
     else if (name.contains('kotak')) return 'lib/core/images/kotak.webp';

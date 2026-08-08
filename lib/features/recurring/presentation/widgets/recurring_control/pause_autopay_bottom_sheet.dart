@@ -92,7 +92,7 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> {
             width: getProportionateScreenWidth(40),
             height: getProportionateScreenHeight(4),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -138,7 +138,7 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> {
                 "Amount to be paid now is rs ${widget.payment['amount'].toint()}",
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(11),
-                  color: Colors.black.withOpacity(0.4),
+                  color: Colors.black.withValues(alpha: 0.4),
                   decoration: TextDecoration.none,
                   fontWeight: FontWeight.normal,
                 ),
@@ -206,7 +206,7 @@ onTap: () => Navigator.pop(context),
       context: context,
       barrierDismissible: true,
       barrierLabel: "date",
-      barrierColor: Colors.black.withOpacity(0.05),
+      barrierColor: Colors.black.withValues(alpha: 0.05),
       pageBuilder: (context, anim1, anim2) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),

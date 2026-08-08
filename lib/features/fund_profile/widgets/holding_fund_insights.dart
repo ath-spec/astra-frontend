@@ -190,7 +190,7 @@ class _HoldingFundInsightsState extends State<HoldingFundInsights> with SingleTi
           width: 8,
           height: 8,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             border: Border.all(color: color),
             shape: BoxShape.circle,
           ),
@@ -272,7 +272,11 @@ class _DualSpiderChartPainter extends CustomPainter {
         final double currentAngle = -math.pi / 2 + angle * j;
         final x = center.dx + r * math.cos(currentAngle);
         final y = center.dy + r * math.sin(currentAngle);
-        if (j == 0) path.moveTo(x, y); else path.lineTo(x, y);
+        if (j == 0) {
+          path.moveTo(x, y);
+        } else {
+          path.lineTo(x, y);
+        }
       }
       path.close();
       canvas.drawPath(path, gridPaint);
@@ -318,16 +322,20 @@ class _DualSpiderChartPainter extends CustomPainter {
         final double r = radius * animatedValue;
         final x = center.dx + r * math.cos(currentAngle);
         final y = center.dy + r * math.sin(currentAngle);
-        if (j == 0) path.moveTo(x, y); else path.lineTo(x, y);
+        if (j == 0) {
+          path.moveTo(x, y);
+        } else {
+          path.lineTo(x, y);
+        }
       }
       path.close();
 
       final fillPaint = Paint()
-        ..color = color.withOpacity(0.15 * animation.value)
+        ..color = color.withValues(alpha: 0.15 * animation.value)
         ..style = PaintingStyle.fill;
       
       final strokePaint = Paint()
-        ..color = color.withOpacity(animation.value)
+        ..color = color.withValues(alpha: animation.value)
         ..style = PaintingStyle.stroke
         ..strokeJoin = StrokeJoin.round
         ..strokeWidth = 2.0;
@@ -336,7 +344,7 @@ class _DualSpiderChartPainter extends CustomPainter {
       canvas.drawPath(path, strokePaint);
       
       final dotPaint = Paint()
-        ..color = color.withOpacity(animation.value)
+        ..color = color.withValues(alpha: animation.value)
         ..style = PaintingStyle.fill;
         
       for (int j = 0; j < numSides; j++) {

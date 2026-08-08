@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../navigation/mainnav.dart';
-import 'nav_shared_components.dart';
 
 class MainNavPill extends StatelessWidget {
   final int currentIndex;

@@ -133,7 +133,7 @@ class MfExploreAssets extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   child: Row(
                     children: [
-                      Container(
+                      SizedBox(
                         width: 32,
                         height: 32,
                         child: Icon(

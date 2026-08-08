@@ -37,7 +37,7 @@ class _ModuleCardState extends State<ModuleCard> {
             border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(_isPressed ? 0.02 : 0.04),
+                color: Colors.black.withValues(alpha: _isPressed ? 0.02 : 0.04),
                 blurRadius: _isPressed ? 4 : 8,
                 offset: _isPressed ? const Offset(0, 2) : const Offset(0, 4),
               ),
@@ -59,7 +59,7 @@ class _ModuleCardState extends State<ModuleCard> {
                       bottom: -4,
                       width: 56, // highlight width
                       child: Container(
-                        color: widget.module.themeColor.withOpacity(0.12),
+                        color: widget.module.themeColor.withValues(alpha: 0.12),
                       ),
                     ),
                     // Solid left bar indicator

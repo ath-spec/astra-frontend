@@ -17,7 +17,7 @@ void main() {
         text = text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
       }
       modified = true;
-      return '"' + text + '"';
+      return '"$text"';
     });
 
     newContent = newContent.replaceAllMapped(stringLowerSingleRegex, (match) {
@@ -29,12 +29,12 @@ void main() {
         text = text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
       }
       modified = true;
-      return "'" + text + "'";
+      return "'$text'";
     });
 
     if (modified) {
       file.writeAsStringSync(newContent);
-      print('Updated ' + file.path);
+      print('Updated ${file.path}');
     }
   }
 }

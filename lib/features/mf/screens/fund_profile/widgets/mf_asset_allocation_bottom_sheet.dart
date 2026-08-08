@@ -488,7 +488,7 @@ class _DebtViewState extends State<_DebtView> {
               _buildLegendRow(const Color(0xFF3B82F6), cq.title, '${cq.percentage}%'),
               const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Color(0xFFF1F5F9), height: 1)),
             ],
-          )).toList(),
+          )),
           
           const SizedBox(height: 20),
           const Divider(color: Color(0xFFE2E8F0), height: 1),
@@ -732,7 +732,7 @@ class _OthersViewState extends State<_OthersView> {
               _buildLegendRow(const Color(0xFFF3F4E5), oa.title, '${oa.percentage}%'),
               const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Color(0xFFF1F5F9), height: 1)),
             ],
-          )).toList(),
+          )),
           
           const SizedBox(height: 20),
           const Divider(color: Color(0xFFE2E8F0), height: 1),

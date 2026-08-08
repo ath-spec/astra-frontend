@@ -141,7 +141,7 @@ class _VideoReaderScreenState extends State<VideoReaderScreen> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha: 0.4),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.reply_rounded, color: Colors.white, size: 24),
@@ -155,7 +155,7 @@ class _VideoReaderScreenState extends State<VideoReaderScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(

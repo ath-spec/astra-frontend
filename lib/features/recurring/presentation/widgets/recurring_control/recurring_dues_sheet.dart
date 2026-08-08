@@ -138,7 +138,7 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
           width: getProportionateScreenWidth(40),
           height: getProportionateScreenHeight(4),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(4),
           ),
         ),
@@ -158,11 +158,11 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
-                border: Border.all(color: Colors.black.withOpacity(0.1)),
+                border: Border.all(color: Colors.black.withValues(alpha: 0.1)),
               ),
               child: Row(
                 children: [
-                   Icon(Icons.search_rounded, color: Colors.black.withOpacity(0.4), size: 20),
+                   Icon(Icons.search_rounded, color: Colors.black.withValues(alpha: 0.4), size: 20),
                    SizedBox(width: getProportionateScreenWidth(8)),
                    Expanded(
                      child: TextField(
@@ -178,7 +178,7 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
                          contentPadding: EdgeInsets.zero,
                          hintText: "Search subscriptions...",
                          hintStyle: TextStyle(fontFamily: 'DMSans', 
-                           color: Colors.black.withOpacity(0.4),
+                           color: Colors.black.withValues(alpha: 0.4),
                            fontSize: getProportionateScreenWidth(12),
                          ),
                          border: InputBorder.none,
@@ -198,7 +198,7 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
-              border: Border.all(color: Colors.black.withOpacity(0.1)),
+              border: Border.all(color: Colors.black.withValues(alpha: 0.1)),
             ),
             child: Icon(Icons.tune_rounded, color: Colors.black, size: 20),
           ),
@@ -231,13 +231,13 @@ class _RecurringDuesSheetState extends State<RecurringDuesSheet> {
                 decoration: BoxDecoration(
                   color: isSelected ? Colors.black : Colors.white,
                   borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
-                  border: isSelected ? null : Border.all(color: Colors.black.withOpacity(0.1)),
+                  border: isSelected ? null : Border.all(color: Colors.black.withValues(alpha: 0.1)),
                 ),
                 child: Text(
                   _tabs[index].toCapitalized(),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(12),
-                    color: isSelected ? Colors.white : Colors.black.withOpacity(0.6),
+                    color: isSelected ? Colors.white : Colors.black.withValues(alpha: 0.6),
                   ),
                 ),
               );

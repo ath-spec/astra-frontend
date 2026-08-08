@@ -45,7 +45,7 @@ class MfAiPicksBento extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF4F46E5).withOpacity(0.3),
+                          color: const Color(0xFF4F46E5).withValues(alpha: 0.3),
                           blurRadius: 16,
                           offset: const Offset(0, 8),
                         ),
@@ -72,14 +72,14 @@ class MfAiPicksBento extends StatelessWidget {
                             fontFamily: 'DMSans',
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             height: 1.4,
                           ),
                         ),
                         const Spacer(),
                         Align(
                           alignment: Alignment.bottomRight,
-                          child: Icon(Icons.auto_awesome_rounded, color: Colors.white.withOpacity(0.5), size: 36),
+                          child: Icon(Icons.auto_awesome_rounded, color: Colors.white.withValues(alpha: 0.5), size: 36),
                         ),
                       ],
                     ),
@@ -129,7 +129,7 @@ class MfAiPicksBento extends StatelessWidget {
                             border: Border.all(color: const Color(0xFFE2E8F0)),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
+                                color: Colors.black.withValues(alpha: 0.02),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -195,7 +195,7 @@ class MfAiPicksBento extends StatelessWidget {
         border: Border.all(color: const Color(0xFFF1F5F9)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

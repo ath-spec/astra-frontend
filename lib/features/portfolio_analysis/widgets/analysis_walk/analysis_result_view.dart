@@ -123,7 +123,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> with SingleTick
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            widget.gaugeColor.withOpacity(0.15),
+            widget.gaugeColor.withValues(alpha: 0.15),
             Colors.transparent,
           ],
           stops: const [0.0, 0.5], // Fades to transparent halfway down the screen

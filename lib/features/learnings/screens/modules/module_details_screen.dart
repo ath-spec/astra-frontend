@@ -55,7 +55,7 @@ class ModuleDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                Icon(Icons.open_in_new_rounded, color: const Color(0xFF1E40AF).withOpacity(0.8), size: 16),
+                Icon(Icons.open_in_new_rounded, color: const Color(0xFF1E40AF).withValues(alpha: 0.8), size: 16),
               ],
             ),
           ),
@@ -143,7 +143,7 @@ class ModuleDetailsScreen extends StatelessWidget {
               bottom: 0,
               width: 56,
               child: Container(
-                color: module.themeColor.withOpacity(0.12),
+                color: module.themeColor.withValues(alpha: 0.12),
               ),
             ),
             // Vertical bar

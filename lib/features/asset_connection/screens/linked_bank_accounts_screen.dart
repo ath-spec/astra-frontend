@@ -46,7 +46,7 @@ class LinkedBankAccountsScreen extends ConsumerWidget {
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: Container(
+                    child: SizedBox(
                       width: 40,
                       height: 40,
                       child: const Icon(Icons.chevron_left, size: 24, color: Color(0xFF0F172A)),
@@ -198,7 +198,7 @@ class LinkedBankAccountsScreen extends ConsumerWidget {
                                 border: Border.all(color: const Color(0xFFF1F5F9)),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF0F172A).withOpacity(0.04),
+                                    color: const Color(0xFF0F172A).withValues(alpha: 0.04),
                                     blurRadius: 16,
                                     offset: const Offset(0, 4),
                                   ),

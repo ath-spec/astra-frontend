@@ -43,7 +43,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
             ),
             const Spacer(),
             // Square Image Tile (Matches Budget Intro Style)
-            Container(
+            SizedBox(
               width: getProportionateScreenWidth(280),
               height: getProportionateScreenWidth(280),
               child: ClipRRect(
@@ -60,15 +60,18 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
               padding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(28),
               ),
-              child: Text(
-                "Manage subscriptions without the chaos",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: getProportionateScreenWidth(18),
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                  height: 1.1,
+              child: SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "Manage subscriptions without the chaos",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: getProportionateScreenWidth(20),
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                    height: 1.1,
+                  ),
                 ),
               ),
             ),
@@ -78,15 +81,18 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
               padding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(24),
               ),
-              child: Text(
-                "One view for all your dues. take control of your recurring payments with ease.",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: getProportionateScreenWidth(12),
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black54,
-                  height: 1.4,
+              child: SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "One view for all your dues. take control of your recurring payments with ease.",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: getProportionateScreenWidth(14),
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black54,
+                    height: 1.4,
+                  ),
                 ),
               ),
             ),

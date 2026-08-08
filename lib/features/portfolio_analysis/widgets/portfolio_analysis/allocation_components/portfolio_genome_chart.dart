@@ -199,11 +199,11 @@ class _SpiderChartPainter extends CustomPainter {
     valuePath.close();
 
     final fillPaint = Paint()
-      ..color = const Color(0xFF2563EB).withOpacity(0.15 * animation.value)
+      ..color = const Color(0xFF2563EB).withValues(alpha: 0.15 * animation.value)
       ..style = PaintingStyle.fill;
     
     final strokePaint = Paint()
-      ..color = const Color(0xFF2563EB).withOpacity(animation.value)
+      ..color = const Color(0xFF2563EB).withValues(alpha: animation.value)
       ..style = PaintingStyle.stroke
       ..strokeJoin = StrokeJoin.round
       ..strokeWidth = 2.0;
@@ -213,7 +213,7 @@ class _SpiderChartPainter extends CustomPainter {
     
     // 4. Draw dots at the vertices
     final dotPaint = Paint()
-      ..color = const Color(0xFF2563EB).withOpacity(animation.value)
+      ..color = const Color(0xFF2563EB).withValues(alpha: animation.value)
       ..style = PaintingStyle.fill;
       
     for (int j = 0; j < numSides; j++) {

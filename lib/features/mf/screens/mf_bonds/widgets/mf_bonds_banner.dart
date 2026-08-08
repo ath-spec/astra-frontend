@@ -98,7 +98,7 @@ class _MfBondsBannerState extends State<MfBondsBanner> {
       width: 6,
       height: 6,
       decoration: BoxDecoration(
-        color: _currentPage == index ? Colors.black : Colors.black.withOpacity(0.2),
+        color: _currentPage == index ? Colors.black : Colors.black.withValues(alpha: 0.2),
         shape: BoxShape.circle,
       ),
     );

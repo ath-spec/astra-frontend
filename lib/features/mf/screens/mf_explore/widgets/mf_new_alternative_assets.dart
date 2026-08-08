@@ -16,7 +16,7 @@ class MfNewAlternativeAssets extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Alternative Assets',
                 style: TextStyle(
@@ -226,7 +226,7 @@ class _AnimatedAssetCardState extends State<_AnimatedAssetCard> {
                         colors: [
                           widget.backgroundColor,
                           widget.backgroundColor,
-                          widget.backgroundColor.withOpacity(0.0),
+                          widget.backgroundColor.withValues(alpha: 0.0),
                         ],
                         stops: const [0.0, 0.2, 1.0], // Covers the left edge completely, smoothly fades out
                       ),

@@ -31,7 +31,7 @@ class CancelSuccessBottomSheet extends StatelessWidget {
                 width: getProportionateScreenWidth(40),
                 height: getProportionateScreenHeight(4),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(getProportionateScreenWidth(2)),
                 ),
               ),
@@ -50,7 +50,7 @@ class CancelSuccessBottomSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: getProportionateScreenWidth(20),
                         offset: Offset(0, getProportionateScreenHeight(10)),
                       ),
@@ -62,7 +62,7 @@ class CancelSuccessBottomSheet extends StatelessWidget {
                       Icon(
                         Icons.calendar_today_rounded,
                         size: getProportionateScreenWidth(60),
-                        color: Colors.black.withOpacity(0.8),
+                        color: Colors.black.withValues(alpha: 0.8),
                       ),
                       Text(
                         "₹",
@@ -123,7 +123,7 @@ class CancelSuccessBottomSheet extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(12),
-                  color: Colors.black.withOpacity(0.4),
+                  color: Colors.black.withValues(alpha: 0.4),
                   height: 1.4,
                 ),
               ),

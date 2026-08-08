@@ -44,7 +44,7 @@ class BudgetSummaryCard extends StatelessWidget {
                 Text(
                   "₹",
                   style: TextStyle(fontFamily: 'DMSans', 
-                    fontSize: getProportionateScreenWidth(14),
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: textColor ?? const Color(0xFF133026),
                   ),
@@ -52,7 +52,7 @@ class BudgetSummaryCard extends StatelessWidget {
                 Text(
                   amountWhole,
                   style: TextStyle(fontFamily: 'DMSans', 
-                    fontSize: getProportionateScreenWidth(20),
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: textColor ?? const Color(0xFF133026),
                   ),
@@ -61,7 +61,7 @@ class BudgetSummaryCard extends StatelessWidget {
                   Text(
                     ".$amountDecimal",
                     style: TextStyle(fontFamily: 'DMSans', 
-                      fontSize: getProportionateScreenWidth(14),
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: textColor ?? const Color(0xFF133026),
                     ),
@@ -73,7 +73,7 @@ class BudgetSummaryCard extends StatelessWidget {
           Text(
             label,
             style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-              fontSize: getProportionateScreenWidth(12),
+              fontSize:12 ,
               color: textColor ?? const Color(0xFF133026),
             ),
           ),

@@ -27,7 +27,6 @@ import '../../features/auth/screens/aa_stocks_fetching_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/chat/screens/chat_screen.dart';
 import '../../features/chat/screens/chat_history_screen.dart';
-import 'package:flutter/material.dart';
 import '../../features/news/screens/news_screen.dart';
 import '../../features/learnings/screens/learnings_screen.dart';
 import '../../features/learnings/screens/modules/module_details_screen.dart';
@@ -39,7 +38,6 @@ import '../../features/budget/presentation/screens/budget_onboarding_intro_scree
 import '../../features/budget/presentation/screens/budget_control_screen.dart';
 import '../../features/recurring/presentation/screens/recurring_intro_screen.dart';
 import '../../features/recurring/presentation/screens/recurring_control_screen.dart';
-import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
 import '../../features/profile/screens/account_details_screen.dart';
 import '../../features/profile/screens/nominee_list_screen.dart';

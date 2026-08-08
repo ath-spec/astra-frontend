@@ -73,7 +73,7 @@ class BankAccountDetailsScreen extends ConsumerWidget {
                 border: Border.all(color: const Color(0xFFF1F5F9), width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF0F172A).withOpacity(0.04),
+                    color: const Color(0xFF0F172A).withValues(alpha: 0.04),
                     blurRadius: 16,
                     offset: const Offset(0, 4),
                   ),
@@ -158,7 +158,7 @@ class BankAccountDetailsScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(4), // As per emil styling/images, slightly sharper or standard
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF0F172A).withOpacity(0.04),
+                        color: const Color(0xFF0F172A).withValues(alpha: 0.04),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),

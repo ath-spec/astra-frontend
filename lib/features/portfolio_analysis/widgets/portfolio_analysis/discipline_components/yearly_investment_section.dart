@@ -255,20 +255,17 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
 
     if (absVal >= 10000000) {
       formatted =
-          (absVal / 10000000)
+          '${(absVal / 10000000)
               .toStringAsFixed(2)
-              .replaceAll(RegExp(r'\.00$'), '') +
-          'Cr';
+              .replaceAll(RegExp(r'\.00$'), '')}Cr';
     } else if (absVal >= 100000) {
       formatted =
-          (absVal / 100000)
+          '${(absVal / 100000)
               .toStringAsFixed(2)
-              .replaceAll(RegExp(r'\.00$'), '') +
-          'L';
+              .replaceAll(RegExp(r'\.00$'), '')}L';
     } else if (absVal >= 1000) {
       formatted =
-          (absVal / 1000).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '') +
-          'K';
+          '${(absVal / 1000).toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}K';
     } else {
       formatted = absVal.toInt().toString();
     }
@@ -528,7 +525,7 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
 
     // Draw tooltip on top of all bars and gridlines
     if (drawTooltipAction != null) {
-      drawTooltipAction!();
+      drawTooltipAction();
     }
   }
 
@@ -574,8 +571,9 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
     // Position tooltip to not go offscreen
     double left = barTop.dx - boxWidth / 2;
     if (left < 10 * scale) left = 10 * scale;
-    if (left + boxWidth > size.width - (10 * scale))
+    if (left + boxWidth > size.width - (10 * scale)) {
       left = size.width - boxWidth - (10 * scale);
+    }
 
     final top = pointerTipY - (6 * scale) - boxHeight;
     final rect = Rect.fromLTWH(left, top, boxWidth, boxHeight);
@@ -599,7 +597,7 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
     canvas.drawPath(
       combinedPath.shift(Offset(0, 4 * scale)),
       Paint()
-        ..color = Colors.black.withOpacity(0.08)
+        ..color = Colors.black.withValues(alpha: 0.08)
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, 8 * scale),
     );
 

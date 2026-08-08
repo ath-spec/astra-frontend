@@ -109,7 +109,7 @@ class MfExploreGrid extends StatelessWidget {
             child: Icon(
               icon,
               size: 72,
-              color: iconColor.withOpacity(0.5), // Simulated 3D graphic fade
+              color: iconColor.withValues(alpha: 0.5), // Simulated 3D graphic fade
             ),
           ),
           Positioned(

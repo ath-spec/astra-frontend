@@ -28,7 +28,7 @@ class TrialsTab extends StatelessWidget {
           child: Text(
             "No trial subscriptions",
             style: TextStyle(fontFamily: 'DMSans', 
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withValues(alpha: 0.4),
               fontSize: getProportionateScreenWidth(14),
             ),
           ),

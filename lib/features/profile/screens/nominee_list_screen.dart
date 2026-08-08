@@ -21,7 +21,7 @@ class NomineeListScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () => context.pop(),
                     behavior: HitTestBehavior.opaque,
-                    child: Container(
+                    child: SizedBox(
                       width: 44.w,
                       height: 44,
                       child: Icon(

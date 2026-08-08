@@ -21,7 +21,7 @@ class AllocationGaugeSection extends StatefulWidget {
 class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  double _lastHapticValue = 0;
+  final double _lastHapticValue = 0;
 
   bool _hasAnimated = false;
 
@@ -264,7 +264,7 @@ class _AllocationGaugePainter extends CustomPainter {
     final activeStart = startAngle + (activeIndex * segmentSweep);
     
     final activePaint = Paint()
-      ..color = activeColor.withOpacity(progress)
+      ..color = activeColor.withValues(alpha: progress)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 16
       ..strokeCap = StrokeCap.butt; // Flat edges by default
@@ -277,14 +277,14 @@ class _AllocationGaugePainter extends CustomPainter {
         // Left cap is round
         final dx = math.cos(activeStart);
         final dy = math.sin(activeStart);
-        canvas.drawCircle(center + Offset(dx * innerRadius, dy * innerRadius), 8, Paint()..color = activeColor.withOpacity(progress));
+        canvas.drawCircle(center + Offset(dx * innerRadius, dy * innerRadius), 8, Paint()..color = activeColor.withValues(alpha: progress));
       }
       if (activeIndex == numSegments - 1) {
         // Right cap is round
         final endAngle = activeStart + segmentSweep;
         final dx = math.cos(endAngle);
         final dy = math.sin(endAngle);
-        canvas.drawCircle(center + Offset(dx * innerRadius, dy * innerRadius), 8, Paint()..color = activeColor.withOpacity(progress));
+        canvas.drawCircle(center + Offset(dx * innerRadius, dy * innerRadius), 8, Paint()..color = activeColor.withValues(alpha: progress));
       }
     }
 
@@ -324,8 +324,8 @@ class _AllocationGaugePainter extends CustomPainter {
       final glowPaint = Paint()
         ..shader = RadialGradient(
           colors: [
-            activeColor.withOpacity(0.3 * progress),
-            activeColor.withOpacity(0.0),
+            activeColor.withValues(alpha: 0.3 * progress),
+            activeColor.withValues(alpha: 0.0),
           ],
           stops: const [0.0, 0.7],
         ).createShader(Rect.fromCircle(center: glowCenter, radius: innerRadius * 0.9));

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import '../providers/chat_provider.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/chat_input_field.dart';
 import '../widgets/chat_app_bar.dart';

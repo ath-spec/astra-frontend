@@ -68,7 +68,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                     ), // User requested border radius 4
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 32,
                         offset: const Offset(0, 12),
                       ),
@@ -99,7 +99,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
+                                      color: Colors.black.withValues(alpha: 0.1),
                                       blurRadius: 4,
                                       offset: const Offset(2, 2),
                                     ),

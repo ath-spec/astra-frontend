@@ -54,7 +54,7 @@ class RecurringPaymentsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF131313),
         borderRadius: BorderRadius.circular(44),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,14 +65,14 @@ class RecurringPaymentsCard extends StatelessWidget {
               Text(
                 'Recurring',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Icon(
                 Icons.more_horiz,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
               ),
             ],
           ),
@@ -94,7 +94,7 @@ class RecurringPaymentsCard extends StatelessWidget {
                 child: Text(
                   'Upcoming in $currentMonth',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 14,
                   ),
                 ),
@@ -132,12 +132,12 @@ class RecurringPaymentsCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(
               bill['icon'] as IconData,
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               size: 24,
             ),
           ),
@@ -149,7 +149,7 @@ class RecurringPaymentsCard extends StatelessWidget {
                 Text(
                   bill['title'] as String,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -158,7 +158,7 @@ class RecurringPaymentsCard extends StatelessWidget {
                 Text(
                   bill['subtitle'] as String,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 12,
                   ),
                 ),

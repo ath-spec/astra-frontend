@@ -125,7 +125,7 @@ final List<Chapter> mockBeginnerChapters = [
             'Asset allocation is an investment strategy that aims to balance risk and reward by apportioning a portfolio\'s assets according to an individual\'s goals, risk tolerance, and investment horizon.',
           ),
           ChapterTextContent(
-            '\"Don\'t put all your eggs in one basket.\" By diversifying across asset classes, you reduce the impact of a poor performing asset on your overall portfolio.',
+            '"Don\'t put all your eggs in one basket." By diversifying across asset classes, you reduce the impact of a poor performing asset on your overall portfolio.',
           ),
         ],
       ),

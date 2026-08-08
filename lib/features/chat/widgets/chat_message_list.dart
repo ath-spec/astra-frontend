@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/chat_message.dart';
 import '../providers/chat_provider.dart';
 import 'chat_initial_view.dart'; // Contains ChatHeader
-import 'quick_helps.dart';
 
 class ChatMessageList extends ConsumerStatefulWidget {
   const ChatMessageList({super.key});

@@ -114,8 +114,9 @@ class _MfStocksCollectionScreenState extends State<MfStocksCollectionScreen> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  if (_returnPeriod == '1Y') _returnPeriod = '3Y';
-                  else if (_returnPeriod == '3Y') _returnPeriod = '5Y';
+                  if (_returnPeriod == '1Y') {
+                    _returnPeriod = '3Y';
+                  } else if (_returnPeriod == '3Y') _returnPeriod = '5Y';
                   else _returnPeriod = '1Y';
                 });
               },
@@ -202,7 +203,7 @@ class _MfStocksCollectionScreenState extends State<MfStocksCollectionScreen> {
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               itemCount: funds.length,
-              separatorBuilder: (_, __) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
+              separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
               itemBuilder: (context, index) {
                 final fund = funds[index];
                 return _buildFundRow(fund);

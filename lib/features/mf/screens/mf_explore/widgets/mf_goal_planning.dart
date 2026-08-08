@@ -13,7 +13,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
   final List<Map<String, dynamic>> _goals = [
     {
       'title': 'House',
-      'image': 'lib/core/images/house\.webp',
+      'image': 'lib/core/images/house.webp',
       'planTitle': 'Your House Goal Plan',
       'planSubtitle': '₹50 Lakhs • 7 Years',
       'items': [
@@ -26,7 +26,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
     },
     {
       'title': 'Travel',
-      'image': 'lib/core/images/travel\.webp',
+      'image': 'lib/core/images/travel.webp',
       'planTitle': 'Your Travel Goal Plan',
       'planSubtitle': '₹5 Lakhs • 2 Years',
       'items': [
@@ -38,7 +38,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
     },
     {
       'title': 'Education',
-      'image': 'lib/core/images/edu\.webp',
+      'image': 'lib/core/images/edu.webp',
       'planTitle': 'Your Education Goal Plan',
       'planSubtitle': '₹25 Lakhs • 10 Years',
       'items': [
@@ -50,7 +50,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
     },
     {
       'title': 'Wedding',
-      'image': 'lib/core/images/wed\.webp',
+      'image': 'lib/core/images/wed.webp',
       'planTitle': 'Your Wedding Goal Plan',
       'planSubtitle': '₹30 Lakhs • 5 Years',
       'items': [
@@ -269,7 +269,7 @@ class _MfGoalPlanningState extends State<MfGoalPlanning> {
                                 ),
                               );
                             },
-                            child: Container(
+                            child: SizedBox(
                               key: ValueKey(selectedGoal['image']),
                               width: imageSize,
                               height: imageSize,

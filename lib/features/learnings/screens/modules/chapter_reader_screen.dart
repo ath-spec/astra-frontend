@@ -89,7 +89,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -345,7 +345,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  '${widget.chapter.title}',
+                  widget.chapter.title,
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 16,
@@ -407,7 +407,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                           borderRadius: BorderRadius.circular(100),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
+                              color: Colors.black.withValues(alpha: 0.08),
                               blurRadius: 16,
                               offset: const Offset(0, 4),
                             ),
@@ -423,7 +423,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                             activeTrackColor: const Color(0xFF2563EB),
                             inactiveTrackColor: _isDarkMode ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
                             thumbColor: const Color(0xFF2563EB),
-                            overlayColor: const Color(0xFF2563EB).withOpacity(0.2),
+                            overlayColor: const Color(0xFF2563EB).withValues(alpha: 0.2),
                             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
                           ),
                           child: Slider(
@@ -472,7 +472,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 bottom: 0,
                 width: 56,
                 child: Container(
-                  color: widget.module.themeColor.withOpacity(0.12),
+                  color: widget.module.themeColor.withValues(alpha: 0.12),
                 ),
               ),
               Positioned(
@@ -538,14 +538,14 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: widget.module.themeColor.withOpacity(_isDarkMode ? 0.3 : 0.15),
+                        color: widget.module.themeColor.withValues(alpha: _isDarkMode ? 0.3 : 0.15),
                         shape: BoxShape.circle,
                       ),
                     ),
                     Icon(
                       widget.chapter.icon,
                       size: 64,
-                      color: widget.module.themeColor.withOpacity(0.8),
+                      color: widget.module.themeColor.withValues(alpha: 0.8),
                     ),
                   ],
                 ),
@@ -577,7 +577,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
               );
             }
             return const SizedBox.shrink();
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -652,7 +652,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 );
               }).toList(),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -674,11 +674,11 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
       decoration: BoxDecoration(
         color: bgColor,
         border: Border(
-          top: BorderSide(color: borderColor.withOpacity(0.5)),
+          top: BorderSide(color: borderColor.withValues(alpha: 0.5)),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             offset: const Offset(0, -4),
             blurRadius: 8,
           ),

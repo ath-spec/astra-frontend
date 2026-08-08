@@ -177,7 +177,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
       },
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -286,7 +286,7 @@ class _DottedDivider extends StatelessWidget {
 }
 
 class _NotchBorder extends OutlinedBorder {
-  const _NotchBorder({super.side = const BorderSide(color: const Color.fromARGB(255, 188, 187, 187), width: 1.0)});
+  const _NotchBorder({super.side = const BorderSide(color: Color.fromARGB(255, 188, 187, 187), width: 1.0)});
 
   @override
   OutlinedBorder copyWith({BorderSide? side}) => _NotchBorder(side: side ?? this.side);

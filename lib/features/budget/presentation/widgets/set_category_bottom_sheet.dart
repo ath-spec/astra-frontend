@@ -176,7 +176,7 @@ class _SetCategoryBottomSheetState
               width: 40,
               height: 5,
               decoration: BoxDecoration(
-                color: BudgetColors.black.withOpacity(0.1),
+                color: BudgetColors.black.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -226,7 +226,7 @@ class _SetCategoryBottomSheetState
                 ),
                 itemCount: _categories.length,
                 separatorBuilder: (context, index) => Divider(
-                  color: BudgetColors.black.withOpacity(0.05),
+                  color: BudgetColors.black.withValues(alpha: 0.05),
                   height: 32,
                 ),
                 itemBuilder: (context, index) {
@@ -234,13 +234,13 @@ class _SetCategoryBottomSheetState
                   return InkWell(
                     onTap: () => _toggleCategorySet(cat),
                     highlightColor: Colors.transparent,
-                    splashColor: BudgetColors.black.withOpacity(0.02),
+                    splashColor: BudgetColors.black.withValues(alpha: 0.02),
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: cat.iconColor.withOpacity(0.1),
+                            color: cat.iconColor.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(cat.icon, color: cat.iconColor, size: 24),

@@ -88,32 +88,57 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
         backgroundColor: const Color(0xFFF9FAFB),
         body: Stack(
           children: [
-            SingleChildScrollView(
-              controller: _scrollController,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: getProportionateScreenWidth(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: getProportionateScreenHeight(80)),
-                    // Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Budget",
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: getProportionateScreenWidth(18),
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF0F172A),
+            SafeArea(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: getProportionateScreenWidth(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Back Button
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+                          child: ZeyroIconButton(
+                            eventName: 'budget_control_screen_back_tapped',
+                            icon: const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Color(0xFF0F172A),
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              if (Navigator.of(context).canPop()) {
+                                Navigator.of(context).pop();
+                              } else {
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pushNamedAndRemoveUntil(AppRoutes.main, (route) => false);
+                              }
+                            },
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: getProportionateScreenHeight(24)),
+                      ),
+                      // Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Budget",
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 30,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF0F172A),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: getProportionateScreenHeight(24)),
 
                     // Main Overview Card
                     BudgetOverviewCard(
@@ -162,7 +187,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                             "Category budgets",
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: getProportionateScreenWidth(14),
+                              fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: const Color.fromARGB(255, 0, 0, 0),
                             ),
@@ -177,30 +202,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                 ),
               ),
             ),
-            // Back Button Overlay
-            Positioned(
-              left: 16,
-              top: MediaQuery.paddingOf(context).top + 8,
-              child: ZeyroIconButton(
-                eventName: 'budget_control_screen_back_tapped',
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: const Color(0xFF0F172A),
-                  size: 20,
-                ),
-                onPressed: () {
-                  if (Navigator.of(context).canPop()) {
-                    Navigator.of(context).pop();
-                  } else {
-                    Navigator.of(
-                      context,
-                      rootNavigator: true,
-                    ).pushNamedAndRemoveUntil(AppRoutes.main, (route) => false);
-                  }
-                },
-              ),
-            ),
-          ],
+        )],
         ),
       ),
     );
@@ -326,8 +328,8 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                     const SizedBox(width: 6),
                     const Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: const Color(0xFF0F172A),
-                      size: 10,
+                      color: Color(0xFF0F172A),
+                      size: 12,
                     ),
                   ],
                 ),
@@ -351,7 +353,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
       daysRemaining: daysRemaining,
       icon: _getIconForName(budget.categoryName),
       isMini: true,
-      backgroundColor: _parseColor(budget.categoryColor, fallback: _getCategoryColor(budget.status)).withOpacity(0.15),
+      backgroundColor: _parseColor(budget.categoryColor, fallback: _getCategoryColor(budget.status)).withValues(alpha: 0.15),
       textColor: _parseColor(budget.categoryTextColor, fallback: _getCategoryTextColor(budget.status)),
       borderColor: const Color(0xFFE2E8F0),
     );
@@ -364,7 +366,7 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
       case 'critical':
         return const Color(0xFFFEE2E2);
       default:
-        return const Color.fromARGB(255, 5, 134, 91).withOpacity(0.1);
+        return const Color.fromARGB(255, 5, 134, 91).withValues(alpha: 0.1);
     }
   }
 

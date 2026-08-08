@@ -302,7 +302,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
             border: Border.all(color: const Color(0xFFF1F5F9)),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF0F172A).withOpacity(0.04),
+                color: const Color(0xFF0F172A).withValues(alpha: 0.04),
                 offset: const Offset(0, 4),
                 blurRadius: 16,
               ),

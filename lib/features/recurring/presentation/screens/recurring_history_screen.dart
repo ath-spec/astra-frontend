@@ -162,7 +162,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                     getProportionateScreenHeight(12),
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(opacity * 0.8),
+                    color: Colors.white.withValues(alpha: opacity * 0.8),
                   ),
                   child: Row(
                     children: [
@@ -209,7 +209,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                                   fontFamily: 'DMSans',
                                   fontSize: getProportionateScreenWidth(10),
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.black.withOpacity(0.4),
+                                  color: Colors.black.withValues(alpha: 0.4),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -255,7 +255,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -324,7 +324,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                             style: TextStyle(
                               fontFamily: 'DMSans',
                               fontSize: getProportionateScreenWidth(10),
-                              color: Colors.white.withOpacity(0.5),
+                              color: Colors.white.withValues(alpha: 0.5),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -374,7 +374,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                     style: TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: getProportionateScreenWidth(10),
-                      color: Colors.white.withOpacity(0.4),
+                      color: Colors.white.withValues(alpha: 0.4),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -400,10 +400,10 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
-        border: Border.all(color: Colors.black.withOpacity(0.04)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -414,7 +414,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
           Container(
             padding: EdgeInsets.all(getProportionateScreenWidth(10)),
             decoration: BoxDecoration(
-              color: bgColor.withOpacity(0.2),
+              color: bgColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(
                 getProportionateScreenWidth(4),
               ),
@@ -471,7 +471,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: getProportionateScreenWidth(8),
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   fontWeight: FontWeight.w500,
                 ),
               ),

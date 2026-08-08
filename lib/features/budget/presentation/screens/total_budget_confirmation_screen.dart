@@ -88,7 +88,7 @@ class BudgetConfirmationScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   elevation: 4,
-                  shadowColor: BudgetColors.black.withOpacity(0.3),
+                  shadowColor: BudgetColors.black.withValues(alpha: 0.3),
                 ),
                 child: Text("Set category budgets",
                   style: TextStyle(fontFamily: 'DMSans', 

@@ -93,9 +93,9 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white.withOpacity(lerpDouble(0.0, 0.85, easedRatio)!),
-                        Colors.white.withOpacity(lerpDouble(0.0, 0.4, easedRatio)!),
-                        Colors.white.withOpacity(0.0),
+                        Colors.white.withValues(alpha: lerpDouble(0.0, 0.85, easedRatio)!),
+                        Colors.white.withValues(alpha: lerpDouble(0.0, 0.4, easedRatio)!),
+                        Colors.white.withValues(alpha: 0.0),
                       ],
                       stops: [0.0, 0.7, 1.0],
                     ),
@@ -190,7 +190,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                         border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5.w),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.03),
+                            color: Colors.black.withValues(alpha: 0.03),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -233,7 +233,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
               children: [
                 GestureDetector(
                   onTap: onBackTap,
-                  child: Container(
+                  child: SizedBox(
                     width: 44.w,
                     height: 44,
                     child: Icon(

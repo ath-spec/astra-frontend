@@ -216,8 +216,8 @@ class _AppShellState extends ConsumerState<AppShell> {
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
                             colors: [
-                              const Color(0xFFF9FAFB).withOpacity(0.95), // Frosted white at bottom edge
-                              const Color(0xFFF9FAFB).withOpacity(0.0),  // Transparent above
+                              const Color(0xFFF9FAFB).withValues(alpha: 0.95), // Frosted white at bottom edge
+                              const Color(0xFFF9FAFB).withValues(alpha: 0.0),  // Transparent above
                             ],
                             stops: const [0.0, 1.0],
                           ),
@@ -256,7 +256,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeOut,
-                    color: isInputMode ? Colors.black.withOpacity(0.6) : Colors.transparent,
+                    color: isInputMode ? Colors.black.withValues(alpha: 0.6) : Colors.transparent,
                   ),
                 ),
               ),

@@ -181,7 +181,7 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                             ),
                             shadows: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: Colors.black.withValues(alpha: 0.08),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -404,8 +404,8 @@ class _InteractiveChartPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          lineColor.withOpacity(0.3),
-          lineColor.withOpacity(0.0),
+          lineColor.withValues(alpha: 0.3),
+          lineColor.withValues(alpha: 0.0),
         ],
       ).createShader(Rect.fromLTRB(0, 0, size.width, size.height))
       ..style = PaintingStyle.fill;
@@ -427,7 +427,7 @@ class _InteractiveChartPainter extends CustomPainter {
 
       final Paint outerNodePaint = Paint()..color = Colors.white..style = PaintingStyle.fill;
       final Paint innerNodePaint = Paint()..color = lineColor..style = PaintingStyle.fill;
-      final Paint shadowPaint = Paint()..color = Colors.black.withOpacity(0.1)..style = PaintingStyle.fill..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+      final Paint shadowPaint = Paint()..color = Colors.black.withValues(alpha: 0.1)..style = PaintingStyle.fill..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
 
       // Calculate the true global X of the clamped tooltip arrow
       double left = x - (tooltipWidth / 2);
@@ -492,13 +492,9 @@ class _TooltipShapeBorder extends ShapeBorder {
   final double arrowOffset;
 
   const _TooltipShapeBorder({
-    this.arrowWidth = 10.0,
     this.arrowHeight = 6.0,
-    this.radius = 4.0,
-    this.borderColor = const Color(0xFF475569), // Slate 600
-    this.borderWidth = 1.5,
     this.arrowOffset = 0.0,
-  });
+  }) : arrowWidth = 10.0, radius = 4.0, borderColor = const Color(0xFF475569), borderWidth = 1.5;
 
   @override
   EdgeInsetsGeometry get dimensions => EdgeInsets.only(bottom: arrowHeight);

@@ -426,14 +426,14 @@ class _Performance3DBarPainter extends CustomPainter {
       final topColor = bars[i]['colorTop'] as Color;
 
       // ── Tapered Perspective Projection ────────────────────────
-      final depthX_bottom = depthX * 0.3; // Thinner at the base
-      final depthX_top = depthX;          // Thicker at the top
+      final depthxBottom = depthX * 0.3; // Thinner at the base
+      final depthxTop = depthX;          // Thicker at the top
 
       // ── Right Side Face ───────────────────────────────────────
       final sidePath = Path()
         ..moveTo(bx + barW, by)
-        ..lineTo(bx + barW + depthX_bottom, by - depthY)
-        ..lineTo(bx + barW + depthX_top, by - currentH - depthY)
+        ..lineTo(bx + barW + depthxBottom, by - depthY)
+        ..lineTo(bx + barW + depthxTop, by - currentH - depthY)
         ..lineTo(bx + barW, by - currentH)
         ..close();
       canvas.drawPath(sidePath, Paint()..color = sideColor);
@@ -442,8 +442,8 @@ class _Performance3DBarPainter extends CustomPainter {
       final topPath = Path()
         ..moveTo(bx, by - currentH)
         ..lineTo(bx + barW, by - currentH)
-        ..lineTo(bx + barW + depthX_top, by - currentH - depthY)
-        ..lineTo(bx + depthX_top, by - currentH - depthY)
+        ..lineTo(bx + barW + depthxTop, by - currentH - depthY)
+        ..lineTo(bx + depthxTop, by - currentH - depthY)
         ..close();
       canvas.drawPath(topPath, Paint()..color = topColor);
 
@@ -457,7 +457,7 @@ class _Performance3DBarPainter extends CustomPainter {
         canvas.clipRect(frontRect);
 
         final hatchPaint = Paint()
-          ..color = sideColor.withOpacity(0.28)
+          ..color = sideColor.withValues(alpha: 0.28)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.2;
 
@@ -513,7 +513,7 @@ class _Performance3DBarPainter extends CustomPainter {
             fontFamily: 'SpaceGrotesk',
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF0F172A).withOpacity(labelOpacity),
+            color: const Color(0xFF0F172A).withValues(alpha: labelOpacity),
           ),
         );
         textPainter.layout();

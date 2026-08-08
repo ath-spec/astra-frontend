@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../navigation/mainnav.dart';
 import '../../../core/providers/nav_context_provider.dart';
-import 'nav_shared_components.dart';
 
 class ExploreNavPill extends ConsumerWidget {
   const ExploreNavPill({super.key});

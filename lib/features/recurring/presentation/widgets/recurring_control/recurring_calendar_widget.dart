@@ -93,7 +93,7 @@ class _RecurringCalendarWidgetState extends State<RecurringCalendarWidget> {
               style: TextStyle(fontFamily: 'DMSans', 
                 fontSize: getProportionateScreenWidth(11),
                 fontWeight: FontWeight.w500,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 letterSpacing: 0.5,
               ),
             ),
@@ -164,7 +164,7 @@ class _RecurringCalendarWidgetState extends State<RecurringCalendarWidget> {
           height: getProportionateScreenWidth(48),
           decoration: BoxDecoration(
             color: isToday
-                ? Colors.white.withOpacity(0.12)
+                ? Colors.white.withValues(alpha: 0.12)
                 : Colors.transparent,
             shape: BoxShape.circle,
           ),
@@ -179,7 +179,7 @@ class _RecurringCalendarWidgetState extends State<RecurringCalendarWidget> {
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(14),
                     fontWeight: isToday ? FontWeight.w600 : FontWeight.w400,
-                    color: isCurrentMonth ? Colors.white : Colors.white.withOpacity(0.15),
+                    color: isCurrentMonth ? Colors.white : Colors.white.withValues(alpha: 0.15),
                   ),
                 ),
               // Center payment logos if they exist
@@ -204,7 +204,7 @@ class _RecurringCalendarWidgetState extends State<RecurringCalendarWidget> {
     final List<Color> themeColors = [
       Color(0xFFECCFF0),
       Color(0xFFC8E6C9),
-      Color(0xFF4808C7).withOpacity(0.5),
+      Color(0xFF4808C7).withValues(alpha: 0.5),
       Color(0xFFD6FF3F),
     ];
     return Column(

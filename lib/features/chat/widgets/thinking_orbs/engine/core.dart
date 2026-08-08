@@ -83,7 +83,7 @@ void paintDots(Canvas canvas, List<Dot> dots, bool dark, [double rMin = 0.3, Col
     
     final Color baseColor = customColor ?? Color.fromARGB(255, g, g, g);
     final paint = Paint()
-      ..color = baseColor.withOpacity(d.alpha)
+      ..color = baseColor.withValues(alpha: d.alpha)
       ..style = PaintingStyle.fill;
       
     canvas.drawCircle(Offset(d.x, d.y), max(rMin, d.r), paint);

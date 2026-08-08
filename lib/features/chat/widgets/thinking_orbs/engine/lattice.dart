@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 import 'core.dart';
-import 'profiles.dart';
 
 class Move {
   final int axis;

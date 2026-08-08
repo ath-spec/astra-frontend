@@ -188,8 +188,9 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         backgroundColor: const Color(0xFFFFFFFF),
-        body: Stack(
-          children: [
+        body: SizedBox.expand(
+          child: Stack(
+            children: [
             SafeArea(
               child: SingleChildScrollView(
                 child: Padding(
@@ -230,7 +231,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                             "Your suggested monthly budget",
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: getProportionateScreenWidth(18),
+                              fontSize: getProportionateScreenWidth(20),
                               fontWeight: FontWeight.w600,
                               color: BudgetColors.black,
                             ),
@@ -258,7 +259,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                             "₹${NumberFormat('#,##,###').format(widget.totalBudget)}",
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 28,
+                              fontSize: 30,
                               fontWeight: FontWeight.w600,
                               color: BudgetColors.black,
                             ),
@@ -317,7 +318,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                                         const Color(0xfffbd1d3),
                                         const Color(
                                           0xfffbd1d3,
-                                        ).withOpacity(0.0),
+                                        ).withValues(alpha: 0.0),
                                       ],
                                       stops: const [0.0, 0.3, 1.0],
                                     ),
@@ -340,7 +341,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                                         "Why ₹${NumberFormat('#,##,###').format(widget.totalBudget)}?",
                                         style: TextStyle(
                                           fontFamily: 'DMSans',
-                                          fontSize: 14,
+                                          fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                           color: BudgetColors.black,
                                         ),
@@ -400,7 +401,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       elevation: 4,
-                      shadowColor: BudgetColors.black.withOpacity(0.3),
+                      shadowColor: BudgetColors.black.withValues(alpha: 0.3),
                     ),
                     child: Text(
                       "Continue",
@@ -417,7 +418,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildBulletPoint(String text, {bool isDark = false}) {
@@ -445,7 +446,7 @@ class _SuggestedBudgetScreenState extends ConsumerState<SuggestedBudgetScreen> {
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontFamily: 'DMSans',
-                fontSize: 10,
+                fontSize: 12,
                 color: color,
                 height: 1.5,
               ),
@@ -601,7 +602,7 @@ class _SuggestedBarChartState extends ConsumerState<_SuggestedBarChart>
                   "₹${NumberFormat('#,##,###').format(widget.totalBudget)}",
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: getProportionateScreenWidth(12),
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: BudgetColors.foreground,
                   ),
@@ -693,7 +694,7 @@ class _SuggestedBarChartState extends ConsumerState<_SuggestedBarChart>
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontFamily: 'DMSans',
-              fontSize: getProportionateScreenWidth(10),
+              fontSize: getProportionateScreenWidth(12),
               color: BudgetColors.grey7,
             ),
           ),

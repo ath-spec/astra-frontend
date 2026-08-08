@@ -457,7 +457,7 @@ class _NoRecurringCard extends StatelessWidget {
                             end: Alignment.bottomCenter,
                           ),
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
                         ),
                         child: const Text(
                           'Track now',

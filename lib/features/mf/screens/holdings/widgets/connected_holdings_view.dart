@@ -40,7 +40,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
 
   List<HoldingItem> _displayHoldings = [];
   SortOption? _currentSort;
-  Set<String> _activeFilters = {};
+  final Set<String> _activeFilters = {};
 
   void _toggleFilter(String filter) {
     setState(() {
@@ -202,7 +202,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
               borderRadius: BorderRadius.circular(4.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
+                  color: Colors.black.withValues(alpha: 0.03),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -456,7 +456,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),

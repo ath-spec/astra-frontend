@@ -98,7 +98,7 @@ class SubscriptionTile extends StatelessWidget {
                             ((item['isDark'] ?? true)
                                     ? Colors.white
                                     : Colors.black)
-                                .withOpacity(isEnabled ? 1.0 : 0.7),
+                                .withValues(alpha: isEnabled ? 1.0 : 0.7),
                       )
                     : Container(
                         padding: EdgeInsets.all(
@@ -126,7 +126,7 @@ class SubscriptionTile extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         color: isEnabled
                             ? Colors.black
-                            : Colors.black.withOpacity(0.5),
+                            : Colors.black.withValues(alpha: 0.5),
                         letterSpacing: -0.2,
                       ),
                     ),
@@ -180,7 +180,7 @@ class SubscriptionTile extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: isEnabled
                         ? Colors.black
-                        : Colors.black.withOpacity(0.3),
+                        : Colors.black.withValues(alpha: 0.3),
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -191,7 +191,7 @@ class SubscriptionTile extends StatelessWidget {
                       .toLowerCase(),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(8),
-                    color: Colors.black.withOpacity(isEnabled ? 0.4 : 0.3),
+                    color: Colors.black.withValues(alpha: isEnabled ? 0.4 : 0.3),
                     fontWeight: FontWeight.normal,
                   ),
                 ),

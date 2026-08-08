@@ -86,7 +86,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                           child: Image.asset(
                             widget.image,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            errorBuilder: (_, _, _) => Container(
                               color: const Color(0xFFE8E8E3),
                             ),
                           ),
@@ -100,7 +100,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                Colors.black.withOpacity(0.3),
+                                Colors.black.withValues(alpha: 0.3),
                                 Colors.transparent,
                                 Colors.transparent,
                                 const Color(0xFFFAFAF9),
@@ -305,7 +305,7 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                                   ),
                                 ),
                               );
-                            }).toList(),
+                            }),
 
                             const SizedBox(height: 24),
                             const Divider(color: Color(0xFFE4E2DC)),
@@ -359,11 +359,11 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: Colors.black.withValues(alpha: 0.08),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -390,11 +390,11 @@ class _NewsArticleScreenState extends State<NewsArticleScreen>
                           decoration: BoxDecoration(
                             color: _isBookmarked
                                 ? const Color(0xFF1A1A17)
-                                : Colors.white.withOpacity(0.9),
+                                : Colors.white.withValues(alpha: 0.9),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: Colors.black.withValues(alpha: 0.08),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),

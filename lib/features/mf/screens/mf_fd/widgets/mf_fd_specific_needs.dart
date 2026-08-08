@@ -35,7 +35,7 @@ class _MfFdSpecificNeedsState extends State<MfFdSpecificNeeds> {
             title: 'Insured FDs',
             icon: Icons.shield,
             iconColor: Colors.blue,
-            iconBgColor: Colors.blue.withOpacity(0.1),
+            iconBgColor: Colors.blue.withValues(alpha: 0.1),
             description: 'Invest with confidence knowing your FD is insured up to ₹5 lakh by DICGC, RBI\'s subsidiary.',
             cards: [
               _buildFDCard('Suryoday SF Bank', 'Instant withdrawal', '8.1', '2Y 6M', Colors.deepOrange),
@@ -48,7 +48,7 @@ class _MfFdSpecificNeedsState extends State<MfFdSpecificNeeds> {
             title: 'FDs with SIP',
             icon: Icons.savings,
             iconColor: Colors.deepOrange,
-            iconBgColor: Colors.deepOrange.withOpacity(0.1),
+            iconBgColor: Colors.deepOrange.withValues(alpha: 0.1),
             description: 'Invest regularly with SIP and watch your savings grow steadily with assured returns.',
             cards: [
               _buildFDCard('Suryoday SF Bank', 'Upto ₹5L insured', '8.1', '2Y 6M', Colors.deepOrange),
@@ -61,7 +61,7 @@ class _MfFdSpecificNeedsState extends State<MfFdSpecificNeeds> {
             title: 'Recurring Deposits (RDs)',
             icon: Icons.calendar_month,
             iconColor: Colors.green,
-            iconBgColor: Colors.green.withOpacity(0.1),
+            iconBgColor: Colors.green.withValues(alpha: 0.1),
             description: 'Build wealth monthly with guaranteed, locked-in returns through RDs.',
             cards: [
               _buildFDCard('Shivalik SF Bank', 'Upto ₹5L insured', '7.8', '1Y 10M', Colors.teal),
@@ -74,7 +74,7 @@ class _MfFdSpecificNeedsState extends State<MfFdSpecificNeeds> {
             title: 'Tax Saving Fixed Deposits',
             icon: Icons.percent,
             iconColor: Colors.teal,
-            iconBgColor: Colors.teal.withOpacity(0.1),
+            iconBgColor: Colors.teal.withValues(alpha: 0.1),
             description: 'Claim deductions upto ₹1.5L under Section 80C while earning assured returns.',
             cards: [
               _buildFDCard('Suryoday SF Bank', 'Upto ₹5L insured', '8.0', '5Y', Colors.deepOrange),
@@ -87,7 +87,7 @@ class _MfFdSpecificNeedsState extends State<MfFdSpecificNeeds> {
             title: 'Quick Withdrawal FDs',
             icon: Icons.hourglass_bottom,
             iconColor: Colors.orange,
-            iconBgColor: Colors.orange.withOpacity(0.1),
+            iconBgColor: Colors.orange.withValues(alpha: 0.1),
             description: 'Access your savings instantly with our FD partners - whenever you need it.',
             cards: [
               _buildFDCard('Suryoday SF Bank', 'Instant withdrawal', '8.1', '2Y 6M', Colors.deepOrange),
@@ -100,7 +100,7 @@ class _MfFdSpecificNeedsState extends State<MfFdSpecificNeeds> {
             title: 'High Credit Rated FDs',
             icon: Icons.workspace_premium,
             iconColor: Colors.blueAccent,
-            iconBgColor: Colors.blueAccent.withOpacity(0.1),
+            iconBgColor: Colors.blueAccent.withValues(alpha: 0.1),
             description: 'Invest in high-rated NBFC FDs (ICRA/CRISIL) for stable, worry-free returns.',
             cards: [
               _buildFDCard('Bajaj Finance Ltd.', 'AAA+ Rated', '7.4', '2Y 7M', Colors.blue[800]!),
@@ -228,7 +228,7 @@ class _MfFdSpecificNeedsState extends State<MfFdSpecificNeeds> {
         border: Border.all(color: const Color(0xFFF1F5F9)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 4),
           )
@@ -242,7 +242,7 @@ class _MfFdSpecificNeedsState extends State<MfFdSpecificNeeds> {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: logoColor.withOpacity(0.1),
+              color: logoColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),

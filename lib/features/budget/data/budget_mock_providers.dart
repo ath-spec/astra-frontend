@@ -125,7 +125,7 @@ class BudgetState extends ChangeNotifier {
                         if ((c as dynamic).title != null) title = (c as dynamic).title;
                         if ((c as dynamic).iconColor != null) {
                             Color colorObj = (c as dynamic).iconColor;
-                            color = '#${colorObj.value.toRadixString(16).padLeft(8, '0')}';
+                            color = '#${colorObj.toARGB32().toRadixString(16).padLeft(8, '0')}';
                         }
                     }
                 } catch (_) {}

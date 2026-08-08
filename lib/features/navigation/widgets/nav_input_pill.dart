@@ -39,7 +39,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
   NavInputState _currentState = NavInputState.initial;
   String _userMessage = "";
   
-  String _aiResponse = "I can certainly help you with that! Let's analyze your portfolio first.";
+  final String _aiResponse = "I can certainly help you with that! Let's analyze your portfolio first.";
   String _streamedResponse = "";
   Timer? _streamTimer;
 
@@ -215,7 +215,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, 4),
             ),
@@ -364,7 +364,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                             behavior: HitTestBehavior.opaque,
                             child: const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Icon(Icons.keyboard_alt_outlined, size: 20, color: const Color(0xFF041E49)),
+                              child: Icon(Icons.keyboard_alt_outlined, size: 20, color: Color(0xFF041E49)),
                             ),
                           ),
                           const SizedBox(width: 4),

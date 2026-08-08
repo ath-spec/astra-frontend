@@ -46,7 +46,7 @@ class _VerifyPanScreenState extends ConsumerState<VerifyPanScreen> {
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 32,
                         offset: const Offset(0, 12),
                       ),
@@ -180,7 +180,7 @@ class _VerifyPanScreenState extends ConsumerState<VerifyPanScreen> {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    const Color(0xFFF8FAFC).withOpacity(0.5),
+                                    const Color(0xFFF8FAFC).withValues(alpha: 0.5),
                                     const Color(0xFFF1F5F9),
                                   ],
                                 ),

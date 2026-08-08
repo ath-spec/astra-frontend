@@ -143,7 +143,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                   ),
                   SizedBox(height: 32.h),
                   // Fund List
-                  ..._mockFunds.map((fund) => _buildFundRow(fund)).toList(),
+                  ..._mockFunds.map((fund) => _buildFundRow(fund)),
                   SizedBox(height: 32.h),
                 ],
               ),

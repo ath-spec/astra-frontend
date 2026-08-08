@@ -73,7 +73,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                   fontSize: 14,
                   height: 1.5,
-                  color: const Color(0xFF133026).withOpacity(0.7),
+                  color: const Color(0xFF133026).withValues(alpha: 0.7),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -85,7 +85,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: const Color(0xFFFAF5EA),
                     borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: const Color(0xFF133026).withOpacity(0.1)),
+                    border: Border.all(color: const Color(0xFF133026).withValues(alpha: 0.1)),
                   ),
                   child: Column(
                     children: [
@@ -95,7 +95,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                             : (exception.conflicts.length > 1 ? "specifically, your fixed limits for" : "specifically, your fixed limit for"),
                         style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                           fontSize: 13,
-                          color: const Color(0xFF133026).withOpacity(0.7),
+                          color: const Color(0xFF133026).withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -120,7 +120,7 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                                 : "is more than your new total. you'll need to lower it first to proceed."),
                         style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                           fontSize: 13,
-                          color: const Color(0xFF133026).withOpacity(0.7),
+                          color: const Color(0xFF133026).withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),

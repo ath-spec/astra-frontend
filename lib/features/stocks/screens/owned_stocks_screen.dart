@@ -20,7 +20,7 @@ enum ViewMode { summary, expanded, table }
 class _StocksScreenState extends ConsumerState<StocksScreen> {
     ViewMode _viewMode = ViewMode.summary;
 
-  Set<String> _activeFilters = {'Stocks'};
+  final Set<String> _activeFilters = {'Stocks'};
   String _activeSort = 'Current Value';
   DateTime _lastRefreshed = DateTime.now().subtract(const Duration(days: 10));
 
@@ -358,7 +358,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),
@@ -459,7 +459,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -507,7 +507,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: Offset(0, 2),
                   )
@@ -558,7 +558,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
             ),
             boxShadow: isSelected && !isOutline ? [
               BoxShadow(
-                color: Colors.black.withOpacity(0.02),
+                color: Colors.black.withValues(alpha: 0.02),
                 blurRadius: 4,
                 offset: Offset(0, 2),
               )
@@ -658,7 +658,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                           borderRadius: BorderRadius.circular(4.r), // User requested border radius 4
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 8,
                               offset: Offset(0, 4),
                             ),

@@ -59,7 +59,7 @@ class VideosTab extends StatelessWidget {
           border: Border.all(color: const Color(0xFFE2E8F0)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -82,7 +82,7 @@ class VideosTab extends StatelessWidget {
                       child: Container(
                         width: 16,
                         decoration: BoxDecoration(
-                          color: module.flagColor.withOpacity(0.2),
+                          color: module.flagColor.withValues(alpha: 0.2),
                           borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(4),
                             bottomRight: Radius.circular(4),

@@ -21,7 +21,7 @@ class HomeSurplusBanner extends StatelessWidget {
         border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -84,7 +84,7 @@ class HomeSurplusBanner extends StatelessWidget {
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -116,12 +116,12 @@ class HomeSurplusBanner extends StatelessWidget {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Colors.white, width: 2),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF10B981).withOpacity(0.1),
+                          color: const Color(0xFF10B981).withValues(alpha: 0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -131,7 +131,7 @@ class HomeSurplusBanner extends StatelessWidget {
                       child: Icon(
                         Icons.payments_rounded,
                         size: 48,
-                        color: const Color(0xFF10B981).withOpacity(0.8),
+                        color: const Color(0xFF10B981).withValues(alpha: 0.8),
                       ),
                     ),
                   ),

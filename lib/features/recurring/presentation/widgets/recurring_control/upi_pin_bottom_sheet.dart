@@ -68,7 +68,7 @@ class _UpiPinBottomSheetState extends State<UpiPinBottomSheet> {
                 width: getProportionateScreenWidth(40),
                 height: getProportionateScreenHeight(4),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
                 ),
               ),
@@ -102,7 +102,7 @@ class _UpiPinBottomSheetState extends State<UpiPinBottomSheet> {
               style: TextStyle(fontFamily: 'DMSans', 
                 fontSize: getProportionateScreenWidth(16),
                 fontWeight: FontWeight.w600,
-                color: Colors.black.withOpacity(0.6),
+                color: Colors.black.withValues(alpha: 0.6),
               ),
             ),
 
@@ -119,7 +119,7 @@ class _UpiPinBottomSheetState extends State<UpiPinBottomSheet> {
                   margin: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(12)),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black.withOpacity(0.2)),
+                    border: Border.all(color: Colors.black.withValues(alpha: 0.2)),
                     color: isFilled ? Colors.black : Colors.transparent,
                   ),
                 );

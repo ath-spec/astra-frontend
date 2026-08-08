@@ -117,7 +117,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
               0,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFFFBF8E7).withOpacity(opacity * 0.8),
+              color: const Color(0xFFFBF8E7).withValues(alpha: opacity * 0.8),
             ),
             child: Column(
               children: [
@@ -127,7 +127,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
                     width: getProportionateScreenWidth(40),
                     height: getProportionateScreenHeight(4),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -250,7 +250,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
                   "Per month",
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(10),
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -299,7 +299,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(10), color: Colors.black.withOpacity(0.4), fontWeight: FontWeight.w500)),
+              Text(label, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(10), color: Colors.black.withValues(alpha: 0.4), fontWeight: FontWeight.w500)),
               SizedBox(height: getProportionateScreenHeight(3)),
               Text(value, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(13), fontWeight: FontWeight.w600, color: Colors.black)),
             ],
@@ -307,14 +307,14 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
           Container(
             padding: EdgeInsets.all(getProportionateScreenWidth(6)),
             decoration: BoxDecoration(color: const Color(0xFFFBF8E7), borderRadius: BorderRadius.circular(4)),
-            child: Icon(icon, size: 14, color: Colors.black.withOpacity(0.4)),
+            child: Icon(icon, size: 14, color: Colors.black.withValues(alpha: 0.4)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDivider() => Divider(height: 1, color: Colors.black.withOpacity(0.05));
+  Widget _buildDivider() => Divider(height: 1, color: Colors.black.withValues(alpha: 0.05));
 
   Widget _buildSecondaryButton(String text, VoidCallback onTap) {
     return ZeyroTapDetector(eventName: 'manage_autopay_bottom_sheet_action_tapped', 
@@ -335,7 +335,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Subscription history", style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(11), color: Colors.black.withOpacity(0.4), fontWeight: FontWeight.w600)),
+          Text("Subscription history", style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(11), color: Colors.black.withValues(alpha: 0.4), fontWeight: FontWeight.w600)),
           SizedBox(height: getProportionateScreenHeight(14)),
           _buildHistoryRow("Jan 7, 2026", "₹${widget.payment['amount'].toInt()}", "Paid", const Color(0xFFDFF0D8), const Color(0xFF3C763D)),
           _buildHistoryRow("Dec 7, 2025", "₹${widget.payment['amount'].toInt()}", "Paid", const Color(0xFFDFF0D8), const Color(0xFF3C763D)),
@@ -383,7 +383,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
             scale: 0.8,
             child: Switch(
               value: _remindMe,
-              activeColor: Colors.black,
+              activeThumbColor: Colors.black,
               onChanged: (val) {
                 setState(() {
                   _remindMe = val;
@@ -392,7 +392,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
             ),
           )
         else
-          Text(value, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(12), color: Colors.black.withOpacity(0.4), fontWeight: FontWeight.w500)),
+          Text(value, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(12), color: Colors.black.withValues(alpha: 0.4), fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -445,7 +445,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
       context: context,
       barrierDismissible: true,
       barrierLabel: "pause",
-      barrierColor: Colors.black.withOpacity(0.05),
+      barrierColor: Colors.black.withValues(alpha: 0.05),
       pageBuilder: (context, anim1, anim2) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
@@ -466,7 +466,7 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
       context: context,
       barrierDismissible: true,
       barrierLabel: "resume",
-      barrierColor: Colors.black.withOpacity(0.05),
+      barrierColor: Colors.black.withValues(alpha: 0.05),
       pageBuilder: (context, anim1, anim2) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
@@ -483,9 +483,9 @@ class _ManageAutopayBottomSheetState extends State<ManageAutopayBottomSheet> {
   }
 
   void _handleCancelInitiation(BuildContext context) async {
-    final pinSuccess = await showGeneralDialog<bool>(context: context, barrierDismissible: true, barrierLabel: "pin", barrierColor: Colors.black.withOpacity(0.05), pageBuilder: (context, anim1, anim2) => BackdropFilter(filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8), child: Align(alignment: Alignment.bottomCenter, child: UpiPinBottomSheet(payment: widget.payment))), transitionBuilder: (context, anim1, anim2, child) => SlideTransition(position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(anim1), child: child), transitionDuration: const Duration(milliseconds: 300));
+    final pinSuccess = await showGeneralDialog<bool>(context: context, barrierDismissible: true, barrierLabel: "pin", barrierColor: Colors.black.withValues(alpha: 0.05), pageBuilder: (context, anim1, anim2) => BackdropFilter(filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8), child: Align(alignment: Alignment.bottomCenter, child: UpiPinBottomSheet(payment: widget.payment))), transitionBuilder: (context, anim1, anim2, child) => SlideTransition(position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(anim1), child: child), transitionDuration: const Duration(milliseconds: 300));
     if (pinSuccess == true && context.mounted) {
-      final finalResult = await showGeneralDialog<bool>(context: context, barrierDismissible: true, barrierLabel: "success", barrierColor: Colors.black.withOpacity(0.05), pageBuilder: (context, anim1, anim2) => BackdropFilter(filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8), child: Align(alignment: Alignment.bottomCenter, child: const CancelSuccessBottomSheet())), transitionBuilder: (context, anim1, anim2, child) => SlideTransition(position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(anim1), child: child), transitionDuration: const Duration(milliseconds: 300));
+      final finalResult = await showGeneralDialog<bool>(context: context, barrierDismissible: true, barrierLabel: "success", barrierColor: Colors.black.withValues(alpha: 0.05), pageBuilder: (context, anim1, anim2) => BackdropFilter(filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8), child: Align(alignment: Alignment.bottomCenter, child: const CancelSuccessBottomSheet())), transitionBuilder: (context, anim1, anim2, child) => SlideTransition(position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(anim1), child: child), transitionDuration: const Duration(milliseconds: 300));
       if (finalResult == true && context.mounted) Navigator.of(context).pop('cancelled');
     }
   }

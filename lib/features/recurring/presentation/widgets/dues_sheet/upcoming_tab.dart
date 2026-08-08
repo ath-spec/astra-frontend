@@ -39,7 +39,7 @@ class _UpcomingTabStateNew extends State<UpcomingTab> {
         context: context,
         barrierDismissible: true,
         barrierLabel: "pause auto-pay",
-        barrierColor: Colors.black.withOpacity(0.05),
+        barrierColor: Colors.black.withValues(alpha: 0.05),
         pageBuilder: (context, anim1, anim2) {
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
@@ -141,7 +141,7 @@ class _UpcomingTabStateNew extends State<UpcomingTab> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
-        border: Border.all(color: Colors.black.withOpacity(0.04)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -187,7 +187,7 @@ class _UpcomingTabStateNew extends State<UpcomingTab> {
                   _getNextRenewalText(item),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(12),
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -227,7 +227,7 @@ class _UpcomingTabStateNew extends State<UpcomingTab> {
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(18),
                   fontWeight: FontWeight.w600,
-                  color: isEnabled ? Colors.black : Colors.black.withOpacity(0.3),
+                  color: isEnabled ? Colors.black : Colors.black.withValues(alpha: 0.3),
                   letterSpacing: -0.5,
                 ),
               ),
@@ -238,7 +238,7 @@ class _UpcomingTabStateNew extends State<UpcomingTab> {
                     .toCapitalized(),
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(10),
-                  color: Colors.black.withOpacity(0.4),
+                  color: Colors.black.withValues(alpha: 0.4),
                   fontWeight: FontWeight.w500,
                 ),
               ),

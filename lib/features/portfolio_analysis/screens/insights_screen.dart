@@ -117,7 +117,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 boxShadow: [
                   BoxShadow(
                     color: _isScrolled
-                        ? Colors.black.withOpacity(0.04)
+                        ? Colors.black.withValues(alpha: 0.04)
                         : Colors.transparent,
                     blurRadius: 10 * scale,
                     offset: Offset(0, 4 * scale),
@@ -162,7 +162,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                     border: Border.all(
                                       color: const Color(0xFFF1F5F9),
                                     ),
-                                    color: Colors.white.withOpacity(0.8),
+                                    color: Colors.white.withValues(alpha: 0.8),
                                   ),
                                   child: Icon(
                                     Icons.chevron_left,
@@ -208,7 +208,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                     border: Border.all(
                                       color: const Color(0xFFF1F5F9),
                                     ),
-                                    color: Colors.white.withOpacity(0.8),
+                                    color: Colors.white.withValues(alpha: 0.8),
                                   ),
                                   child: Icon(
                                     Icons.chevron_right,
@@ -1509,10 +1509,10 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                                           colors: [
                                                             const Color(
                                                               0xFFF3E8FF,
-                                                            ).withOpacity(0.8),
+                                                            ).withValues(alpha: 0.8),
                                                             Colors.white
-                                                                .withOpacity(
-                                                                  0.0,
+                                                                .withValues(
+                                                                  alpha: 0.0,
                                                                 ),
                                                           ],
                                                           begin: Alignment

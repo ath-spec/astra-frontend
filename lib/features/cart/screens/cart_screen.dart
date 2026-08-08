@@ -31,7 +31,7 @@ class _CartScreenState extends State<CartScreen> {
                   GestureDetector(
                     onTap: () => context.pop(),
                     behavior: HitTestBehavior.opaque,
-                    child: Container(
+                    child: SizedBox(
                       width: 44.w,
                       height: 44,
                       child: Icon(
@@ -143,7 +143,7 @@ class _CartScreenState extends State<CartScreen> {
                             borderRadius: BorderRadius.circular(32.r),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF0F172A).withOpacity(0.2),
+                                color: const Color(0xFF0F172A).withValues(alpha: 0.2),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),

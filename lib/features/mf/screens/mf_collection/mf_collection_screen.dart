@@ -84,7 +84,7 @@ class _MfCollectionScreenState extends State<MfCollectionScreen> {
             child: InkWell(
               onTap: () => Navigator.pop(context),
               borderRadius: BorderRadius.circular(4),
-              child: Container(
+              child: SizedBox(
                 width: 40,
                 height: 40,
                 child: const Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Color(0xFF1E1E1E)),
@@ -156,7 +156,7 @@ class _MfCollectionScreenState extends State<MfCollectionScreen> {
                   ),
                   const SizedBox(height: 32),
                   // Fund List
-                  ..._mockFunds.map((fund) => _buildFundRow(fund)).toList(),
+                  ..._mockFunds.map((fund) => _buildFundRow(fund)),
                   const SizedBox(height: 32),
                 ],
               ),

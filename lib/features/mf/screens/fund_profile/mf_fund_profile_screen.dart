@@ -326,7 +326,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: data.riskColor.withOpacity(0.1),
+                    color: data.riskColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Row(
@@ -361,7 +361,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
               border: Border.all(color: const Color(0xFFF1F5F9)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
+                  color: Colors.black.withValues(alpha: 0.02),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -452,7 +452,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
           border: Border.all(color: const Color(0xFFE2E8F0)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -790,7 +790,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
         border: const Border(top: BorderSide(color: Color(0xFFF1F5F9))),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -4),
           ),

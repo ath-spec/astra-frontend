@@ -719,9 +719,9 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white.withOpacity(lerpDouble(0.0, 0.85, easedRatio)!),
-                        Colors.white.withOpacity(lerpDouble(0.0, 0.4, easedRatio)!),
-                        Colors.white.withOpacity(0.0),
+                        Colors.white.withValues(alpha: lerpDouble(0.0, 0.85, easedRatio)!),
+                        Colors.white.withValues(alpha: lerpDouble(0.0, 0.4, easedRatio)!),
+                        Colors.white.withValues(alpha: 0.0),
                       ],
                       stops: const [0.0, 0.7, 1.0],
                     ),
@@ -763,14 +763,14 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: currentHPad, vertical: currentVPad),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(pillBgRatio),
+                  color: Colors.white.withValues(alpha: pillBgRatio),
                   borderRadius: BorderRadius.circular(currentBorderRadius),
                   border: Border.all(
-                    color: const Color(0xFFE2E8F0).withOpacity(currentBorderOpacity),
+                    color: const Color(0xFFE2E8F0).withValues(alpha: currentBorderOpacity),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(currentShadowOpacity),
+                      color: Colors.black.withValues(alpha: currentShadowOpacity),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -934,7 +934,7 @@ class _ReturnsPillState extends State<_ReturnsPill> {
             border: Border.all(color: const Color(0xFFE2E8F0)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),

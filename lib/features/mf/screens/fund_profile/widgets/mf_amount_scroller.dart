@@ -228,7 +228,7 @@ class _MfAmountScrollerWidgetState extends State<MfAmountScrollerWidget> {
                         end: Alignment.centerRight,
                         colors: [
                           Colors.white,
-                          Colors.white.withOpacity(0.0),
+                          Colors.white.withValues(alpha: 0.0),
                         ],
                       ),
                     ),
@@ -242,7 +242,7 @@ class _MfAmountScrollerWidgetState extends State<MfAmountScrollerWidget> {
                         end: Alignment.centerLeft,
                         colors: [
                           Colors.white,
-                          Colors.white.withOpacity(0.0),
+                          Colors.white.withValues(alpha: 0.0),
                         ],
                       ),
                     ),

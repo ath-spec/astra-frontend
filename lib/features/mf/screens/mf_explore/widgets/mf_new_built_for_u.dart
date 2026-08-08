@@ -31,7 +31,7 @@ class MfNewAiPicksHero extends StatelessWidget {
             border: Border.all(color: const Color(0xFFF1F5F9)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -99,7 +99,7 @@ class MfNewAiPicksHero extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFF818CF8).withOpacity(0.3),
+                      const Color(0xFF818CF8).withValues(alpha: 0.3),
                       Colors.transparent,
                     ],
                   ),

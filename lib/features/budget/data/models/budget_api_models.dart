@@ -205,20 +205,13 @@ class BudgetDiagnosisResponse extends Diagnosis {
   final String month;
   BudgetDiagnosisResponse({
     required this.month,
-    required List<dynamic> historicalSpending,
-    required double averageIncome,
-    required double averageExpenses,
-    required double averageSavings,
-    required double suggestedTotalBudget,
-    required List<DiagnosisInsight> diagnosisInsights,
-  }) : super(
-          averageIncome: averageIncome,
-          averageSavings: averageSavings,
-          averageExpenses: averageExpenses,
-          suggestedTotalBudget: suggestedTotalBudget,
-          historicalSpending: historicalSpending,
-          diagnosisInsights: diagnosisInsights,
-        );
+    required super.historicalSpending,
+    required super.averageIncome,
+    required super.averageExpenses,
+    required super.averageSavings,
+    required super.suggestedTotalBudget,
+    required super.diagnosisInsights,
+  });
 }
 class BudgetLatestResponse {
   final double totalBudget;

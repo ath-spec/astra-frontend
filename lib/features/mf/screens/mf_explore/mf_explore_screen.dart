@@ -199,9 +199,9 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        const Color(0xFFF9FAFB).withOpacity(lerpDouble(0.0, 0.85, easedRatio)!),
-                        const Color(0xFFF9FAFB).withOpacity(lerpDouble(0.0, 0.4, easedRatio)!),
-                        const Color(0xFFF9FAFB).withOpacity(0.0),
+                        const Color(0xFFF9FAFB).withValues(alpha: lerpDouble(0.0, 0.85, easedRatio)!),
+                        const Color(0xFFF9FAFB).withValues(alpha: lerpDouble(0.0, 0.4, easedRatio)!),
+                        const Color(0xFFF9FAFB).withValues(alpha: 0.0),
                       ],
                       stops: const [0.0, 0.7, 1.0],
                     ),
@@ -243,14 +243,14 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: currentHPad, vertical: currentVPad),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(pillBgRatio),
+                  color: Colors.white.withValues(alpha: pillBgRatio),
                   borderRadius: BorderRadius.circular(currentBorderRadius),
                   border: Border.all(
-                    color: const Color(0xFFE2E8F0).withOpacity(currentBorderOpacity),
+                    color: const Color(0xFFE2E8F0).withValues(alpha: currentBorderOpacity),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(currentShadowOpacity),
+                      color: Colors.black.withValues(alpha: currentShadowOpacity),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -276,7 +276,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                         opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
                         child: Padding(
                           padding: EdgeInsets.only(top: lerpDouble(8.0, 0.0, easedRatio)!),
-                          child: Container(
+                          child: SizedBox(
                             height: lerpDouble(16.0, 0.0, easedRatio)!,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,

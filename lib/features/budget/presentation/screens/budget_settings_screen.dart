@@ -228,7 +228,7 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
         ),
         content: Text(
           "This will delete your current active budget from the backend and reset your app state. This action cannot be undone.",
-          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', color: const Color(0xFF0F172A).withOpacity(0.7)),
+          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', color: const Color(0xFF0F172A).withValues(alpha: 0.7)),
         ),
         actions: [
           TextButton(
@@ -294,7 +294,7 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text("Budget settings",
                   style: TextStyle(fontFamily: 'DMSans', 
-                    fontSize: getProportionateScreenWidth(32),
+                    fontSize: getProportionateScreenWidth(20),
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF0F172A),
                   ),
@@ -332,7 +332,7 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                                   borderRadius: BorderRadius.circular(4),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF0F172A).withOpacity(0.03),
+                                      color: const Color(0xFF0F172A).withValues(alpha: 0.03),
                                       blurRadius: 10,
                                       offset: const Offset(0, 4),
                                     ),
@@ -346,7 +346,7 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                                       subtitle: "",
                                       controller: _incomeController,
                                     ),
-                                    Divider(height: 1, color: const Color(0xFF0F172A).withOpacity(0.05)),
+                                    Divider(height: 1, color: const Color(0xFF0F172A).withValues(alpha: 0.05)),
                                     _buildEditableTile(
                                       icon: Icons.savings_outlined,
                                       title: "Total budget",
@@ -368,7 +368,7 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                                     borderRadius: BorderRadius.circular(4),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF0F172A).withOpacity(0.03),
+                                        color: const Color(0xFF0F172A).withValues(alpha: 0.03),
                                         blurRadius: 10,
                                         offset: const Offset(0, 4),
                                       ),
@@ -380,14 +380,14 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                                       Text("Budget breakdown",
                                         style: TextStyle(fontFamily: 'DMSans', 
                                           fontWeight: FontWeight.w600,
-                                          fontSize: 15,
+                                          fontSize: 16,
                                           color: const Color(0xFF0F172A),
                                         ),
                                       ),
                                       const SizedBox(height: 14),
-                                      _buildInfoRow("bills total", _settings!.billsTotal),
+                                      _buildInfoRow("Bills total", _settings!.billsTotal),
                                       const SizedBox(height: 10),
-                                      _buildInfoRow("essential categories", _settings!.essentialCategoriesTotal),
+                                      _buildInfoRow("Essential categories", _settings!.essentialCategoriesTotal),
                                       if (_settings!.lastReset != null) ...[
                                         const SizedBox(height: 10),
                                         Row(
@@ -395,14 +395,14 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                                           children: [
                                             Text("Last reset",
                                               style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                                                fontSize: 13,
-                                                color: const Color(0xFF0F172A).withOpacity(0.7),
+                                                fontSize: 14,
+                                                color: const Color(0xFF0F172A).withValues(alpha: 0.7),
                                               ),
                                             ),
                                             Text(
                                               DateFormat('MMM d, yyyy').format(_settings!.lastReset!),
                                               style: TextStyle(fontFamily: 'DMSans', 
-                                                fontSize: 13,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                                 color: const Color(0xFF0F172A),
                                               ),
@@ -424,9 +424,9 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                                   onPressed: (_isSaving || !_hasChanges) ? null : _saveSettings,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF0F172A),
-                                    disabledBackgroundColor: const Color(0xFF0F172A).withOpacity(0.3),
+                                    disabledBackgroundColor: const Color(0xFF0F172A).withValues(alpha: 0.3),
                                     foregroundColor: const Color(0xFFFFFFFF),
-                                    disabledForegroundColor: const Color(0xFFFFFFFF).withOpacity(0.7),
+                                    disabledForegroundColor: const Color(0xFFFFFFFF).withValues(alpha: 0.7),
                                     minimumSize: const Size(double.infinity, 54),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                                     elevation: 0,
@@ -435,10 +435,10 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                                       ? const SizedBox(
                                           height: 20,
                                           width: 20,
-                                          child: CircularProgressIndicator(color: const Color(0xFFFFFFFF), strokeWidth: 2),
+                                          child: CircularProgressIndicator(color: Color(0xFFFFFFFF), strokeWidth: 2),
                                         )
                                       : Text("Save settings",
-                                          style: TextStyle(fontFamily: 'DMSans', fontWeight: FontWeight.w600, fontSize: 15),
+                                          style: TextStyle(fontFamily: 'DMSans', fontWeight: FontWeight.w600, fontSize: 16),
                                         ),
                                 ),
                               ),
@@ -454,17 +454,17 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                                     vertical: getProportionateScreenHeight(8),
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFDC2626).withOpacity(0.07),
+                                    color: const Color(0xFFDC2626).withValues(alpha: 0.07),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Icon(Icons.delete_outline_rounded, size: 14, color: const Color(0xFFDC2626)),
+                                      const Icon(Icons.delete_outline_rounded, size: 14, color: Color(0xFFDC2626)),
                                       const SizedBox(width: 6),
                                       Text("Reset & clear budget",
                                         style: TextStyle(fontFamily: 'DMSans', 
-                                          fontSize: getProportionateScreenWidth(12),
+                                          fontSize: 14,
                                           color: const Color(0xFFDC2626),
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -490,7 +490,6 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
     required String title,
     required String subtitle,
     required TextEditingController controller,
-    bool readOnly = false,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -520,7 +519,7 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                     subtitle,
                     style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                       fontSize: getProportionateScreenWidth(12),
-                      color: const Color(0xFF0F172A).withOpacity(0.6),
+                      color: const Color(0xFF0F172A).withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -552,11 +551,11 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
-                  borderSide: BorderSide(color: const Color(0xFF0F172A).withOpacity(0.15)),
+                  borderSide: BorderSide(color: const Color(0xFF0F172A).withValues(alpha: 0.15)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
-                  borderSide: BorderSide(color: const Color(0xFF0F172A).withOpacity(0.15)),
+                  borderSide: BorderSide(color: const Color(0xFF0F172A).withValues(alpha: 0.15)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -578,12 +577,12 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', fontSize: 13, color: const Color(0xFF0F172A).withOpacity(0.7)),
+          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', fontSize: 13, color: const Color(0xFF0F172A).withValues(alpha: 0.7)),
         ),
         Text(
           _nf.format(amount),
           style: TextStyle(fontFamily: 'DMSans', 
-            fontSize: 13,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF0F172A),
           ),

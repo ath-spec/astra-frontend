@@ -26,7 +26,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
   final ScrollController _scrollController = ScrollController();
   double _scrollOffset = 0.0;
   bool _remindMe = true;
-  bool _scrollEnabled = false;
+  final bool _scrollEnabled = false;
 
   @override
   void initState() {
@@ -139,7 +139,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
               getProportionateScreenHeight(12),
             ),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 255, 255, 255).withOpacity(opacity * 0.8),
+              color: const Color.fromARGB(255, 255, 255, 255).withValues(alpha: opacity * 0.8),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -268,7 +268,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
                       .toCapitalized(),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(10),
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -317,7 +317,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(10), color: Colors.black.withOpacity(0.4), fontWeight: FontWeight.w500)),
+              Text(label, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(10), color: Colors.black.withValues(alpha: 0.4), fontWeight: FontWeight.w500)),
               SizedBox(height: getProportionateScreenHeight(3)),
               Text(value, style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(12), fontWeight: FontWeight.w600, color: Colors.black)),
             ],
@@ -325,14 +325,14 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
           Container(
             padding: EdgeInsets.all(getProportionateScreenWidth(6)),
             decoration: BoxDecoration(color: const Color.fromARGB(255, 255, 255, 255), borderRadius: BorderRadius.circular(4)),
-            child: Icon(icon, size: 14, color: Colors.black.withOpacity(0.4)),
+            child: Icon(icon, size: 14, color: Colors.black.withValues(alpha: 0.4)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDivider() => Divider(height: 1, color: Colors.black.withOpacity(0.05));
+  Widget _buildDivider() => Divider(height: 1, color: Colors.black.withValues(alpha: 0.05));
 
   Widget _buildSecondaryButton(String text, VoidCallback onTap) {
     return ZeyroTapDetector(eventName: 'manage_autopay_screen_action_tapped', 
@@ -391,7 +391,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
             Icon(
               Icons.arrow_forward_ios_rounded,
               size: 16,
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
             ),
           ],
         ),
@@ -452,7 +452,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
           Text(value,
               style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(12),
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   fontWeight: FontWeight.w400)),
       ],
     );
@@ -546,7 +546,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
       context: context,
       barrierDismissible: true,
       barrierLabel: "pause",
-      barrierColor: Colors.black.withOpacity(0.05),
+      barrierColor: Colors.black.withValues(alpha: 0.05),
       pageBuilder: (context, anim1, anim2) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
@@ -572,7 +572,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
       context: context,
       barrierDismissible: true,
       barrierLabel: "resume",
-      barrierColor: Colors.black.withOpacity(0.05),
+      barrierColor: Colors.black.withValues(alpha: 0.05),
       pageBuilder: (context, anim1, anim2) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
@@ -598,7 +598,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
         context: context,
         barrierDismissible: true,
         barrierLabel: "pin",
-        barrierColor: Colors.black.withOpacity(0.05),
+        barrierColor: Colors.black.withValues(alpha: 0.05),
         pageBuilder: (context, anim1, anim2) => BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
             child: Align(
@@ -614,7 +614,7 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
           context: context,
           barrierDismissible: true,
           barrierLabel: "success",
-          barrierColor: Colors.black.withOpacity(0.05),
+          barrierColor: Colors.black.withValues(alpha: 0.05),
           pageBuilder: (context, anim1, anim2) => BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Align(
@@ -625,8 +625,9 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
                   .animate(anim1),
               child: child),
           transitionDuration: const Duration(milliseconds: 300));
-      if (finalResult == true && context.mounted)
+      if (finalResult == true && context.mounted) {
         Navigator.of(context).pop('cancelled');
+      }
     }
   }
 }

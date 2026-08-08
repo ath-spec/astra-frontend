@@ -11,7 +11,7 @@ class ModulesTab extends StatefulWidget {
 }
 
 class _ModulesTabState extends State<ModulesTab> {
-  String _searchQuery = '';
+  final String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
   @override

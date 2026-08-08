@@ -99,7 +99,7 @@ class _MfFdBannerState extends State<MfFdBanner> {
                             letterSpacing: -2,
                             shadows: [
                               Shadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(alpha: 0.2),
                                 offset: const Offset(2, 4),
                                 blurRadius: 4,
                               ),
@@ -116,7 +116,7 @@ class _MfFdBannerState extends State<MfFdBanner> {
                             height: 1,
                             shadows: [
                               Shadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(alpha: 0.2),
                                 offset: const Offset(2, 4),
                                 blurRadius: 4,
                               ),
@@ -133,7 +133,7 @@ class _MfFdBannerState extends State<MfFdBanner> {
                         borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 4,
                             offset: const Offset(0, 4),
                           )

@@ -24,7 +24,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  double _lastHapticValue = 0;
+  final double _lastHapticValue = 0;
 
   bool _hasAnimated = false;
 
@@ -223,11 +223,11 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: const _NotchBorder(
-                side: BorderSide(color: const Color.fromARGB(255, 188, 187, 187)),
+                side: BorderSide(color: Color.fromARGB(255, 188, 187, 187)),
               ),
               shadows: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
+                  color: Colors.black.withValues(alpha: 0.03),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -284,7 +284,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                             child: AnimatedBuilder(
                               animation: _animation,
                               builder: (context, child) {
-                                return Container(
+                                return SizedBox(
                                   height: 8,
                                   child: Align(
                                     alignment: Alignment.centerLeft,
@@ -348,7 +348,7 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
                             child: AnimatedBuilder(
                               animation: _animation,
                               builder: (context, child) {
-                                return Container(
+                                return SizedBox(
                                   height: 8,
                                   child: Align(
                                     alignment: Alignment.centerLeft,

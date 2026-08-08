@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/chat_provider.dart';
 
-import '../../../core/widgets/progressive_blur.dart';
 
 class ChatAppBar extends ConsumerWidget {
   const ChatAppBar({super.key});

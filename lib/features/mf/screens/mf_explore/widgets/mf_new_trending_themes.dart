@@ -318,7 +318,7 @@ class _MfNewTrendingThemesState extends State<MfNewTrendingThemes> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),

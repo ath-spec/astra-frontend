@@ -3,10 +3,8 @@ import 'package:flutter/services.dart';
 import 'generic_info_sheet.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
-import '../../../../../core/widgets/rotating_shimmer_border.dart';
 import 'dart:math' as math;
 import 'dart:async';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MonthlyInvestmentSection extends StatefulWidget {
   const MonthlyInvestmentSection({super.key});

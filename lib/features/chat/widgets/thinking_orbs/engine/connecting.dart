@@ -48,7 +48,7 @@ void paintLines(Canvas ctx, List<Line> lines, bool dark, [Color? customColor]) {
     final g = ((dark ? 1 - w : w) * 255).round();
     final Color baseColor = customColor ?? Color.fromARGB(255, g, g, g);
     final paint = Paint()
-      ..color = baseColor.withOpacity(l.a)
+      ..color = baseColor.withValues(alpha: l.a)
       ..strokeWidth = l.w
       ..style = PaintingStyle.stroke;
     ctx.drawLine(Offset(l.x1, l.y1), Offset(l.x2, l.y2), paint);

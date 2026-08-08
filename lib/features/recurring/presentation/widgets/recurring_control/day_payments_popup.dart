@@ -31,7 +31,7 @@ class DayPaymentsPopup extends StatelessWidget {
         borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: getProportionateScreenWidth(30),
             spreadRadius: 0,
             offset: Offset(0, getProportionateScreenHeight(10)),
@@ -45,7 +45,7 @@ class DayPaymentsPopup extends StatelessWidget {
           ...payments.map((payment) => _buildPaymentRow(payment)),
 
           SizedBox(height: getProportionateScreenHeight(8)),
-          Divider(color: Colors.black.withOpacity(0.06), thickness: getProportionateScreenHeight(1)),
+          Divider(color: Colors.black.withValues(alpha: 0.06), thickness: getProportionateScreenHeight(1)),
           SizedBox(height: getProportionateScreenHeight(12)),
 
           // Total Row
@@ -56,7 +56,7 @@ class DayPaymentsPopup extends StatelessWidget {
                 "total",
                 style: TextStyle(fontFamily: 'Syne', 
                   fontSize: getProportionateScreenWidth(12),
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -130,7 +130,7 @@ class DayPaymentsPopup extends StatelessWidget {
                   (payment['type'] as String).toCapitalized(),
                   style: TextStyle(fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(10),
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                   ),
                 ),
               ],
