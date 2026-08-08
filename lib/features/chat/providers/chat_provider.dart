@@ -4,6 +4,7 @@ import 'package:just_audio/just_audio.dart';
 import '../models/chat_message.dart';
 import '../services/demo_ai_service.dart';
 import 'chat_session_provider.dart';
+import '../../auth/providers/auth_provider.dart';
 
 part 'chat_provider.g.dart';
 
@@ -131,8 +132,17 @@ class ChatNotifier extends _$ChatNotifier {
     }).toList();
 
     try {
+      final authState = ref.read(authProvider);
+      String phone = '+919876543210';
+      String name = 'Judge';
+      
+      if (authState is AuthAuthenticated) {
+        phone = authState.user.email.replaceAll('@astra.dev', '');
+        name = authState.user.name;
+      }
+
       // Fetch response from Groq
-      final responseText = await _aiService.getChatResponse(messageHistory);
+      final responseText = await _aiService.getChatResponse(messageHistory, phone: phone, name: name);
       
       if (_isCancelled) return;
       

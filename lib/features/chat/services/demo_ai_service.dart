@@ -15,7 +15,7 @@ class DemoAIService {
   // Custom prompt from the user about investing and portfolio analysis
   String get systemPrompt => dotenv.env['AI_SYSTEM_PROMPT'] ?? 'You are a helpful assistant.';
 
-  Future<String> getChatResponse(List<Map<String, String>> messageHistory, {String? systemPromptOverride}) async {
+  Future<String> getChatResponse(List<Map<String, String>> messageHistory, {String? systemPromptOverride, required String phone, required String name}) async {
     final combinedPrompt = systemPromptOverride != null 
         ? '$systemPrompt\n\n$systemPromptOverride'
         : systemPrompt;
@@ -37,8 +37,9 @@ class DemoAIService {
           },
         ),
         data: {
-          'astra_user_id': 'judge-1234',
-          'phone_number': '+919876543210',
+          'astra_user_id': phone, // Using phone as unique ID for hackathon demo
+          'phone_number': phone,
+          'name': name,
         },
       );
 
