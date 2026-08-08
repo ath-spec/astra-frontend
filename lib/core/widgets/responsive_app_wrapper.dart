@@ -125,8 +125,10 @@ class ResponsiveAppWrapper extends StatelessWidget {
                 ),
               ),
             ),
-          );
-        }
+          ),
+        ),
+      );
+    }
 
         // Native behavior on mobile
         return child;
