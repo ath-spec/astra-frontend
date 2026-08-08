@@ -610,18 +610,17 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      body: SafeArea(
-        child: Builder(
-          builder: (context) => SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: CustomScrollView(
-              slivers: [
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: HoldingsHeaderDelegate(
-                    safeAreaTop: 0, // Handled by SafeArea
-                    screenHeight: MediaQuery.sizeOf(context).height,
+      body: Builder(
+        builder: (context) => SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: CustomScrollView(
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: HoldingsHeaderDelegate(
+                  safeAreaTop: MediaQuery.paddingOf(context).top,
+                  screenHeight: MediaQuery.sizeOf(context).height,
                     hasImportedPortfolio: true,
                     isLocked: isLocked,
                     onLockTap: () {
@@ -721,7 +720,6 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

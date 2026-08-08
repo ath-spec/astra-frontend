@@ -8,7 +8,7 @@ class GemButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double scale = (MediaQuery.sizeOf(context).height / 800).clamp(1.0, 1.15);
-    final double size = 38 * scale;
+    final double size = 48 * scale;
     final double iconSize = 24 * scale;
 
     return GestureDetector(
@@ -48,11 +48,10 @@ class HomeCircleButton extends StatelessWidget {
   final VoidCallback onTap;
   const HomeCircleButton({super.key, required this.onTap});
 
-  @override
   Widget build(BuildContext context) {
     final double scale = (MediaQuery.sizeOf(context).height / 800).clamp(1.0, 1.15);
-    final double size = 38 * scale;
-    final double iconSize = 22 * scale;
+    final double size = 48 * scale;
+    final double iconSize = 24 * scale;
     final double borderRadius = 28 * scale;
 
     return Container(

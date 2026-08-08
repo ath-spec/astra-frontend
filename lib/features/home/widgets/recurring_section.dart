@@ -61,7 +61,7 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-          'Bills',
+          'Track your bills',
           style: TextStyle(
             fontFamily: 'DMSans',
                 fontSize: 20,
@@ -168,9 +168,9 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: _buildBillStat('upcoming', '₹373')),
-                  Expanded(child: _buildBillStat('overdue', '₹54')),
-                  Expanded(child: _buildBillStat('paid', '₹0')),
+                  Expanded(child: _buildBillStat('Upcoming', '₹373')),
+                  Expanded(child: _buildBillStat('Overdue', '₹54')),
+                  Expanded(child: _buildBillStat('Paid', '₹0')),
                 ],
               ),
             ),
@@ -321,7 +321,7 @@ class DuePaymentCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              'due in $dueInDays days',
+              'Due in $dueInDays days',
               style: const TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 10,
@@ -353,7 +353,7 @@ class DuePaymentCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'pay now',
+                  'PAY NOW',
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 11,
@@ -390,7 +390,7 @@ class _NoRecurringCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0XFFFFFFFF),
         borderRadius: BorderRadius.circular(4),
-        border:Border.all(color:const Color.fromARGB(255, 240, 240, 235),)
+        border:Border.all(color:const Color(0xFFE2E8F0),)
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(4),
@@ -427,16 +427,6 @@ class _NoRecurringCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
-                        'Track your bills',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
                         'AI automatically fetches your bills and reminds you to pay them on time',
                         style: TextStyle(
                           fontFamily: 'DMSans',
@@ -447,7 +437,7 @@ class _NoRecurringCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 22),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
@@ -460,7 +450,7 @@ class _NoRecurringCard extends StatelessWidget {
                           border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
                         ),
                         child: const Text(
-                          'Track now',
+                          'TRACK NOW',
                           style: TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 10,

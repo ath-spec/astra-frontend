@@ -31,18 +31,17 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
 
                     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      body: SafeArea(
-        child: Builder(
-          builder: (context) => SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: CustomScrollView(
-              slivers: [
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: HoldingsHeaderDelegate(
-                    safeAreaTop: 0,
-                    screenHeight: MediaQuery.sizeOf(context).height,
+      body: Builder(
+        builder: (context) => SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: CustomScrollView(
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: HoldingsHeaderDelegate(
+                  safeAreaTop: MediaQuery.paddingOf(context).top,
+                  screenHeight: MediaQuery.sizeOf(context).height,
                     hasImportedPortfolio: _hasImportedPortfolio,
                     isLocked: isLocked,
                     onLockTap: () {
@@ -87,9 +86,6 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
-
-

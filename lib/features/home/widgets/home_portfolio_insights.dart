@@ -87,13 +87,6 @@ class HomePortfolioInsights extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0F172A).withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: Stack(
         children: [
@@ -139,13 +132,6 @@ class HomePortfolioInsights extends StatelessWidget {
                       end: Alignment.bottomCenter,
                     ),
                     borderRadius: BorderRadius.circular(4),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                     border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
                   ),
                   child: Text(

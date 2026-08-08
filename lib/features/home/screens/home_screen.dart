@@ -11,6 +11,7 @@ import '../../../core/providers/privacy_provider.dart';
 import '../../../core/utils/privacy_formatter.dart';
 import '../../auth/providers/auth_provider.dart';
 
+import '../widgets/home_today_portfolio_changes.dart';
 import '../widgets/home_portfolio_insights.dart';
 import '../widgets/home_quick_actions.dart';
 import '../widgets/home_astra_intelligence.dart';
@@ -191,7 +192,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   _buildAssetRow(
                     icon: Icons.bar_chart_rounded,
                     title: 'Mutual Funds',
-                    buttonText: 'Import',
+                    buttonText: 'IMPORT',
                     onPressed: () => context.push('/mf-fetch-confirm'),
                   ),
                 _buildDottedDivider(),
@@ -212,7 +213,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   _buildAssetRow(
                     icon: Icons.candlestick_chart_rounded,
                     title: 'Stocks',
-                    buttonText: 'Import',
+                    buttonText: 'IMPORT',
                     onPressed: () => context.push('/aa-stocks-otp'),
                   ),
                 _buildDottedDivider(),
@@ -232,8 +233,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     isLinked: false,
                     isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
                   ),
+                  
                 
-                const SizedBox(height: 40),
+                const SizedBox(height: 48),
                 HomePortfolioInsights(isLocked: isLocked),
                 
                 const SizedBox(height: 48),
@@ -241,13 +243,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 
                 const SizedBox(height: 48),
                 const HomeQuickActions(),
+                const SizedBox(height: 48),
+                if (assetState.mfConnected || assetState.stocksConnected)
+                  HomeTodayPortfolioChanges(
+                    mfConnected: assetState.mfConnected,
+                    stocksConnected: assetState.stocksConnected,
+                  ),
                 
               ]),
             ),
           ),
 
           const SliverToBoxAdapter(
-            child: SizedBox(height: 16),
+            child: SizedBox(height: 48),
           ),
           // 4. Edge-to-edge Portfolio Growth Graph
           if (assetState.mfConnected || assetState.stocksConnected)
@@ -257,17 +265,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 stocksConnected: assetState.stocksConnected,
               ),
             ),
-
+          const SliverToBoxAdapter(child: SizedBox(height: 48)),
 
           const SliverToBoxAdapter(
             child: BudgetSection(),
           ),
-
+          const SliverToBoxAdapter(child: SizedBox(height: 48)),
           const SliverToBoxAdapter(
             child: RecurringSection(),
           ),
           const SliverToBoxAdapter(
-            child: SizedBox(height: 24),
+            child: SizedBox(height: 48),
           ),
           SliverToBoxAdapter(
             child: SizedBox(height: 140 + bottomPadding), // Extra padding for AppShell nav bar
@@ -307,7 +315,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     title,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                     ),
@@ -384,7 +392,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               style: const TextStyle(
                 fontFamily: 'DMSans',
                 color: Color(0xFF0F172A),
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -409,7 +417,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               buttonText,
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -518,7 +526,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   color: Color(0xFF0F172A),
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -542,7 +550,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       style: TextStyle(
                         color: Color(0xFF94A3B8),
                         fontSize: 16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 2.0,
                       ),
                     ),
@@ -554,7 +562,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       fontFamily: 'DMSans',
                       color: Color(0xFF94A3B8),
                       fontSize: 11,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1.2,
                     ),
                   ),
@@ -568,11 +576,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Text(
-                  'Import',
+                  'IMPORT',
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

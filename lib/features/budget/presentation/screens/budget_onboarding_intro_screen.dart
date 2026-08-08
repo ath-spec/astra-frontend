@@ -136,7 +136,6 @@ class _BudgetOnboardingIntroScreenState extends State<BudgetOnboardingIntroScree
                           style: TextStyle(fontFamily: 'DMSans', 
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            letterSpacing: 1,
                           ),
                         ),
                         const SizedBox(width: 8),

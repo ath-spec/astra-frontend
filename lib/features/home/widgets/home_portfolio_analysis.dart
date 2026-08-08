@@ -261,7 +261,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(color: const Color(0xFFE2E8F0)),
         ),
         child: Column(
@@ -336,8 +336,8 @@ class HomePortfolioAnalysis extends StatelessWidget {
               decoration: BoxDecoration(
                 color: bottomBgColor ?? const Color(0xFFF8FAFC),
                 borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
+                  bottomLeft: Radius.circular(4),
+                  bottomRight: Radius.circular(4),
                 ),
                 border: const Border(top: BorderSide(color: Color(0xFFE2E8F0))),
               ),

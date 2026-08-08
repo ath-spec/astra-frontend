@@ -15,6 +15,7 @@ class ModuleDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        toolbarHeight: 48,
         backgroundColor: Colors.white,
         elevation: 0,
         leadingWidth: 200,
@@ -61,14 +62,16 @@ class ModuleDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
+      body: Align(
+        alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 30),
                 // Header section
                 _buildHeader(),
                 const SizedBox(height: 40),

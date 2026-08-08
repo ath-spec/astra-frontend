@@ -152,7 +152,7 @@ class _NavigationPillState extends State<NavigationPill> {
 
             Widget content = Container(
               color: Colors.transparent,
-              height: 38 * scale,
+              height: 48 * scale,
               width: needsScroll ? totalWidth : null,
               child: Stack(
                   clipBehavior: Clip.none,
@@ -167,7 +167,7 @@ class _NavigationPillState extends State<NavigationPill> {
                       top: 0, 
                       left: indicatorLeft, 
                       width: tabWidth, 
-                      height: 38 * scale, // Updated to match new container height
+                      height: 48 * scale, // Updated to match new container height
                       child: AnimatedOpacity(
                         opacity: visualIndex == -1 ? 0.0 : 1.0,
                         duration: const Duration(milliseconds: 300),
@@ -190,6 +190,7 @@ class _NavigationPillState extends State<NavigationPill> {
                             widget.onTabTapped(visualIndex);
                           },
                         child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100),
                             gradient: const LinearGradient(
@@ -255,10 +256,10 @@ class _NavigationPillState extends State<NavigationPill> {
                                       children: [
                                         widget.customIcons != null && widget.customIcons!.length > index
                                             ? widget.customIcons![index](color)
-                                            : Icon(
+                                          : Icon(
                                                 widget.icons[index],
                                                 color: color,
-                                                size: 16 * scale,
+                                                size: 22 * scale,
                                               ),
                                         if (widget.labels[index].isNotEmpty) ...[
                                           const SizedBox(height: 2),

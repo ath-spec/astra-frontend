@@ -50,7 +50,7 @@ class _BudgetSectionState extends ConsumerState<BudgetSection> {
         children: [
           const SizedBox(height: 16),
           const Text(
-            'Budget',
+            'Build a budget',
             style: TextStyle(
               fontFamily: 'DMSans',
               fontSize: 20,
@@ -101,7 +101,7 @@ class _BudgetCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0XFFFFFFFF),
           borderRadius: BorderRadius.circular(4),
-          border:Border.all(color:const Color.fromARGB(255, 240, 240, 235),)
+          border:Border.all(color:const Color(0xFFE2E8F0),)
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(4),
@@ -140,16 +140,6 @@ class _BudgetCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Text(
-                          'Build a budget',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
                           'AI sets up your budget and helps you track progress all month long',
                           style: TextStyle(
                             fontFamily: 'DMSans',
@@ -160,7 +150,7 @@ class _BudgetCard extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 22),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
@@ -170,17 +160,10 @@ class _BudgetCard extends StatelessWidget {
                               end: Alignment.bottomCenter,
                             ),
                             borderRadius: BorderRadius.circular(4),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
                             border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
                           ),
                           child: const Text(
-                            'Create now',
+                            'CREATE NOW',
                             style: TextStyle(
                               fontFamily: 'DMSans',
                               fontSize: 10,

@@ -126,7 +126,6 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
                     fontFamily: 'DMSans',
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 1,
                   ),
                 ),
               ),

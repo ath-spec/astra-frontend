@@ -25,6 +25,7 @@ import '../../features/auth/screens/name_screen.dart';
 import '../../features/auth/screens/aa_stocks_otp_screen.dart';
 import '../../features/auth/screens/aa_stocks_fetching_screen.dart';
 import '../../features/home/screens/home_screen.dart';
+import '../../features/home/screens/asset_today_change_screen.dart';
 import '../../features/chat/screens/chat_screen.dart';
 import '../../features/chat/screens/chat_history_screen.dart';
 import '../../features/news/screens/news_screen.dart';
@@ -237,6 +238,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/stocks',
         builder: (context, state) => const StocksScreen(),
+      ),
+      GoRoute(
+        path: '/asset-today-change',
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>? ?? {};
+          return AssetTodayChangeScreen(data: data);
+        },
       ),
 
       GoRoute(

@@ -70,8 +70,10 @@ class _AppShellState extends ConsumerState<AppShell> {
         ref.read(navContextProvider.notifier).state = NavContext.main;
       } else if (index == 1) {
         ref.read(navContextProvider.notifier).state = NavContext.mf;
+        ref.read(mfTabIndexProvider.notifier).state = 0;
       } else if (index == 4) {
         ref.read(navContextProvider.notifier).state = NavContext.learnings;
+        ref.read(learningsTabIndexProvider.notifier).state = 0;
       }
     }
 
