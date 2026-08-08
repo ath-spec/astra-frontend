@@ -125,7 +125,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
         messages,
         phone: phone,
         name: name,
-        systemPromptOverride: dotenv.env['NAV_PILL_PROMPT_OVERRIDE'] ?? 'You are ASTRA. Keep your answer VERY CONCISE (max 1-2 sentences).',
+        isNavPill: true,
       );
 
       if (mounted) {

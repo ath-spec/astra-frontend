@@ -12,16 +12,8 @@ class DemoAIService {
   final Dio _dio = Dio();
   final AudioPlayer audioPlayer = AudioPlayer();
   
-  // Custom prompt from the user about investing and portfolio analysis
-  String get systemPrompt => dotenv.env['AI_SYSTEM_PROMPT'] ?? 'You are a helpful assistant.';
-
-  Future<String> getChatResponse(List<Map<String, String>> messageHistory, {String? systemPromptOverride, required String phone, required String name}) async {
+  Future<String> getChatResponse(List<Map<String, String>> messageHistory, {bool isNavPill = false, required String phone, required String name}) async {
     final messages = [...messageHistory];
-    
-    // If there's an override (like from nav_input_pill), inject it at the end to guide the AI strongly
-    if (systemPromptOverride != null) {
-      messages.add({'role': 'system', 'content': systemPromptOverride});
-    }
 
     try {
       final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
@@ -55,6 +47,7 @@ class DemoAIService {
         ),
         data: {
           'messages': messages,
+          'is_nav_pill': isNavPill,
         },
       );
       
