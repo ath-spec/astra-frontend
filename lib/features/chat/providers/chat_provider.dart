@@ -5,6 +5,7 @@ import '../models/chat_message.dart';
 import '../services/demo_ai_service.dart';
 import 'chat_session_provider.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../asset_connection/providers/asset_connection_provider.dart';
 
 part 'chat_provider.g.dart';
 
@@ -87,7 +88,18 @@ class ChatNotifier extends _$ChatNotifier {
       name = authState.user.name;
     }
 
-    final historyRaw = await _aiService.fetchChatHistory(phone: phone, name: name);
+    // Extract Linked Banks from the UI State
+    final assetState = ref.read(assetConnectionProvider);
+    final linkedBanks = assetState.bankAccounts
+        .where((b) => b.isLinked)
+        .map((b) => {
+              'bankName': b.bankName,
+              'accountType': b.accountNumber.split(' ').first.toUpperCase(),
+              'balance': b.balance > 0 ? b.balance : 150000.0, // fallback balance if none
+            })
+        .toList();
+
+    final historyRaw = await _aiService.fetchChatHistory(phone: phone, name: name, banks: linkedBanks);
     
     List<ChatMessage> historyMessages = [];
     for (var msg in historyRaw) {

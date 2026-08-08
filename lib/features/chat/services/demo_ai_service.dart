@@ -79,7 +79,7 @@ class DemoAIService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchChatHistory({required String phone, required String name}) async {
+  Future<List<Map<String, dynamic>>> fetchChatHistory({required String phone, required String name, required List<Map<String, dynamic>> banks}) async {
     try {
       final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
       
@@ -87,7 +87,7 @@ class DemoAIService {
       final authResponse = await _dio.post(
         '$baseUrl/api/auth/token',
         options: Options(headers: {'Content-Type': 'application/json'}),
-        data: {'astra_user_id': phone, 'phone_number': phone, 'name': name},
+        data: {'astra_user_id': phone, 'phone_number': phone, 'name': name, 'banks': banks},
       );
       final jwtToken = authResponse.data['token'];
 
