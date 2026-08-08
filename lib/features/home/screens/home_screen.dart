@@ -1,5 +1,6 @@
 import 'dart:ui' show lerpDouble, ImageFilter;
-import 'dart:math' show pi;
+import 'dart:math' hide log;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -692,7 +693,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
             child: Stack(
               children: [
                 // Progressive blur
-                ShaderMask(
+                if (!kIsWeb) ShaderMask(
                   blendMode: BlendMode.dstIn,
                   shaderCallback: (bounds) => const LinearGradient(
                     begin: Alignment.topCenter,

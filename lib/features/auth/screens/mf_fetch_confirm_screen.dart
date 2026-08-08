@@ -53,7 +53,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                 height: double.infinity,
                 child: Stack(
                   children: [
-                Center(
+                Positioned.fill(
                   child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(
                   horizontal: 16.w,

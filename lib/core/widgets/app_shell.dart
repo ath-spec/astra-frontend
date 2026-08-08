@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -210,7 +211,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                   child: Stack(
                     children: [
                       // Progressive blur (fading out upwards)
-                      ShaderMask(
+                      if (!kIsWeb) ShaderMask(
                         blendMode: BlendMode.dstIn,
                         shaderCallback: (bounds) => const LinearGradient(
                           begin: Alignment.bottomCenter,

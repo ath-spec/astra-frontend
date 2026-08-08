@@ -1,4 +1,5 @@
 import 'dart:ui' show lerpDouble, ImageFilter;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -107,7 +108,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
             child: Stack(
               children: [
                 // Progressive blur
-                ShaderMask(
+                if (!kIsWeb) ShaderMask(
                   blendMode: BlendMode.dstIn,
                   shaderCallback: (bounds) => const LinearGradient(
                     begin: Alignment.topCenter,

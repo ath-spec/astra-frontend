@@ -157,9 +157,10 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
               ),
             ),
             
-            // Scrollable Content
             Expanded(
-              child: SingleChildScrollView(
+              child: SizedBox(
+                width: double.infinity,
+                child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(
                   children: [

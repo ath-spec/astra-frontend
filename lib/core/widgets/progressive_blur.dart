@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// A widget that applies a progressive blur to the backdrop, fading out seamlessly.
@@ -19,6 +20,7 @@ class ProgressiveBlur extends StatelessWidget {
     // Instead of stacking 6 BackdropFilters (which destroys scroll performance),
     // we use a single BackdropFilter and mask its output with a linear gradient.
     // This achieves the exact same fading progressive blur at a fraction of the GPU cost.
+    if (kIsWeb) return const SizedBox.shrink();
     return ShaderMask(
       blendMode: BlendMode.dstIn,
       shaderCallback: (Rect bounds) {

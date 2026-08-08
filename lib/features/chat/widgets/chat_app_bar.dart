@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,9 +15,15 @@ class ChatAppBar extends ConsumerWidget {
     final hasMessages = messages.isNotEmpty;
 
     return ClipRect(
-      child: BackdropFilter(
+      child: kIsWeb ? _buildContent(context) : BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
+        child: _buildContent(context),
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return Container(
           color: Colors.transparent,
       padding: EdgeInsets.only(
         top: MediaQuery.paddingOf(context).top + 8,
@@ -66,9 +73,6 @@ class ChatAppBar extends ConsumerWidget {
             icon: Icons.history_rounded,
             onTap: () => context.push('/chat-history'),
           ),
-        ],
-      ),
-        ),
       ),
     );
   }
@@ -84,7 +88,7 @@ class ImageFilterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRect(
-      child: BackdropFilter(
+      child: kIsWeb ? child : BackdropFilter(
         filter: filter,
         child: child,
       ),

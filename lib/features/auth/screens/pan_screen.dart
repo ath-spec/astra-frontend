@@ -311,7 +311,9 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
                 ),
               ),
               Expanded(
-                child: SingleChildScrollView(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Center(
                     child: ConstrainedBox(

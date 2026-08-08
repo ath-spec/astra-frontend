@@ -125,9 +125,10 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
               ),
             ),
             
-            // Scrollable Content
             Expanded(
-              child: SingleChildScrollView(
+              child: SizedBox(
+                width: double.infinity,
+                child: SingleChildScrollView(
                 padding: EdgeInsets.only(
                   left: 16.w,
                   right: 16.w,
