@@ -16,55 +16,69 @@ class DemoAIService {
   String get systemPrompt => dotenv.env['AI_SYSTEM_PROMPT'] ?? 'You are a helpful assistant.';
 
   Future<String> getChatResponse(List<Map<String, String>> messageHistory, {String? systemPromptOverride}) async {
-    try {
-      final combinedPrompt = systemPromptOverride != null 
-          ? '$systemPrompt\n\n$systemPromptOverride'
-          : systemPrompt;
-          
-      final messages = [
-        {'role': 'system', 'content': combinedPrompt},
-        ...messageHistory,
-      ];
+    final combinedPrompt = systemPromptOverride != null 
+        ? '$systemPrompt\n\n$systemPromptOverride'
+        : systemPrompt;
+        
+    final messages = [
+      {'role': 'system', 'content': combinedPrompt},
+      ...messageHistory,
+    ];
 
-      try {
-        // Try the main model
-        final response = await _dio.post(
-          'https://api.groq.com/openai/v1/chat/completions',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $groqApiKey',
-              'Content-Type': 'application/json',
-            },
-          ),
-          data: {
-            'model': 'openai/gpt-oss-120b', // Main model
-            'messages': messages,
-            'temperature': 0.7,
+    try {
+      final baseUrl = 'https://astra.zeyro.in'; // Live Railway URL
+      final appAuthToken = dotenv.env['APP_AUTH_TOKEN'] ?? '';
+      
+      // 1. Fetch JWT Token
+      final authResponse = await _dio.post(
+        '$baseUrl/api/auth/token',
+        options: Options(
+          headers: {
+            'X-Astra-Auth': appAuthToken,
+            'Content-Type': 'application/json',
           },
-        );
+        ),
+        data: {
+          'astra_user_id': 'judge-1234',
+          'phone_number': '+919876543210',
+        },
+      );
+
+      final jwtToken = authResponse.data['token'];
+
+      // 2. Call the chat endpoint securely with the JWT
+      final response = await _dio.post(
+        '$baseUrl/api/chat',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $jwtToken',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {
+          'messages': messages,
+        },
+      );
+      
+      if (response.statusCode == 200) {
         return response.data['choices'][0]['message']['content'];
-      } catch (e) {
-        print('Main model failed, falling back to secondary: $e');
-        // Fallback model
-        final fallbackResponse = await _dio.post(
-          'https://api.groq.com/openai/v1/chat/completions',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $groqApiKey',
-              'Content-Type': 'application/json',
-            },
-          ),
-          data: {
-            'model': 'openai/gpt-oss-20b', // Fallback model
-            'messages': messages,
-            'temperature': 0.7,
-          },
-        );
-        return fallbackResponse.data['choices'][0]['message']['content'];
       }
+      return 'Sorry, I encountered an error. Please try again.';
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout || 
+          e.type == DioExceptionType.sendTimeout || 
+          e.type == DioExceptionType.receiveTimeout || 
+          e.type == DioExceptionType.connectionError) {
+        throw Exception("It looks like you're offline. Please check your internet connection.");
+      }
+      
+      if (e.response?.statusCode == 429) {
+        throw Exception("You are sending messages too fast! Please wait a moment.");
+      }
+      
+      throw Exception("The server is experiencing issues. Please try again later.");
     } catch (e) {
-      print('Groq Error: $e');
-      return "I'm having trouble connecting right now.";
+      throw Exception("An unexpected error occurred.");
     }
   }
 
