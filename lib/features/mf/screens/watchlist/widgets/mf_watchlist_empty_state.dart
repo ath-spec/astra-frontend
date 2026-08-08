@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MfWatchlistEmptyState extends StatelessWidget {
   final VoidCallback? onCtaTapped;
@@ -46,25 +45,25 @@ class MfWatchlistEmptyState extends StatelessWidget {
                       color: const Color(0xFF0F172A),
                     ),
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 12),
                   Text(
                     "Tap the bookmark on any fund to track its NAV and returns here - no pressure to buy.",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       color: const Color(0xFF64748B),
                       height: 1.5,
                     ),
                   ),
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 32),
                   GestureDetector(
                     onTap: onCtaTapped,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 0, 0, 0),
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         "Explore All Funds".toUpperCase(),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../order_details/screens/order_details_screen.dart';
 
 class OrdersBottomSheet extends StatelessWidget {
@@ -12,8 +11,8 @@ class OrdersBottomSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16.r),
-          topRight: Radius.circular(16.r),
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
         ),
       ),
       constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.9),
@@ -21,20 +20,20 @@ class OrdersBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 12.h),
+          SizedBox(height: 12),
           Center(
             child: Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
                 color: const Color(0xFFE2E8F0),
-                borderRadius: BorderRadius.circular(2.r),
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 24),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            padding: EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -42,12 +41,12 @@ class OrdersBottomSheet extends StatelessWidget {
                   'orders',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 8),
                 Text(
                   'following is a record of all past orders in the\nCanara Robeco Large Cap Growth Direct Plan',
                   style: TextStyle(
@@ -60,9 +59,9 @@ class OrdersBottomSheet extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            padding: EdgeInsets.symmetric(horizontal: 24),
             child: Divider(color: const Color(0xFFF1F5F9), thickness: 1),
           ),
           Flexible(
@@ -77,7 +76,7 @@ class OrdersBottomSheet extends StatelessWidget {
                 _buildOrderRow(context, '₹100', '19 Jan \'26'),
                 _buildOrderRow(context, '₹100', '19 Jan \'26'),
                 _buildOrderRow(context, '₹299.99', '29 Dec \'25'),
-                SizedBox(height: 24.h), // bottom padding
+                SizedBox(height: 24), // bottom padding
               ],
             ),
           ),
@@ -98,7 +97,7 @@ class OrdersBottomSheet extends StatelessWidget {
       },
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           children: [
             Row(
@@ -108,23 +107,23 @@ class OrdersBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       border: Border.all(color: const Color(0xFFCBD5E1)),
-                      borderRadius: BorderRadius.circular(4.r),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       'BUY',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 8.sp,
+                        fontSize: 8,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1.0,
                         color: const Color(0xFF64748B),
                       ),
                     ),
                   ),
-                  SizedBox(height: 8.h),
+                  SizedBox(height: 8),
                   Text(
                     date,
                     style: TextStyle(
@@ -151,12 +150,12 @@ class OrdersBottomSheet extends StatelessWidget {
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(height: 8.h),
+                      SizedBox(height: 8),
                       Text(
                         'COMPLETED',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 9.sp,
+                          fontSize: 9,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                           color: const Color(0xFF10B981),
@@ -164,9 +163,9 @@ class OrdersBottomSheet extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 8),
                   Padding(
-                    padding: EdgeInsets.only(top: 2.h),
+                    padding: EdgeInsets.only(top: 2),
                     child: Icon(
                       Icons.chevron_right,
                       size: 10,
@@ -177,7 +176,7 @@ class OrdersBottomSheet extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
           _buildDashedDivider(),
         ],
       ),

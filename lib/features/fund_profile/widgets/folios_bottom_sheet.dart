@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FoliosBottomSheet extends StatelessWidget {
   const FoliosBottomSheet({super.key});
@@ -11,28 +10,28 @@ class FoliosBottomSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16.r),
-          topRight: Radius.circular(16.r),
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 12.h),
+          SizedBox(height: 12),
           Center(
             child: Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
                 color: const Color(0xFFE2E8F0),
-                borderRadius: BorderRadius.circular(2.r),
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 24),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            padding: EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -40,12 +39,12 @@ class FoliosBottomSheet extends StatelessWidget {
                   'Folios',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 8),
                 Text(
                   '1 folio',
                   style: TextStyle(
@@ -54,19 +53,19 @@ class FoliosBottomSheet extends StatelessWidget {
                     color: const Color(0xFF94A3B8),
                   ),
                 ),
-                SizedBox(height: 24.h),
+                SizedBox(height: 24),
                 _buildDashedDivider(),
-                SizedBox(height: 24.h),
+                SizedBox(height: 24),
                 Text(
                   '₹2,36,538.56',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 8),
                 Row(
                   children: [
                     Text(
@@ -77,12 +76,12 @@ class FoliosBottomSheet extends StatelessWidget {
                         color: const Color(0xFF94A3B8),
                       ),
                     ),
-                    SizedBox(width: 8.w),
+                    SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: const Color(0xFFE2E8F0),
-                        borderRadius: BorderRadius.circular(2.r),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                       child: Text(
                         'EXTERNAL',
@@ -97,7 +96,7 @@ class FoliosBottomSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 48.h), // bottom padding
+                SizedBox(height: 48), // bottom padding
               ],
             ),
           ),

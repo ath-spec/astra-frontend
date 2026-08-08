@@ -168,9 +168,11 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 420),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -383,6 +385,7 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
                       ],
                     ),
                   ),
+                ),
                 ),
               ),
             ),

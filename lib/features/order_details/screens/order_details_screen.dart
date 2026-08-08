@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../mf/screens/fund_profile/mf_fund_profile_screen.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
@@ -16,12 +15,12 @@ class OrderDetailsScreen extends StatelessWidget {
             _buildTopBar(context),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildMainCard(context),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 32),
                     _buildExpandableSection('More details'),
                     _buildDivider(),
                     _buildSupportSection(),
@@ -71,7 +70,7 @@ class OrderDetailsScreen extends StatelessWidget {
               'Order details',
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 14.sp,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: Colors.black,
               ),
@@ -87,7 +86,7 @@ class OrderDetailsScreen extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Column(
@@ -105,12 +104,12 @@ class OrderDetailsScreen extends StatelessWidget {
             },
             behavior: HitTestBehavior.opaque,
             child: Padding(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.all(16),
               child: Row(
                 children: [
                   // Logo with star badge
                   SizedBox(
-                    width: 44.w,
+                    width: 44,
                     height: 44,
                     child: Stack(
                       children: [
@@ -135,7 +134,7 @@ class OrderDetailsScreen extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 6.sp,
+                              fontSize: 6,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF0F8387),
                             ),
@@ -145,7 +144,7 @@ class OrderDetailsScreen extends StatelessWidget {
                           right: 0,
                           bottom: 0,
                           child: Container(
-                            padding: EdgeInsets.all(2.w),
+                            padding: EdgeInsets.all(2),
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -160,7 +159,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width: 12.w),
+                  SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,12 +168,12 @@ class OrderDetailsScreen extends StatelessWidget {
                           'Canara Robeco Large Cap Fund',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF475569),
                           ),
                         ),
-                        SizedBox(height: 2.h),
+                        SizedBox(height: 2),
                         Text(
                           'Equity • Large-Cap',
                           style: TextStyle(
@@ -200,7 +199,7 @@ class OrderDetailsScreen extends StatelessWidget {
           
           // Bottom half (Order info)
           Padding(
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -215,19 +214,19 @@ class OrderDetailsScreen extends StatelessWidget {
                         color: const Color(0xFF64748B),
                       ),
                     ),
-                    SizedBox(width: 8.w),
+                    SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(color: const Color(0xFFE2E8F0)),
-                        borderRadius: BorderRadius.circular(2.r),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                       child: Text(
                         'EXTERNAL',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 8.sp,
+                          fontSize: 8,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
                           color: const Color(0xFF64748B),
@@ -236,7 +235,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -244,22 +243,22 @@ class OrderDetailsScreen extends StatelessWidget {
                       '₹100',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14.sp, // Max allowed font size
+                        fontSize: 14, // Max allowed font size
                         fontWeight: FontWeight.w700,
                         color: Colors.black,
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6.h),
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: const Color(0xFF10B981),
-                        borderRadius: BorderRadius.circular(2.r),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                       child: Text(
                         'COMPLETED',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 8.sp,
+                          fontSize: 8,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
                           color: Colors.white,
@@ -268,7 +267,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 32.h),
+                SizedBox(height: 32),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -278,11 +277,11 @@ class OrderDetailsScreen extends StatelessWidget {
                           'Completion date',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             color: const Color(0xFF64748B),
                           ),
                         ),
-                        SizedBox(width: 6.w),
+                        SizedBox(width: 6),
                         Icon(
                           Icons.info_outline,
                           size: 14,
@@ -294,7 +293,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       '20 Jan \'26',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12.sp,
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
                         color: Colors.black,
                       ),
@@ -311,7 +310,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
   Widget _buildExpandableSection(String title) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.h),
+      padding: EdgeInsets.symmetric(vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -319,7 +318,7 @@ class OrderDetailsScreen extends StatelessWidget {
             title,
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 14.sp, // Strict max size
+              fontSize: 14, // Strict max size
               fontWeight: FontWeight.w700,
               color: Colors.black,
             ),
@@ -336,7 +335,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
   Widget _buildSupportSection() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24.h),
+      padding: EdgeInsets.symmetric(vertical: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -347,12 +346,12 @@ class OrderDetailsScreen extends StatelessWidget {
                 size: 20,
                 color: Colors.black,
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: 12),
               Text(
                 'Need help? Contact support',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
@@ -382,11 +381,11 @@ class OrderDetailsScreen extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(24, 16, 24, 24),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 16.h),
+        padding: EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: Colors.black, width: 1.5.w),
-          borderRadius: BorderRadius.circular(4.r),
+          border: Border.all(color: Colors.black, width: 1.5),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -396,12 +395,12 @@ class OrderDetailsScreen extends StatelessWidget {
               size: 16,
               color: Colors.black,
             ),
-            SizedBox(width: 8.w),
+            SizedBox(width: 8),
             Text(
               'Support',
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12.sp, // CTA size
+                fontSize: 12, // CTA size
                 fontWeight: FontWeight.w700,
                 color: Colors.black,
               ),

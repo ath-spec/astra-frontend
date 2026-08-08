@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../widgets/portfolio_analysis/discipline_tab.dart';
 import '../widgets/portfolio_analysis/allocation_tab.dart';
@@ -120,12 +119,10 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
           onHorizontalDragEnd: (details) {
             if (details.primaryVelocity == null) return;
             if (details.primaryVelocity! < -300) {
-              // Swipe Left -> go to next tab
               if (_tabController.index < 2) {
                 _tabController.animateTo(_tabController.index + 1);
               }
             } else if (details.primaryVelocity! > 300) {
-              // Swipe Right -> go to previous tab
               if (_tabController.index > 0) {
                 _tabController.animateTo(_tabController.index - 1);
               }
@@ -134,34 +131,15 @@ class _PortfolioAnalysisScreenState extends State<PortfolioAnalysisScreen> with 
           child: SizedBox(
             height: 48,
             width: screenWidth,
-            child: AnimatedBuilder(
-            animation: _tabController.animation!,
-            builder: (context, child) {
-              final value = _tabController.animation!.value;
-              // value: 0 -> left = width/3, value: 1 -> left = 0, value: 2 -> left = -width/3
-              final leftOffset = (1.0 - value) * (screenWidth / 3);
-
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    left: leftOffset,
-                    width: screenWidth,
-                    child: Row(
-                      children: [
-                        _buildTabButton(0, 'Discipline', Icons.adjust),
-                        _buildTabButton(1, 'Allocation', Icons.view_in_ar_outlined),
-                        _buildTabButton(2, 'Performance', Icons.change_history),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildTabButton(0, 'Discipline', Icons.adjust),
+                _buildTabButton(1, 'Allocation', Icons.view_in_ar_outlined),
+                _buildTabButton(2, 'Performance', Icons.change_history),
+              ],
+            ),
           ),
-        ),
         ),
         // Divider
         Container(

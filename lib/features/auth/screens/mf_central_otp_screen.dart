@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
@@ -54,12 +53,12 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
 
   Widget _buildSecurityListItem({required IconData icon, required Color iconColor, required String text}) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.only(bottom: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, size: 18, color: iconColor),
-          SizedBox(width: 12.w),
+          SizedBox(width: 12),
           Expanded(
             child: Text(
               text,
@@ -94,7 +93,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
           children: [
             // App Bar
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -130,13 +129,15 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                 width: double.infinity,
                 child: SingleChildScrollView(
                 padding: EdgeInsets.only(
-                  left: 16.w,
-                  right: 16.w,
+                  left: 16,
+                  right: 16,
                   bottom: (MediaQuery.viewInsetsOf(context).bottom) + 24,
                 ),
-                child: Column(
-                  children: [
-                    SizedBox(height: 16.h),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                    SizedBox(height: 16),
                     // Logo Section
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -148,28 +149,28 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 32),
                     
                     // Info Card
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.info_outline, color: Color(0xFF3B82F6), size: 20),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               'Data being fetched for:\nPersonal Finance Management',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 12.sp,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF3B82F6),
                                 height: 1.4,
@@ -179,15 +180,15 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     
                     // OTP Card
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.all(24.w),
+                      padding: EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Column(
                         children: [
@@ -195,25 +196,25 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.security, color: Color(0xFF9333EA), size: 18),
-                              SizedBox(width: 8.w),
+                              SizedBox(width: 8),
                               Text(
                                 'Enter your 6-digit OTP',
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                   color: Color(0xFF0F172A),
                                 ),
                               ),
                             ],
                           ),
-                          SizedBox(height: 24.h),
+                          SizedBox(height: 24),
                           // OTP Input Fields
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(6, (index) {
                               return SizedBox(
-                                width: 42.w,
+                                width: 42,
                                 height: 46,
                                 child: TextField(
                                   controller: _otpControllers[index],
@@ -238,7 +239,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                                   onChanged: (value) => _onOtpChanged(value, index),
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12.sp,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFF0F172A),
                                   ),
@@ -246,19 +247,19 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                                     counterText: "",
                                     contentPadding: EdgeInsets.zero,
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(4.r),
+                                      borderRadius: BorderRadius.circular(4),
                                       borderSide: BorderSide(color: Color(0xFFE2E8F0)),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(4.r),
-                                      borderSide: BorderSide(color: Color(0xFFA855F7), width: 2.w),
+                                      borderRadius: BorderRadius.circular(4),
+                                      borderSide: BorderSide(color: Color(0xFFA855F7), width: 2),
                                     ),
                                   ),
                                 ),
                               );
                             }),
                           ),
-                          SizedBox(height: 32.h),
+                          SizedBox(height: 32),
                           // Authenticate Button
                           ElevatedButton(
                             onPressed: _isOtpFilled ? _onAuthenticate : null,
@@ -269,7 +270,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                               foregroundColor: Colors.white,
                               minimumSize: const Size(double.infinity, 52),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.r),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               elevation: 0,
                             ),
@@ -277,7 +278,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                               'Authenticate with OTP',
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 12.sp,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -285,15 +286,15 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     
                     // Security Card
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.all(24.w),
+                      padding: EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,13 +303,13 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Icon(Icons.verified_user, color: Color(0xFF1D4ED8), size: 24),
-                              SizedBox(width: 12.w),
+                              SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   'Secure Authentication for Portfolio Access',
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
-                                    fontSize: 12.sp,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF1D4ED8),
                                     height: 1.3,
@@ -317,7 +318,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 24.h),
+                          SizedBox(height: 24),
                           _buildSecurityListItem(
                             icon: Icons.info,
                             iconColor: const Color(0xFFEF4444),
@@ -346,8 +347,9 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 32),
                   ],
+                ),
                 ),
               ),
             ),
@@ -356,7 +358,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
             // Bottom Fixed Section
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 24.h),
+              padding: EdgeInsets.symmetric(vertical: 24),
               color: Colors.white,
               child: Column(
                 children: [
@@ -370,12 +372,12 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                       color: Color(0xFF22C55E),
                     ),
                   ),
-                  SizedBox(height: 8.h),
+                  SizedBox(height: 8),
                   Text(
                     'Enter OTP',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                     ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../widgets/orders_bottom_sheet.dart';
 import '../widgets/folios_bottom_sheet.dart';
 import '../../mf/screens/fund_profile/mf_fund_profile_screen.dart';
@@ -25,22 +24,22 @@ class YourFundProfileScreen extends StatelessWidget {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      padding: EdgeInsets.symmetric(horizontal: 24),
                       child: Column(
                         children: [
-                          SizedBox(height: 16.h),
+                          SizedBox(height: 16),
                           _buildHeader(context),
-                          SizedBox(height: 32.h),
+                          SizedBox(height: 32),
                           _buildValueCard(),
                           _buildDetailsList(),
-                          SizedBox(height: 32.h),
+                          SizedBox(height: 32),
                           Divider(
                             color: const Color(0xFFE2E8F0),
                             thickness: 1,
                           ),
-                          SizedBox(height: 24.h),
+                          SizedBox(height: 24),
                           _buildMoreDetailsSection(context),
-                          SizedBox(height: 24.h),
+                          SizedBox(height: 24),
                           // Injecting mock deep dive data here for demonstration
                           HoldingInstrumentCard(
                             data: HoldingDeepDiveData(
@@ -49,7 +48,7 @@ class YourFundProfileScreen extends StatelessWidget {
                               contribution: 'Provides stability and consistent growth by investing in established, large-cap companies. Acts as an anchor for the equity portion of your portfolio.',
                             ),
                           ),
-                          SizedBox(height: 24.h),
+                          SizedBox(height: 24),
                           HoldingFundInsights(
                             isPositiveImpact: true,
                             whatItDoesRightNow: 'Currently provides a solid foundation of large-cap equity exposure, balancing out the higher volatility of your mid and small-cap holdings.',
@@ -103,7 +102,7 @@ class YourFundProfileScreen extends StatelessWidget {
             ),
           ),
           Container(
-            width: 56.w,
+            width: 56,
             height: 56,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -155,12 +154,12 @@ class YourFundProfileScreen extends StatelessWidget {
                 'Canara Robeco Large Cap Fund',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14.sp, // Strict size
+                  fontSize: 14, // Strict size
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(width: 4.w),
+              SizedBox(width: 4),
               Icon(
                 Icons.chevron_right,
                 size: 16,
@@ -169,7 +168,7 @@ class YourFundProfileScreen extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 6.h),
+        SizedBox(height: 6),
         Text(
           'Equity • Large-Cap',
           style: TextStyle(
@@ -178,12 +177,12 @@ class YourFundProfileScreen extends StatelessWidget {
             color: const Color(0xFF64748B),
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 12),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFFF1F5F9)),
           ),
           child: Row(
@@ -194,7 +193,7 @@ class YourFundProfileScreen extends StatelessWidget {
                 size: 8,
                 color: const Color(0xFFEF4444),
               ),
-              SizedBox(width: 6.w),
+              SizedBox(width: 6),
               Text(
                 'HIGH VOLATILITY FUND',
                 style: TextStyle(
@@ -215,12 +214,12 @@ class YourFundProfileScreen extends StatelessWidget {
   Widget _buildValueCard() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 24.h),
+      padding: EdgeInsets.symmetric(vertical: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8.r),
-          topRight: Radius.circular(8.r),
+          topLeft: Radius.circular(8),
+          topRight: Radius.circular(8),
         ),
         border: Border.all(color: const Color(0xFFF1F5F9)),
         boxShadow: [
@@ -241,12 +240,12 @@ class YourFundProfileScreen extends StatelessWidget {
               color: const Color(0xFF94A3B8),
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 8),
           Text(
             '₹2,36,538.56',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 14.sp, // Strict size (constrained from huge to 14)
+              fontSize: 14, // Strict size (constrained from huge to 14)
               fontWeight: FontWeight.w700,
               color: Colors.black,
             ),
@@ -263,8 +262,8 @@ class YourFundProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(8.r),
-          bottomRight: Radius.circular(8.r),
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(8),
         ),
         boxShadow: [
           BoxShadow(
@@ -296,7 +295,7 @@ class YourFundProfileScreen extends StatelessWidget {
 
   Widget _buildDetailRow(String label, String value, {Color? valueColor, bool hasArrow = false}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
+      padding: EdgeInsets.symmetric(vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -311,7 +310,7 @@ class YourFundProfileScreen extends StatelessWidget {
                 ),
               ),
               if (hasArrow) ...[
-                SizedBox(width: 4.w),
+                SizedBox(width: 4),
                 Icon(Icons.keyboard_arrow_down, size: 16, color: const Color(0xFF64748B)),
               ],
             ],
@@ -368,7 +367,7 @@ class YourFundProfileScreen extends StatelessWidget {
             color: const Color(0xFF94A3B8),
           ),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: 16),
         GestureDetector(
           onTap: () {
             showModalBottomSheet(
@@ -399,7 +398,7 @@ class YourFundProfileScreen extends StatelessWidget {
 
   Widget _buildListTile(String title, String subtitle) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.h),
+      padding: EdgeInsets.symmetric(vertical: 16),
       child: Row(
         children: [
           Container(
@@ -414,7 +413,7 @@ class YourFundProfileScreen extends StatelessWidget {
               color: const Color(0xFF475569),
             ),
           ),
-          SizedBox(width: 16.w),
+          SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -423,12 +422,12 @@ class YourFundProfileScreen extends StatelessWidget {
                   title,
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12.sp, // Strict size
+                    fontSize: 12, // Strict size
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF0F172A),
                   ),
                 ),
-                SizedBox(height: 2.h),
+                SizedBox(height: 2),
                 Text(
                   subtitle,
                   style: TextStyle(
@@ -470,7 +469,7 @@ class YourFundProfileScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0F172A),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       elevation: 0,
                     ),
@@ -486,7 +485,7 @@ class YourFundProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: 12),
               Expanded(
                 child: SizedBox(
                   height: 48,
@@ -494,9 +493,9 @@ class YourFundProfileScreen extends StatelessWidget {
                     onPressed: () {},
                     style: OutlinedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      side: BorderSide(color: const Color(0xFF0F172A), width: 1.5.w),
+                      side: BorderSide(color: const Color(0xFF0F172A), width: 1.5),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       elevation: 0,
                     ),

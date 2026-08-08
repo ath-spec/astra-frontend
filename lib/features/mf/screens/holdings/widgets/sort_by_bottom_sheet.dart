@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 enum SortOption {
   currentValue,
@@ -60,12 +59,12 @@ class _SortByBottomSheetState extends State<SortByBottomSheet> {
                 ),
               ),
             ),
-            SizedBox(width: 12.w),
+            SizedBox(width: 12),
             Text(
               title,
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12.sp,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF0F172A),
               ),
@@ -83,7 +82,7 @@ class _SortByBottomSheetState extends State<SortByBottomSheet> {
       padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(4.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
       ),
       child: Padding(
         padding: EdgeInsets.all(24.0),
@@ -96,10 +95,10 @@ class _SortByBottomSheetState extends State<SortByBottomSheet> {
               height: 4,
               decoration: BoxDecoration(
                 color: const Color(0xFFE2E8F0),
-                borderRadius: BorderRadius.circular(4.r),
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 24),
             
             // Header
             Row(
@@ -109,7 +108,7 @@ class _SortByBottomSheetState extends State<SortByBottomSheet> {
                   'Sort by',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: const Color(0xFF0F172A),
                     letterSpacing: -0.5,
@@ -130,31 +129,31 @@ class _SortByBottomSheetState extends State<SortByBottomSheet> {
                 ),
               ],
             ),
-            SizedBox(height: 16.h),
-            Divider(color: const Color(0xFFF1F5F9), height: 1.h),
-            SizedBox(height: 8.h),
+            SizedBox(height: 16),
+            Divider(color: const Color(0xFFF1F5F9), height: 1),
+            SizedBox(height: 8),
 
             // Options
             _buildRadioOption('Current Value', SortOption.currentValue),
-            Divider(color: const Color(0xFFF1F5F9), height: 1.h),
+            Divider(color: const Color(0xFFF1F5F9), height: 1),
             _buildRadioOption('Returns', SortOption.returns),
-            Divider(color: const Color(0xFFF1F5F9), height: 1.h),
+            Divider(color: const Color(0xFFF1F5F9), height: 1),
             _buildRadioOption('XIRR', SortOption.xirr),
-            Divider(color: const Color(0xFFF1F5F9), height: 1.h),
+            Divider(color: const Color(0xFFF1F5F9), height: 1),
             _buildRadioOption('1-Day Change', SortOption.oneDayChange),
-            Divider(color: const Color(0xFFF1F5F9), height: 1.h),
+            Divider(color: const Color(0xFFF1F5F9), height: 1),
             _buildRadioOption('Alphabetically', SortOption.alphabetically),
             
-            SizedBox(height: 24.h),
+            SizedBox(height: 24),
 
             // Apply Button
             GestureDetector(
               onTap: _onApply,
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 16.h),
+                padding: EdgeInsets.symmetric(vertical: 16),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4.r),
+                  borderRadius: BorderRadius.circular(4),
                   gradient: const LinearGradient(
                     colors: [Color(0xFF333333), Color(0xFF000000)],
                     begin: Alignment.topCenter,
@@ -173,7 +172,7 @@ class _SortByBottomSheetState extends State<SortByBottomSheet> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),

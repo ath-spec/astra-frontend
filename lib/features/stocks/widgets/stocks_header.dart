@@ -1,6 +1,5 @@
 import 'dart:ui' show lerpDouble, ImageFilter;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/widgets/arch_background.dart';
 
 class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
@@ -161,7 +160,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                     todayChange,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF10B981),
                     ),
@@ -183,11 +182,11 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                     onTap: onRefreshTap,
                     behavior: HitTestBehavior.opaque,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16.r),
-                        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5.w),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.03),
@@ -204,7 +203,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                             size: 12,
                             color: const Color(0xFF0F172A),
                           ),
-                          SizedBox(width: 6.w),
+                          SizedBox(width: 6),
                           Text(
                             lastRefreshedText,
                             style: TextStyle(
@@ -234,7 +233,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                 GestureDetector(
                   onTap: onBackTap,
                   child: SizedBox(
-                    width: 44.w,
+                    width: 44,
                     height: 44,
                     child: Icon(
                       Icons.arrow_back_ios_new_rounded,
@@ -248,7 +247,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                     GestureDetector(
                       onTap: onLockTap,
                       child: Container(
-                        width: 36.w,
+                        width: 36,
                         height: 36,
                         decoration: BoxDecoration(
                           color: const Color(0xFFF1F5F9),
@@ -262,14 +261,14 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                         ),
                       ),
                     ),
-                    SizedBox(width: 12.w),
+                    SizedBox(width: 12),
                     GestureDetector(
                       onTap: onAddAccountsTap,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16.r),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: const Color(0xFFE2E8F0)),
                         ),
                         child: Row(
@@ -280,7 +279,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
                               size: 12,
                               color: const Color(0xFF475569),
                             ),
-                            SizedBox(width: 4.w),
+                            SizedBox(width: 4),
                             Text(
                               'ADD ACCOUNTS',
                               style: TextStyle(

@@ -447,7 +447,7 @@ class _InsightTaxHarvestingViewState extends State<InsightTaxHarvestingView>
                               builder: (context, child) {
                                 final barHeight = 44 * s;
                                 final fullWidth =
-                                    MediaQuery.sizeOf(context).width -
+                                    (390.0 * s) -
                                     (48 * s); // padding
                                 final fillWidth =
                                     (fullWidth - (3 * s)) *
@@ -1402,7 +1402,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
                                 final barWidth = 60 * s;
                                 final fullHeight = 240 * s;
                                 final stackWidth =
-                                    MediaQuery.sizeOf(context).width - 48.0 * s;
+                                    (390.0 * s) - 48.0 * s;
                                 final fillHeight =
                                     fullHeight *
                                     0.15 *
@@ -1413,7 +1413,7 @@ class _InsightIndexFundsViewState extends State<InsightIndexFundsView>
 
                                 return Center(
                                   child: SizedBox(
-                                    width: MediaQuery.sizeOf(context).width,
+                                    width: stackWidth,
                                     height: fullHeight,
                                     child: Stack(
                                       alignment: Alignment.bottomCenter,

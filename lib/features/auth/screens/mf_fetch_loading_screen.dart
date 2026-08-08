@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
@@ -71,21 +70,21 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
-              SizedBox(height: 32.h),
+              SizedBox(height: 32),
               
               // Title
               Text(
                 'Fetching your funds...',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
                   letterSpacing: -0.5,
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
               
               // Skeleton Loader
               AnimatedBuilder(
@@ -94,10 +93,10 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                   return Opacity(
                     opacity: 0.5 + (_pulseController.value * 0.5),
                     child: Container(
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                           color: const Color(0xFFE2E8F0),
                           style: BorderStyle.solid,
@@ -113,14 +112,14 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                       child: Row(
                         children: [
                           Container(
-                            width: 32.w,
+                            width: 32,
                             height: 32,
                             decoration: const BoxDecoration(
                               color: Color(0xFFF1F5F9),
                               shape: BoxShape.circle,
                             ),
                           ),
-                          SizedBox(width: 16.w),
+                          SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,16 +129,16 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                                   height: 12,
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFF1F5F9),
-                                    borderRadius: BorderRadius.circular(4.r),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
-                                SizedBox(height: 8.h),
+                                SizedBox(height: 8),
                                 Container(
                                   width: 180,
                                   height: 12,
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFF1F5F9),
-                                    borderRadius: BorderRadius.circular(4.r),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
                               ],
@@ -150,7 +149,7 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                             height: 12,
                             decoration: BoxDecoration(
                               color: const Color(0xFFF1F5F9),
-                              borderRadius: BorderRadius.circular(4.r),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                           ),
                         ],
@@ -159,20 +158,20 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                   );
                 },
               ),
-              SizedBox(height: 32.h),
+              SizedBox(height: 32),
               
               // Warning text
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const _AnimatedHourglass(),
-                  SizedBox(width: 12.w),
+                  SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'This process can take upto 10 mins. Proceed to connecting Stocks.',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12.sp,
+                        fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: Color(0xFF64748B),
                         height: 1.4,
@@ -181,16 +180,16 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                   ),
                 ],
               ),
-              SizedBox(height: 32.h),
+              SizedBox(height: 32),
               
               // Proceed Button
               GestureDetector(
                 onTap: _onProceed,
                 child: Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4.r),
+                    borderRadius: BorderRadius.circular(4),
                     color: const Color(0xFF0F172A),
                   ),
                   child: Text(
@@ -198,14 +197,14 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 32.h),
+              SizedBox(height: 32),
               
               // Footer
               Row(
@@ -220,13 +219,13 @@ class _MfFetchLoadingScreenState extends ConsumerState<MfFetchLoadingScreen>
                       color: Color(0xFF64748B),
                     ),
                   ),
-                  SizedBox(width: 4.w),
+                  SizedBox(width: 4),
                   Icon(Icons.touch_app, size: 16, color: Color(0xFF0F172A)),
                   Text(
                     'mf central',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                       letterSpacing: -0.5,

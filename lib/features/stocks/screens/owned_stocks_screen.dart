@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/privacy_provider.dart';
@@ -192,7 +191,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                     'Holdings',
                     style: TextStyle(
                       fontFamily: 'SpaceGrotesk',
-                      fontSize: 18.sp,
+                      fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF0F172A),
                       letterSpacing: -0.5,
@@ -201,16 +200,16 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFFF1F5F9),
-                      borderRadius: BorderRadius.circular(4.r),
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    padding: EdgeInsets.all(4.w),
+                    padding: EdgeInsets.all(4),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _buildViewToggleIcon(Icons.view_agenda_rounded, ViewMode.summary),
-                        SizedBox(width: 4.w),
+                        SizedBox(width: 4),
                         _buildViewToggleIcon(Icons.view_stream_rounded, ViewMode.expanded),
-                        SizedBox(width: 4.w),
+                        SizedBox(width: 4),
                         _buildViewToggleIcon(Icons.grid_view_rounded, ViewMode.table),
                       ],
                     ),
@@ -224,17 +223,17 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
           SliverToBoxAdapter(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: 24),
               child: Row(
                 children: [
                   _buildChip('Sort by', icon: Icons.sort_rounded, isOutline: true),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 8),
                   _buildChip('Stocks'),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 8),
                   _buildChip('ETFs'),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 8),
                   _buildChip('Gainers'),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 8),
                   _buildChip('Losers'),
                 ],
               ),
@@ -309,7 +308,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: Row(
@@ -319,14 +318,14 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
           Container(
             width: 140, // Fixed width for STOCKS
             decoration: BoxDecoration(
-              border: Border(right: BorderSide(color: Color(0xFFF1F5F9), width: 1.w)),
+              border: Border(right: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
             ),
             child: Column(
               children: [
                 // Header
                 Container(
                   height: headerHeight,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   alignment: Alignment.centerLeft,
                   child: Row(
                     children: [
@@ -334,7 +333,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                         'STOCKS',
                         style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: Color(0xFF0F172A)),
                       ),
-                      SizedBox(width: 4.w),
+                      SizedBox(width: 4),
                       Icon(Icons.keyboard_arrow_down_rounded, size: 12, color: Color(0xFF94A3B8)),
                     ],
                   ),
@@ -345,11 +344,11 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                   final stock = entry.value;
                   return Container(
                     height: rowHeight,
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     alignment: Alignment.centerLeft,
                     decoration: BoxDecoration(
                       border: Border(
-                        top: BorderSide(color: const Color(0xFFF1F5F9), width: 1.w),
+                        top: BorderSide(color: const Color(0xFFF1F5F9), width: 1),
                       ),
                     ),
                     child: Text(
@@ -390,7 +389,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                       height: rowHeight,
                       decoration: BoxDecoration(
                         border: Border(
-                          top: BorderSide(color: const Color(0xFFF1F5F9), width: 1.w),
+                          top: BorderSide(color: const Color(0xFFF1F5F9), width: 1),
                         ),
                       ),
                       child: Row(
@@ -398,7 +397,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                           // Amount Column
                           Container(
                             width: 100,
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             alignment: Alignment.centerLeft,
                             child: Text(
                               PrivacyFormatter.obscure(intl.NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0).format(stock.currentVal), isLocked),
@@ -408,7 +407,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                           // 1D Column
                           Container(
                             width: 100,
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             alignment: Alignment.centerLeft,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -423,7 +422,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                                     color: isPositive ? const Color(0xFF10B981) : const Color(0xFFEF4444),
                                   ),
                                 ),
-                                SizedBox(height: 2.h),
+                                SizedBox(height: 2),
                                 Text(
                                   isLocked ? PrivacyFormatter.cypher : '(${stock.oneDayChangePct}%)',
                                   style: TextStyle(
@@ -439,7 +438,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                           // LTP Column
                           Container(
                             width: 100,
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             alignment: Alignment.center,
                             child: Text(
                               PrivacyFormatter.obscure(ltpFormat.format(stock.ltp), isLocked),
@@ -449,7 +448,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                           // QTY Column
                           Container(
                             width: 80,
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             alignment: Alignment.centerRight,
                             child: Text(
                               isLocked ? PrivacyFormatter.cypher : '${stock.quantity}',
@@ -472,7 +471,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
   Widget _buildTableHeaderCell(String title, double width, {bool isRight = false, bool isCenter = false}) {
     return Container(
       width: width,
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       alignment: isRight ? Alignment.centerRight : (isCenter ? Alignment.center : Alignment.centerLeft),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -481,7 +480,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
             title,
             style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.5, color: Color(0xFF0F172A)),
           ),
-          SizedBox(width: 4.w),
+          SizedBox(width: 4),
           Icon(Icons.keyboard_arrow_down_rounded, size: 12, color: Color(0xFF94A3B8)),
         ],
       ),
@@ -500,10 +499,10 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: const Cubic(0.23, 1.0, 0.32, 1.0),
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(4.r),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: isSelected
               ? [
                   BoxShadow(
@@ -549,10 +548,10 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: const Cubic(0.23, 1.0, 0.32, 1.0),
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6.h),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
             color: isOutline ? Colors.transparent : (isSelected ? Colors.white : const Color(0xFFF1F5F9)),
-            borderRadius: BorderRadius.circular(4.r),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: isOutline ? const Color(0xFFE2E8F0) : (isSelected ? const Color(0xFFE2E8F0) : Colors.transparent),
             ),
@@ -569,7 +568,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
             children: [
               if (icon != null) ...[
                 Icon(icon, size: 14, color: Color(0xFF0F172A)),
-                SizedBox(width: 4.w),
+                SizedBox(width: 4),
               ],
               Text(
                 label,
@@ -592,14 +591,14 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
       context: context,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(4.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
       ),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return SafeArea(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -611,7 +610,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                           'Sort by',
                           style: TextStyle(
                             fontFamily: 'SpaceGrotesk',
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0F172A),
                           ),
@@ -623,12 +622,12 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                             });
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             child: Text(
                               'Reset',
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 12.sp,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF0F172A),
                               ),
@@ -637,13 +636,13 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 24),
                     // Options
                     _buildSortOption('Current Value', setModalState),
                     _buildSortOption('1-Day Change', setModalState),
                     _buildSortOption('Quantity', setModalState),
                     _buildSortOption('Alphabetically', setModalState),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 32),
                     // Apply Button
                     GestureDetector(
                       onTap: () {
@@ -652,10 +651,10 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        padding: EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
                           color: const Color(0xFF0F172A),
-                          borderRadius: BorderRadius.circular(4.r), // User requested border radius 4
+                          borderRadius: BorderRadius.circular(4), // User requested border radius 4
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.1),
@@ -669,7 +668,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                             'Apply',
                             style: TextStyle(
                               fontFamily: 'DMSans',
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
                             ),
@@ -697,25 +696,25 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16.h),
+        padding: EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1.w)),
+          border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
         ),
         child: Row(
           children: [
             Container(
-              width: 14.w, // Reduced size
+              width: 14, // Reduced size
               height: 14,
               decoration: BoxDecoration(
                 color: isSelected ? const Color(0xFF0F172A) : Colors.transparent,
-                borderRadius: BorderRadius.circular(4.r), // User requested border radius 4
+                borderRadius: BorderRadius.circular(4), // User requested border radius 4
                 border: Border.all(
                   color: isSelected ? const Color(0xFF0F172A) : const Color(0xFFCBD5E1),
-                  width: 1.5.w,
+                  width: 1.5,
                 ),
               ),
             ),
-            SizedBox(width: 12.w),
+            SizedBox(width: 12),
             Text(
               label,
               style: TextStyle(

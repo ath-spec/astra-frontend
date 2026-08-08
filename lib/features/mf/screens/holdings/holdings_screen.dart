@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/mf_holdings_empty_state.dart';
 import 'widgets/mf_holdings_header.dart';
@@ -69,7 +68,7 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
                             });
                           },
                         ),
-                        SizedBox(height: 12.h),
+                        SizedBox(height: 12),
                         MfHoldingsEmptyState(
                           title: "Unlock Portfolio Intelligence",
                           subtitle: "Import your holdings to unlock personalized insights, risk analysis, and smarter recommendations.",
@@ -79,7 +78,7 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
                             context.push('/mf-fetch-confirm');
                           },
                         ),
-                        SizedBox(height: 48.h),
+                        SizedBox(height: 48),
                       ],
                     ),
                   ),

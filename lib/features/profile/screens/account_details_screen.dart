@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -36,14 +35,14 @@ class AccountDetailsScreen extends ConsumerWidget {
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.only(left: 24.w, top: 16.h, right: 24.w, bottom: 24.h),
+              padding: EdgeInsets.only(left: 24, top: 16, right: 24, bottom: 24),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
                     behavior: HitTestBehavior.opaque,
                     child: SizedBox(
-                      width: 44.w,
+                      width: 44,
                       height: 44,
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
@@ -55,7 +54,7 @@ class AccountDetailsScreen extends ConsumerWidget {
                   Expanded(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.only(right: 44.w), // balance the back button
+                        padding: EdgeInsets.only(right: 44), // balance the back button
                         child: Text(
                           'ACCOUNT DETAILS',
                           style: TextStyle(
@@ -82,7 +81,7 @@ class AccountDetailsScreen extends ConsumerWidget {
             // Content
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -90,13 +89,13 @@ class AccountDetailsScreen extends ConsumerWidget {
                       'Mutual fund account',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF0F172A),
                         letterSpacing: -0.5,
                       ),
                     ),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 32),
                     
                     _buildDetailRow(
                       
@@ -164,7 +163,7 @@ class AccountDetailsScreen extends ConsumerWidget {
             color: const Color(0xFF94A3B8),
           ),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -172,7 +171,7 @@ class AccountDetailsScreen extends ConsumerWidget {
               value,
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12.sp,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF0F172A),
               ),
@@ -185,10 +184,10 @@ class AccountDetailsScreen extends ConsumerWidget {
               ),
           ],
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: 16),
         if (!isLast) ...[
           const _DashedDivider(),
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
         ],
       ],
     );

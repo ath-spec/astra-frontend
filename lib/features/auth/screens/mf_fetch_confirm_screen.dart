@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
@@ -53,14 +52,16 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                 height: double.infinity,
                 child: Stack(
                   children: [
-                Positioned.fill(
+                Center(
                   child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 24.h,
+                  horizontal: 16,
+                  vertical: 24,
                 ),
-                child: Container(
-                  padding: EdgeInsets.all(24.w),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Container(
+                  padding: EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(
@@ -92,10 +93,10 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                 height: 40,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(4.r),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                     color: const Color(0xFF64748B),
-                                    width: 2.w,
+                                    width: 2,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
@@ -108,16 +109,16 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                 child: Row(
                                   children: [
                                     Container(
-                                      width: 12.w,
+                                      width: 12,
                                       decoration: BoxDecoration(
                                         color: Color(0xFF94A3B8),
                                         borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(4.r),
-                                          bottomLeft: Radius.circular(4.r),
+                                          topLeft: Radius.circular(4),
+                                          bottomLeft: Radius.circular(4),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 8.w),
+                                    SizedBox(width: 8),
                                     Icon(
                                       Icons.currency_rupee,
                                       size: 14,
@@ -131,7 +132,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                               top: 0,
                               right: 0,
                               child: Container(
-                                padding: EdgeInsets.all(4.w),
+                                padding: EdgeInsets.all(4),
                                 decoration: const BoxDecoration(
                                   color: Color(0xFF22C55E), // Green 500
                                   shape: BoxShape.circle,
@@ -147,19 +148,19 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                         ),
                         ),
                       ),
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 24),
                       Text(
                         "Let's connect Mutual Funds",
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontFamily: 'SpaceGrotesk',
-                          fontSize: 18.sp,
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF0F172A),
                           letterSpacing: -0.5,
                         ),
                       ),
-                      SizedBox(height: 12.h),
+                      SizedBox(height: 12),
                       Text(
                         'An OTP will be sent to your number to fetch\nyour holdings via MF Central.',
                         textAlign: TextAlign.start,
@@ -171,7 +172,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                           height: 1.5,
                         ),
                       ),
-                      SizedBox(height: 32.h),
+                      SizedBox(height: 32),
                       // Inner Card matching the uploaded image design
                       Container(
                         width: double.infinity,
@@ -200,7 +201,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                       color: Color(0xFF94A3B8),
                                     ),
                                   ),
-                                  SizedBox(height: 8.h),
+                                  SizedBox(height: 8),
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     mainAxisAlignment:
@@ -210,7 +211,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                         '+91 $phone',
                                         style: TextStyle(
                                           fontFamily: 'DMSans',
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.w700,
                                           color: Color(0xFF0F172A),
                                         ),
@@ -222,7 +223,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                         },
                                         behavior: HitTestBehavior.opaque,
                                         child: Padding(
-                                          padding: EdgeInsets.only(bottom: 2.h),
+                                          padding: EdgeInsets.only(bottom: 2),
                                           child: Text(
                                             'Edit number',
                                             style: TextStyle(
@@ -292,7 +293,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                       color: Color(0xFF94A3B8),
                                     ),
                                   ),
-                                  SizedBox(height: 8.h),
+                                  SizedBox(height: 8),
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     mainAxisAlignment:
@@ -302,7 +303,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                         pan,
                                         style: TextStyle(
                                           fontFamily: 'DMSans',
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.w700,
                                           color: Color(0xFF0F172A),
                                         ),
@@ -320,7 +321,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                         },
                                         behavior: HitTestBehavior.opaque,
                                         child: Padding(
-                                          padding: EdgeInsets.only(bottom: 2.h),
+                                          padding: EdgeInsets.only(bottom: 2),
                                           child: Text(
                                             'Edit PAN number',
                                             style: TextStyle(
@@ -344,10 +345,10 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                             ),
                             // Footer gradient section
                             Container(
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
+                              padding: EdgeInsets.symmetric(vertical: 16),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.vertical(
-                                  bottom: Radius.circular(4.r),
+                                  bottom: Radius.circular(4),
                                 ), // Match border radius 4
                                 gradient: LinearGradient(
                                   begin: Alignment.topCenter,
@@ -366,12 +367,12 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                                     size: 14,
                                     color: Color(0xFF64748B),
                                   ),
-                                  SizedBox(width: 6.w),
+                                  SizedBox(width: 6),
                                   Text(
                                     'powered by ',
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
-                                      fontSize: 11.sp,
+                                      fontSize: 11,
                                       fontWeight: FontWeight.w500,
                                       color: Color(0xFF64748B),
                                     ),
@@ -387,7 +388,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 32.h),
+                      SizedBox(height: 32),
                       ElevatedButton(
                         onPressed: () {
                           showMfCentralLoginBottomSheet(context, isOnboarding: widget.isOnboarding);
@@ -407,7 +408,7 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                           'Confirm and proceed', // Matched button text from image
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -416,10 +417,11 @@ class _MfFetchConfirmScreenState extends ConsumerState<MfFetchConfirmScreen> {
                   ),
                 ),
                 ),
+                ),
               ),
               Positioned(
-                top: 16.h,
-                left: 8.w,
+                top: 16,
+                left: 8,
                 child: IconButton(
                   icon: Icon(
                     Icons.arrow_back_ios_new_rounded,

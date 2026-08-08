@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import '../../news/screens/news_article_screen.dart';
@@ -132,7 +131,7 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
             ),
           ),
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: 24),
         
         // Feed
         ListView.separated(
@@ -140,7 +139,7 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
           physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: 24.0),
           itemCount: _newsItems.length,
-          separatorBuilder: (context, index) => SizedBox(height: 24.h),
+          separatorBuilder: (context, index) => SizedBox(height: 24),
           itemBuilder: (context, index) {
             final item = _newsItems[index];
             return _WealthFeedCard(
@@ -204,8 +203,9 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
     if (!mounted) return;
     if (_wrapperKey.currentContext != null) {
       final box = _wrapperKey.currentContext!.findRenderObject() as RenderBox?;
-      if (box != null && box.hasSize) {
-        final double globalY = box.localToGlobal(Offset.zero).dy;
+      final rootBox = Navigator.of(context, rootNavigator: true).context.findRenderObject() as RenderBox?;
+      if (box != null && box.hasSize && rootBox != null) {
+        final double globalY = box.localToGlobal(Offset.zero, ancestor: rootBox).dy;
         final newAbsoluteY = globalY + widget.scrollController.offset;
         final newHeight = box.size.height;
         
@@ -229,7 +229,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
 
     double scale = (MediaQuery.sizeOf(context).width / 393.0).clamp(0.8, 1.2);
     final topSafeArea = MediaQuery.paddingOf(context).top;
-    final double pinOffset = topSafeArea + 90.0; // No stagger, stack perfectly on top
+    final double pinOffset = topSafeArea + 56.0; // Standard AppBar height
 
     return SizedBox(
       key: _wrapperKey,
@@ -298,7 +298,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(4.r),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: const Color(0xFFF1F5F9)),
             boxShadow: [
               BoxShadow(
@@ -315,7 +315,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
               Hero(
                 tag: 'news_image_${widget.imagePath}_${widget.index}',
                 child: ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(4.r)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
                   child: AspectRatio(
                     aspectRatio: 16 / 10,
                     child: Image.asset(
@@ -338,10 +338,10 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                         return Padding(
                           padding: EdgeInsets.only(right: 8.0),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(4.r),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: Row(
@@ -349,7 +349,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                               children: [
                                 if (isTrending) ...[
                                   Icon(Icons.local_fire_department_rounded, size: 12, color: const Color(0xFFEF4444)),
-                                  SizedBox(width: 4.w),
+                                  SizedBox(width: 4),
                                 ],
                                 Text(
                                   tag.replaceAll('•', '').trim(),
@@ -366,7 +366,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                         );
                       }).toList(),
                     ),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: 12),
                     
                     // Title
                     Text(
@@ -379,7 +379,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                         height: 1.3,
                       ),
                     ),
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 8),
                     
                     // Description
                     Text(
@@ -394,7 +394,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                            // Footer (Source and Read More)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -426,7 +426,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                             );
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -444,7 +444,7 @@ class _WealthFeedCardState extends State<_WealthFeedCard> {
                                     color: const Color(0xFF0F172A),
                                   ),
                                 ),
-                                SizedBox(width: 4.w),
+                                SizedBox(width: 4),
                                 Icon(
                                   Icons.chevron_right_rounded,
                                   size: 16,

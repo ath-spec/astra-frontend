@@ -91,7 +91,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         right: 0,
                         bottom: MediaQuery.viewInsetsOf(context).bottom > 0
                             ? MediaQuery.viewInsetsOf(context).bottom
-                            : MediaQuery.paddingOf(context).bottom,
+                            : (kIsWeb ? 24.0 : MediaQuery.paddingOf(context).bottom),
                         child: const ChatInputField(),
                       ),
                     ],

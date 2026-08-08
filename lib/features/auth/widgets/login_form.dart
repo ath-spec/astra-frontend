@@ -188,6 +188,8 @@ class _LoginFormState extends ConsumerState<LoginForm>
                         ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
                     ),
                     decoration: InputDecoration(
+                      hoverColor: Colors.transparent,
+                      focusColor: Colors.transparent,
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,

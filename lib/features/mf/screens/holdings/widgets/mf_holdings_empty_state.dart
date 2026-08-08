@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MfHoldingsEmptyState extends StatelessWidget {
   final String title;
@@ -27,7 +26,7 @@ class MfHoldingsEmptyState extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFFF9FAFB),
-          borderRadius: BorderRadius.circular(4.r),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(color: const Color.fromARGB(255, 224, 224, 224)),
         ),
         clipBehavior: Clip.hardEdge,
@@ -53,14 +52,14 @@ class MfHoldingsEmptyState extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 18.sp,
+                      fontSize: 18,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.5,
                       color: const Color(0xFF0F172A),
                     ),
                     textAlign: TextAlign.left,
                   ),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 6),
                   Text(
                     subtitle,
                     style: TextStyle(
@@ -72,20 +71,20 @@ class MfHoldingsEmptyState extends StatelessWidget {
                     ),
                     textAlign: TextAlign.left,
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 12),
                   GestureDetector(
                     onTap: onCtaTapped,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 0, 0, 0),
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         ctaText.toUpperCase(),
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 8.sp,
+                          fontSize: 8,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.8,
                           color: const Color.fromARGB(255, 255, 255, 255),

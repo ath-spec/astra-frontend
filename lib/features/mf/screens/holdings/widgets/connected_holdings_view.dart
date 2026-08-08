@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'sort_by_bottom_sheet.dart';
 import 'mf_holdings_header.dart';
@@ -183,7 +182,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     child: GestureDetector(
                       onTap: () {}, // Prevent taps on the card from dismissing
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16),
                         child: HoldingDetailsBottomSheet(
                           item: aggregateItem,
                           formatCurrency: formatCurrency,
@@ -196,11 +195,11 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
             );
           },
           child: Container(
-            margin: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
+            margin: EdgeInsets.fromLTRB(16, 16, 16, 24),
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(4.r),
+              borderRadius: BorderRadius.circular(4),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.03),
@@ -221,12 +220,12 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                           'Holding details',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0F172A),
                           ),
                         ),
-                        SizedBox(width: 4.w),
+                        SizedBox(width: 4),
                         Icon(
                           Icons.unfold_more,
                           size: 16,
@@ -241,7 +240,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     ),
                   ],
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -253,12 +252,12 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                           isLocked ? '₹ * * * *' : formatLargeNumber(investedVal),
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0F172A),
                           ),
                         ),
-                        SizedBox(height: 2.h),
+                        SizedBox(height: 2),
                         Text(
                           'Invested',
                           style: TextStyle(
@@ -276,12 +275,12 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                           isLocked ? '* * *' : '${xirrVal.toStringAsFixed(2)}%',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0F172A),
                           ),
                         ),
-                        SizedBox(height: 2.h),
+                        SizedBox(height: 2),
                         Text(
                           'Current XIRR',
                           style: TextStyle(
@@ -299,12 +298,12 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                           isLocked ? '₹ * * * *' : '+${formatLargeNumber(returnsVal)} (15.04%)',
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF22C55E),
                           ),
                         ),
-                        SizedBox(height: 2.h),
+                        SizedBox(height: 2),
                         Text(
                           'Total Returns',
                           style: TextStyle(
@@ -328,7 +327,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
   Widget _buildFilterChips() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           _buildChip(
@@ -337,25 +336,25 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
             onTap: _showSortBottomSheet,
             isActive: _currentSort != null,
           ),
-          SizedBox(width: 8.w),
+          SizedBox(width: 8),
           _buildChip(
             'Equity',
             onTap: () => _toggleFilter('Equity'),
             isActive: _activeFilters.contains('Equity'),
           ),
-          SizedBox(width: 8.w),
+          SizedBox(width: 8),
           _buildChip(
             'Debt',
             onTap: () => _toggleFilter('Debt'),
             isActive: _activeFilters.contains('Debt'),
           ),
-          SizedBox(width: 8.w),
+          SizedBox(width: 8),
           _buildChip(
             'Global',
             onTap: () => _toggleFilter('Global'),
             isActive: _activeFilters.contains('Global'),
           ),
-          SizedBox(width: 8.w),
+          SizedBox(width: 8),
           _buildChip(
             'SIP',
             onTap: () => _toggleFilter('SIP'),
@@ -376,10 +375,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isActive ? Colors.black : Colors.white,
-          borderRadius: BorderRadius.circular(4.r),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: isActive ? Colors.black : const Color(0xFFE2E8F0),
           ),
@@ -392,7 +391,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                 size: 14,
                 color: isActive ? Colors.white : const Color(0xFF0F172A),
               ),
-              SizedBox(width: 6.w),
+              SizedBox(width: 6),
             ],
             Text(
               label,
@@ -427,10 +426,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
             ),
           ),
           Container(
-            padding: EdgeInsets.all(4.w),
+            padding: EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(4.r),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Row(
               children: [
@@ -450,10 +449,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
     return GestureDetector(
       onTap: () => setState(() => _viewType = index),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(4.r),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: isSelected
               ? [
                   BoxShadow(
@@ -480,7 +479,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
       color: const Color(0xFFF9FAFB),
       padding: EdgeInsets.only(
         top: MediaQuery.paddingOf(context).top,
-        bottom: 8.h,
+        bottom: 8,
       ),
       child: Column(
         children: [
@@ -492,7 +491,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(8.w),
+                  padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
@@ -507,12 +506,12 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                 Spacer(),
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 8.h,
+                    horizontal: 16,
+                    vertical: 8,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(4.r),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(color: const Color(0xFFE2E8F0)),
                   ),
                   child: AnimatedBuilder(
@@ -522,7 +521,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                         isLocked ? '₹ * * * *' : formatCurrency.format(345126 * _numberAnimation.value),
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF0F172A),
                         ),
@@ -534,7 +533,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                 GestureDetector(
                   onTap: () => ref.read(privacyProvider.notifier).state = !isLocked,
                   child: Container(
-                    padding: EdgeInsets.all(4.w),
+                    padding: EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
@@ -547,11 +546,11 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     ),
                   ),
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: 8),
                 GestureDetector(
                   onTap: () => context.push('/cart'),
                   child: Container(
-                    padding: EdgeInsets.all(4.w),
+                    padding: EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
@@ -641,9 +640,9 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                       _buildTopCard(isLocked),
 
                       _buildHeaderRow(),
-                      SizedBox(height: 16.h),
+                      SizedBox(height: 16),
                       _buildFilterChips(),
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 24),
                     ],
                   ),
                 ),
@@ -663,23 +662,23 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                               size: 48,
                               color: Color(0xFFCBD5E1),
                             ),
-                            SizedBox(height: 16.h),
+                            SizedBox(height: 16),
                             Text(
                               'No holdings found',
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 18.sp,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF0F172A),
                               ),
                             ),
-                            SizedBox(height: 8.h),
+                            SizedBox(height: 8),
                             Text(
                               'Try adjusting or clearing your filters to see your portfolio.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'DMSans',
-                                fontSize: 14.sp,
+                                fontSize: 14,
                                 color: Color(0xFF64748B),
                               ),
                             ),

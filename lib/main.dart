@@ -6,7 +6,6 @@ import 'core/error/global_error_handler.dart';
 import 'core/navigation/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/responsive_app_wrapper.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -53,11 +52,9 @@ class AstraApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
 
-    return ScreenUtilInit(
-      designSize: const Size(375, 812),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktopWeb = kIsWeb && constraints.maxWidth > 700;
         return ResponsiveAppWrapper(
           child: MaterialApp.router(
             title: 'Astra',
@@ -66,9 +63,20 @@ class AstraApp extends ConsumerWidget {
             darkTheme: AppTheme.darkTheme,
             themeMode: ThemeMode.system,
             routerConfig: router,
+            builder: (context, child) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  size: isDesktopWeb ? const Size(393, 852) : MediaQuery.of(context).size,
+                  padding: isDesktopWeb ? const EdgeInsets.only(top: 47, bottom: 34) : MediaQuery.of(context).padding,
+                  viewPadding: isDesktopWeb ? const EdgeInsets.only(top: 47, bottom: 34) : MediaQuery.of(context).viewPadding,
+                  textScaler: const TextScaler.linear(1.0),
+                ),
+                child: child!,
+              );
+            },
           ),
         );
-      },
+      }
     );
   }
 }

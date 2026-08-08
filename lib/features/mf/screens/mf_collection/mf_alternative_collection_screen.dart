@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
 class MfAlternativeCollectionScreen extends StatefulWidget {
@@ -78,7 +77,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
           child: Center(
             child: InkWell(
               onTap: () => Navigator.pop(context),
-              borderRadius: BorderRadius.circular(4.r),
+              borderRadius: BorderRadius.circular(4),
               child: SizedBox(
                 width: 40,
                 height: 40,
@@ -115,7 +114,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                                 letterSpacing: -0.5,
                               ),
                             ),
-                            SizedBox(height: 8.h),
+                            SizedBox(height: 8),
                             Text(
                               widget.subtitle,
                               style: TextStyle(
@@ -128,7 +127,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                           ],
                         ),
                       ),
-                      SizedBox(width: 16.w),
+                      SizedBox(width: 16),
                       // Graphic
                       Container(
                         width: 80,
@@ -141,10 +140,10 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                       ),
                     ],
                   ),
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 32),
                   // Fund List
                   ..._mockFunds.map((fund) => _buildFundRow(fund)),
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 32),
                 ],
               ),
             ),
@@ -178,7 +177,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                           fund['initial'],
                           style: TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF1E1E1E),
                           ),
@@ -189,7 +188,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                       bottom: 0,
                       right: 0,
                       child: Container(
-                        padding: EdgeInsets.all(2.w),
+                        padding: EdgeInsets.all(2),
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -199,7 +198,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                     ),
                   ],
                 ),
-                SizedBox(width: 16.w),
+                SizedBox(width: 16),
                 // Details
                 Expanded(
                   child: Column(
@@ -209,12 +208,12 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                         fund['name'],
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 12.sp,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF1E1E1E),
                         ),
                       ),
-                      SizedBox(height: 4.h),
+                      SizedBox(height: 4),
                       Text(
                         fund['category'],
                         style: TextStyle(

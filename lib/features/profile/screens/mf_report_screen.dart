@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class MfReportScreen extends StatelessWidget {
@@ -15,14 +14,14 @@ class MfReportScreen extends StatelessWidget {
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.only(left: 24.w, top: 16.h, right: 24.w, bottom: 24.h),
+              padding: EdgeInsets.only(left: 24, top: 16, right: 24, bottom: 24),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
                     behavior: HitTestBehavior.opaque,
                     child: SizedBox(
-                      width: 44.w,
+                      width: 44,
                       height: 44,
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
@@ -34,7 +33,7 @@ class MfReportScreen extends StatelessWidget {
                   Expanded(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.only(right: 44.w), // balance the back button
+                        padding: EdgeInsets.only(right: 44), // balance the back button
                         child: Text(
                           'MUTUAL FUND REPORT',
                           style: TextStyle(
@@ -61,7 +60,7 @@ class MfReportScreen extends StatelessWidget {
             // Content List
             Expanded(
               child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                 children: [
                   _buildReportSection(
                     context,
@@ -109,7 +108,7 @@ class MfReportScreen extends StatelessWidget {
 
   Widget _buildDivider() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24.h),
+      padding: EdgeInsets.symmetric(vertical: 24),
       child: Container(
         height: 1,
         color: const Color(0xFFF1F5F9),
@@ -135,7 +134,7 @@ class MfReportScreen extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12.sp,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF0F172A),
               ),
@@ -155,12 +154,12 @@ class MfReportScreen extends StatelessWidget {
               ),
           ],
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: 16),
         Container(
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: const Color(0xFFF8FAFC), // very light gray/blue fill
-            borderRadius: BorderRadius.circular(4.r),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: const Color(0xFF0F172A), width: 1.0),
           ),
           child: Row(
@@ -178,7 +177,7 @@ class MfReportScreen extends StatelessWidget {
                       color: const Color(0xFF0F172A),
                     ),
                   ),
-                  SizedBox(height: 4.h),
+                  SizedBox(height: 4),
                   Text(
                     latestSubtitle,
                     style: TextStyle(
@@ -190,17 +189,17 @@ class MfReportScreen extends StatelessWidget {
                 ],
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(4.r),
+                  borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: const Color(0xFF0F172A), width: 1.0),
                 ),
                 child: Text(
                   'Download',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 8.sp,
+                    fontSize: 8,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF0F172A),
                   ),

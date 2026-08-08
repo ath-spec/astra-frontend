@@ -232,6 +232,8 @@ class _MfEditPhoneFormState extends ConsumerState<_MfEditPhoneForm>
                             ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
                         ),
                         decoration: InputDecoration(
+                          hoverColor: Colors.transparent,
+                          focusColor: Colors.transparent,
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class NomineeListScreen extends StatelessWidget {
@@ -15,14 +14,14 @@ class NomineeListScreen extends StatelessWidget {
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.only(left: 24.w, top: 16.h, right: 24.w, bottom: 24.h),
+              padding: EdgeInsets.only(left: 24, top: 16, right: 24, bottom: 24),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
                     behavior: HitTestBehavior.opaque,
                     child: SizedBox(
-                      width: 44.w,
+                      width: 44,
                       height: 44,
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
@@ -34,7 +33,7 @@ class NomineeListScreen extends StatelessWidget {
                   Expanded(
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.only(right: 44.w), // balance the back button
+                        padding: EdgeInsets.only(right: 44), // balance the back button
                         child: Text(
                           'NOMINEES',
                           style: TextStyle(
@@ -61,7 +60,7 @@ class NomineeListScreen extends StatelessWidget {
             // Main Content (Empty State)
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -81,7 +80,7 @@ class NomineeListScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 32),
                     
                     // Title
                     Text(
@@ -95,20 +94,20 @@ class NomineeListScreen extends StatelessWidget {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: 12),
                     
                     // Subtitle
                     Text(
                       'Add a nominee to your mutual fund investments.',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12.sp,
+                        fontSize: 12,
                         color: const Color(0xFF64748B),
                         height: 1.5,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 48.h),
+                    SizedBox(height: 48),
                   ],
                 ),
               ),
@@ -116,15 +115,15 @@ class NomineeListScreen extends StatelessWidget {
 
             // Bottom Button
             Padding(
-              padding: EdgeInsets.all(24.w),
+              padding: EdgeInsets.all(24),
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 18.h),
+                  padding: EdgeInsets.symmetric(vertical: 18),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.r),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   elevation: 0,
                 ),
@@ -132,7 +131,7 @@ class NomineeListScreen extends StatelessWidget {
                   'Add a nominee',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

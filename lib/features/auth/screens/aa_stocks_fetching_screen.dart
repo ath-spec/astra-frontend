@@ -135,11 +135,13 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 420),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const SizedBox(height: 24),
                         // Always show the Fetching UI text
@@ -247,6 +249,7 @@ class _AaStocksFetchingScreenState extends ConsumerState<AaStocksFetchingScreen>
                       ],
                     ),
                   ),
+                ),
                 ),
               ),
             ),

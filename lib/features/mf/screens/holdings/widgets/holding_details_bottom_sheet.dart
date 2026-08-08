@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'holding_item.dart';
 import 'package:astra_frontend/core/widgets/dashed_line.dart'; // Using the dashed line widget
@@ -24,9 +23,9 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(4.r),
+        borderRadius: BorderRadius.circular(4),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -38,10 +37,10 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
                 child: Container(
                   width: 40,
                   height: 4,
-                  margin: EdgeInsets.only(bottom: 24.h),
+                  margin: EdgeInsets.only(bottom: 24),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE2E8F0),
-                    borderRadius: BorderRadius.circular(2.r),
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
@@ -54,7 +53,7 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
                     'Holding details',
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF0F172A),
                       letterSpacing: -0.5,
@@ -62,7 +61,7 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
               const Divider(height: 1, color: Color(0xFFF1F5F9)),
               SizedBox(height: 20),
 
@@ -73,9 +72,9 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
                 valueColor: const Color(0xFF0F172A),
                 
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
               const Divider(height: 1, color: Color(0xFFF1F5F9)),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
 
               // Invested
               _buildDetailRow(
@@ -84,9 +83,9 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
                 valueColor: const Color(0xFF0F172A),
                 
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
               const Divider(height: 1, color: Color(0xFFF1F5F9)),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
 
               // Total returns
               _buildDetailRow(
@@ -95,9 +94,9 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
                 valueColor: isPosRet ? const Color(0xFF15803D) : const Color(0xFFDC2626),
                 
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
               const Divider(height: 1, color: Color(0xFFF1F5F9)),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
 
               // 1D change
               _buildDetailRow(
@@ -115,14 +114,14 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
                 dashWidth: 4,
                 dashSpace: 4,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
 
               // XIRR Section Title
               Text(
                 'XIRR',
                 style: TextStyle(
                   fontFamily: 'DMSans',
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF0F172A),
                 ),
@@ -136,9 +135,9 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
                 subtext: 'Tracks only your current holdings, excluding past redemptions',
                 
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
               const Divider(height: 1, color: Color(0xFFF1F5F9)),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16),
 
               // Lifetime XIRR
               _buildXirrRow(
@@ -147,7 +146,7 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
                 subtext: 'Tracks all your investments and redemptions since you started, including units you redeemed.',
                 
               ),
-              SizedBox(height: 32.h),
+              SizedBox(height: 32),
 
             ],
           ),
@@ -164,7 +163,7 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
           label,
           style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 12.sp,
+            fontSize: 12,
             fontWeight: FontWeight.w500,
             color: const Color(0xFF334155),
           ),
@@ -173,7 +172,7 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
           value,
           style: TextStyle(
             fontFamily: 'DMSans',
-            fontSize: 12.sp,
+            fontSize: 12,
             fontWeight: FontWeight.w700,
             color: valueColor,
           ),
@@ -193,7 +192,7 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
               label,
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12.sp,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: const Color(0xFF0F172A),
               ),
@@ -202,14 +201,14 @@ class HoldingDetailsBottomSheet extends StatelessWidget {
               value,
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12.sp,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF0F172A),
               ),
             ),
           ],
         ),
-        SizedBox(height: 4.h),
+        SizedBox(height: 4),
         Text(
           subtext,
           style: TextStyle(

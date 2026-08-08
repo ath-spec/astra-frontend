@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class CartScreen extends StatefulWidget {
@@ -24,7 +23,7 @@ class _CartScreenState extends State<CartScreen> {
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.only(left: 24.w, top: 16.h, right: 24.w),
+              padding: EdgeInsets.only(left: 24, top: 16, right: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -32,7 +31,7 @@ class _CartScreenState extends State<CartScreen> {
                     onTap: () => context.pop(),
                     behavior: HitTestBehavior.opaque,
                     child: SizedBox(
-                      width: 44.w,
+                      width: 44,
                       height: 44,
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
@@ -41,7 +40,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 24),
                   Text(
                     'Cart',
                     style: TextStyle(
@@ -87,7 +86,7 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 32.h),
+                      SizedBox(height: 32),
                       
                       // Texts
                       Text(
@@ -95,13 +94,13 @@ class _CartScreenState extends State<CartScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF0F172A),
                           letterSpacing: -0.5,
                         ),
                       ),
-                      SizedBox(height: 12.h),
+                      SizedBox(height: 12),
                       Text(
                         'Funds you add to your cart will show up\nhere, ready to invest.',
                         textAlign: TextAlign.center,
@@ -113,7 +112,7 @@ class _CartScreenState extends State<CartScreen> {
                           height: 1.5,
                         ),
                       ),
-                      SizedBox(height: 32.h),
+                      SizedBox(height: 32),
 
                       // Explore Button
                       GestureDetector(
@@ -133,14 +132,14 @@ class _CartScreenState extends State<CartScreen> {
                           curve: const Cubic(0.23, 1, 0.32, 1),
                           transform: Matrix4.identity()..scale(_isExplorePressed ? 0.97 : 1.0),
                           transformAlignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Color(0xFF334155), Color(0xFF0F172A)],
                             ),
-                            borderRadius: BorderRadius.circular(32.r),
+                            borderRadius: BorderRadius.circular(32),
                             boxShadow: [
                               BoxShadow(
                                 color: const Color(0xFF0F172A).withValues(alpha: 0.2),
@@ -156,13 +155,13 @@ class _CartScreenState extends State<CartScreen> {
                                 'EXPLORE ALL FUNDS',
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
                                   letterSpacing: 1.0,
                                 ),
                               ),
-                              SizedBox(width: 8.w),
+                              SizedBox(width: 8),
                               Icon(
                                 Icons.chevron_right_rounded,
                                 color: Colors.white,
