@@ -27,14 +27,12 @@ class DemoAIService {
 
     try {
       final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
-      final appAuthToken = dotenv.env['APP_AUTH_TOKEN'] ?? '';
       
-      // 1. Fetch JWT Token
+      // 1. Fetch JWT Token (Matches z-newui structure where auth handles itself via user identity)
       final authResponse = await _dio.post(
         '$baseUrl/api/auth/token',
         options: Options(
           headers: {
-            'X-Astra-Auth': appAuthToken,
             'Content-Type': 'application/json',
           },
         ),
