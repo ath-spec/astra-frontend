@@ -20,7 +20,7 @@ class DemoAIService {
     final messages = [...messageHistory];
 
     try {
-      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
+      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'https://astra.zeyro.in';
       
       // 1. Authenticate via Mocked OTP Flow
       await _dio.post(
@@ -86,7 +86,7 @@ class DemoAIService {
 
   Future<List<Map<String, dynamic>>> fetchChatHistory({required String phone, required String name, required List<Map<String, dynamic>> banks}) async {
     try {
-      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
+      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'https://astra.zeyro.in';
       
       // Authenticate via Mocked OTP Flow
       await _dio.post(
@@ -144,7 +144,7 @@ class DemoAIService {
     final currentSpeechId = ++_speechId;
     
     try {
-      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
+      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'https://astra.zeyro.in';
       final url = '$baseUrl/api/tts';
       
       // Sarvam TTS API has a strict 500 character limit.
