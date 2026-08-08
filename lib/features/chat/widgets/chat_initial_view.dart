@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
+import 'thinking_orbs/thinking_orb.dart';
 
 class _SlidingGradientTransform extends GradientTransform {
   final double slidePercent;
@@ -105,10 +106,16 @@ class ChatHeader extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                const ThinkingOrb(
+                  mode: 'ribbon',
+                  size: 140,
+                  color: Color(0xFF031E6B), // Match brand color
+                ),
+                const SizedBox(height: 16),
                 Text(
                   'Hi, $userName.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 18,
                     height: 1.1,
@@ -118,7 +125,7 @@ class ChatHeader extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                _AnimatedGradientText(text: "What's on your money mind?"),
+                const _AnimatedGradientText(text: "What's on your money mind?"),
               ],
             ),
           ),

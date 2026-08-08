@@ -12,6 +12,7 @@ import 'holding_details_bottom_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/providers/privacy_provider.dart';
+import '../../../../asset_connection/providers/asset_connection_provider.dart';
 
 class ConnectedHoldingsView extends ConsumerStatefulWidget {
   const ConnectedHoldingsView({super.key});
@@ -606,7 +607,8 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
 
   @override
   Widget build(BuildContext context) {
-                    final isLocked = ref.watch(privacyProvider);
+    final assetState = ref.watch(assetConnectionProvider);
+    final isLocked = ref.watch(privacyProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
@@ -628,6 +630,8 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     },
                     onCartTap: () => context.push('/cart'),
                     onRefreshTap: () => context.push('/mf-fetch-confirm'),
+                    mfConnected: assetState.mfConnected,
+                    stocksConnected: assetState.stocksConnected,
                   ),
                 ),
                 SliverToBoxAdapter(

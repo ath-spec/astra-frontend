@@ -49,6 +49,8 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
                     },
                     onCartTap: () => context.push('/cart'),
                     onRefreshTap: () => context.push('/mf-fetch-confirm'),
+                    mfConnected: assetState.mfConnected,
+                    stocksConnected: assetState.stocksConnected,
                   ),
                 ),
                 SliverToBoxAdapter(

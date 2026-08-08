@@ -89,6 +89,16 @@ class _AppShellState extends ConsumerState<AppShell> {
   void didUpdateWidget(AppShell oldWidget) {
     super.didUpdateWidget(oldWidget);
     final currentIndex = widget.navigationShell.currentIndex;
+    final oldIndex = oldWidget.navigationShell.currentIndex;
+    
+    // If we just navigated away from the Chat tab (index 2), stop any active generation/audio
+    if (oldIndex == 2 && currentIndex != 2) {
+      ref.read(chatNotifierProvider.notifier).cancelGeneration();
+      try {
+        ref.read(speechProvider.notifier).stopListening();
+      } catch (_) {}
+    }
+    
     if (currentIndex != 2 && !_navVisible) {
       _navVisible = true;
     }

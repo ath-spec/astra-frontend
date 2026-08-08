@@ -48,6 +48,7 @@ class MfExploreScreen extends ConsumerWidget {
                 }
               },
               mfConnected: assetState.mfConnected,
+              stocksConnected: assetState.stocksConnected,
             ),
           ),
           SliverList.list(
@@ -95,12 +96,14 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double screenHeight;
   final VoidCallback onBackTap;
   final bool mfConnected;
+  final bool stocksConnected;
 
   _MfExploreHeaderDelegate({
     required this.safeAreaTop,
     required this.screenHeight,
     required this.onBackTap,
     required this.mfConnected,
+    required this.stocksConnected,
   });
 
   @override
@@ -136,6 +139,22 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
     final double pillBgRatio = (easedRatio * 1.5).clamp(0.0, 1.0);
     final double currentBorderOpacity = lerpDouble(0.0, 1.0, pillBgRatio)!;
     final double currentShadowOpacity = lerpDouble(0.0, 0.05, pillBgRatio)!;
+
+    String subtitleText = 'NET WORTH';
+    if (mfConnected && !stocksConnected) subtitleText = 'MUTUAL FUNDS VALUE';
+    if (!mfConnected && stocksConnected) subtitleText = 'STOCKS VALUE';
+
+    double totalWealthValue = (mfConnected ? 352962.0 : 0.0) + (stocksConnected ? 147908.0 : 0.0);
+    String formattedTotal = (totalWealthValue == 0) ? '₹ 0' : '₹ ${totalWealthValue.toInt().toString().replaceAllMapped(RegExp(r"(\d)(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}';
+    
+    String pillOneDayText = '';
+    if (mfConnected && stocksConnected) {
+      pillOneDayText = '₹3,402 (0.65%)';
+    } else if (mfConnected) {
+      pillOneDayText = '₹2,202 (0.62%)';
+    } else if (stocksConnected) {
+      pillOneDayText = '₹1,200 (0.81%)';
+    }
 
     return Container(
       color: Colors.transparent,
@@ -211,10 +230,10 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
             right: 0,
             child: Opacity(
               opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0), // Fades out quickly
-              child: const Center(
+              child: Center(
                 child: Text(
-                  "MUTUAL FUNDS VALUE",
-                  style: TextStyle(
+                  subtitleText,
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     color: Color(0xFF9CA3AF),
                     fontSize: 10,
@@ -253,7 +272,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      mfConnected ? '₹ 3,43,158' : '₹ 0',
+                      formattedTotal,
                       style: TextStyle(
                         fontFamily: 'DMSans',
                         color: const Color(0xFF0F172A),
@@ -282,7 +301,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                                 ),
                                 SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
                                 Text(
-                                  '₹2,491 (0.73%)',
+                                  pillOneDayText,
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
                                     fontSize: lerpDouble(10.0, 0.0, easedRatio)!,

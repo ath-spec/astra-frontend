@@ -7,6 +7,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class DemoAIService {
   static const String elevenLabsVoiceId = '21m00Tcm4TlvDq8ikWAM'; // Rachel voice
   
+  static final DemoAIService _instance = DemoAIService._internal();
+  factory DemoAIService() => _instance;
+  DemoAIService._internal();
+
   final Dio _dio = Dio();
   final AudioPlayer audioPlayer = AudioPlayer();
   

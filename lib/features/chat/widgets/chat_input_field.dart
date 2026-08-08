@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/chat_provider.dart';
 import '../../../core/providers/speech_provider.dart';
 import 'package:go_router/go_router.dart';
+import '../../navigation/widgets/voice_animation.dart';
+
 class ChatInputField extends ConsumerStatefulWidget {
   const ChatInputField({super.key});
 
@@ -100,12 +102,26 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Home icon button (Outside the pill)
-            _HomeButton(),
-            const SizedBox(width: 8),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 250),
+              curve: const Cubic(0.23, 1.0, 0.32, 1.0),
+              child: ref.watch(speechProvider).isListening
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: Center(child: VoiceAnimationWidget(isListening: true)),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Home icon button (Outside the pill)
+                _HomeButton(),
+                const SizedBox(width: 8),
             
             // Text field with Send button properly nested inside as a suffixIcon
             Expanded(
@@ -181,17 +197,19 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                             );
                           },
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-    );
+                          ], // End Column children
+                        ), // End Column
+                      ), // End Padding
+                    ), // End InputDecoration
+                  ), // End TextField
+                ), // End AnimatedContainer
+              ), // End Expanded
+            ], // End Row children
+          ), // End Row
+        ], // End Column children
+      ), // End Column
+    ), // End Padding
+    ); // End TweenAnimationBuilder
   }
 }
 

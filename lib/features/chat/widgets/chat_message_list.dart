@@ -64,7 +64,8 @@ class _ChatMessageListState extends ConsumerState<ChatMessageList> {
         if (messages.isEmpty) ...[
           const SliverFillRemaining(
             hasScrollBody: false,
-            child: Center(
+            child: Align(
+              alignment: Alignment(0.0, -0.4), // Moved up from center
               child: ChatHeader(),
             ),
           ),

@@ -4,6 +4,7 @@ import '../widgets/chat_message_list.dart';
 import '../widgets/chat_input_field.dart';
 import '../widgets/chat_app_bar.dart';
 import '../providers/chat_provider.dart';
+import '../../../core/providers/speech_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -23,11 +24,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   void dispose() {
-    // If the user navigates away (e.g. presses back), immediately stop any ongoing AI audio.
-    // Use Future.microtask or read directly if safe. We use the service/notifier to stop it.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(chatNotifierProvider.notifier).stopSpeaking();
-    });
+    final chatNotifier = ref.read(chatNotifierProvider.notifier);
+    final speechNotifier = ref.read(speechProvider.notifier);
+    final isListening = ref.read(speechProvider).isListening;
+
+    chatNotifier.cancelGeneration();
+    if (isListening) speechNotifier.stopListening();
+    
     super.dispose();
   }
 
@@ -36,7 +39,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     // Add GestureDetector at the top level to dismiss keyboard on tap outside
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
+      child: PopScope(
+        canPop: true,
+        onPopInvoked: (didPop) {
+          // Triggers the exact moment a swipe-back starts!
+          ref.read(chatNotifierProvider.notifier).cancelGeneration();
+          if (ref.read(speechProvider).isListening) {
+            ref.read(speechProvider.notifier).stopListening();
+          }
+        },
+        child: Scaffold(
         backgroundColor: Colors.transparent, // Inherits glass background
         extendBody: true,
         resizeToAvoidBottomInset: false, // Handled manually by padding
@@ -89,6 +101,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 }
@@ -140,19 +153,8 @@ class _AnimatedGradientBackgroundState extends State<_AnimatedGradientBackground
         );
 
         return DecoratedBox(
-          decoration: BoxDecoration(
-            // gradient: LinearGradient(
-            //   begin: alignTop,
-            //   end: alignBottom,
-            //   colors: const [
-            //     Color(0xFF97AFD4), 
-            //     Color(0xFF7493D5),
-            //     Color(0xFFC5D2DE),
-            //     Color(0xFFE7F5FF), 
-            //   ],
-            //   stops: const [0.0, 0.25, 0.45, 1.0],
-            // ),
-            color: Color.fromARGB(255, 231, 243, 254),
+          decoration: const BoxDecoration(
+            color: Color(0xFFFFFFFF),
           ),
         );
       },

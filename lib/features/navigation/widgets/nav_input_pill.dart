@@ -88,6 +88,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
     _secondFocusNode.dispose();
     _streamTimer?.cancel();
     _shimmerController.dispose();
+    _aiService.stopSpeaking();
     try {
       ref.read(speechProvider.notifier).stopListening();
     } catch (_) {}

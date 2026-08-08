@@ -10,6 +10,8 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final VoidCallback onLockTap;
   final VoidCallback onCartTap;
   final VoidCallback onRefreshTap;
+  final bool mfConnected;
+  final bool stocksConnected;
 
   HoldingsHeaderDelegate({
     required this.safeAreaTop,
@@ -19,6 +21,8 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.onLockTap,
     required this.onCartTap,
     required this.onRefreshTap,
+    this.mfConnected = false,
+    this.stocksConnected = false,
   });
 
   @override
@@ -56,6 +60,21 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
     final double pillBgRatio = (easedRatio * 1.5).clamp(0.0, 1.0);
     final double currentBorderOpacity = lerpDouble(0.0, 1.0, pillBgRatio)!;
     final double currentShadowOpacity = lerpDouble(0.0, 0.05, pillBgRatio)!;
+
+    String subtitleText = 'NET WORTH';
+    if (mfConnected && !stocksConnected) subtitleText = 'MUTUAL FUNDS VALUE';
+    if (!mfConnected && stocksConnected) subtitleText = 'STOCKS VALUE';
+
+    double totalWealthValue = (mfConnected ? 352962.0 : 0.0) + (stocksConnected ? 147908.0 : 0.0);
+    
+    String pillOneDayText = '';
+    if (mfConnected && stocksConnected) {
+      pillOneDayText = '₹3,402 (0.65%)';
+    } else if (mfConnected) {
+      pillOneDayText = '₹2,202 (0.62%)';
+    } else if (stocksConnected) {
+      pillOneDayText = '₹1,200 (0.81%)';
+    }
 
     return Container(
       color: Colors.transparent,
@@ -134,7 +153,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
               opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0), // Fades out quickly
               child: Center(
                 child: Text(
-                  "MUTUAL FUNDS VALUE",
+                  subtitleText,
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     color: const Color(0xFF9CA3AF),
@@ -175,7 +194,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                       ],
                     ),
                     child: _OdometerText(
-                      targetValue: hasImportedPortfolio ? 343158 : 0,
+                      targetValue: (hasImportedPortfolio && (mfConnected || stocksConnected)) ? totalWealthValue.toInt() : 0,
                       isLocked: isLocked,
                       style: TextStyle(
                         fontFamily: 'DMSans',
@@ -228,7 +247,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                                         ),
                                         SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
                                         Text(
-                                          isLocked ? '₹ * * * *' : '₹2,491 (0.73%)',
+                                          isLocked ? '₹ * * * *' : pillOneDayText,
                                           style: TextStyle(
                                             fontFamily: 'DMSans',
                                             fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
