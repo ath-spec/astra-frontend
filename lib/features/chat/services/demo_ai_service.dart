@@ -128,7 +128,11 @@ class DemoAIService {
 
   void stopSpeaking() {
     _speechId++; // Invalidate any pending network requests for TTS
-    audioPlayer.stop();
+    try {
+      audioPlayer.stop();
+    } catch (e) {
+      print('Ignored audio stop error: $e');
+    }
   }
 
   Future<void> speak(String text) async {
