@@ -27,7 +27,7 @@ class MfNewAiPicksHero extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: const Color(0xFFF1F5F9)),
             boxShadow: [
               BoxShadow(
@@ -69,7 +69,7 @@ class MfNewAiPicksHero extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
                         color: Colors.black,
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

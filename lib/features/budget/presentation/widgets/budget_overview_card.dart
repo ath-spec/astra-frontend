@@ -97,7 +97,7 @@ class BudgetOverviewCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: backgroundColor, // Background color
-        borderRadius: BorderRadius.circular(!isMini ? 24 : 4),
+        borderRadius: BorderRadius.circular(4),
         border: (isCategoryCard || borderColor != null) ? Border.all(color: borderColor ?? const Color(0xFFE2E8F0), width: 1) : null,
       ),
       child: Column(

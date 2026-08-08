@@ -147,7 +147,7 @@ class _BudgetCard extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                             color: Colors.black54,
                           ),
-                          maxLines: 2,
+                          maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 22),

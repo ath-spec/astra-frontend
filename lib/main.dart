@@ -7,8 +7,12 @@ import 'core/navigation/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  await dotenv.load(fileName: ".env");
   
   // Lock app to portrait mode only (disables landscape)
   await SystemChrome.setPreferredOrientations([

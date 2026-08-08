@@ -88,7 +88,7 @@ class _BudgetIntroDiagnosisScreenState
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric( 
                           horizontal: (24),
                         ),
                         child: Text("Here's what we gathered",
@@ -308,7 +308,7 @@ class _BudgetIntroDiagnosisScreenState
                                   "Analyzing your data...",
                               textAlign: TextAlign.left,
                               style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                                fontSize: (10),
+                                fontSize: (12),
                                 color: BudgetColors.grey7,
                                 height: 1.5,
                               ),

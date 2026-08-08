@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/providers/nav_context_provider.dart';
+import '../../../asset_connection/providers/asset_connection_provider.dart';
 import 'widgets/mf_explore_grid.dart';
 import 'widgets/mf_trending_funds.dart';
 import 'widgets/mf_fund_list_card.dart';
@@ -27,6 +28,8 @@ class MfExploreScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final assetState = ref.watch(assetConnectionProvider);
+    
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       body: CustomScrollView(
@@ -44,6 +47,7 @@ class MfExploreScreen extends ConsumerWidget {
                   context.go('/');
                 }
               },
+              mfConnected: assetState.mfConnected,
             ),
           ),
           SliverList.list(
@@ -74,21 +78,8 @@ class MfExploreScreen extends ConsumerWidget {
                 const MfNewAiPicksHero(),
                 const SizedBox(height: 48),
 
-                
-
-                
-
-                // Section 6: GLOBAL INVESTING
+              // Section 6: GLOBAL INVESTING
                 const MfGlobalInvesting(),
-                const SizedBox(height: 48),
-
-
-                // Section 9: EXPLORE BY RISK
-                const MfExploreByRisk(),
-                const SizedBox(height: 48),
-
-                // Section 10: AI PICKS (DYNAMIC BENTO)
-                const MfAiPicksBento(),
                 
                 const SizedBox(height: 120), // Bottom padding for nav bar
               ],
@@ -103,11 +94,13 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
   final double screenHeight;
   final VoidCallback onBackTap;
+  final bool mfConnected;
 
   _MfExploreHeaderDelegate({
     required this.safeAreaTop,
     required this.screenHeight,
     required this.onBackTap,
+    required this.mfConnected,
   });
 
   @override
@@ -260,7 +253,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '₹ 3,43,158',
+                      mfConnected ? '₹ 3,43,158' : '₹ 0',
                       style: TextStyle(
                         fontFamily: 'DMSans',
                         color: const Color(0xFF0F172A),
@@ -271,7 +264,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                       ),
                     ),
                     // Shrinking subtitle text (1D Change)
-                    if (shrinkRatio < 1.0)
+                    if (mfConnected && shrinkRatio < 1.0)
                       Opacity(
                         opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
                         child: Padding(

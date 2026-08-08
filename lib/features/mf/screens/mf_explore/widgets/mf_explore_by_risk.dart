@@ -142,7 +142,7 @@ class _MfExploreByRiskState extends State<MfExploreByRisk> {
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
       decoration: BoxDecoration(
         color: isActive ? const Color(0xFFF5F3FF) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: isActive ? const Color(0xFF8B5CF6).withValues(alpha: 0.5) : const Color(0xFFF1F5F9),
           width: 1.0,

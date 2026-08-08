@@ -23,7 +23,7 @@ class BudgetConfirmationScreen extends StatelessWidget {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-      backgroundColor: const Color(0xFFfaf5ea),
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(

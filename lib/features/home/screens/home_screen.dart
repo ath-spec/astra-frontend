@@ -686,16 +686,6 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Background Arch - fades out
-          Positioned(
-            top: -shrinkOffset * 0.5,
-            left: 0,
-            right: 0,
-            child: Opacity(
-              opacity: 1.0 - shrinkRatio,
-              child: const ArchBackground(height: 250),
-            ),
-          ),
 
           // Frosted glass blur overlay
           Positioned.fill(

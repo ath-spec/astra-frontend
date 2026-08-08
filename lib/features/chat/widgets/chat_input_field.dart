@@ -13,6 +13,7 @@ class ChatInputField extends ConsumerStatefulWidget {
 class _ChatInputFieldState extends ConsumerState<ChatInputField> {
   final TextEditingController _controller = TextEditingController();
   final ValueNotifier<bool> _hasTextNotifier = ValueNotifier(false);
+  bool _wasVoiceInput = false;
 
   @override
   void initState() {
@@ -29,11 +30,22 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
   void _submit() {
     final text = _controller.text;
     if (text.trim().isNotEmpty) {
-      ref.read(chatNotifierProvider.notifier).sendMessage(text);
+      // Force stop listening if active so the mic doesn't block the audio playback hardware
+      final speechState = ref.read(speechProvider);
+      if (speechState.isListening) {
+        ref.read(speechProvider.notifier).stopListening();
+      }
+      
+      ref.read(chatNotifierProvider.notifier).sendMessage(text, isVoice: _wasVoiceInput);
+      _wasVoiceInput = false; // Reset for next message
       _controller.clear();
       _onTextChanged(); // Manually trigger state update since programmatic clear() doesn't fire onChanged
       FocusScope.of(context).unfocus(); // Close the keyboard
     }
+  }
+
+  void _stopGeneration() {
+    ref.read(chatNotifierProvider.notifier).cancelGeneration();
   }
 
   void _toggleListening() {
@@ -43,10 +55,16 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
     if (speechState.isListening) {
       speechNotifier.stopListening();
     } else {
+      FocusScope.of(context).unfocus(); // Close keyboard so it doesn't interrupt STT
+      final existingText = _controller.text;
+      
       speechNotifier.startListening(
         onResultCallback: (text) {
           if (text.isNotEmpty) {
-            _controller.text = text;
+            _wasVoiceInput = true;
+            // Append the new speech to the existing text
+            final separator = existingText.isNotEmpty && !existingText.endsWith(' ') ? ' ' : '';
+            _controller.text = '$existingText$separator$text';
             _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
             _onTextChanged();
           }
@@ -64,6 +82,9 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
 
   @override
   Widget build(BuildContext context) {
+    final isProcessing = ref.watch(isProcessingProvider);
+    final isSpeaking = ref.watch(isSpeakingProvider);
+    
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0.0, end: 1.0),
       duration: const Duration(milliseconds: 250),
@@ -89,6 +110,7 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
             // Text field with Send button properly nested inside as a suffixIcon
             Expanded(
             child: AnimatedContainer(
+              constraints: const BoxConstraints(minHeight: 48),
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
               decoration: BoxDecoration(
@@ -139,7 +161,7 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                   ),
                   // Properly place the send button INSIDE the textbox using suffixIcon
                   suffixIcon: Padding(
-                    padding: const EdgeInsets.only(right: 8.0, bottom: 6.0),
+                    padding: const EdgeInsets.only(right: 4.0, bottom: 4.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       mainAxisSize: MainAxisSize.min,
@@ -150,8 +172,12 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                             return _DynamicActionSuffix(
                               hasText: hasText,
                               isListening: ref.watch(speechProvider).isListening,
+                              isProcessing: isProcessing,
+                              isSpeaking: isSpeaking,
+                              isTyping: ref.watch(isTypingProvider),
                               onSend: _submit,
                               onMic: _toggleListening,
+                              onStop: _stopGeneration,
                             );
                           },
                         ),
@@ -159,7 +185,6 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
                     ),
                   ),
                 ),
-                // The style property here is duplicated; removed the old lower-font-size one below
               ),
             ),
           ),
@@ -173,14 +198,22 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
 class _DynamicActionSuffix extends StatefulWidget {
   final bool hasText;
   final bool isListening;
+  final bool isProcessing;
+  final bool isSpeaking;
+  final bool isTyping;
   final VoidCallback onSend;
   final VoidCallback onMic;
+  final VoidCallback onStop;
 
   const _DynamicActionSuffix({
     required this.hasText,
     required this.isListening,
+    required this.isProcessing,
+    required this.isSpeaking,
+    required this.isTyping,
     required this.onSend,
     required this.onMic,
+    required this.onStop,
   });
 
   @override
@@ -192,14 +225,40 @@ class _DynamicActionSuffixState extends State<_DynamicActionSuffix> {
 
   @override
   Widget build(BuildContext context) {
+    final isAiActive = widget.isProcessing || widget.isSpeaking || widget.isTyping;
+    
+    // Determine colors based on Emil's design principles
+    Color bgColor;
+    Color iconColor;
+    
+    if (widget.isListening) {
+      // User is speaking into the mic! Show red stop button.
+      bgColor = Colors.red.shade50;
+      iconColor = Colors.red;
+    } else if (isAiActive) {
+      // AI is working (processing, speaking, or typing). Show black stop button.
+      bgColor = const Color(0xFF1E293B); // Dark charcoal (black)
+      iconColor = Colors.white;
+    } else if (widget.hasText) {
+      bgColor = const Color(0xFF1E293B);
+      iconColor = Colors.white;
+    } else {
+      bgColor = const Color(0xFFF1F5F9);
+      iconColor = const Color(0xFF64748B);
+    }
+
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
         setState(() => _isPressed = false);
-        if (widget.hasText) {
+        if (isAiActive) {
+          widget.onStop();
+        } else if (widget.isListening) {
+          widget.onMic(); // Stops the mic
+        } else if (widget.hasText) {
           widget.onSend();
         } else {
-          widget.onMic();
+          widget.onMic(); // Starts the mic
         }
       },
       onTapCancel: () => setState(() => _isPressed = false),
@@ -210,24 +269,52 @@ class _DynamicActionSuffixState extends State<_DynamicActionSuffix> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeOut,
-          width: 32,
-          height: 32,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
-            // Mic is a lighter color, Send is dark charcoal
-            color: widget.hasText ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+            color: bgColor,
             shape: BoxShape.circle,
           ),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) => ScaleTransition(scale: animation, child: child),
-            child: Icon(
-              widget.hasText 
-                ? Icons.arrow_upward_rounded 
-                : (widget.isListening ? Icons.stop_rounded : Icons.mic_none_rounded),
-              key: ValueKey('${widget.hasText}_${widget.isListening}'),
-              size: 18,
-              color: widget.hasText ? Colors.white : const Color(0xFF475569),
-            ),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) {
+              return ScaleTransition(
+                scale: animation,
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+            child: isAiActive 
+                ? Icon(
+                    Icons.stop_rounded,
+                    key: ValueKey('stop_ai_${widget.isProcessing}'),
+                    color: iconColor,
+                    size: 20,
+                  )
+                : widget.isListening
+                ? Icon(
+                    Icons.stop_rounded,
+                    key: const ValueKey('stop_mic'),
+                    color: iconColor,
+                    size: 20,
+                  )
+                : widget.hasText
+                ? Icon(
+                    Icons.arrow_upward_rounded,
+                    key: const ValueKey('send'),
+                    color: iconColor,
+                    size: 20,
+                  )
+                : Icon(
+                    Icons.mic_none_rounded,
+                    key: const ValueKey('mic'),
+                    color: iconColor,
+                    size: 20,
+                  ),
           ),
         ),
       ),
@@ -257,8 +344,8 @@ class _HomeButtonState extends State<_HomeButton> {
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOut,
         child: Container(
-          width: 44,
-          height: 44,
+          width: 48,
+          height: 48,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -274,7 +361,7 @@ class _HomeButtonState extends State<_HomeButton> {
           child: const Icon(
             Icons.home_rounded,
             color: Color(0xFF334155),
-            size: 20,
+            size: 22,
           ),
         ),
       ),

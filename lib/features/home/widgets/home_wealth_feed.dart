@@ -41,21 +41,21 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
 
   final List<Map<String, dynamic>> _newsItems = [
     {
-      'image': 'lib/core/images/no_recurring_bg.webp',
+      'image': 'lib/core/images/income_tax_nudge.webp',
       'tags': ['Top News', '• Trending'],
       'title': 'Income Tax Department\'s NUDGE drive leads to 1.25 crore updated ITRs',
       'description': 'The CBDT\'s technology-driven NUDGE campaign prompted 1.25 crore taxpayers to revise or update their ITRs over FY25.',
       'source': 'LiveMint',
     },
     {
-      'image': 'lib/core/images/why_budget.webp',
+      'image': 'lib/core/images/3yrinvest.webp',
       'tags': ['News from our experts'],
       'title': 'A 3 year investment break turned ₹17 crore into ₹12.1 crore',
       'description': 'Two investors start with ₹1 crore each, both compounding at 12% for 25 years. The first stays uninterrupted and ends with ₹17 crore.',
       'source': 'Economic Times',
     },
     {
-      'image': 'lib/core/images/xplore_pillars.webp',
+      'image': 'lib/core/images/ai_rally.webp',
       'tags': ['Tech', '• Hot'],
       'title': 'AI Stocks Rally: Are we in a bubble or a new era?',
       'description': 'Global tech funds see massive inflows as semiconductor and AI software companies post record-breaking quarterly guidance.',
@@ -126,7 +126,7 @@ class _HomeWealthFeedState extends State<HomeWealthFeed> {
             'Last updated: Today, $_currentTimeIst',
             style: TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.w500,
               color: const Color(0xFF64748B),
             ),

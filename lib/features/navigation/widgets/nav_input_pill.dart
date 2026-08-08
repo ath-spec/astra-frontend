@@ -11,6 +11,9 @@ import 'border_beam.dart';
 import 'voice_animation.dart';
 import 'package:uuid/uuid.dart';
 import '../../chat/models/chat_message.dart';
+import '../../chat/services/demo_ai_service.dart';
+import '../../../core/widgets/typewriter_markdown.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 enum NavInputState { initial, typing, generating, streaming, replied }
 
@@ -35,13 +38,15 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
   
   final TextEditingController _secondController = TextEditingController();
   final FocusNode _secondFocusNode = FocusNode();
+  final _aiService = DemoAIService();
 
   NavInputState _currentState = NavInputState.initial;
   String _userMessage = "";
   
-  final String _aiResponse = "I can certainly help you with that! Let's analyze your portfolio first.";
+  String _aiResponse = "";
   String _streamedResponse = "";
   Timer? _streamTimer;
+  bool _wasVoiceInput = false;
 
   // Shimmer animation for generating state
   late AnimationController _shimmerController;
@@ -88,7 +93,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
     super.dispose();
   }
 
-  void _handleFirstSubmit() {
+  void _handleFirstSubmit() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
@@ -97,42 +102,64 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
       _currentState = NavInputState.generating;
     });
 
-    // Simulate network delay then start streaming
-    Future.delayed(const Duration(milliseconds: 800), () {
+    try {
+      final chatHistory = ref.read(chatNotifierProvider);
+      final historyMessages = chatHistory.map((msg) => {
+        'role': msg.isUser ? 'user' : 'assistant',
+        'content': msg.text,
+      }).toList();
+      
+      final messages = [...historyMessages, {'role': 'user', 'content': text}];
+
+      final response = await _aiService.getChatResponse(
+        messages,
+        systemPromptOverride: dotenv.env['NAV_PILL_PROMPT_OVERRIDE'] ?? 'You are ASTRA. Keep your answer VERY CONCISE (max 1-2 sentences).',
+      );
+
       if (mounted) {
-        setState(() => _currentState = NavInputState.streaming);
-        _startStreaming();
-      }
-    });
-  }
-
-  void _startStreaming() {
-    _streamedResponse = "";
-    int currentIndex = 0;
-    _streamTimer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      if (currentIndex < _aiResponse.length) {
-        setState(() {
-          _streamedResponse += _aiResponse[currentIndex];
-        });
-        currentIndex++;
-      } else {
-        timer.cancel();
-        Future.delayed(const Duration(milliseconds: 300), () {
-          if (mounted) {
-            setState(() {
-              _currentState = NavInputState.replied;
-              _secondFocusNode.requestFocus();
-            });
+        _aiResponse = response.trim();
+        
+        // Trigger voice synthesis (TTS) only if user used voice and hasn't pressed stop
+        if (_wasVoiceInput && _currentState == NavInputState.generating) {
+          String spokenText = _aiResponse.replaceAll(RegExp(r'```json[\s\S]*?```'), '');
+          spokenText = spokenText.replaceAll(RegExp(r'\|.*\|'), '');
+          spokenText = spokenText.replaceAll(RegExp(r'[-*#_~`]'), '');
+          spokenText = spokenText.replaceAll(RegExp(r'\n+'), ' ').trim();
+          
+          if (spokenText.isNotEmpty) {
+            // Await so text typing synchronizes with audio start
+            await _aiService.speak(spokenText);
           }
-        });
+        }
+        
+        // Only start streaming text if the user hasn't pressed stop (double check after await)
+        if (mounted && _currentState == NavInputState.generating) {
+          setState(() => _currentState = NavInputState.streaming);
+        }
       }
-    });
+    } catch (e) {
+      if (mounted) {
+        _aiResponse = "I apologize, but I encountered an error. Let's head to the main chat to sort this out.";
+        setState(() => _currentState = NavInputState.streaming);
+        if (_wasVoiceInput) _aiService.speak("I apologize, but I encountered an error.");
+      }
+    }
   }
 
+  void _stopAiGeneration() {
+    _aiService.stopSpeaking();
+    if (mounted) {
+      setState(() {
+        if (!_aiResponse.endsWith('\u200B')) {
+          _aiResponse += '\u200B';
+        }
+        _currentState = NavInputState.replied;
+        _secondFocusNode.requestFocus();
+      });
+    }
+  }
+
+  // _startStreaming removed since TypewriterMarkdown handles it.
   void _handleSecondSubmit() {
     final text = _secondController.text.trim();
     if (text.isEmpty) return;
@@ -143,28 +170,27 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
         id: uuid.v4(),
         text: _userMessage,
         isUser: true,
-        timestamp: DateTime.now().subtract(const Duration(seconds: 2)),
+        // Use a timestamp old enough that TypewriterMarkdown won't re-animate it
+        timestamp: DateTime.now().subtract(const Duration(seconds: 30)),
       ),
       ChatMessage(
         id: uuid.v4(),
-        text: _aiResponse,
+        // Append the \u200B sentinel so chat's TypewriterMarkdown treats this
+        // as an already-shown message and skips the typewriter effect
+        text: '${_aiResponse}\u200B',
         isUser: false,
-        timestamp: DateTime.now().subtract(const Duration(seconds: 1)),
+        timestamp: DateTime.now().subtract(const Duration(seconds: 30)),
       ),
     ];
 
-    // Add the inline conversation history first
+    // 1. Add the inline conversation history from the nav pill
     ref.read(chatNotifierProvider.notifier).addMessages(messages);
-    
-    // Slight delay to allow history to process before sending the new message
-    Future.delayed(const Duration(milliseconds: 100), () {
-      ref.read(chatNotifierProvider.notifier).sendMessage(text);
-    });
 
-    // Close input mode
+    // 2. Send the new follow-up message immediately (no delay — delay causes race condition)
+    ref.read(chatNotifierProvider.notifier).sendMessage(text, isVoice: _wasVoiceInput);
+
+    // 3. Close input mode and navigate AFTER messages are set up
     ref.read(navInputModeProvider.notifier).state = false;
-    
-    // Notify parent to route to chat branch
     widget.onSend();
   }
 
@@ -175,18 +201,24 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
     if (speechState.isListening) {
       speechNotifier.stopListening();
     } else {
+      FocusScope.of(context).unfocus(); // Close keyboard so it doesn't interrupt STT
+      final isFirstPhase = _currentState == NavInputState.initial || _currentState == NavInputState.typing;
+      final existingText = isFirstPhase ? _controller.text : _secondController.text;
+
       speechNotifier.startListening(
         onResultCallback: (text) {
           if (!mounted) return;
-          if (_currentState == NavInputState.initial || _currentState == NavInputState.typing) {
-            if (text.isNotEmpty) {
-              _controller.text = text;
+          if (text.isNotEmpty) {
+            _wasVoiceInput = true;
+            final separator = existingText.isNotEmpty && !existingText.endsWith(' ') ? ' ' : '';
+            final combinedText = '$existingText$separator$text';
+            
+            if (isFirstPhase) {
+              _controller.text = combinedText;
               _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
               _onTextChanged();
-            }
-          } else if (_currentState == NavInputState.replied) {
-            if (text.isNotEmpty) {
-              _secondController.text = text;
+            } else if (_currentState == NavInputState.replied) {
+              _secondController.text = combinedText;
               _secondController.selection = TextSelection.fromPosition(TextPosition(offset: _secondController.text.length));
             }
           }
@@ -370,11 +402,19 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                           const SizedBox(width: 4),
                         ],
                         GestureDetector(
-                          onTap: _toggleListening,
+                          onTap: () {
+                            if (_currentState == NavInputState.streaming || _currentState == NavInputState.generating) {
+                              _stopAiGeneration();
+                            } else {
+                              _toggleListening();
+                            }
+                          },
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             child: Icon(
-                              ref.watch(speechProvider).isListening ? Icons.stop_rounded : Icons.mic_none_rounded, 
+                              (_currentState == NavInputState.streaming || _currentState == NavInputState.generating || ref.watch(speechProvider).isListening)
+                                  ? Icons.stop_rounded 
+                                  : Icons.mic_none_rounded, 
                               size: 20, 
                               color: const Color(0xFF041E49)
                             ),
@@ -515,14 +555,18 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
               Expanded(
                 child: _currentState == NavInputState.generating
                     ? _buildGeneratingShimmer()
-                    : Text(
-                        _currentState == NavInputState.streaming ? _streamedResponse : _aiResponse,
-                        style: const TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 14,
-                          color: Color(0xFF0F172A),
-                          height: 1.4,
-                        ),
+                    : TypewriterMarkdown(
+                        text: _aiResponse,
+                        animate: _currentState == NavInputState.streaming && !_aiResponse.contains('```json'),
+                        onTypingStarted: () {},
+                        onTypingFinished: () {
+                          if (mounted) {
+                            setState(() {
+                              _currentState = NavInputState.replied;
+                              _secondFocusNode.requestFocus();
+                            });
+                          }
+                        },
                       ),
               ),
               if (_currentState == NavInputState.replied)
@@ -590,7 +634,13 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         GestureDetector(
-                          onTap: _toggleListening,
+                          onTap: () {
+                            if (_currentState == NavInputState.streaming || _currentState == NavInputState.generating) {
+                              _stopAiGeneration();
+                            } else {
+                              _toggleListening();
+                            }
+                          },
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             decoration: const BoxDecoration(
@@ -598,7 +648,9 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                               color: Color(0xFFD3E3FD), // Deeper blue for active mic
                             ),
                             child: Icon(
-                              ref.watch(speechProvider).isListening ? Icons.stop_rounded : Icons.mic_none_rounded, 
+                              (_currentState == NavInputState.streaming || _currentState == NavInputState.generating || ref.watch(speechProvider).isListening)
+                                  ? Icons.stop_rounded 
+                                  : Icons.mic_none_rounded, 
                               size: 20, 
                               color: const Color(0xFF041E49)
                             ),
@@ -638,30 +690,102 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
   }
 
   Widget _buildGeneratingShimmer() {
-    return FadeTransition(
-      opacity: _shimmerAnimation,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 12,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: const Color(0xFFE2E8F0),
-              borderRadius: BorderRadius.circular(6),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FadeTransition(
+          opacity: _shimmerAnimation,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 12,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE2E8F0),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                height: 12,
+                width: 200,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE2E8F0),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        const _GeneratingStepsWidget(),
+      ],
+    );
+  }
+}
+
+class _GeneratingStepsWidget extends StatefulWidget {
+  const _GeneratingStepsWidget();
+
+  @override
+  State<_GeneratingStepsWidget> createState() => _GeneratingStepsWidgetState();
+}
+
+class _GeneratingStepsWidgetState extends State<_GeneratingStepsWidget> {
+  int _stepIndex = 0;
+  Timer? _timer;
+  final List<String> _steps = [
+    'Thinking...',
+    'Analyzing portfolio...',
+    'Preparing voice...',
+    'Almost ready...',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 1500), (timer) {
+      if (mounted) {
+        setState(() {
+          if (_stepIndex < _steps.length - 1) {
+            _stepIndex++;
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      key: ValueKey(_stepIndex),
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 400),
+      curve: const Cubic(0.23, 1, 0.32, 1),
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, 4 * (1 - value)),
+            child: Text(
+              _steps[_stepIndex],
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 13,
+                color: Color(0xFF64748B),
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          Container(
-            height: 12,
-            width: 200,
-            decoration: BoxDecoration(
-              color: const Color(0xFFE2E8F0),
-              borderRadius: BorderRadius.circular(6),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

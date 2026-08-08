@@ -207,7 +207,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
         ),
         textAlign: TextAlign.left,
         style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-          fontSize: 10,
+          fontSize: 12,
           color: _getTextColor(),
           height: 1.5,
         ),
@@ -253,7 +253,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: const Color(0xFFfaf5ea),
+        backgroundColor: const Color(0xFFFFFFFF),
         body: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           behavior: HitTestBehavior.translucent,

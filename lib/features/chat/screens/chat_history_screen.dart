@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/chat_provider.dart';
+import '../providers/chat_session_provider.dart';
 import '../../../core/widgets/dashed_line.dart';
 
 class ChatHistoryScreen extends ConsumerStatefulWidget {
@@ -65,10 +66,14 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
     );
   }
 
-  Widget _buildChatItem(String title, {bool isLast = false}) {
+  Widget _buildChatItem(String title, {bool isLast = false, String? sessionId}) {
     return ScaleButton(
       onTap: () {
-        ref.read(chatNotifierProvider.notifier).loadDummyThread(title);
+        if (sessionId != null) {
+          ref.read(chatNotifierProvider.notifier).loadSession(sessionId);
+        } else {
+          ref.read(chatNotifierProvider.notifier).loadDummyThread(title);
+        }
         context.pop();
       },
       child: Container(
@@ -87,6 +92,8 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
                   color: Color(0xFF1E293B),
                   height: 1.3,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             if (!isLast)
@@ -105,6 +112,7 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
     final topPadding = MediaQuery.paddingOf(context).top;
+    final liveSessions = ref.watch(chatSessionManagerProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -163,6 +171,9 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
                     ),
                     children: [
                       _buildSectionHeader('Today'),
+                      for (int i = 0; i < liveSessions.length; i++)
+                        _buildChatItem(liveSessions[i].title, isLast: i == liveSessions.length - 1 && _todayChats.isEmpty, sessionId: liveSessions[i].id),
+                      
                       for (int i = 0; i < _todayChats.length; i++)
                         _buildChatItem(_todayChats[i]['title'], isLast: i == _todayChats.length - 1),
 

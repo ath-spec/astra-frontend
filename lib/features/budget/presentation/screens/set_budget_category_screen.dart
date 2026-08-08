@@ -146,7 +146,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-      backgroundColor: const Color(0xFFfaf5ea),
+      backgroundColor: const Color(0xFFFFFFFF),
       body: Stack(
         children: [
           SafeArea(
@@ -288,7 +288,7 @@ class _SetBudgetCategoryScreenState extends ConsumerState<SetBudgetCategoryScree
             child: GestureDetector(
               onVerticalDragUpdate: (_) {}, // Absorbs swipe down to prevent accidental button taps
               child: Container(
-                color: const Color(0xFFfaf5ea),
+                color: const Color(0xFFFFFFFF),
               child: SafeArea(
                 top: false,
                 child: Padding(

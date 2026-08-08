@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../portfolio_analysis/widgets/portfolio_analysis/allocation_components/spider_chart_info_sheet.dart';
 import '../../../core/responsive/size_config.dart';
+import '../../../core/widgets/animated_gradient_text.dart';
 
 class HoldingFundInsights extends StatefulWidget {
   final bool isPositiveImpact;
@@ -223,13 +224,15 @@ class _HoldingFundInsightsState extends State<HoldingFundInsights> with SingleTi
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          answer,
-          style: const TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 12,
-            height: 1.5,
-            color: Color(0xFF475569),
+        AnimatedGradientShimmer(
+          child: Text(
+            answer,
+            style: const TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 12,
+              height: 1.5,
+              color: Colors.white,
+            ),
           ),
         ),
       ],

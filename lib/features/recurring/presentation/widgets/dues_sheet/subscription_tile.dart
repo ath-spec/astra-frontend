@@ -122,7 +122,7 @@ class SubscriptionTile extends StatelessWidget {
                     Text(
                       (item['name'] as String).toCapitalized(),
                       style: TextStyle(fontFamily: 'DMSans', 
-                        fontSize: getProportionateScreenWidth(12),
+                        fontSize: getProportionateScreenWidth(14),
                         fontWeight: FontWeight.w600,
                         color: isEnabled
                             ? Colors.black
@@ -134,7 +134,7 @@ class SubscriptionTile extends StatelessWidget {
                     Text(
                       _getSubtitle().toCapitalized(),
                       style: TextStyle(fontFamily: 'DMSans', 
-                        fontSize: getProportionateScreenWidth(9),
+                        fontSize: getProportionateScreenWidth(12),
                         color: Colors.black,
                         fontWeight: FontWeight.normal,
                       ),
@@ -157,7 +157,7 @@ class SubscriptionTile extends StatelessWidget {
                       child: Text(
                         status.toCapitalized(),
                         style: TextStyle(fontFamily: 'DMSans', 
-                          fontSize: getProportionateScreenWidth(8),
+                          fontSize: getProportionateScreenWidth(10),
                           fontWeight: FontWeight.w500,
                           color: isEnabled
                               ? const Color.fromARGB(255, 0, 0, 0)
@@ -190,7 +190,7 @@ class SubscriptionTile extends StatelessWidget {
                           : "per month")
                       .toLowerCase(),
                   style: TextStyle(fontFamily: 'DMSans', 
-                    fontSize: getProportionateScreenWidth(8),
+                    fontSize: getProportionateScreenWidth(10),
                     color: Colors.black.withValues(alpha: isEnabled ? 0.4 : 0.3),
                     fontWeight: FontWeight.normal,
                   ),

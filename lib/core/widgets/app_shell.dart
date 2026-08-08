@@ -52,7 +52,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     });
   }
 
-  void _onPillTap(int index, {bool clearChat = true}) {
+  void _onPillTap(int index, {bool clearChat = false}) {
     final goingToChat = index == 2;
     final currentIndex = widget.navigationShell.currentIndex;
 
@@ -63,6 +63,8 @@ class _AppShellState extends ConsumerState<AppShell> {
     if (goingToChat) {
       setState(() => _navVisible = false);
       if (clearChat) {
+        // We only clear the chat if explicitly requested (e.g. starting a fresh session from history)
+        // For standard nav pill taps, we want to retain the active session so the user can navigate away and back.
         ref.invalidate(chatNotifierProvider);
       }
     } else {

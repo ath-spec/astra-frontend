@@ -24,9 +24,9 @@ class _BudgetCategoryAnalyzingScreenState
     extends ConsumerState<BudgetCategoryAnalyzingScreen> {
   int _textIndex = 0;
   final List<String> _loadingTexts = [
-    "Agent is reviewing your spending habits...",
-    "Agent is generating a budget plan...",
-    "Agent is generating category budgets...",
+    "Reviewing your spending habits...",
+    "Generating a budget plan...",
+    "Generating category budgets...",
   ];
 
   Timer? _textTimer;
@@ -181,7 +181,7 @@ class _BudgetCategoryAnalyzingScreenState
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-      backgroundColor: const Color(0xffece9ea),
+      backgroundColor: const Color(0xFFFFFFFF),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

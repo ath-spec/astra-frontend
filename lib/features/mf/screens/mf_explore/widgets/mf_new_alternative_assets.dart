@@ -186,7 +186,7 @@ class _AnimatedAssetCardState extends State<_AnimatedAssetCard> {
             ),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(3), // clip inner slightly smaller to avoid border bleeding
+            borderRadius: BorderRadius.circular(4), // clip inner slightly smaller to avoid border bleeding
             child: Stack(
               children: [
                 // Base Image Layer (Responsive)

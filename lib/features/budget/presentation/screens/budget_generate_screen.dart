@@ -28,9 +28,9 @@ class BudgetGenerateScreen extends ConsumerStatefulWidget {
 class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
   int _textIndex = 0;
   final List<String> _loadingTexts = [
-    "Agent is saving your preferences...",
-    "Agent is generating final budget plan...",
-    "Agent is setting up budget control center for you...",
+    "Saving your preferences...",
+    "Generating final budget plan...",
+    "Setting up budget control center for you...",
   ];
 
   Timer? _textTimer;
@@ -125,7 +125,7 @@ class _BudgetGenerateScreenState extends ConsumerState<BudgetGenerateScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: const Color(0xffece9ea),
+        backgroundColor: const Color(0xFFFFFFFF),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

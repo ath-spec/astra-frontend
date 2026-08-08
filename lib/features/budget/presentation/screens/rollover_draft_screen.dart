@@ -254,14 +254,14 @@ class _RolloverDraftScreenState extends ConsumerState<RolloverDraftScreen> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Color(0xFFfaf5ea),
+        backgroundColor: const Color(0xFFFFFFFF),
         body: Center(child: CircularProgressIndicator(color: BudgetColors.black)),
       );
     }
 
     if (_hasError) {
       return Scaffold(
-        backgroundColor: const Color(0xFFfaf5ea),
+        backgroundColor: const Color(0xFFFFFFFF),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

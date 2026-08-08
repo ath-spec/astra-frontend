@@ -34,7 +34,7 @@ class MfGlobalInvesting extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 16.0),
           decoration: BoxDecoration(
             color: const Color(0xFF0F172A), // Slate 900
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(4),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.1),

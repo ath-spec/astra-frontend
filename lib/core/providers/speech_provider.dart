@@ -67,11 +67,14 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
     return false;
   }
 
+  String _sessionAccumulatedWords = '';
+
   Future<void> startListening({Function(String)? onResultCallback}) async {
     _onResultCallback = onResultCallback;
     final initialized = await initialize();
     if (!initialized) return;
 
+    _sessionAccumulatedWords = '';
     state = state.copyWith(isListening: true, recognizedWords: '', hasError: false);
     
     await _speechToText.listen(
@@ -85,9 +88,19 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
   }
 
   void _onSpeechResult(SpeechRecognitionResult result) {
-    state = state.copyWith(recognizedWords: result.recognizedWords);
+    String currentWords = result.recognizedWords;
+    
+    // On Android dictation mode, STT sends finalResult=true for a chunk and then restarts.
+    // We must accumulate these finalized chunks so they don't overwrite each other.
+    if (result.finalResult) {
+      _sessionAccumulatedWords = (_sessionAccumulatedWords + ' ' + currentWords).trim();
+      currentWords = '';
+    }
+
+    final fullText = (_sessionAccumulatedWords + ' ' + currentWords).trim();
+    state = state.copyWith(recognizedWords: fullText);
     if (_onResultCallback != null) {
-      _onResultCallback!(result.recognizedWords);
+      _onResultCallback!(fullText);
     }
   }
 

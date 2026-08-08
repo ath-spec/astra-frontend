@@ -634,10 +634,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 16.h),
-                        child: _buildTopCard(isLocked),
-                      ),
+                      _buildTopCard(isLocked),
 
                       _buildHeaderRow(),
                       SizedBox(height: 16.h),

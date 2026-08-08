@@ -255,13 +255,15 @@ class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProvid
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          answer,
-          style: const TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 12,
-            height: 1.5,
-            color: Color(0xFF475569),
+        AnimatedGradientShimmer(
+          child: Text(
+            answer,
+            style: const TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 12,
+              height: 1.5,
+              color: Colors.white,
+            ),
           ),
         ),
       ],

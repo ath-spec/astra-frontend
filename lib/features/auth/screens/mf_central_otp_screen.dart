@@ -26,12 +26,15 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
     super.dispose();
   }
 
+  bool get _isOtpFilled => _otpControllers.every((c) => c.text.isNotEmpty);
+
   void _onOtpChanged(String value, int index) {
     if (value.isNotEmpty && index < 5) {
       _focusNodes[index + 1].requestFocus();
     } else if (value.isEmpty && index > 0) {
       _focusNodes[index - 1].requestFocus();
     }
+    setState(() {});
   }
 
   void _onSkip() {
@@ -257,9 +260,11 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                           SizedBox(height: 32.h),
                           // Authenticate Button
                           ElevatedButton(
-                            onPressed: _onAuthenticate,
+                            onPressed: _isOtpFilled ? _onAuthenticate : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFA855F7), // Purple color
+                              disabledBackgroundColor: const Color(0xFFE2E8F0), // Disabled color
+                              disabledForegroundColor: const Color(0xFF94A3B8),
                               foregroundColor: Colors.white,
                               minimumSize: const Size(double.infinity, 52),
                               shape: RoundedRectangleBorder(

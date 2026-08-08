@@ -3,12 +3,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/chat_input_field.dart';
 import '../widgets/chat_app_bar.dart';
+import '../providers/chat_provider.dart';
 
-class ChatScreen extends ConsumerWidget {
+class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends ConsumerState<ChatScreen> {
+  @override
+  void dispose() {
+    // If the user navigates away (e.g. presses back), immediately stop any ongoing AI audio.
+    // Use Future.microtask or read directly if safe. We use the service/notifier to stop it.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(chatNotifierProvider.notifier).stopSpeaking();
+    });
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Add GestureDetector at the top level to dismiss keyboard on tap outside
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
