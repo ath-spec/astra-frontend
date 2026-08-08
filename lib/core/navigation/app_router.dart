@@ -379,6 +379,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'module-details',
+                    redirect: (context, state) {
+                      if (state.extra == null) return '/learnings';
+                      return null;
+                    },
                     builder: (context, state) {
                       final module = state.extra as dynamic;
                       return ModuleDetailsScreen(module: module);
@@ -386,6 +390,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'chapter-list',
+                    redirect: (context, state) {
+                      if (state.extra == null) return '/learnings';
+                      return null;
+                    },
                     builder: (context, state) {
                       final data = state.extra as Map<String, dynamic>;
                       return ChapterListScreen(
@@ -396,6 +404,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'chapter-reader',
+                    redirect: (context, state) {
+                      if (state.extra == null) return '/learnings';
+                      return null;
+                    },
                     builder: (context, state) {
                       final map = state.extra as Map<String, dynamic>? ?? {};
                       return ChapterReaderScreen(
@@ -407,6 +419,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'video-reader',
+                    redirect: (context, state) {
+                      if (state.extra == null) return '/learnings';
+                      return null;
+                    },
                     builder: (context, state) {
                       final module = state.extra as VideoModule;
                       return VideoReaderScreen(module: module);
