@@ -125,6 +125,8 @@ class _NavigationPillState extends State<NavigationPill> {
             ),
             child: LayoutBuilder(
           builder: (context, constraints) {
+            final double scale = (MediaQuery.sizeOf(context).height / 800).clamp(1.0, 1.15);
+
             // Standardize tab width based on current row's max width and floor it to prevent sub-pixel clipping in ScrollViews
             final double pillWidth = constraints.maxWidth;
             double tabWidth = (pillWidth / widget.visibleTabsCount).floorToDouble();
@@ -150,7 +152,7 @@ class _NavigationPillState extends State<NavigationPill> {
 
             Widget content = Container(
               color: Colors.transparent,
-              height: 38,
+              height: 38 * scale,
               width: needsScroll ? totalWidth : null,
               child: Stack(
                   clipBehavior: Clip.none,
@@ -165,7 +167,7 @@ class _NavigationPillState extends State<NavigationPill> {
                       top: 0, 
                       left: indicatorLeft, 
                       width: tabWidth, 
-                      height: 38, // Updated to match new container height 38
+                      height: 38 * scale, // Updated to match new container height
                       child: AnimatedOpacity(
                         opacity: visualIndex == -1 ? 0.0 : 1.0,
                         duration: const Duration(milliseconds: 300),
@@ -256,7 +258,7 @@ class _NavigationPillState extends State<NavigationPill> {
                                             : Icon(
                                                 widget.icons[index],
                                                 color: color,
-                                                size: 16,
+                                                size: 16 * scale,
                                               ),
                                         if (widget.labels[index].isNotEmpty) ...[
                                           const SizedBox(height: 2),
@@ -266,7 +268,7 @@ class _NavigationPillState extends State<NavigationPill> {
                                             maxLines: 1,
                                             style: TextStyle(
                                               fontFamily: 'DMSans',
-                                              fontSize: 10, 
+                                              fontSize: 10 * scale, 
                                               fontWeight:FontWeight.w600,
                                               color: color,
                                               decoration: TextDecoration.none,

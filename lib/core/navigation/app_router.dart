@@ -56,6 +56,7 @@ import '../../features/stocks/screens/owned_stocks_screen.dart';
 import '../../features/cart/screens/cart_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/corner_fade_reveal_transition.dart';
+import 'nav_keys.dart';
 
 /// GoRouter configuration with auth state redirection.
 /// Follows navigation patterns in dart-flutter-patterns.
@@ -328,6 +329,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         },
         branches: [
           StatefulShellBranch(
+            navigatorKey: homeNavKey,
             routes: [
               GoRoute(
                 path: '/',
@@ -336,6 +338,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
+            navigatorKey: mfNavKey,
             routes: [
               GoRoute(
                 path: '/mf',
@@ -344,6 +347,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
+            navigatorKey: chatNavKey,
             routes: [
               GoRoute(
                 path: '/chat',
@@ -352,6 +356,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
+            navigatorKey: newsNavKey,
             routes: [
               GoRoute(
                 path: '/news',
@@ -360,6 +365,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
+            navigatorKey: learningsNavKey,
             routes: [
               GoRoute(
                 path: '/learnings',

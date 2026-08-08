@@ -13,6 +13,7 @@ import '../../features/navigation/widgets/nav_shared_components.dart';
 import '../../features/navigation/widgets/nav_input_pill.dart';
 import '../providers/nav_input_provider.dart';
 import '../providers/speech_provider.dart';
+import '../navigation/nav_keys.dart';
 
 class AppShell extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -26,6 +27,14 @@ class AppShell extends ConsumerStatefulWidget {
 class _AppShellState extends ConsumerState<AppShell> {
   bool _navVisible = true;
   int _previousIndex = 0;
+
+  static final _branchNavKeys = [
+    homeNavKey,
+    mfNavKey,
+    chatNavKey,
+    newsNavKey,
+    learningsNavKey,
+  ];
 
   @override
   void initState() {
@@ -135,22 +144,37 @@ class _AppShellState extends ConsumerState<AppShell> {
         break;
     }
 
+    final bool isHome = currentIndex == 0;
+
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        
-        if (isInputMode) {
+
+        final isInput = ref.read(navInputModeProvider);
+        if (isInput) {
           FocusScope.of(context).unfocus();
           ref.read(navInputModeProvider.notifier).state = false;
           ref.read(speechProvider.notifier).stopListening();
-        } else if (currentIndex == 0) {
-          // Prevent predictive back gesture bug by manually popping the app
-          await SystemNavigator.pop();
-        } else if (currentIndex == 2) {
-          widget.navigationShell.goBranch(_previousIndex);
+          return;
+        }
+
+        final currentIndex = widget.navigationShell.currentIndex;
+
+        // Try popping within the current branch first
+        final branchKey = _branchNavKeys[currentIndex];
+        final nav = branchKey.currentState;
+        if (nav != null && nav.canPop()) {
+          nav.pop();
+          return;
+        }
+
+        // At branch root — go home if not already there
+        if (currentIndex == 0) {
+          SystemNavigator.pop();
         } else {
-          _onPillTap(0); // Return to Home
+          ref.read(navContextProvider.notifier).state = NavContext.main;
+          widget.navigationShell.goBranch(0);
         }
       },
       child: Scaffold(
@@ -263,7 +287,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                                 : Padding(
                                     key: const ValueKey('has_home'),
                                     padding: const EdgeInsets.only(right: 12.0),
-                                    child: buildHomeCircle(() => _onPillTap(0)),
+                                    child: HomeCircleButton(onTap: () => _onPillTap(0)),
                                   ),
                           ),
                           Expanded(
@@ -327,7 +351,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                                 : Padding(
                                     key: const ValueKey('has_gem'),
                                     padding: const EdgeInsets.only(left: 12.0),
-                                    child: buildGemButton(() {
+                                    child: GemButton(onTap: () {
                                       if (widget.navigationShell.currentIndex == 0) {
                                         _onPillTap(2, clearChat: true);
                                       } else {
@@ -347,3 +371,5 @@ class _AppShellState extends ConsumerState<AppShell> {
 }
 
 // End of AppShell
+
+

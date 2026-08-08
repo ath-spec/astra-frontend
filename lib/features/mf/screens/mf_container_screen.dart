@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/providers/nav_context_provider.dart';
 import 'holdings/holdings_screen.dart';
 import 'sip/sip_screen.dart';
