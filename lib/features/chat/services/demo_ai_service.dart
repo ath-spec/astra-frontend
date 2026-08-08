@@ -18,18 +18,24 @@ class DemoAIService {
     try {
       final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
       
-      // 1. Fetch JWT Token (Matches z-newui structure where auth handles itself via user identity)
+      // 1. Authenticate via Mocked OTP Flow
+      await _dio.post(
+        '$baseUrl/api/auth/otp/send',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+        data: {'phone_number': phone},
+      );
+
       final authResponse = await _dio.post(
-        '$baseUrl/api/auth/token',
+        '$baseUrl/api/auth/otp/verify',
         options: Options(
           headers: {
             'Content-Type': 'application/json',
-            'X-Astra-Auth': dotenv.env['APP_AUTH_TOKEN'] ?? '',
           },
         ),
         data: {
-          'astra_user_id': phone, // Using phone as unique ID for hackathon demo
+          'astra_user_id': phone, 
           'phone_number': phone,
+          'otp': '1234',
           'name': name,
         },
       );
@@ -78,14 +84,25 @@ class DemoAIService {
     try {
       final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
       
-      // Get Token first
+      // Authenticate via Mocked OTP Flow
+      await _dio.post(
+        '$baseUrl/api/auth/otp/send',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+        data: {'phone_number': phone},
+      );
+
       final authResponse = await _dio.post(
-        '$baseUrl/api/auth/token',
+        '$baseUrl/api/auth/otp/verify',
         options: Options(headers: {
           'Content-Type': 'application/json',
-          'X-Astra-Auth': dotenv.env['APP_AUTH_TOKEN'] ?? '',
         }),
-        data: {'astra_user_id': phone, 'phone_number': phone, 'name': name, 'banks': banks},
+        data: {
+          'astra_user_id': phone, 
+          'phone_number': phone, 
+          'otp': '1234', 
+          'name': name, 
+          'banks': banks
+        },
       );
       final jwtToken = authResponse.data['token'];
       _cachedJwtToken = jwtToken; // Cache the token for TTS requests
