@@ -143,6 +143,14 @@ class DemoAIService {
       final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
       final url = '$baseUrl/api/tts';
       
+      // Sarvam TTS API has a strict 500 character limit.
+      // We truncate the text to ~490 characters safely at a word boundary.
+      String safeText = text;
+      if (safeText.length > 490) {
+        int lastSpace = safeText.substring(0, 490).lastIndexOf(' ');
+        safeText = lastSpace > 0 ? safeText.substring(0, lastSpace) : safeText.substring(0, 490);
+      }
+      
       final response = await _dio.post(
         url,
         options: Options(
@@ -152,7 +160,7 @@ class DemoAIService {
           },
         ),
         data: {
-          'text': text,
+          'text': safeText,
         },
       );
 

@@ -42,6 +42,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: PopScope(
         canPop: true,
         onPopInvoked: (didPop) {
+          if (!didPop) return; // Ignore keyboard dismisses or system back if route didn't pop
           // Triggers the exact moment a swipe-back starts!
           ref.read(chatNotifierProvider.notifier).cancelGeneration();
           if (ref.read(speechProvider).isListening) {

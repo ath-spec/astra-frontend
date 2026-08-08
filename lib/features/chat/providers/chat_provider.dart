@@ -77,8 +77,6 @@ class ChatNotifier extends _$ChatNotifier {
   Future<void> initializeHistory() async {
     if (state.isNotEmpty) return; // Already loaded
 
-    ref.read(isProcessingProvider.notifier).setProcessing(true);
-    
     final authState = ref.read(authProvider);
     String phone = '+919876543210';
     String name = 'Judge';
@@ -113,7 +111,7 @@ class ChatNotifier extends _$ChatNotifier {
         id: _uuid.v4(),
         text: content,
         isUser: role == 'user',
-        timestamp: DateTime.now(), // Fallback
+        timestamp: DateTime.now().subtract(const Duration(hours: 1)), // Mock timestamp
       ));
     }
     
@@ -121,8 +119,6 @@ class ChatNotifier extends _$ChatNotifier {
       state = historyMessages;
       _saveSession();
     }
-    
-    ref.read(isProcessingProvider.notifier).setProcessing(false);
   }
 
   void addMessages(List<ChatMessage> messages) {

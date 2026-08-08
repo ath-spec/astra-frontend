@@ -1,0 +1,10 @@
+[build]
+  command = "bash netlify-build.sh"
+  publish = "build/web"
+
+[[redirects]]
+  # This routing rule is critical for Flutter Web!
+  # It ensures that deep links and browser refreshes are handled by Flutter's router instead of Netlify returning a 404.
+  from = "/*"
+  to = "/index.html"
+  status = 200

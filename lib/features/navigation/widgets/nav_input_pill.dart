@@ -48,6 +48,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
   String _streamedResponse = "";
   Timer? _streamTimer;
   bool _wasVoiceInput = false;
+  bool _isTextTypingFinished = false;
 
   // Shimmer animation for generating state
   late AnimationController _shimmerController;
@@ -102,6 +103,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
     setState(() {
       _userMessage = text;
       _currentState = NavInputState.generating;
+      _isTextTypingFinished = false;
     });
 
     try {
@@ -249,6 +251,18 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
     } else {
       content = _buildChatState();
     }
+
+    // Listen for audio playback completion to trigger transition if text is already done typing
+    ref.listen<bool>(isSpeakingProvider, (previous, isSpeaking) {
+      if (previous == true && isSpeaking == false) {
+        if (_currentState == NavInputState.streaming && _isTextTypingFinished) {
+          setState(() {
+            _currentState = NavInputState.replied;
+            _secondFocusNode.requestFocus();
+          });
+        }
+      }
+    });
 
     final mainContent = AnimatedSize(
       duration: const Duration(milliseconds: 250),
@@ -416,7 +430,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                         ],
                         GestureDetector(
                           onTap: () {
-                            if (_currentState == NavInputState.streaming || _currentState == NavInputState.generating) {
+                            if (_currentState == NavInputState.streaming || _currentState == NavInputState.generating || ref.read(isSpeakingProvider)) {
                               _stopAiGeneration();
                             } else {
                               _toggleListening();
@@ -425,7 +439,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             child: Icon(
-                              (_currentState == NavInputState.streaming || _currentState == NavInputState.generating || ref.watch(speechProvider).isListening)
+                              (_currentState == NavInputState.streaming || _currentState == NavInputState.generating || ref.watch(isSpeakingProvider) || ref.watch(speechProvider).isListening)
                                   ? Icons.stop_rounded 
                                   : Icons.mic_none_rounded, 
                               size: 20, 
@@ -573,11 +587,15 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                         animate: _currentState == NavInputState.streaming && !_aiResponse.contains('```json'),
                         onTypingStarted: () {},
                         onTypingFinished: () {
+                          _isTextTypingFinished = true;
                           if (mounted) {
-                            setState(() {
-                              _currentState = NavInputState.replied;
-                              _secondFocusNode.requestFocus();
-                            });
+                            // Only transition if the AI is not currently speaking
+                            if (!ref.read(isSpeakingProvider)) {
+                              setState(() {
+                                _currentState = NavInputState.replied;
+                                _secondFocusNode.requestFocus();
+                              });
+                            }
                           }
                         },
                       ),
@@ -648,7 +666,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                       children: [
                         GestureDetector(
                           onTap: () {
-                            if (_currentState == NavInputState.streaming || _currentState == NavInputState.generating) {
+                            if (_currentState == NavInputState.streaming || _currentState == NavInputState.generating || ref.read(isSpeakingProvider)) {
                               _stopAiGeneration();
                             } else {
                               _toggleListening();
@@ -661,7 +679,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill> with TickerProvider
                               color: Color(0xFFD3E3FD), // Deeper blue for active mic
                             ),
                             child: Icon(
-                              (_currentState == NavInputState.streaming || _currentState == NavInputState.generating || ref.watch(speechProvider).isListening)
+                              (_currentState == NavInputState.streaming || _currentState == NavInputState.generating || ref.watch(isSpeakingProvider) || ref.watch(speechProvider).isListening)
                                   ? Icons.stop_rounded 
                                   : Icons.mic_none_rounded, 
                               size: 20, 

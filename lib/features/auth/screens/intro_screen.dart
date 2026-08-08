@@ -160,34 +160,40 @@ class _IntroScreenState extends State<IntroScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // --- SKIP button (padded, constrained) ---
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Consumer(
-                    builder: (context, ref, child) {
-                      return TextButton(
-                        onPressed: () {
-                          ref.read(authProvider.notifier).skipLogin();
-                          context.go('/');
-                        },
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(0, 0),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text(
-                          'SKIP',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            color: Color(0xFF9CA3AF),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
+              // --- SKIP button (hidden but maintains layout height) ---
+              Visibility(
+                visible: false,
+                maintainSize: true,
+                maintainAnimation: true,
+                maintainState: true,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        return TextButton(
+                          onPressed: () {
+                            ref.read(authProvider.notifier).skipLogin();
+                            context.go('/');
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
-                        ),
-                      );
-                    },
+                          child: const Text(
+                            'SKIP',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              color: Color(0xFF9CA3AF),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
