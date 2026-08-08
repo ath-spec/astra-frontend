@@ -176,9 +176,17 @@ class ChatNotifier extends _$ChatNotifier {
       ref.read(isProcessingProvider.notifier).setProcessing(false);
       
       if (!_isCancelled) {
+        // Clean up the Exception: prefix if it exists
+        String errorText = e.toString();
+        if (errorText.startsWith('Exception: ')) {
+          errorText = errorText.substring(11);
+        } else {
+          errorText = 'I apologize, but I encountered an error connecting to my servers. Please try again.';
+        }
+
         final errorMsg = ChatMessage(
           id: _uuid.v4(),
-          text: 'I apologize, but I encountered an error connecting to my servers. Please try again.',
+          text: errorText,
           isUser: false,
           timestamp: DateTime.now(),
         );
