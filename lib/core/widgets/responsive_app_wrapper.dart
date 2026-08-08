@@ -16,10 +16,14 @@ class ResponsiveAppWrapper extends StatelessWidget {
             child: Container(
               color: const Color(0xFFE2E8F0), // Soft slate background for contrast
               child: Center(
-                child: SizedBox(
-                  width: 401, // 393 + 8 for buttons
-                  height: 852,
-                  child: Stack(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 24.0),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: SizedBox(
+                      width: 401, // 393 + 8 for buttons
+                      height: 852,
+                      child: Stack(
                     alignment: Alignment.center,
                     children: [
                       // --- HARDWARE BUTTONS ---
