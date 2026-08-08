@@ -351,6 +351,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                 ),
               ),
             ),
+            ),
             
             // Bottom Fixed Section
             Container(

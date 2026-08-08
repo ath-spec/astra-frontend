@@ -522,6 +522,7 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                 ),
               ),
             ),
+            ),
             
             // Bottom Fixed Section
             Container(

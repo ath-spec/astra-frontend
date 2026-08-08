@@ -525,6 +525,7 @@ class _PanVerificationScreenState extends ConsumerState<PanVerificationScreen>
                   ),
                 ),
               ),
+              ),
               // Bottom Section: Consent Checkbox & Continue Button
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),

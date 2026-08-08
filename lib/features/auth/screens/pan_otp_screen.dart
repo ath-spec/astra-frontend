@@ -210,6 +210,7 @@ class _PanOtpVerificationScreenState extends ConsumerState<PanOtpVerificationScr
                   ),
                 ),
               ),
+              ),
               // Continue Button
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),

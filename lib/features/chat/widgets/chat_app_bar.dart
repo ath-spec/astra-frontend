@@ -73,6 +73,7 @@ class ChatAppBar extends ConsumerWidget {
             icon: Icons.history_rounded,
             onTap: () => context.push('/chat-history'),
           ),
+        ],
       ),
     );
   }
