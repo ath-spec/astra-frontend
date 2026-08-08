@@ -32,6 +32,7 @@ class DemoAIService {
         options: Options(
           headers: {
             'Content-Type': 'application/json',
+            'X-Astra-Auth': dotenv.env['APP_AUTH_TOKEN'] ?? '',
           },
         ),
         data: {
@@ -86,7 +87,10 @@ class DemoAIService {
       // Get Token first
       final authResponse = await _dio.post(
         '$baseUrl/api/auth/token',
-        options: Options(headers: {'Content-Type': 'application/json'}),
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'X-Astra-Auth': dotenv.env['APP_AUTH_TOKEN'] ?? '',
+        }),
         data: {'astra_user_id': phone, 'phone_number': phone, 'name': name, 'banks': banks},
       );
       final jwtToken = authResponse.data['token'];
