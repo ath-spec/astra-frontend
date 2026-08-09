@@ -499,7 +499,12 @@ class _NavInputPillState extends ConsumerState<NavInputPill>
                       opacity: isTyping ? 1.0 : 0.5,
                       duration: const Duration(milliseconds: 200),
                       child: GestureDetector(
-                        onTap: isTyping ? _handleFirstSubmit : null,
+                        onTap: isTyping
+                            ? () {
+                                _aiService.unlockAudioContext();
+                                _handleFirstSubmit();
+                              }
+                            : null,
                         behavior: HitTestBehavior.opaque,
                         child: const Padding(
                           padding: EdgeInsets.all(8.0),
@@ -716,6 +721,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill>
                       children: [
                         GestureDetector(
                           onTap: () {
+                            _aiService.unlockAudioContext();
                             if (_currentState == NavInputState.streaming ||
                                 _currentState == NavInputState.generating ||
                                 ref.read(isSpeakingProvider)) {
@@ -758,7 +764,10 @@ class _NavInputPillState extends ConsumerState<NavInputPill>
                     duration: const Duration(milliseconds: 200),
                     child: GestureDetector(
                       onTap: _currentState == NavInputState.replied
-                          ? _handleSecondSubmit
+                          ? () {
+                              _aiService.unlockAudioContext();
+                              _handleSecondSubmit();
+                            }
                           : null,
                       behavior: HitTestBehavior.opaque,
                       child: const Padding(

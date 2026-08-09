@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -38,6 +39,19 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
 
   Future<bool> initialize() async {
     if (state.isInitialized) return true;
+
+    try {
+      var status = await Permission.microphone.status;
+      if (!status.isGranted) {
+        status = await Permission.microphone.request();
+      }
+      if (status.isPermanentlyDenied) {
+        await openAppSettings();
+        return false;
+      }
+    } catch (e) {
+      print('Permission handler ignored on this platform: $e');
+    }
 
     try {
       final initialized = await _speechToText.initialize(

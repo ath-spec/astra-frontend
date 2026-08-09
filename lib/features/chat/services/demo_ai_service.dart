@@ -3,6 +3,7 @@ import 'package:just_audio/just_audio.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'audio_unlock.dart';
 
 class DemoAIService {
   static const String elevenLabsVoiceId = '21m00Tcm4TlvDq8ikWAM'; // Rachel voice
@@ -125,13 +126,7 @@ class DemoAIService {
   }
 
   void unlockAudioContext() {
-    try {
-      // Synchronously triggering play() during a user tap unlocks Safari's Web Audio API context
-      audioPlayer.play().catchError((_) {});
-      audioPlayer.pause();
-    } catch (e) {
-      print('Audio unlock error: $e');
-    }
+    unlockWebAudio();
   }
 
   int _speechId = 0;
