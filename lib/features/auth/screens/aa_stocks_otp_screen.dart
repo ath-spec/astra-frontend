@@ -252,32 +252,22 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                           // 6-digit OTP input field
                           Center(
                             child: IntrinsicWidth(
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: [
-                                  // Manual Hint Text
-                                  AnimatedBuilder(
-                                    animation: _otpController,
-                                    builder: (context, child) {
-                                      if (_otpController.text.isEmpty) {
-                                        return const Text(
-                                          '000000',
-                                          style: TextStyle(
-                                            fontFamily: 'SpaceGrotesk',
-                                            fontSize: 32,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 12.0,
-                                            color: Color(0xFFE5E7EB),
-                                          ),
-                                        );
-                                      }
-                                      return const SizedBox.shrink();
-                                    },
-                                  ),
-                                  // Gradient TextField
-                                  ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (bounds) => const LinearGradient(
+                              child: TextField(
+                                controller: _otpController,
+                                focusNode: _focusNode,
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.left,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(6),
+                                ],
+                                style: TextStyle(
+                                  fontFamily: 'SpaceGrotesk',
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 12.0,
+                                  foreground: Paint()
+                                    ..shader = const LinearGradient(
                                       colors: [
                                         Color(0xFF5BA1F7),
                                         Color(0xFF031E6B),
@@ -286,33 +276,23 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                                       stops: [0.0, 0.5, 1.0],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
-                                    ).createShader(bounds),
-                                    child: TextField(
-                                      controller: _otpController,
-                                      focusNode: _focusNode,
-                                      keyboardType: TextInputType.number,
-                                      textAlign: TextAlign.left,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly,
-                                        LengthLimitingTextInputFormatter(6),
-                                      ],
-                                      style: const TextStyle(
-                                        fontFamily: 'SpaceGrotesk',
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 12.0,
-                                        color: Colors.white, // Masked by ShaderMask
-                                      ),
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                      ),
-                                    ),
+                                    ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
+                                ),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  hintText: '000000',
+                                  hintStyle: TextStyle(
+                                    fontFamily: 'SpaceGrotesk',
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 12.0,
+                                    foreground: Paint()..color = const Color(0xFFE5E7EB),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ),

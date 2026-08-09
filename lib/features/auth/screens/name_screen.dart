@@ -148,32 +148,22 @@ class _NameScreenState extends ConsumerState<NameScreen>
                           // Name TextField
                           Transform.translate(
                             offset: const Offset(-4, 0),
-                            child: Stack(
-                              alignment: Alignment.centerLeft,
-                              children: [
-                                // Manual Hint Text
-                                AnimatedBuilder(
-                                  animation: _nameController,
-                                  builder: (context, child) {
-                                    if (_nameController.text.isEmpty) {
-                                      return const Text(
-                                        '(type your name)',
-                                        style: TextStyle(
-                                          fontFamily: 'SpaceGrotesk',
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 0.5,
-                                          color: Color(0xFFD1D5DB),
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                ),
-                                // Gradient TextField
-                                ShaderMask(
-                                  blendMode: BlendMode.srcIn,
-                                  shaderCallback: (bounds) => const LinearGradient(
+                            child: TextField(
+                              controller: _nameController,
+                              focusNode: _focusNode,
+                              keyboardType: TextInputType.name,
+                              textCapitalization: TextCapitalization.words,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(14),
+                                _NameInputFormatter(),
+                              ],
+                              style: TextStyle(
+                                fontFamily: 'SpaceGrotesk',
+                                fontSize: 32,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                                foreground: Paint()
+                                  ..shader = const LinearGradient(
                                     colors: [
                                       Color(0xFF5BA1F7),
                                       Color(0xFF031E6B),
@@ -182,33 +172,23 @@ class _NameScreenState extends ConsumerState<NameScreen>
                                     stops: [0.0, 0.5, 1.0],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
-                                  ).createShader(bounds),
-                                  child: TextField(
-                                    controller: _nameController,
-                                    focusNode: _focusNode,
-                                    keyboardType: TextInputType.name,
-                                    textCapitalization: TextCapitalization.words,
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(14),
-                                      _NameInputFormatter(),
-                                    ],
-                                    style: const TextStyle(
-                                      fontFamily: 'SpaceGrotesk',
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.5,
-                                      color: Colors.white, // Masked by ShaderMask
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                  ),
+                                  ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                                hintText: '(type your name)',
+                                hintStyle: TextStyle(
+                                  fontFamily: 'SpaceGrotesk',
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                  foreground: Paint()..color = const Color(0xFFD1D5DB),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                           // Single fixed-height row: error on left, char count on right.
