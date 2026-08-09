@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -40,17 +39,7 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
   Future<bool> initialize() async {
     if (state.isInitialized) return true;
 
-    var status = await Permission.microphone.status;
-    if (!status.isGranted) {
-      status = await Permission.microphone.request();
-    }
-
-    if (status.isPermanentlyDenied) {
-      await openAppSettings();
-      return false;
-    }
-
-    if (status.isGranted) {
+    try {
       final initialized = await _speechToText.initialize(
         onStatus: (val) {
           if (val == 'done' || val == 'notListening') {
@@ -63,8 +52,10 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
       );
       state = state.copyWith(isInitialized: initialized);
       return initialized;
+    } catch (e) {
+      print('Speech init error: $e');
+      return false;
     }
-    return false;
   }
 
   String _sessionAccumulatedWords = '';
@@ -80,9 +71,10 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
     await _speechToText.listen(
       onResult: _onSpeechResult,
       listenFor: const Duration(seconds: 30),
-      pauseFor: const Duration(seconds: 5),
+      pauseFor: const Duration(seconds: 2), // Snappier cutoff when they stop talking
       partialResults: true,
       cancelOnError: true,
+      localeId: 'en_IN', // Drastically improves accuracy for Indian English & financial terms (SIP, Lakhs)
       listenMode: ListenMode.dictation,
     );
   }

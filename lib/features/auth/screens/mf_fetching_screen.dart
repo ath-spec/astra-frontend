@@ -133,7 +133,7 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
+                  /* TextButton(
                     onPressed: () {
                       _timer?.cancel();
                       context.pushReplacement('/mf-status');
@@ -161,7 +161,7 @@ class _MfFetchingScreenState extends State<MfFetchingScreen>
                         ),
                       ),
                     ),
-                  ),
+                  ), */
                 ],
               ),
             ),

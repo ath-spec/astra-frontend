@@ -20,7 +20,7 @@ class LoginScreen extends ConsumerWidget {
             children: [
               const LoginForm(),
               // Temporary Skip Button for Testing
-              Positioned(
+              /* Positioned(
                 top: 8,
                 right: 8,
                 child: TextButton(
@@ -37,7 +37,7 @@ class LoginScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-              ),
+              ), */
             ],
           ),
         ),

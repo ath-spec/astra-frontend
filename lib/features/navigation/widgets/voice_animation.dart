@@ -63,30 +63,48 @@ class _VoiceAnimationWidgetState extends State<VoiceAnimationWidget> with Ticker
 
   @override
   Widget build(BuildContext context) {
+    Widget bars = Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: List.generate(_barCount, (index) {
+        return AnimatedBuilder(
+          animation: _controllers[index],
+          builder: (context, child) {
+            final height = 4.0 + (_controllers[index].value * 16.0);
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: 6,
+              height: height,
+              decoration: BoxDecoration(
+                color: widget.isListening ? Colors.white : const Color(0xFFCBD5E1),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            );
+          },
+        );
+      }),
+    );
+
+    if (widget.isListening) {
+      bars = ShaderMask(
+        blendMode: BlendMode.srcIn,
+        shaderCallback: (bounds) => const LinearGradient(
+          colors: [
+            Color(0xFF5BA1F7),
+            Color(0xFF031E6B),
+            Color(0xFF241714),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ).createShader(bounds),
+        child: bars,
+      );
+    }
+
     return SizedBox(
       height: 24,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: List.generate(_barCount, (index) {
-          return AnimatedBuilder(
-            animation: _controllers[index],
-            builder: (context, child) {
-              final height = 4.0 + (_controllers[index].value * 16.0);
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: 6,
-                height: height,
-                decoration: BoxDecoration(
-                  color: widget.isListening ? const Color(0xFF5BA1F7) : const Color(0xFFCBD5E1),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              );
-            },
-          );
-        }),
-      ),
+      child: bars,
     );
   }
 }

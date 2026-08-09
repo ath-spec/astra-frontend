@@ -52,39 +52,42 @@ class MfExploreScreen extends ConsumerWidget {
               stocksConnected: assetState.stocksConnected,
             ),
           ),
-          SliverList.list(
-            children: [// spacing since we removed MfExploreHeader
-                
-                // EXPLORE ASSETS
-                const SizedBox(height: 32),
-                const MfExploreAssets(),
+          SliverToBoxAdapter(
+            child: Transform.translate(
+              offset: const Offset(0, -42),
+              child: Column(
+                children: [
+                  // EXPLORE ASSETS
+                  const MfExploreAssets(),
 
-                // Section 1: TRENDING THEMES
-                const SizedBox(height: 48),
-                const MfNewTrendingThemes(),
-                const SizedBox(height: 48),
+                  // Section 1: TRENDING THEMES
+                  const SizedBox(height: 48),
+                  const MfNewTrendingThemes(),
+                  const SizedBox(height: 48),
 
-                // Section 5: INVESTMENT IDEAS
-                const MfNewInvestmentIdeas(),
-                const SizedBox(height: 48),
-                // Section 6: GOAL PLANNING
-                const MfGoalPlanning(),
-                const SizedBox(height: 48),
-                // Section 2: ALTERNATIVE ASSETS
-                const MfNewAlternativeAssets(),
-                const SizedBox(height: 48),
-                const MfAlternativeFunds(),
-                const SizedBox(height: 48),
-                
-                // Section 3: AI PICKS (HERO)
-                const MfNewAiPicksHero(),
-                const SizedBox(height: 48),
+                  // Section 5: INVESTMENT IDEAS
+                  const MfNewInvestmentIdeas(),
+                  const SizedBox(height: 48),
+                  // Section 6: GOAL PLANNING
+                  const MfGoalPlanning(),
+                  const SizedBox(height: 48),
+                  // Section 2: ALTERNATIVE ASSETS
+                  const MfNewAlternativeAssets(),
+                  const SizedBox(height: 48),
+                  const MfAlternativeFunds(),
+                  const SizedBox(height: 48),
+                  
+                  // Section 3: AI PICKS (HERO)
+                  const MfNewAiPicksHero(),
+                  const SizedBox(height: 48),
 
-              // Section 6: GLOBAL INVESTING
-                const MfGlobalInvesting(),
-                
-                const SizedBox(height: 120), // Bottom padding for nav bar
-              ],
+                // Section 6: GLOBAL INVESTING
+                  const MfGlobalInvesting(),
+                  
+                  const SizedBox(height: 120), // Bottom padding for nav bar
+                ],
+              ),
+            ),
           ),
         ],
       ),

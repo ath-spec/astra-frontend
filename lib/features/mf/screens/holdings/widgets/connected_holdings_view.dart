@@ -194,8 +194,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
               ),
             );
           },
-          child: Container(
-            margin: EdgeInsets.fromLTRB(16, 16, 16, 24),
+          child: Transform.translate(
+            offset: const Offset(0, -42), // Negative margin effect
+            child: Container(
+              margin: EdgeInsets.fromLTRB(16, 0, 16, 8),
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -317,12 +319,13 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                   ],
                 ),
               ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+            ), // End Column
+          ), // End Container
+        ), // End Transform.translate
+      ); // End GestureDetector
+    }, // End builder
+  ); // End AnimatedBuilder
+}
 
   Widget _buildFilterChips() {
     return SingleChildScrollView(

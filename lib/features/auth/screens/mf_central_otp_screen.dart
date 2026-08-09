@@ -108,7 +108,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                       child: Icon(Icons.arrow_back_ios_new, size: 16, color: Color(0xFF0F172A)),
                     ),
                   ),
-                  TextButton(
+                  /* TextButton(
                     onPressed: _onSkip,
                     child: Text(
                       'Skip',
@@ -119,7 +119,7 @@ class _MfCentralOtpScreenState extends State<MfCentralOtpScreen> {
                         color: Color(0xFF0F172A),
                       ),
                     ),
-                  ),
+                  ), */
                 ],
               ),
             ),

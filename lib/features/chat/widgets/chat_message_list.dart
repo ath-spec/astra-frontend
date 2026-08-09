@@ -381,10 +381,22 @@ class _ThinkingStepsWidgetState extends State<_ThinkingStepsWidget>
           children: [
             Opacity(
               opacity: _shimmerAnim.value,
-              child: const Icon(
-                Icons.auto_awesome_rounded,
-                size: 14,
-                color: Color(0xFF6366F1),
+              child: ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [
+                    Color(0xFF5BA1F7),
+                    Color(0xFF031E6B),
+                    Color(0xFF241714),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  size: 14,
+                  color: Colors.white,
+                ),
               ),
             ),
             const SizedBox(width: 8),

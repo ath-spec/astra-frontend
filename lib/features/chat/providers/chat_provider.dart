@@ -155,6 +155,9 @@ class ChatNotifier extends _$ChatNotifier {
   Future<void> sendMessage(String text, {bool isVoice = true}) async {
     if (text.trim().isEmpty) return;
 
+    // Synchronously unlock audio context on Safari right when the user interacts
+    _aiService.unlockAudioContext();
+
     // Immediately stop any currently playing AI audio when a new message is sent
     _aiService.stopSpeaking();
 

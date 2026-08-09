@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class NavigationPill extends StatefulWidget {
@@ -99,7 +100,7 @@ class _NavigationPillState extends State<NavigationPill> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
-        boxShadow: [
+        boxShadow: kIsWeb ? null : [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 24,

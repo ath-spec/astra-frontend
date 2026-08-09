@@ -161,7 +161,7 @@ class _IntroScreenState extends State<IntroScreen>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // --- SKIP button (hidden but maintains layout height) ---
-              Visibility(
+              /* Visibility(
                 visible: false,
                 maintainSize: true,
                 maintainAnimation: true,
@@ -196,7 +196,7 @@ class _IntroScreenState extends State<IntroScreen>
                     ),
                   ),
                 ),
-              ),
+              ), */
 
               // --- PageView: FULL WIDTH, no horizontal padding ---
               Expanded(
@@ -259,25 +259,24 @@ class _IntroScreenState extends State<IntroScreen>
                                         child: SizedBox(
                                           width: double.infinity,
                                           height: double.infinity,
-                                          child: FittedBox(
-                                            fit: BoxFit.contain,
-                                            alignment: Alignment.center,
-                                            child: SizedBox(
-                                                width: _videoController
-                                                    .value
-                                                    .size
-                                                    .width,
-                                                height: _videoController
-                                                    .value
-                                                    .size
-                                                    .height,
-                                                child: VideoPlayer(
-                                                  _videoController,
+                                          child: ValueListenableBuilder<VideoPlayerValue>(
+                                            valueListenable: _videoController,
+                                            builder: (context, value, child) {
+                                              final width = value.size.width == 0 ? 400.0 : value.size.width;
+                                              final height = value.size.height == 0 ? 800.0 : value.size.height;
+                                              return FittedBox(
+                                                fit: BoxFit.contain,
+                                                alignment: Alignment.center,
+                                                child: SizedBox(
+                                                  width: width,
+                                                  height: height,
+                                                  child: VideoPlayer(_videoController),
                                                 ),
-                                              ),
-                                            ),
+                                              );
+                                            },
                                           ),
                                         ),
+                                      ),
                                     );
                                   }
 

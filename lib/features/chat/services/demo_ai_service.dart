@@ -124,6 +124,16 @@ class DemoAIService {
     }
   }
 
+  void unlockAudioContext() {
+    try {
+      // Synchronously triggering play() during a user tap unlocks Safari's Web Audio API context
+      audioPlayer.play().catchError((_) {});
+      audioPlayer.pause();
+    } catch (e) {
+      print('Audio unlock error: $e');
+    }
+  }
+
   int _speechId = 0;
 
   void stopSpeaking() {

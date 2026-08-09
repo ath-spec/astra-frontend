@@ -139,7 +139,7 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                       },
                     ),
                   ),
-                  Padding(
+                  /* Padding(
                     padding: const EdgeInsets.only(right: 8.0, top: 8.0),
                     child: TextButton(
                       onPressed: () => context.push('/banks-linking'),
@@ -156,7 +156,7 @@ class _AaStocksOtpScreenState extends ConsumerState<AaStocksOtpScreen>
                         ),
                       ),
                     ),
-                  ),
+                  ), */
                 ],
               ),
               Expanded(

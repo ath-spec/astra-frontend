@@ -140,7 +140,7 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                       child: Icon(Icons.arrow_back_ios_new, size: 16, color: Color(0xFF0F172A)),
                     ),
                   ),
-                  TextButton(
+                  /* TextButton(
                     onPressed: _onSkip,
                     child: Text(
                       'Skip',
@@ -151,7 +151,7 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                         color: Color(0xFF0F172A),
                       ),
                     ),
-                  ),
+                  ), */
                 ],
               ),
             ),
@@ -166,19 +166,6 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                   child: Column(
                     children: [
                     SizedBox(height: 8),
-                    // Logo Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'lib/core/images/mfcentral_logo.webp',
-                          height: 72,
-                          fit: BoxFit.contain,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 24),
-                    
                     // Main Card
                     Container(
                       width: double.infinity,
@@ -201,27 +188,39 @@ class _MfCentralCasScreenState extends State<MfCentralCasScreen> {
                             width: double.infinity,
                             color: const Color(0xFF533B9E),
                             padding: EdgeInsets.all(20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  'MF Central',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'MF Central',
+                                        style: TextStyle(
+                                          fontFamily: 'DMSans',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'Secure CAS Document Processing',
+                                        style: TextStyle(
+                                          fontFamily: 'DMSans',
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Secure CAS Document Processing',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.white,
-                                  ),
+                                Image.asset(
+                                  'lib/core/images/mfcentral_logo.webp',
+                                  height: 32,
+                                  fit: BoxFit.contain,
                                 ),
                               ],
                             ),

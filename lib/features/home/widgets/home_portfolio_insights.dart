@@ -13,15 +13,36 @@ class HomePortfolioInsights extends StatelessWidget {
         Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Insights for your portfolio',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -1.0,
-                  color: Color(0xFF0F172A),
-
+              ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [
+                    Color(0xFF5BA1F7),
+                    Color(0xFF031E6B),
+                    Color(0xFF241714),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      size: 22,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      'Insights for your portfolio',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -1.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 4),
