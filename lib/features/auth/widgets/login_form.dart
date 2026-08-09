@@ -161,51 +161,85 @@ class _LoginFormState extends ConsumerState<LoginForm>
                 const SizedBox(height: 8),
                 Transform.translate(
                   offset: const Offset(-4, 0),
-                  child: TextField(
-                    controller: _phoneController,
-                    focusNode: _focusNode,
-                    enabled: !isLoading,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    style: TextStyle(
-                      fontFamily: 'SpaceGrotesk',
-                      fontSize: 32,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                      foreground: Paint()
-                        ..shader = const LinearGradient(
-                          colors: [
-                            Color(0xFF5BA1F7),
-                            Color(0xFF031E6B),
-                            Color(0xFF241714),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return SizedBox(
+                        width: constraints.maxWidth,
+                        child: Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            // Visual Layer (Gradient Text)
+                            AnimatedBuilder(
+                              animation: _phoneController,
+                              builder: (context, child) {
+                                if (_phoneController.text.isEmpty) {
+                                  return const Text(
+                                    '9876543210',
+                                    style: TextStyle(
+                                      fontFamily: 'SpaceGrotesk',
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 2.0,
+                                      color: Color(0xFFE5E7EB),
+                                    ),
+                                  );
+                                }
+                                return Text(
+                                  _phoneController.text,
+                                  style: TextStyle(
+                                    fontFamily: 'SpaceGrotesk',
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 2.0,
+                                    foreground: Paint()
+                                      ..shader = const LinearGradient(
+                                        colors: [
+                                          Color(0xFF5BA1F7),
+                                          Color(0xFF031E6B),
+                                          Color(0xFF241714),
+                                        ],
+                                        stops: [0.0, 0.5, 1.0],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
+                                  ),
+                                );
+                              },
+                            ),
+                            // Interaction Layer (Invisible TextField, Visible Cursor)
+                            TextField(
+                              controller: _phoneController,
+                              focusNode: _focusNode,
+                              enabled: !isLoading,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                              ],
+                              cursorColor: const Color(0xFF031E6B),
+                              style: const TextStyle(
+                                fontFamily: 'SpaceGrotesk',
+                                fontSize: 32,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 2.0,
+                                color: Colors.transparent, // Hides native text to show gradient below
+                              ),
+                              decoration: const InputDecoration(
+                                filled: true,
+                                fillColor: Colors.transparent, // Defeats Safari Dark Mode
+                                hoverColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
                           ],
-                          stops: [0.0, 0.5, 1.0],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
-                    ),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.transparent, // Forces transparent background, overriding OS dark mode
-                      hoverColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                      hintText: '9876543210',
-                      hintStyle: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0,
-                        foreground: Paint()..color = const Color(0xFFE5E7EB),
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                   const SizedBox(height: 16),

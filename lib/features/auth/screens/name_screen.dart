@@ -151,51 +151,83 @@ class _NameScreenState extends ConsumerState<NameScreen>
                             child: Stack(
                               alignment: Alignment.centerLeft,
                               children: [
-                                  TextField(
-                                    controller: _nameController,
-                                    focusNode: _focusNode,
-                                    keyboardType: TextInputType.name,
-                                    textCapitalization: TextCapitalization.words,
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(14),
-                                      _NameInputFormatter(),
-                                    ],
-                                    style: TextStyle(
-                                      fontFamily: 'SpaceGrotesk',
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.5,
-                                      foreground: Paint()
-                                        ..shader = const LinearGradient(
-                                          colors: [
-                                            Color(0xFF5BA1F7),
-                                            Color(0xFF031E6B),
-                                            Color(0xFF241714),
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return SizedBox(
+                                        width: constraints.maxWidth,
+                                        child: Stack(
+                                          alignment: Alignment.centerLeft,
+                                          children: [
+                                            AnimatedBuilder(
+                                              animation: _nameController,
+                                              builder: (context, child) {
+                                                if (_nameController.text.isEmpty) {
+                                                  return const Text(
+                                                    '(type your name)',
+                                                    style: TextStyle(
+                                                      fontFamily: 'SpaceGrotesk',
+                                                      fontSize: 32,
+                                                      fontWeight: FontWeight.w600,
+                                                      letterSpacing: 0.5,
+                                                      color: Color(0xFFD1D5DB),
+                                                    ),
+                                                  );
+                                                }
+                                                return Text(
+                                                  _nameController.text,
+                                                  style: TextStyle(
+                                                    fontFamily: 'SpaceGrotesk',
+                                                    fontSize: 32,
+                                                    fontWeight: FontWeight.w600,
+                                                    letterSpacing: 0.5,
+                                                    foreground: Paint()
+                                                      ..shader = const LinearGradient(
+                                                        colors: [
+                                                          Color(0xFF5BA1F7),
+                                                          Color(0xFF031E6B),
+                                                          Color(0xFF241714),
+                                                        ],
+                                                        stops: [0.0, 0.5, 1.0],
+                                                        begin: Alignment.topLeft,
+                                                        end: Alignment.bottomRight,
+                                                      ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            TextField(
+                                              controller: _nameController,
+                                              focusNode: _focusNode,
+                                              keyboardType: TextInputType.name,
+                                              textCapitalization: TextCapitalization.words,
+                                              inputFormatters: [
+                                                LengthLimitingTextInputFormatter(14),
+                                                _NameInputFormatter(),
+                                              ],
+                                              cursorColor: const Color(0xFF031E6B),
+                                              style: const TextStyle(
+                                                fontFamily: 'SpaceGrotesk',
+                                                fontSize: 32,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.5,
+                                                color: Colors.transparent, // Hides native text
+                                              ),
+                                              decoration: const InputDecoration(
+                                                filled: true,
+                                                fillColor: Colors.transparent, // Defeats Safari Dark Mode
+                                                hoverColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                border: InputBorder.none,
+                                                enabledBorder: InputBorder.none,
+                                                focusedBorder: InputBorder.none,
+                                                isDense: true,
+                                                contentPadding: EdgeInsets.zero,
+                                              ),
+                                            ),
                                           ],
-                                          stops: [0.0, 0.5, 1.0],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
-                                    ),
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: Colors.transparent, // Forces transparent background
-                                      hoverColor: Colors.transparent,
-                                      focusColor: Colors.transparent,
-                                      border: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.zero,
-                                      hintText: '(type your name)',
-                                      hintStyle: TextStyle(
-                                        fontFamily: 'SpaceGrotesk',
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.5,
-                                        foreground: Paint()..color = const Color(0xFFD1D5DB),
-                                      ),
-                                    ),
+                                        ),
+                                      );
+                                    },
                                   ),
                               ],
                             ),
