@@ -43,6 +43,7 @@ lib/
 │   └── portfolio_analysis/ # Discipline, Allocation, and Performance analytics tabs
 └── main.dart               # Application entry point and initialization
 ```
+*Note: The app curretly uses synthetic data*
 
 ## 🚀 Getting Started (Local Development)
 
