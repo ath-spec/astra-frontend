@@ -161,22 +161,32 @@ class _LoginFormState extends ConsumerState<LoginForm>
                 const SizedBox(height: 8),
                 Transform.translate(
                   offset: const Offset(-4, 0),
-                  child: TextField(
-                    controller: _phoneController,
-                    focusNode: _focusNode,
-                    enabled: !isLoading,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    style: TextStyle(
-                      fontFamily: 'SpaceGrotesk',
-                      fontSize: 32,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                      foreground: Paint()
-                        ..shader = const LinearGradient(
+                  child: Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      // Manual Hint Text
+                      AnimatedBuilder(
+                        animation: _phoneController,
+                        builder: (context, child) {
+                          if (_phoneController.text.isEmpty) {
+                            return const Text(
+                              '9876543210',
+                              style: TextStyle(
+                                fontFamily: 'SpaceGrotesk',
+                                fontSize: 32,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 2.0,
+                                color: Color(0xFFE5E7EB),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                      // Gradient TextField
+                      ShaderMask(
+                        blendMode: BlendMode.srcIn,
+                        shaderCallback: (bounds) => const LinearGradient(
                           colors: [
                             Color(0xFF5BA1F7),
                             Color(0xFF031E6B),
@@ -185,25 +195,35 @@ class _LoginFormState extends ConsumerState<LoginForm>
                           stops: [0.0, 0.5, 1.0],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                        ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
-                    ),
-                    decoration: InputDecoration(
-                      hoverColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                      hintText: '9876543210',
-                      hintStyle: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0,
-                        foreground: Paint()..color = const Color(0xFFE5E7EB), // Explicitly override foreground so it stays grey
+                        ).createShader(bounds),
+                        child: TextField(
+                          controller: _phoneController,
+                          focusNode: _focusNode,
+                          enabled: !isLoading,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                          ],
+                          style: const TextStyle(
+                            fontFamily: 'SpaceGrotesk',
+                            fontSize: 32,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.0,
+                            color: Colors.white, // Masked by ShaderMask
+                          ),
+                          decoration: const InputDecoration(
+                            hoverColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
                   const SizedBox(height: 16),
