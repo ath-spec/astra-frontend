@@ -152,24 +152,19 @@ class _EditNumberOverlayState extends State<EditNumberOverlay> {
               child: Stack(
                 alignment: Alignment.centerLeft,
                 children: [
-                  AnimatedBuilder(
-                    animation: _controller,
-                    builder: (context, child) {
-                      if (_controller.text.isEmpty) {
-                        return const Text(
-                          '9876543210',
-                          style: TextStyle(
-                            fontFamily: 'SpaceGrotesk',
-                            fontSize: 32,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2.0,
-                            color: Color(0xFFE5E7EB),
-                          ),
-                        );
-                      }
-                      return ShaderMask(
-                        blendMode: BlendMode.srcIn,
-                        shaderCallback: (bounds) => const LinearGradient(
+                  TextField(
+                    controller: _controller,
+                    autofocus: true,
+                    keyboardType: TextInputType.number,
+                    maxLength: 10,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    style: TextStyle(
+                      fontFamily: 'SpaceGrotesk',
+                      fontSize: 32,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2.0,
+                      foreground: Paint()
+                        ..shader = const LinearGradient(
                           colors: [
                             Color(0xFF5BA1F7),
                             Color(0xFF031E6B),
@@ -178,35 +173,11 @@ class _EditNumberOverlayState extends State<EditNumberOverlay> {
                           stops: [0.0, 0.5, 1.0],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                        ).createShader(bounds),
-                        child: Text(
-                          _controller.text,
-                          style: const TextStyle(
-                            fontFamily: 'SpaceGrotesk',
-                            fontSize: 32,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  TextField(
-                    controller: _controller,
-                    autofocus: true,
-                    keyboardType: TextInputType.number,
-                    maxLength: 10,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    cursorColor: const Color(0xFF031E6B),
-                    style: const TextStyle(
-                      fontFamily: 'SpaceGrotesk',
-                      fontSize: 32,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                      color: Colors.transparent,
+                        ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
                     ),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.transparent, // Forces transparent background
                       hoverColor: Colors.transparent,
                       focusColor: Colors.transparent,
                       border: InputBorder.none,
@@ -215,6 +186,14 @@ class _EditNumberOverlayState extends State<EditNumberOverlay> {
                       isDense: true,
                       counterText: '',
                       contentPadding: EdgeInsets.zero,
+                      hintText: '9876543210',
+                      hintStyle: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
+                        fontSize: 32,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 2.0,
+                        foreground: Paint()..color = const Color(0xFFE5E7EB),
+                      ),
                     ),
                   ),
                 ],
