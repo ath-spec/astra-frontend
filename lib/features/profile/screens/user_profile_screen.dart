@@ -6,6 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
+import '../../budget/data/budget_mock_providers.dart';
+import '../../chat/providers/chat_provider.dart';
+import '../../chat/providers/chat_session_provider.dart';
+import '../../mf/providers/watchlist_provider.dart';
+import '../../profiling/providers/profiling_provider.dart';
+import '../../../core/providers/speech_provider.dart';
+import '../../../core/providers/nav_context_provider.dart';
+import '../../../core/providers/nav_input_provider.dart';
+import '../../../core/providers/privacy_provider.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
   const UserProfileScreen({super.key});
@@ -323,6 +332,23 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
                         title: 'Logout',
                         isLast: true,
                         onTap: () {
+                          // Clear all session data across providers
+                          ref.invalidate(chatNotifierProvider);
+                          ref.invalidate(chatSessionManagerProvider);
+                          ref.invalidate(budgetStateProvider);
+                          ref.invalidate(assetConnectionProvider);
+                          ref.invalidate(profilingProvider);
+                          ref.invalidate(watchlistProvider);
+                          ref.invalidate(speechProvider);
+                          
+                          // Core navigation & state
+                          ref.invalidate(navContextProvider);
+                          ref.invalidate(mfTabIndexProvider);
+                          ref.invalidate(exploreTabIndexProvider);
+                          ref.invalidate(learningsTabIndexProvider);
+                          ref.invalidate(navInputModeProvider);
+                          ref.invalidate(privacyProvider);
+
                           ref.read(authProvider.notifier).logout();
                           context.go('/intro');
                         },
