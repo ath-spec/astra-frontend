@@ -177,8 +177,7 @@ class DemoAIService {
       if (_speechId != currentSpeechId) return;
 
       final audioBase64 = response.data['audios'][0] as String;
-      final audioData = base64Decode(audioBase64);
-      final source = MyAudioSource(audioData);
+      final source = AudioSource.uri(Uri.parse('data:audio/wav;base64,$audioBase64'));
       
       // Double check before playing
       if (_speechId != currentSpeechId) return;
@@ -192,23 +191,5 @@ class DemoAIService {
     } catch (e) {
       print('Sarvam Error: $e');
     }
-  }
-}
-
-class MyAudioSource extends StreamAudioSource {
-  final List<int> _bytes;
-  MyAudioSource(this._bytes);
-
-  @override
-  Future<StreamAudioResponse> request([int? start, int? end]) async {
-    start ??= 0;
-    end ??= _bytes.length;
-    return StreamAudioResponse(
-      sourceLength: _bytes.length,
-      contentLength: end - start,
-      offset: start,
-      stream: Stream.value(_bytes.sublist(start, end)),
-      contentType: 'audio/mpeg',
-    );
   }
 }

@@ -8,6 +8,7 @@ void unlockWebAudio() {
     // we bypass Safari's strict Autoplay block and fully unlock the Web Audio context.
     final audio = html.AudioElement();
     audio.src = 'data:audio/mpeg;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq';
+    html.document.body?.append(audio);
     audio.play().catchError((e) {
       // Ignored: Safari might throw if the source is considered too short, but the context is still unlocked
     });
