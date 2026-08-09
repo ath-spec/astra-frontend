@@ -148,47 +148,77 @@ class _NameScreenState extends ConsumerState<NameScreen>
                           // Name TextField
                           Transform.translate(
                             offset: const Offset(-4, 0),
-                            child: TextField(
-                              controller: _nameController,
-                              focusNode: _focusNode,
-                              keyboardType: TextInputType.name,
-                              textCapitalization: TextCapitalization.words,
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(14),
-                                _NameInputFormatter(),
-                              ],
-                              style: TextStyle(
-                                fontFamily: 'SpaceGrotesk',
-                                fontSize: 32,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.5,
-                                foreground: Paint()
-                                  ..shader = const LinearGradient(
-                                    colors: [
-                                      Color(0xFF5BA1F7),
-                                      Color(0xFF031E6B),
-                                      Color(0xFF241714),
-                                    ],
-                                    stops: [0.0, 0.5, 1.0],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
-                              ),
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                                hintText: '(type your name)',
-                                hintStyle: TextStyle(
-                                  fontFamily: 'SpaceGrotesk',
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.5,
-                                  foreground: Paint()..color = const Color(0xFFD1D5DB),
+                            child: Stack(
+                              alignment: Alignment.centerLeft,
+                              children: [
+                                AnimatedBuilder(
+                                  animation: _nameController,
+                                  builder: (context, child) {
+                                    if (_nameController.text.isEmpty) {
+                                      return const Text(
+                                        '(type your name)',
+                                        style: TextStyle(
+                                          fontFamily: 'SpaceGrotesk',
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.5,
+                                          color: Color(0xFFD1D5DB),
+                                        ),
+                                      );
+                                    }
+                                    return ShaderMask(
+                                      blendMode: BlendMode.srcIn,
+                                      shaderCallback: (bounds) => const LinearGradient(
+                                        colors: [
+                                          Color(0xFF5BA1F7),
+                                          Color(0xFF031E6B),
+                                          Color(0xFF241714),
+                                        ],
+                                        stops: [0.0, 0.5, 1.0],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ).createShader(bounds),
+                                      child: Text(
+                                        _nameController.text,
+                                        style: const TextStyle(
+                                          fontFamily: 'SpaceGrotesk',
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.5,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ),
+                                TextField(
+                                  controller: _nameController,
+                                  focusNode: _focusNode,
+                                  keyboardType: TextInputType.name,
+                                  textCapitalization: TextCapitalization.words,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(14),
+                                    _NameInputFormatter(),
+                                  ],
+                                  cursorColor: const Color(0xFF031E6B),
+                                  style: const TextStyle(
+                                    fontFamily: 'SpaceGrotesk',
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.5,
+                                    color: Colors.transparent,
+                                  ),
+                                  decoration: const InputDecoration(
+                                    hoverColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           // Single fixed-height row: error on left, char count on right.

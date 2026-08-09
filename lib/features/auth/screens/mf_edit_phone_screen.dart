@@ -205,49 +205,77 @@ class _MfEditPhoneFormState extends ConsumerState<_MfEditPhoneForm>
                     const SizedBox(height: 8),
                     Transform.translate(
                       offset: const Offset(-4, 0),
-                      child: TextField(
-                        controller: _phoneController,
-                        focusNode: _focusNode,
-                        enabled: !isLoading,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        style: TextStyle(
-                          fontFamily: 'SpaceGrotesk',
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 2.0,
-                          foreground: Paint()
-                            ..shader = const LinearGradient(
-                              colors: [
-                                Color(0xFF5BA1F7),
-                                Color(0xFF031E6B),
-                                Color(0xFF241714),
-                              ],
-                              stops: [0.0, 0.5, 1.0],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
-                        ),
-                        decoration: InputDecoration(
-                          hoverColor: Colors.transparent,
-                          focusColor: Colors.transparent,
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                          hintText: '9876543210',
-                          hintStyle: TextStyle(
-                            fontFamily: 'SpaceGrotesk',
-                            fontSize: 32,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2.0,
-                            foreground: Paint()..color = const Color(0xFFE5E7EB),
+                      child: Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          AnimatedBuilder(
+                            animation: _phoneController,
+                            builder: (context, child) {
+                              if (_phoneController.text.isEmpty) {
+                                return const Text(
+                                  '9876543210',
+                                  style: TextStyle(
+                                    fontFamily: 'SpaceGrotesk',
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 2.0,
+                                    color: Color(0xFFE5E7EB),
+                                  ),
+                                );
+                              }
+                              return ShaderMask(
+                                blendMode: BlendMode.srcIn,
+                                shaderCallback: (bounds) => const LinearGradient(
+                                  colors: [
+                                    Color(0xFF5BA1F7),
+                                    Color(0xFF031E6B),
+                                    Color(0xFF241714),
+                                  ],
+                                  stops: [0.0, 0.5, 1.0],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ).createShader(bounds),
+                                child: Text(
+                                  _phoneController.text,
+                                  style: const TextStyle(
+                                    fontFamily: 'SpaceGrotesk',
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 2.0,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        ),
+                          TextField(
+                            controller: _phoneController,
+                            focusNode: _focusNode,
+                            enabled: !isLoading,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ],
+                            cursorColor: const Color(0xFF031E6B),
+                            style: const TextStyle(
+                              fontFamily: 'SpaceGrotesk',
+                              fontSize: 32,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 2.0,
+                              color: Colors.transparent,
+                            ),
+                            decoration: const InputDecoration(
+                              hoverColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 16),

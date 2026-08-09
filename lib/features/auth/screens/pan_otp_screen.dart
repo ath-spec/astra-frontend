@@ -117,47 +117,77 @@ class _PanOtpVerificationScreenState extends ConsumerState<PanOtpVerificationScr
                           const SizedBox(height: 30),
                           Center(
                             child: IntrinsicWidth(
-                              child: TextField(
-                                controller: _otpController,
-                                focusNode: _focusNode,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.left,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(6),
-                                ],
-                                style: TextStyle(
-                                  fontFamily: 'SpaceGrotesk',
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 12.0,
-                                  foreground: Paint()
-                                    ..shader = const LinearGradient(
-                                      colors: [
-                                        Color(0xFF5BA1F7),
-                                        Color(0xFF031E6B),
-                                        Color(0xFF241714),
-                                      ],
-                                      stops: [0.0, 0.5, 1.0],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
-                                ),
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                  hintText: '000000',
-                                  hintStyle: TextStyle(
-                                    fontFamily: 'SpaceGrotesk',
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 12.0,
-                                    foreground: Paint()..color = const Color(0xFFE5E7EB),
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: [
+                                  AnimatedBuilder(
+                                    animation: _otpController,
+                                    builder: (context, child) {
+                                      if (_otpController.text.isEmpty) {
+                                        return const Text(
+                                          '000000',
+                                          style: TextStyle(
+                                            fontFamily: 'SpaceGrotesk',
+                                            fontSize: 36,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 12.0,
+                                            color: Color(0xFFE5E7EB),
+                                          ),
+                                        );
+                                      }
+                                      return ShaderMask(
+                                        blendMode: BlendMode.srcIn,
+                                        shaderCallback: (bounds) => const LinearGradient(
+                                          colors: [
+                                            Color(0xFF5BA1F7),
+                                            Color(0xFF031E6B),
+                                            Color(0xFF241714),
+                                          ],
+                                          stops: [0.0, 0.5, 1.0],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ).createShader(bounds),
+                                        child: Text(
+                                          _otpController.text,
+                                          style: const TextStyle(
+                                            fontFamily: 'SpaceGrotesk',
+                                            fontSize: 36,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 12.0,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
-                                ),
+                                  TextField(
+                                    controller: _otpController,
+                                    focusNode: _focusNode,
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.left,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(6),
+                                    ],
+                                    cursorColor: const Color(0xFF031E6B),
+                                    style: const TextStyle(
+                                      fontFamily: 'SpaceGrotesk',
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 12.0,
+                                      color: Colors.transparent,
+                                    ),
+                                    decoration: const InputDecoration(
+                                      hoverColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      border: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
