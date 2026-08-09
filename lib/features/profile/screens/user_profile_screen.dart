@@ -15,6 +15,7 @@ import '../../../core/providers/speech_provider.dart';
 import '../../../core/providers/nav_context_provider.dart';
 import '../../../core/providers/nav_input_provider.dart';
 import '../../../core/providers/privacy_provider.dart';
+import '../../home/widgets/home_portfolio_analysis.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
   const UserProfileScreen({super.key});
@@ -348,6 +349,8 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
                           ref.invalidate(learningsTabIndexProvider);
                           ref.invalidate(navInputModeProvider);
                           ref.invalidate(privacyProvider);
+
+                          hasSeenAnalysisWalkthrough.value = false;
 
                           ref.read(authProvider.notifier).logout();
                           context.go('/intro');
