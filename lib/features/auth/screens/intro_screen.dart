@@ -59,9 +59,9 @@ class _IntroScreenState extends State<IntroScreen>
     if (widget.preloadedController != null) {
       _videoController = widget.preloadedController!;
       _videoController.addListener(_onVideoControllerUpdate);
-      _videoController.setLooping(true);
-      _videoController.setVolume(0.0);
-      _videoController.play();
+      await _videoController.setLooping(true);
+      await _videoController.setVolume(0.0);
+      await _videoController.play();
       if (mounted) {
         setState(() => _videoState = _VideoReady());
       }
@@ -83,9 +83,9 @@ class _IntroScreenState extends State<IntroScreen>
 
       if (!mounted) return;
 
-      _videoController.setLooping(true);
-      _videoController.setVolume(0.0);
-      _videoController.play();
+      await _videoController.setLooping(true);
+      await _videoController.setVolume(0.0);
+      await _videoController.play();
 
       setState(() => _videoState = _VideoReady());
     } catch (e) {
@@ -281,38 +281,54 @@ class _IntroScreenState extends State<IntroScreen>
                                     );
                                   }
 
-                                  final e = _videoState as _VideoError;
-                                  return Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.error_outline,
-                                        color: Color(0xFF031E6B),
-                                        size: 40,
-                                      ),
-                                      const SizedBox(height: 12),
-                                      const Text(
-                                        'Could not load video',
-                                        style: TextStyle(
-                                          fontFamily: 'DMSans',
-                                          fontSize: 14,
-                                          color: Color(0xFF031E6B),
-                                        ),
-                                      ),
-                                      if (e.message.isNotEmpty) ...[
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          e.message,
-                                          style: const TextStyle(
-                                            fontFamily: 'DMMono',
-                                            fontSize: 11,
-                                            color: Colors.grey,
+                                  if (_videoState is _VideoError) {
+                                    final errorMsg = (_videoState as _VideoError).message;
+                                    // If the browser blocked autoplay, give them a manual play button
+                                    if (errorMsg.contains('NotAllowedError') || 
+                                        errorMsg.contains('user agent') || 
+                                        errorMsg.contains('permission')) {
+                                      return Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.play_circle_outline, color: Color(0xFF031E6B), size: 48),
+                                          const SizedBox(height: 16),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              setState(() => _videoState = _VideoLoading());
+                                              _initVideo();
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: const Color(0xFF031E6B),
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                              elevation: 0,
+                                            ),
+                                            child: const Text('Tap to Play Video', style: TextStyle(fontFamily: 'DMSans')),
                                           ),
-                                          textAlign: TextAlign.center,
-                                        ),
+                                        ],
+                                      );
+                                    }
+
+                                    // Fallback for other hard errors
+                                    return Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.error_outline,
+                                            color: Color(0xFF031E6B), size: 32),
+                                        const SizedBox(height: 8),
+                                        const Text('Could not load video',
+                                            style: TextStyle(
+                                                fontFamily: 'DMSans', color: Color(0xFF031E6B))),
+                                        const SizedBox(height: 8),
+                                        Text(errorMsg,
+                                            style: const TextStyle(
+                                                fontFamily: 'DMMono', fontSize: 10, color: Colors.grey),
+                                            textAlign: TextAlign.center),
                                       ],
-                                    ],
-                                  );
+                                    );
+                                  }
+
+                                  return const SizedBox.shrink();
                                 },
                               ),
                             ),
