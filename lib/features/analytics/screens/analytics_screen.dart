@@ -6,6 +6,9 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/widgets/unconnected_bank_empty_state.dart';
+import '../../asset_connection/providers/asset_connection_provider.dart';
 import '../data/analytics_repository.dart';
 import '../models/analytics_models.dart';
 import '../widgets/ai_mood_insight_card.dart';
@@ -19,14 +22,14 @@ import '../widgets/actionable_insights_card.dart';
 import 'category_spends_screen.dart';
 import '../../transactions/screens/transactions_screen.dart';
 
-class AnalyticsScreen extends StatefulWidget {
+class AnalyticsScreen extends ConsumerStatefulWidget {
   const AnalyticsScreen({super.key});
 
   @override
-  State<AnalyticsScreen> createState() => _AnalyticsScreenState();
+  ConsumerState<AnalyticsScreen> createState() => _AnalyticsScreenState();
 }
 
-class _AnalyticsScreenState extends State<AnalyticsScreen> {
+class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
   final _repo = AnalyticsRepository.instance;
 
   String _selectedCycle = 'This month';
@@ -37,12 +40,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   AnalyticsInsights? _insights;
   bool _loadingSummary = true;
   bool _loadingInsights = true;
+  bool _demoMode = false;
 
   @override
   void initState() {
     super.initState();
-    // Instant paint from cache (if any), then refresh in the background —
-    // same peek+fetch pattern used elsewhere in the app.
     _summary = _repo.peekSummary();
     _insights = _repo.peekInsights();
     _loadingSummary = _summary == null;
@@ -87,7 +89,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final summary = _summary;
+    final assetState = ref.watch(assetConnectionProvider);
+    final isBankConnected = assetState.banksConnected || _demoMode;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -110,48 +113,57 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 selectedCycle: _selectedCycle,
                 onCycleTap: _openCycleSheet,
               ),
-              const SizedBox(height: 24),
-              AiMoodInsightCard(
-                mood: _insights?.aiInsight.mood ?? AiMood.neutral,
-                text: _insights?.aiInsight.text ?? '',
-                isLoading: _loadingInsights,
-              ),
-              const SizedBox(height: 28),
-              if (summary != null) ...[
-                FocusLevelChartCard(
-                  selectedCycle: _selectedCycle,
-                  customFromDate: _customFromDate,
-                  customToDate: _customToDate,
+              const SizedBox(height: 20),
+              if (!isBankConnected) ...[
+                UnconnectedBankEmptyState(
+                  title: 'Unlock Spend Analytics',
+                  description:
+                      'Connect your bank account via Account Aggregator to get AI-powered spending insights, category breakdowns, and monthly trends.',
+                  onDemoTap: () => setState(() => _demoMode = true),
+                ),
+              ] else ...[
+                AiMoodInsightCard(
+                  mood: _insights?.aiInsight.mood ?? AiMood.neutral,
+                  text: _insights?.aiInsight.text ?? '',
+                  isLoading: _loadingInsights,
                 ),
                 const SizedBox(height: 28),
-                RecentSpendsCard(
-                  spends: summary.recentSpends,
-                  onSeeAll: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const TransactionsScreen()),
+                if (_summary != null) ...[
+                  FocusLevelChartCard(
+                    selectedCycle: _selectedCycle,
+                    customFromDate: _customFromDate,
+                    customToDate: _customToDate,
                   ),
-                ),
-                const SizedBox(height: 28),
-                CategoryAllocationCard(
-                  allocations: summary.categoryAllocations,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const CategorySpendsScreen()),
+                  const SizedBox(height: 28),
+                  RecentSpendsCard(
+                    spends: _summary!.recentSpends,
+                    onSeeAll: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const TransactionsScreen()),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 28),
-                MonthlySpendingLevelCard(
-                  categories: summary.spendingLevels,
-                  onSeeAll: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const CategorySpendsScreen()),
+                  const SizedBox(height: 28),
+                  CategoryAllocationCard(
+                    allocations: _summary!.categoryAllocations,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const CategorySpendsScreen()),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 28),
-                SpendTrendsCard(trends: summary.spendTrends),
-                const SizedBox(height: 28),
-              ] else if (_loadingSummary) ...[
-                const SizedBox(height: 140, child: Center(child: CircularProgressIndicator())),
+                  const SizedBox(height: 28),
+                  MonthlySpendingLevelCard(
+                    categories: _summary!.spendingLevels,
+                    onSeeAll: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const CategorySpendsScreen()),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  SpendTrendsCard(trends: _summary!.spendTrends),
+                  const SizedBox(height: 28),
+                ] else if (_loadingSummary) ...[
+                  const SizedBox(height: 140, child: Center(child: CircularProgressIndicator())),
+                ],
+                if (_insights != null)
+                  ActionableInsightsCard(insights: _insights!.actionableInsights),
               ],
-              if (_insights != null)
-                ActionableInsightsCard(insights: _insights!.actionableInsights),
             ],
           ),
         ),

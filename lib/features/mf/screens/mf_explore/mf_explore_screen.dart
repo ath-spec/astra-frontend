@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/providers/nav_context_provider.dart';
 import '../../../asset_connection/providers/asset_connection_provider.dart';
+import '../../../dashboard/data/dashboard_providers.dart';
 import 'widgets/mf_explore_grid.dart';
 import 'widgets/mf_trending_funds.dart';
 import 'widgets/mf_fund_list_card.dart';
@@ -30,7 +31,13 @@ class MfExploreScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final assetState = ref.watch(assetConnectionProvider);
-    
+    final summaryAsync = ref.watch(dashboardSummaryProvider);
+    final summary = summaryAsync.value;
+
+    final double totalWealth = summary?.totalWealth ?? 0.0;
+    final double oneDayChange = summary?.oneDayChangeAmount ?? 0.0;
+    final double oneDayPct = summary?.oneDayChangePct ?? 0.0;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       body: CustomScrollView(
@@ -50,41 +57,59 @@ class MfExploreScreen extends ConsumerWidget {
               },
               mfConnected: assetState.mfConnected,
               stocksConnected: assetState.stocksConnected,
+              totalWealthValue: totalWealth,
+              oneDayChangeAmount: oneDayChange,
+              oneDayChangePct: oneDayPct,
             ),
           ),
           SliverToBoxAdapter(
             child: Transform.translate(
               offset: const Offset(0, -42),
               child: Column(
-                children: [
+                children: const [
                   // EXPLORE ASSETS
-                  const MfExploreAssets(),
+                  MfExploreAssets(),
 
                   // Section 1: TRENDING THEMES
-                  const SizedBox(height: 48),
-                  const MfNewTrendingThemes(),
-                  const SizedBox(height: 48),
+                  SizedBox(height: 48),
+                  MfNewTrendingThemes(),
+                  SizedBox(height: 48),
 
                   // Section 5: INVESTMENT IDEAS
-                  const MfNewInvestmentIdeas(),
-                  const SizedBox(height: 48),
+                  MfNewInvestmentIdeas(),
+                  SizedBox(height: 48),
                   // Section 6: GOAL PLANNING
-                  const MfGoalPlanning(),
-                  const SizedBox(height: 48),
+                  MfGoalPlanning(),
+                  SizedBox(height: 48),
                   // Section 2: ALTERNATIVE ASSETS
-                  const MfNewAlternativeAssets(),
-                  const SizedBox(height: 48),
-                  const MfAlternativeFunds(),
-                  const SizedBox(height: 48),
+                  MfNewAlternativeAssets(),
+                  SizedBox(height: 48),
+                  MfAlternativeFunds(),
+                  SizedBox(height: 48),
                   
                   // Section 3: AI PICKS (HERO)
-                  const MfNewAiPicksHero(),
-                  const SizedBox(height: 48),
+                  MfNewAiPicksHero(),
+                  SizedBox(height: 48),
 
-                // Section 6: GLOBAL INVESTING
-                  const MfGlobalInvesting(),
-                  
-                  const SizedBox(height: 120), // Bottom padding for nav bar
+                  // Global Investing
+                  MfGlobalInvesting(),
+                  SizedBox(height: 48),
+
+                  // Explore by Risk
+                  MfExploreByRisk(),
+                  SizedBox(height: 48),
+
+                  // Trending Funds
+                  MfTrendingFunds(),
+                  SizedBox(height: 48),
+
+                  // Income & Safety
+                  MfIncomeSafety(),
+                  SizedBox(height: 48),
+
+                  // Learn and Grow
+                  MfLearnAndGrow(),
+                  SizedBox(height: 120), // Bottom padding for navigation
                 ],
               ),
             ),
@@ -101,6 +126,9 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
   final VoidCallback onBackTap;
   final bool mfConnected;
   final bool stocksConnected;
+  final double totalWealthValue;
+  final double oneDayChangeAmount;
+  final double oneDayChangePct;
 
   _MfExploreHeaderDelegate({
     required this.safeAreaTop,
@@ -108,36 +136,33 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.onBackTap,
     required this.mfConnected,
     required this.stocksConnected,
+    required this.totalWealthValue,
+    required this.oneDayChangeAmount,
+    required this.oneDayChangePct,
   });
 
   @override
-  double get minExtent => safeAreaTop + 84.0;
+  double get minExtent => safeAreaTop + 68; // Compact header with pill
 
   @override
-  double get maxExtent => safeAreaTop + (screenHeight * 0.4);
+  double get maxExtent => safeAreaTop + 140; // Full height with big text
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    // 0.0 when fully expanded, 1.0 when fully collapsed
-    final shrinkRatio = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
-    // Use an ease-in-out curve for the transition to make it feel organic (Emil style)
-    final curve = Curves.easeInOutCubic;
-    final double easedRatio = curve.transform(shrinkRatio);
+    final double shrinkRatio = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+    
+    // Custom easing curve: stays large for longer, then shrinks rapidly near the end
+    final double easedRatio = Curves.easeInOutCubic.transform(shrinkRatio);
 
-    // Layout Interpolations
-    final double startTop = maxExtent * 0.3;
-    final double endTop = safeAreaTop + 18.0; // Vertically centered with 44px buttons
-    final double currentTop = lerpDouble(startTop, endTop, easedRatio)!;
-
-    final double startSubtitleTop = startTop - 26.0;
-    final double endSubtitleTop = endTop - 40.0;
-    final double currentSubtitleTop = lerpDouble(startSubtitleTop, endSubtitleTop, easedRatio)!;
-
-    // Style Interpolations
-    final double currentFontSize = lerpDouble(26.0, 14.0, easedRatio)!;
+    // Dynamic sizing based on eased ratio
+    final double currentFontSize = lerpDouble(32.0, 18.0, easedRatio)!;
     final double currentBorderRadius = lerpDouble(0.0, 20.0, easedRatio)!;
     final double currentHPad = lerpDouble(0.0, 16.0, easedRatio)!;
     final double currentVPad = lerpDouble(0.0, 6.0, easedRatio)!;
+
+    // Positioning calculations
+    final double currentSubtitleTop = lerpDouble(safeAreaTop + 8, safeAreaTop + 4, shrinkRatio)!;
+    final double currentTop = lerpDouble(safeAreaTop + 24, safeAreaTop + 6, easedRatio)!;
     
     // Fade the background in slower so it looks like text first, then pill
     final double pillBgRatio = (easedRatio * 1.5).clamp(0.0, 1.0);
@@ -148,17 +173,11 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
     if (mfConnected && !stocksConnected) subtitleText = 'MUTUAL FUNDS VALUE';
     if (!mfConnected && stocksConnected) subtitleText = 'STOCKS VALUE';
 
-    double totalWealthValue = (mfConnected ? 352962.0 : 0.0) + (stocksConnected ? 147908.0 : 0.0);
-    String formattedTotal = (totalWealthValue == 0) ? '₹ 0' : '₹ ${totalWealthValue.toInt().toString().replaceAllMapped(RegExp(r"(\d)(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}';
+    String formattedTotal = (totalWealthValue == 0)
+        ? '₹ 0'
+        : '₹ ${totalWealthValue.toInt().toString().replaceAllMapped(RegExp(r"(\d)(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}';
     
-    String pillOneDayText = '';
-    if (mfConnected && stocksConnected) {
-      pillOneDayText = '₹3,402 (0.65%)';
-    } else if (mfConnected) {
-      pillOneDayText = '₹2,202 (0.62%)';
-    } else if (stocksConnected) {
-      pillOneDayText = '₹1,200 (0.81%)';
-    }
+    final formattedChange = '₹${oneDayChangeAmount.toInt().toString().replaceAllMapped(RegExp(r"(\d)(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")} (${oneDayChangePct.toStringAsFixed(2)}%)';
 
     return Container(
       color: Colors.transparent,
@@ -169,7 +188,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
             top: (-shrinkOffset * 0.1),
             left: 0,
             right: 0,
-            bottom: screenHeight * 0.035, // Responsive bottom spacing
+            bottom: screenHeight * 0.035,
             child: Opacity(
               opacity: 1.0 - shrinkRatio,
               child: Container(
@@ -185,30 +204,29 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
 
-          // Frosted glass blur overlay
+          // Progressive blur
           Positioned.fill(
             child: Stack(
               children: [
-                // Progressive blur
-                if (!kIsWeb) ShaderMask(
-                  blendMode: BlendMode.dstIn,
-                  shaderCallback: (bounds) => const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.black, Colors.black, Colors.transparent],
-                    stops: [0.0, 0.7, 1.0],
-                  ).createShader(bounds),
-                  child: ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(
-                        sigmaX: lerpDouble(0.0, 16.0, easedRatio)!,
-                        sigmaY: lerpDouble(0.0, 16.0, easedRatio)!,
+                if (!kIsWeb)
+                  ShaderMask(
+                    blendMode: BlendMode.dstIn,
+                    shaderCallback: (bounds) => const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.black, Colors.black, Colors.transparent],
+                      stops: [0.0, 0.7, 1.0],
+                    ).createShader(bounds),
+                    child: ClipRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: lerpDouble(0.0, 16.0, easedRatio)!,
+                          sigmaY: lerpDouble(0.0, 16.0, easedRatio)!,
+                        ),
+                        child: const SizedBox.expand(),
                       ),
-                      child: const SizedBox.expand(),
                     ),
                   ),
-                ),
-                // Progressive tint
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -233,7 +251,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
             left: 0,
             right: 0,
             child: Opacity(
-              opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0), // Fades out quickly
+              opacity: (1.0 - (shrinkRatio * 2.5)).clamp(0.0, 1.0),
               child: Center(
                 child: Text(
                   subtitleText,
@@ -249,7 +267,7 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
             ),
           ),
 
-          // The Transforming Wealth Number -> Pill
+          // Wealth Number -> Pill
           Positioned(
             top: currentTop,
             left: 0,
@@ -286,7 +304,6 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                         height: 1.1,
                       ),
                     ),
-                    // Shrinking subtitle text (1D Change)
                     if (mfConnected && shrinkRatio < 1.0)
                       Opacity(
                         opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
@@ -301,11 +318,11 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
                                 Icon(
                                   Icons.arrow_upward_rounded,
                                   size: lerpDouble(14.0, 0.0, easedRatio)!,
-                                  color: const Color.fromARGB(255, 5, 134, 91), // Emerald 500
+                                  color: const Color.fromARGB(255, 5, 134, 91),
                                 ),
                                 SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
                                 Text(
-                                  pillOneDayText,
+                                  formattedChange,
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
                                     fontSize: lerpDouble(10.0, 0.0, easedRatio)!,
@@ -341,6 +358,8 @@ class _MfExploreHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _MfExploreHeaderDelegate oldDelegate) {
-    return safeAreaTop != oldDelegate.safeAreaTop;
+    return safeAreaTop != oldDelegate.safeAreaTop ||
+        totalWealthValue != oldDelegate.totalWealthValue ||
+        oneDayChangeAmount != oldDelegate.oneDayChangeAmount;
   }
 }

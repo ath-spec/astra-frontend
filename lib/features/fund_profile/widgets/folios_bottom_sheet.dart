@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../mf/data/mf_holdings_models.dart';
 
 class FoliosBottomSheet extends StatelessWidget {
-  const FoliosBottomSheet({super.key});
+  final MfFolio? folio;
+  final String? schemeName;
+  final double? currentValue;
+
+  const FoliosBottomSheet({
+    super.key,
+    this.folio,
+    this.schemeName,
+    this.currentValue,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-        return Container(
-      decoration: BoxDecoration(
+    final currencyFormatter = NumberFormat('#,##,##0.00', 'en_IN');
+    final name = folio?.schemeName ?? schemeName ?? 'Mutual Fund Holding';
+    final folioNum = folio?.folioNumber ?? 'FOLIO-2026-LIVE';
+    final amount = folio?.currentValue ?? currentValue ?? 0.0;
+    final plan = folio?.planType ?? 'DIRECT';
+    final units = folio?.unitsHeld ?? 0.0;
+    final amc = folio?.amcName ?? 'Asset Management Co';
+
+    return Container(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16),
@@ -18,7 +36,7 @@ class FoliosBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Center(
             child: Container(
               width: 40,
@@ -29,35 +47,14 @@ class FoliosBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Folios',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '1 folio',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    color: const Color(0xFF94A3B8),
-                  ),
-                ),
-                SizedBox(height: 24),
-                _buildDashedDivider(),
-                SizedBox(height: 24),
-                Text(
-                  '₹2,36,538.56',
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 14,
@@ -65,41 +62,106 @@ class FoliosBottomSheet extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      'Folio no. 17762024046',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 10,
-                        color: const Color(0xFF94A3B8),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE2E8F0),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                      child: Text(
-                        'EXTERNAL',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
-                          color: const Color(0xFF475569),
-                        ),
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 4),
+                Text(
+                  '1 active folio registered under $amc',
+                  style: const TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 11,
+                    color: Color(0xFF94A3B8),
+                  ),
                 ),
-                SizedBox(height: 48), // bottom padding
               ],
             ),
           ),
+          const SizedBox(height: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: Divider(color: Color(0xFFF1F5F9), thickness: 1),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF0F172A),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Folio: $folioNum',
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF64748B),
+                            ),
+                          ),
+                          if (units > 0) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              '${units.toStringAsFixed(3)} units',
+                              style: const TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 10,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '₹${currencyFormatter.format(amount)}',
+                          style: const TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF0F172A),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF1F5F9),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            plan,
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF475569),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildDashedDivider(),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
         ],
       ),
     );
@@ -109,18 +171,18 @@ class FoliosBottomSheet extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final boxWidth = constraints.constrainWidth();
-        final dashWidth = 4.0;
-        final dashHeight = 1.0;
+        const dashWidth = 4.0;
+        const dashHeight = 1.0;
         final dashCount = (boxWidth / (2 * dashWidth)).floor();
         return Flex(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           direction: Axis.horizontal,
           children: List.generate(dashCount, (_) {
-            return SizedBox(
+            return const SizedBox(
               width: dashWidth,
               height: dashHeight,
               child: DecoratedBox(
-                decoration: BoxDecoration(color: const Color(0xFFF1F5F9)),
+                decoration: BoxDecoration(color: Color(0xFFF1F5F9)),
               ),
             );
           }),

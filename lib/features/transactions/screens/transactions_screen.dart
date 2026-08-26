@@ -5,8 +5,11 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/responsive/context_responsive.dart';
 import '../../../core/widgets/responsive_body.dart';
+import '../../../core/widgets/unconnected_bank_empty_state.dart';
+import '../../asset_connection/providers/asset_connection_provider.dart';
 import '../data/transactions_repository.dart';
 import '../models/transaction_models.dart';
 import '../widgets/type_switcher_pill.dart';
@@ -17,20 +20,21 @@ import 'category_transactions_screen.dart';
 import 'merchant_transactions_screen.dart';
 import 'transaction_detail_screen.dart';
 
-class TransactionsScreen extends StatefulWidget {
+class TransactionsScreen extends ConsumerStatefulWidget {
   const TransactionsScreen({super.key});
 
   @override
-  State<TransactionsScreen> createState() => _TransactionsScreenState();
+  ConsumerState<TransactionsScreen> createState() => _TransactionsScreenState();
 }
 
-class _TransactionsScreenState extends State<TransactionsScreen> {
+class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
   final _repo = TransactionsRepository.instance;
 
   int _selectedTab = 0;
   List<TransactionDateGroup>? _groups;
   List<CategorySummary>? _categories;
   List<MerchantSummary>? _merchants;
+  bool _demoMode = false;
 
   @override
   void initState() {
@@ -72,6 +76,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
     final hPad = context.pageHorizontalPadding;
+    final assetState = ref.watch(assetConnectionProvider);
+    final isBankConnected = assetState.banksConnected || _demoMode;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -90,21 +96,33 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         ),
       ),
       body: ResponsiveBody(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(hPad, 4, hPad, 12),
-              child: TypeSwitcherPill(selectedIndex: _selectedTab, onChanged: _onTabChanged),
-            ),
-            Expanded(
-              child: switch (_selectedTab) {
-                0 => _buildTransactionsTab(hPad),
-                1 => _buildCategoriesTab(hPad),
-                _ => _buildMerchantsTab(hPad),
-              },
-            ),
-          ],
-        ),
+        child: !isBankConnected
+            ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: hPad),
+                child: Center(
+                  child: UnconnectedBankEmptyState(
+                    title: 'No Bank Account Connected',
+                    description:
+                        'Connect your bank account to automatically aggregate and view all your UPI payments, debits, and merchant transactions.',
+                    onDemoTap: () => setState(() => _demoMode = true),
+                  ),
+                ),
+              )
+            : Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(hPad, 4, hPad, 12),
+                    child: TypeSwitcherPill(selectedIndex: _selectedTab, onChanged: _onTabChanged),
+                  ),
+                  Expanded(
+                    child: switch (_selectedTab) {
+                      0 => _buildTransactionsTab(hPad),
+                      1 => _buildCategoriesTab(hPad),
+                      _ => _buildMerchantsTab(hPad),
+                    },
+                  ),
+                ],
+              ),
       ),
     );
   }

@@ -17,7 +17,11 @@ class BanksLinkingScreen extends ConsumerStatefulWidget {
 class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
   final List<String> _selectedMoreBanks = [];
   final List<String> _popularBanks = [
+    'HDFC Bank',
+    'ICICI Bank',
     'State Bank of India',
+    'Axis Bank',
+    'Kotak Mahindra Bank',
     'Punjab National Bank',
     'Bank of Baroda',
     'Canara Bank',
@@ -193,9 +197,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                           children: state.bankAccounts.map((bank) {
                             return _buildBankCard(
                               bank: bank,
-                              onTap: bank.isLinked
-                                  ? null // already linked, not interactive
-                                  : () => notifier.toggleBankSelection(bank.id),
+                              onTap: () => notifier.toggleBankSelection(bank.id),
                             );
                           }).toList(),
                         ),

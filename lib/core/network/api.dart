@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:astra_frontend/core/network/dio_client.dart';
 import 'package:astra_frontend/core/network/api_exception.dart';
 
@@ -10,18 +11,32 @@ import 'package:astra_frontend/core/network/api_exception.dart';
 /// issue requests, or use [unwrap]/[unwrapList] to decode the standard
 /// `/api/v1` response envelope `{"error": bool, "message": string, "data": ...}`.
 class DioApiClient {
-  DioApiClient({String? baseUrl})
-      : _client = DioClient(
-          baseUrl: baseUrl ??
-              const String.fromEnvironment(
-                'API_BASE_URL',
-                defaultValue: 'http://localhost:8080',
-              ),
+  DioApiClient({String? baseUrl}) : _explicitBaseUrl = baseUrl;
+
+  final String? _explicitBaseUrl;
+  DioClient? _client;
+
+  DioClient get _effectiveClient {
+    if (_client == null) {
+      String url = _explicitBaseUrl ?? '';
+      if (url.isEmpty && dotenv.isInitialized) {
+        url = dotenv.env['API_BASE_URL'] ?? '';
+      }
+      if (url.isEmpty) {
+        url = const String.fromEnvironment(
+          'API_BASE_URL',
+          defaultValue: 'https://astra.zeyro.in',
         );
+      }
+      if (url.isEmpty) {
+        url = 'https://astra.zeyro.in';
+      }
+      _client = DioClient(baseUrl: url);
+    }
+    return _client!;
+  }
 
-  final DioClient _client;
-
-  Dio get dio => _client.dio;
+  Dio get dio => _effectiveClient.dio;
 
   /// Unwraps a single-object `/api/v1` envelope response, returning the
   /// decoded `data` payload via [fromJson]. Throws [ApiException] if the

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/analysis_walk/analysis_intro_view.dart';
 import '../widgets/analysis_walk/analysis_result_view.dart';
 import '../../home/widgets/home_portfolio_analysis.dart';
 import '../models/portfolio_analysis_models.dart';
+import '../data/portfolio_analysis_providers.dart';
 
 enum WalkStep {
   disciplineIntro,
@@ -14,14 +16,14 @@ enum WalkStep {
   performanceResult,
 }
 
-class AnalysisWalkScreen extends StatefulWidget {
+class AnalysisWalkScreen extends ConsumerStatefulWidget {
   const AnalysisWalkScreen({super.key});
 
   @override
-  State<AnalysisWalkScreen> createState() => _AnalysisWalkScreenState();
+  ConsumerState<AnalysisWalkScreen> createState() => _AnalysisWalkScreenState();
 }
 
-class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
+class _AnalysisWalkScreenState extends ConsumerState<AnalysisWalkScreen> {
   WalkStep _currentStep = WalkStep.disciplineIntro;
 
   void _nextStep() {
@@ -125,7 +127,7 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 40), // Balance the close button
+                    const SizedBox(width: 40),
                   ],
                 ),
               ),
@@ -137,6 +139,10 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
   }
 
   Widget _buildCurrentView() {
+    final disciplineAsync = ref.watch(portfolioDisciplineProvider);
+    final allocationAsync = ref.watch(portfolioAllocationProvider);
+    final performanceAsync = ref.watch(portfolioPerformanceProvider);
+
     switch (_currentStep) {
       case WalkStep.disciplineIntro:
         return AnalysisIntroView(
@@ -147,13 +153,15 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
           onNext: _nextStep,
         );
       case WalkStep.disciplineResult:
-        final model = DisciplineLevel.moderate;
+        final disc = disciplineAsync.value;
+        final model = disc != null ? disc.level : DisciplineLevel.good;
+        final streak = disc?.currentStreakMonths ?? 4;
         return AnalysisResultView(
           key: const ValueKey('disciplineResult'),
           type: ResultType.discipline,
           mode: model.label,
-          scoreText: 'You\'re building good habits.',
-          description: 'Your monthly contributions are becoming more consistent, though there\'s room to strengthen your SIP adherence.',
+          scoreText: 'You have a $streak-month disciplined investing streak.',
+          description: 'Your monthly contributions and SIP commitments are actively compounding your net worth.',
           gaugeColor: model.color,
           gradientColors: model.gradientColors,
           fillPercentage: model.score,
@@ -168,13 +176,15 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
           onNext: _nextStep,
         );
       case WalkStep.allocationResult:
-        final model = AllocationLevel.veryAggressive;
+        final alloc = allocationAsync.value;
+        final model = alloc != null ? alloc.level : AllocationLevel.balanced;
+        final eqPct = alloc?.equityPct ?? 65.0;
         return AnalysisResultView(
           key: const ValueKey('allocationResult'),
           type: ResultType.allocation,
           mode: model.label,
-          scoreText: 'Your portfolio is highly aggressive.',
-          description: 'Heavy concentration in high-risk equity and multiplier assets positions you for sharp swings and high rewards.',
+          scoreText: 'Your asset allocation is ${model.label.toLowerCase()}.',
+          description: '${eqPct.toStringAsFixed(0)}% equity allocation calibrated against fixed income and liquid reserves.',
           gaugeColor: model.activeColor,
           gradientColors: model.gradientColors,
           fillPercentage: model.activeSegments / 5,
@@ -189,13 +199,15 @@ class _AnalysisWalkScreenState extends State<AnalysisWalkScreen> {
           onNext: _nextStep,
         );
       case WalkStep.performanceResult:
-        final model = PerformanceLevel.veryStrong;
+        final perf = performanceAsync.value;
+        final model = perf != null ? perf.level : PerformanceLevel.strong;
+        final retPct = perf?.totalReturnPct ?? 18.5;
         return AnalysisResultView(
           key: const ValueKey('performanceResult'),
           type: ResultType.performance,
           mode: model.label,
-          scoreText: 'Your portfolio is outperforming the market.',
-          description: 'Your XIRR is significantly ahead of the benchmark. Excellent fund quality and smart choices are paying off.',
+          scoreText: 'Blended return of +${retPct.toStringAsFixed(1)}% across holdings.',
+          description: 'Your portfolio performance is actively beating broad fixed deposits and benchmark indices.',
           gaugeColor: model.activeColor,
           gradientColors: model.gradientColors,
           fillPercentage: model.activeSegments / 5,

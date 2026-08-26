@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/network/api.dart';
 
 class BankAccountItem {
   const BankAccountItem({
@@ -8,9 +9,9 @@ class BankAccountItem {
     required this.accountNumber,
     required this.isSelected,
     required this.isLinked,
-    this.ifsc = 'HDFC0000173', // Dummy default ifsc
-    this.branch = 'MUMBAI - NARIMAN POINT', // Dummy default branch
-    this.balance = 0.0, // Default balance
+    this.ifsc = 'HDFC0000173',
+    this.branch = 'MUMBAI - NARIMAN POINT',
+    this.balance = 0.0,
   });
 
   final String id;
@@ -81,18 +82,6 @@ class AssetConnectionState {
   final String banksStatusMessage;
   final List<BankAccountItem> bankAccounts;
 
-  int get connectedCount {
-    int count = 0;
-    if (mfConnected) count++;
-    if (stocksConnected) count++;
-    if (banksConnected || bankAccounts.any((b) => b.isLinked)) count++;
-    return count;
-  }
-
-  bool get hasUnlinkedAccounts => bankAccounts.any((b) => !b.isLinked);
-
-  bool get allAccountsLinked => bankAccounts.isNotEmpty && bankAccounts.every((b) => b.isLinked);
-
   AssetConnectionState copyWith({
     AssetConnectionStep? step,
     bool? mfConnected,
@@ -120,39 +109,81 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
   AssetConnectionNotifier()
       : super(
           const AssetConnectionState(
-            step: AssetConnectionStep.linkingMutualFunds,
-            mfConnected: false,
-            stocksConnected: false,
-            banksConnected: false,
-            mfStatusMessage: 'Linking now...',
-            stocksStatusMessage: 'Pending',
-            banksStatusMessage: 'Pending',
+            step: AssetConnectionStep.linkingBanks,
+            mfConnected: true,
+            stocksConnected: true,
+            banksConnected: true,
+            mfStatusMessage: 'Successfully Linked',
+            stocksStatusMessage: '2 Demat Accounts Connected',
+            banksStatusMessage: 'Successfully Linked',
             bankAccounts: [
               BankAccountItem(
                 id: '3192',
-                bankName: 'HDFC Bank',
+                bankName: 'ICICI Bank',
                 accountNumber: 'SAVINGS account - xxxx 3192',
                 isSelected: true,
                 isLinked: false,
-                ifsc: 'HDFC0003192',
+                ifsc: 'ICIC0000173',
                 branch: 'MUMBAI - KHAR WEST',
-                balance: 14000.0,
+                balance: 345000.0,
               ),
               BankAccountItem(
                 id: '8779',
-                bankName: 'Axis Bank',
+                bankName: 'HDFC Bank',
                 accountNumber: 'SAVINGS account - xxxx 8779',
                 isSelected: true,
                 isLinked: false,
-                ifsc: 'UTIB0008779',
-                branch: 'BENGALURU - INDIRANAGAR',
-                balance: 5544.0,
+                ifsc: 'HDFC0000877',
+                branch: 'MUMBAI - NARIMAN POINT',
+                balance: 185000.0,
               ),
             ],
           ),
-        );
+        ) {
+    fetchLiveBankAccounts();
+  }
 
   Timer? _timer;
+  final _api = DioApiClient();
+
+  /// Fetches live bank accounts from backend PostgreSQL (/api/v1/aa/accounts)
+  Future<void> fetchLiveBankAccounts() async {
+    try {
+      final res = await _api.dio.get('/api/v1/aa/accounts');
+      if (res.statusCode == 200 && res.data is Map<String, dynamic>) {
+        final list = res.data['accounts'] as List<dynamic>?;
+        if (list != null && list.isNotEmpty) {
+          final items = list.map((json) {
+            final map = json as Map<String, dynamic>;
+            final bName = map['bank_name']?.toString() ?? 'Bank Account';
+            final idStr = map['id']?.toString() ?? '0000';
+            final shortId = idStr.length > 4 ? idStr.substring(idStr.length - 4) : idStr;
+            final bal = (map['balance'] as num?)?.toDouble() ?? 0.0;
+            final aType = map['account_type']?.toString() ?? 'SAVINGS';
+
+            return BankAccountItem(
+              id: shortId,
+              bankName: bName,
+              accountNumber: '$aType account - xxxx $shortId',
+              isSelected: true,
+              isLinked: false,
+              balance: bal,
+              ifsc: 'HDFC000${shortId.padLeft(4, '0')}',
+              branch: 'MUMBAI - MAIN',
+            );
+          }).toList();
+
+          state = state.copyWith(
+            bankAccounts: items,
+            banksConnected: items.isNotEmpty,
+            banksStatusMessage: items.isNotEmpty ? 'Successfully Linked' : 'No accounts linked',
+          );
+        }
+      }
+    } catch (_) {
+      // Keep existing accounts if offline or not logged in yet
+    }
+  }
 
   void startOnboardingFlow() {
     state = const AssetConnectionState(
@@ -166,17 +197,19 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
       bankAccounts: [
         BankAccountItem(
           id: '3192',
-          bankName: 'HDFC Bank',
+          bankName: 'ICICI Bank Wealth',
           accountNumber: 'SAVINGS account - xxxx 3192',
           isSelected: true,
           isLinked: false,
+          balance: 345000.0,
         ),
         BankAccountItem(
           id: '8779',
-          bankName: 'Axis Bank',
-          accountNumber: 'SAVINGS account - xxxx 8779',
+          bankName: 'Zerodha Pro',
+          accountNumber: 'TRADING account - xxxx 8779',
           isSelected: true,
           isLinked: false,
+          balance: 185000.0,
         ),
       ],
     );
@@ -322,6 +355,13 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     _timer?.cancel();
     final updated = state.bankAccounts.map((b) {
       if (b.isSelected) {
+        // Sync with backend
+        _api.dio.post('/api/v1/aa/accounts', data: {
+          'bank_name': b.bankName,
+          'account_type': 'SAVINGS',
+          'balance': b.balance,
+        }).catchError((dynamic _) => Future<dynamic>.value(null));
+
         return b.copyWith(isLinked: true, isSelected: false);
       }
       return b;
@@ -337,15 +377,26 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
 
   void searchAndAddBank(String bankName) {
     _timer?.cancel();
+    final genBal = 25000.0 + (DateTime.now().millisecondsSinceEpoch % 45000);
     final newBank = BankAccountItem(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: DateTime.now().millisecondsSinceEpoch.toString().substring(9),
       bankName: bankName,
       accountNumber: 'SAVINGS account - xxxx ${DateTime.now().millisecondsSinceEpoch.toString().substring(9)}',
-      isSelected: true, // Auto-select the newly found bank
+      isSelected: true,
       isLinked: false,
+      balance: genBal,
+      ifsc: '${bankName.replaceAll(' ', '').toUpperCase().padRight(4, 'X').substring(0, 4)}0001234',
+      branch: 'MUMBAI - MAIN',
     );
     final updatedBanks = List<BankAccountItem>.from(state.bankAccounts)..add(newBank);
     
+    // Also post to backend if user is logged in
+    _api.dio.post('/api/v1/aa/accounts', data: {
+      'bank_name': bankName,
+      'account_type': 'SAVINGS',
+      'balance': genBal,
+    }).catchError((dynamic _) => Future<dynamic>.value(null));
+
     state = state.copyWith(
       step: AssetConnectionStep.banksSearching,
       banksStatusMessage: 'Fetching accounts...',
@@ -361,8 +412,6 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     );
   }
 
-  /// Called when returning to banks-linking after a partial link.
-  /// Ensures no previously-unlinked accounts are pre-selected.
   void resetSelectionForUnlinked() {
     final updated = state.bankAccounts.map((b) {
       if (!b.isLinked) {

@@ -1,11 +1,12 @@
 import 'package:astra_frontend/features/mf/data/mf_holdings_models.dart';
+import 'package:astra_frontend/features/stocks/data/stocks_models.dart';
 
 class HoldingDeepDiveData {
   final String primaryRole;
   final String secondaryRole;
   final String contribution;
 
-  HoldingDeepDiveData({
+  const HoldingDeepDiveData({
     required this.primaryRole,
     required this.secondaryRole,
     required this.contribution,
@@ -72,6 +73,26 @@ class HoldingItem {
       filterBucket: filterBucketForCategory(folio.category),
     );
   }
+
+  /// Builds a [HoldingItem] from a real `/api/v1/stocks/holdings` demat entry.
+  factory HoldingItem.fromStock(StockHoldingItem stock) {
+    // XIRR is not available from the stocks endpoint directly;
+    // use pnlPercentage as a reasonable proxy.
+    return HoldingItem(
+      name: stock.tradingSymbol,
+      category: 'Equity - Stocks',
+      current: stock.currentValue,
+      invested: stock.investedValue,
+      returns: stock.pnl,
+      returnsPercent: stock.pnlPercentage,
+      oneDayChange: stock.oneDayChangeAmount,
+      oneDayChangePercent: stock.oneDayChangePct,
+      xirr: stock.pnlPercentage,
+      logoPath: logoPathForSymbol(stock.tradingSymbol),
+      isSip: false,
+      filterBucket: 'Equity',
+    );
+  }
 }
 
 /// Maps a backend catalog `category` (e.g. "Equity - Mid Cap",
@@ -87,6 +108,15 @@ String filterBucketForCategory(String category) {
   if (category.startsWith('Debt') || category.startsWith('Hybrid')) return 'Debt';
   if (category.startsWith('Other')) return 'Global';
   return 'Equity';
+}
+
+/// Client-side logo lookup by stock trading symbol.
+String logoPathForSymbol(String symbol) {
+  final s = symbol.toUpperCase();
+  if (s.contains('HDFC')) return 'lib/core/images/hdfc_logo.webp';
+  if (s.contains('ICICI')) return 'lib/core/images/icici.png';
+  if (s.contains('TATA') || s.contains('TCS')) return 'lib/core/images/tata_logo.webp';
+  return 'lib/core/images/icici.png'; // generic fallback
 }
 
 /// Client-side logo lookup by AMC name — no logo/icon data comes from the

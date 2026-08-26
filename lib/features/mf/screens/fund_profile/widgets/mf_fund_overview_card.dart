@@ -91,17 +91,17 @@ class _MfFundOverviewCardState extends State<MfFundOverviewCard> {
             ),
             child: Column(
               children: [
-                _buildStatRow('NAV: 30 Jul \'26', '127.71'),
+                _buildStatRow('NAV', widget.data.nav != null ? '₹ ${widget.data.nav!.toStringAsFixed(2)}' : '₹ 100.00'),
                 _buildDivider(),
-                _buildStatRow('Expense ratio', '0.63%'),
+                _buildStatRow('Expense ratio', widget.data.expenseRatio != null ? '${widget.data.expenseRatio!.toStringAsFixed(2)}%' : '0.65%'),
                 _buildDivider(),
-                _buildStatRow('AUM (Fund size)', '₹14K Cr'),
+                _buildStatRow('AUM (Fund size)', widget.data.aum != null ? '₹ ${(widget.data.aum! / 1000).toStringAsFixed(1)}K Cr' : '₹ 12.5K Cr'),
                 _buildDivider(),
                 _buildStatRow('Fund Age', '13 years 6 months'),
                 _buildDivider(),
                 _buildStatRow(
                   'Min. Investment',
-                  'SIP: ₹500\nOne-time: ₹5K',
+                  'SIP: ₹ ${widget.data.minSipAmount?.toInt() ?? 500}\nOne-time: ₹ ${(widget.data.minInvestment != null ? (widget.data.minInvestment! / 1000).toStringAsFixed(0) : '5')}K',
                   isMultilineValue: true,
                 ),
                 

@@ -156,16 +156,109 @@ class UserHoldingData {
   }
 }
 
+class DeepDiveData {
+  final String primaryRole;
+  final String secondaryRole;
+  final String strengths;
+  final String tradeOffs;
+  final String contribution;
+
+  const DeepDiveData({
+    required this.primaryRole,
+    required this.secondaryRole,
+    required this.strengths,
+    required this.tradeOffs,
+    required this.contribution,
+  });
+
+  factory DeepDiveData.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const DeepDiveData(
+        primaryRole: 'Core Growth',
+        secondaryRole: 'Capital Preservation',
+        strengths: 'Solid fundamentals and resilient market position.',
+        tradeOffs: 'Moderate market beta.',
+        contribution: 'Provides stability and steady compounding.',
+      );
+    }
+    return DeepDiveData(
+      primaryRole: json['primary_role']?.toString() ?? 'Core Growth',
+      secondaryRole: json['secondary_role']?.toString() ?? 'Capital Preservation',
+      strengths: json['strengths']?.toString() ?? '',
+      tradeOffs: json['trade_offs']?.toString() ?? '',
+      contribution: json['contribution']?.toString() ?? '',
+    );
+  }
+}
+
+class FundInsightsDetail {
+  final bool isPositiveImpact;
+  final String whyGetFund;
+  final String suitableFor;
+  final String avoidIf;
+  final String impactText;
+  final String whatItDoesRightNow;
+  final String whatBuyingMoreWillDo;
+  final List<double> currentValues;
+  final List<double> projectedValues;
+
+  const FundInsightsDetail({
+    required this.isPositiveImpact,
+    required this.whyGetFund,
+    required this.suitableFor,
+    required this.avoidIf,
+    required this.impactText,
+    required this.whatItDoesRightNow,
+    required this.whatBuyingMoreWillDo,
+    required this.currentValues,
+    required this.projectedValues,
+  });
+
+  factory FundInsightsDetail.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const FundInsightsDetail(
+        isPositiveImpact: true,
+        whyGetFund: 'Provides risk-adjusted capital growth.',
+        suitableFor: 'Long-term disciplined wealth accumulation.',
+        avoidIf: 'Seeking immediate cash redemption.',
+        impactText: 'Improves portfolio diversification.',
+        whatItDoesRightNow: 'Provides market compounding and risk balance.',
+        whatBuyingMoreWillDo: 'Accelerates capital growth with controlled volatility.',
+        currentValues: [0.5, 0.4, 0.6, 0.3, 0.7, 0.4, 0.2],
+        projectedValues: [0.7, 0.5, 0.7, 0.4, 0.7, 0.5, 0.3],
+      );
+    }
+    final curr = (json['current_values'] as List?)?.map((e) => (e as num).toDouble()).toList() ?? [];
+    final proj = (json['projected_values'] as List?)?.map((e) => (e as num).toDouble()).toList() ?? [];
+
+    return FundInsightsDetail(
+      isPositiveImpact: json['is_positive_impact'] == true,
+      whyGetFund: json['why_get_fund']?.toString() ?? '',
+      suitableFor: json['suitable_for']?.toString() ?? '',
+      avoidIf: json['avoid_if']?.toString() ?? '',
+      impactText: json['impact_text']?.toString() ?? '',
+      whatItDoesRightNow: json['what_it_does_right_now']?.toString() ?? '',
+      whatBuyingMoreWillDo: json['what_buying_more_will_do']?.toString() ?? '',
+      currentValues: curr,
+      projectedValues: proj,
+    );
+  }
+}
+
 class FundProfileDetail {
   final CatalogFund fund;
   final AllocationBreakdownData allocation;
   final List<ChartPointData> chartPoints;
+  final DeepDiveData deepDive;
+  final FundInsightsDetail insights;
   final UserHoldingData? userHolding;
 
   const FundProfileDetail({
     required this.fund,
     required this.allocation,
     required this.chartPoints,
+    required this.deepDive,
+    required this.insights,
     this.userHolding,
   });
 
@@ -186,10 +279,15 @@ class FundProfileDetail {
         ? UserHoldingData.fromJson(json['user_holding'] as Map<String, dynamic>)
         : null;
 
+    final deepDive = DeepDiveData.fromJson(json['deep_dive'] as Map<String, dynamic>?);
+    final insights = FundInsightsDetail.fromJson(json['insights'] as Map<String, dynamic>?);
+
     return FundProfileDetail(
       fund: CatalogFund.fromJson(json),
       allocation: alloc,
       chartPoints: chartPts,
+      deepDive: deepDive,
+      insights: insights,
       userHolding: holding,
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import '../../../../stocks/data/stocks_providers.dart';
-import '../../../../stocks/data/stocks_models.dart';
 import 'mf_order_item_card.dart';
 
 class MfOrderList extends ConsumerWidget {
@@ -12,6 +12,19 @@ class MfOrderList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ordersAsync = ref.watch(stocksOrdersProvider);
     final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 2);
+
+    if (ordersAsync.isLoading) {
+      return const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            AppThemeShimmerCard(height: 70),
+            SizedBox(height: 12),
+            AppThemeShimmerCard(height: 70),
+          ],
+        ),
+      );
+    }
 
     if (ordersAsync.hasValue && ordersAsync.value != null && ordersAsync.value!.isNotEmpty) {
       final orders = ordersAsync.value!;
@@ -43,29 +56,36 @@ class MfOrderList extends ConsumerWidget {
       );
     }
 
-    // Default fallback order list
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildDateHeader('12 FEB'),
-        const MfOrderItemCard(
-          logoText: 'CANARA\nROBECO',
-          logoColor: Color(0xFF0EA5E9),
-          fundName: 'Canara Robeco Large Cap Fund',
-          amount: '₹22,501.87',
-          type: 'BUY',
-          status: 'COMPLETED',
+    // Clean Empty State
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 24.0),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(Icons.receipt_long_outlined, size: 48, color: const Color(0xFF94A3B8)),
+            const SizedBox(height: 12),
+            const Text(
+              'No Orders Yet',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF0F172A),
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Your completed and ongoing mutual fund & stock transactions will appear here.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 12,
+                color: Color(0xFF64748B),
+              ),
+            ),
+          ],
         ),
-        _buildDateHeader('9 FEB'),
-        const MfOrderItemCard(
-          logoText: 'Nippon',
-          logoColor: Color(0xFFEF4444),
-          fundName: 'Nippon India Large Cap Fund',
-          amount: '₹58,191.95',
-          type: 'SELL',
-          status: 'COMPLETED',
-        ),
-      ],
+      ),
     );
   }
 

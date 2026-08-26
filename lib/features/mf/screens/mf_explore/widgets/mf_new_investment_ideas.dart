@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../data/catalog_providers.dart';
+import '../../../data/catalog_models.dart';
 import 'mf_fund_list_card.dart';
 import '../../mf_collection/mf_collection_screen.dart';
 
-class MfNewInvestmentIdeas extends StatelessWidget {
+class MfNewInvestmentIdeas extends ConsumerWidget {
   const MfNewInvestmentIdeas({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+    final catalogFunds = catalogAsync.value ?? [];
+
+    final valueFunds = catalogFunds
+        .where((f) => f.category.toLowerCase().contains('equity') || f.category.toLowerCase().contains('value'))
+        .take(3)
+        .map((f) => MfFundItemData(
+              name: f.schemeName,
+              category: f.category,
+              returns: '${(f.returns3y ?? 21.0).toStringAsFixed(1)}%',
+              logoIcon: Icons.trending_up_rounded,
+              logoColor: const Color(0xFF10B981),
+            ))
+        .toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -19,122 +37,44 @@ class MfNewInvestmentIdeas extends StatelessWidget {
               fontSize: 20,
               fontWeight: FontWeight.w600,
               letterSpacing: -1.0,
-              color: Color.fromARGB(255, 0, 0, 0),
+              color: Color(0xFF0F172A),
             ),
           ),
         ),
         const SizedBox(height: 16),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: MediaQuery.sizeOf(context).width * 0.8,
-                child: MfFundListCard(
-                  margin: const EdgeInsets.only(left: 16.0, right: 8.0),
-                  borderColor: HSLColor.fromColor(Colors.white).withLightness((1.0 - 0.12).clamp(0.0, 1.0)).toColor(),
-                  sectionTitle: '', // We use our own header above
-                  cardTitle: 'High Growth',
-                  cardSubtitle: 'Top ideas with high potential returns.',
-                  cardGraphic: SizedBox(
-                    width: 90,
-                    height: 90,
-                    child: Image.asset(
-                      'lib/core/images/growth_collections.webp',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  onViewCollection: () {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (_) => const MfCollectionScreen(
-                          title: 'High Growth',
-                          subtitle: 'Top ideas with high potential returns.',
-                          imagePath: 'lib/core/images/growth_collections.webp',
-                        ),
-                      ),
-                    );
-                  },
-                  funds: const [
-                    MfFundItemData(
-                      name: 'Quant Value Fund',
-                      category: 'Equity • Value',
-                      returns: '22.56%',
-                      logoIcon: Icons.account_balance,
-                      logoColor: Colors.deepPurple,
-                    ),
-                    MfFundItemData(
-                      name: 'Axis Value Fund',
-                      category: 'Equity • Value',
-                      returns: '18.73%',
-                      logoIcon: Icons.change_history,
-                      logoColor: Colors.red,
-                    ),
-                    MfFundItemData(
-                      name: 'HSBC Value Fund',
-                      category: 'Equity • Value',
-                      returns: '18.4%',
-                      logoIcon: Icons.hdr_strong,
-                      logoColor: Colors.redAccent,
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.sizeOf(context).width * 0.8,
-                child: MfFundListCard(
-                  margin: const EdgeInsets.only(left: 8.0, right: 16.0),
-                  borderColor: HSLColor.fromColor(Colors.white).withLightness((1.0 - 0.12).clamp(0.0, 1.0)).toColor(),
-                  sectionTitle: '',
-                  cardTitle: 'Safe Investing',
-                  cardSubtitle: 'Protect your capital with safer options.',
-                  cardGraphic: SizedBox(
-                    width: 90,
-                    height: 90,
-                    child: Image.asset(
-                      'lib/core/images/safe_investments.webp',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  onViewCollection: () {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (_) => const MfCollectionScreen(
-                          title: 'Safe Investing',
-                          subtitle: 'Protect your capital with safer options.',
-                          imagePath: 'lib/core/images/safe_investments.webp',
-                        ),
-                      ),
-                    );
-                  },
-                  funds: const [
-                    MfFundItemData(
-                      name: 'HDFC Corporate Bond Fund',
-                      category: 'Debt • Corporate Bond',
-                      returns: '7.28%',
-                      logoIcon: Icons.domain,
-                      logoColor: Colors.blue,
-                    ),
-                    MfFundItemData(
-                      name: 'SBI Debt Fund',
-                      category: 'Debt • Short Term',
-                      returns: '7.10%',
-                      logoIcon: Icons.lens,
-                      logoColor: Colors.lightBlue,
-                    ),
-                    MfFundItemData(
-                      name: 'ICICI Pru Savings Fund',
-                      category: 'Debt • Liquid',
-                      returns: '6.75%',
-                      logoIcon: Icons.water_drop,
-                      logoColor: Colors.deepOrange,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+        MfFundListCard(
+          sectionTitle: '',
+          cardTitle: 'Value Investing',
+          cardSubtitle: 'Undervalued companies with solid fundamentals',
+          cardGraphic: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF10B981).withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.diamond_outlined, color: Color(0xFF10B981), size: 24),
           ),
+          funds: valueFunds.isNotEmpty
+              ? valueFunds
+              : const [
+                  MfFundItemData(
+                    name: 'Quant Value Fund',
+                    category: 'Equity • Value',
+                    returns: '22.56%',
+                    logoIcon: Icons.trending_up_rounded,
+                    logoColor: Color(0xFF10B981),
+                  ),
+                ],
+          onViewCollection: () {
+            Navigator.of(context, rootNavigator: true).push(
+              MaterialPageRoute(
+                builder: (context) => const MfCollectionScreen(
+                  title: 'Value Investing',
+                  subtitle: 'Undervalued stocks with growth potential',
+                ),
+              ),
+            );
+          },
         ),
       ],
     );

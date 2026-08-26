@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import '../../../../dashboard/data/dashboard_providers.dart';
+import '../../../data/portfolio_analysis_providers.dart';
 import '../../../models/portfolio_analysis_models.dart';
 import 'allocation_info_sheet.dart';
 import 'allocation_factor_info_sheet.dart';
 
-class AllocationFactorsCard extends StatefulWidget {
+class AllocationFactorsCard extends ConsumerStatefulWidget {
   const AllocationFactorsCard({super.key});
 
   @override
-  State<AllocationFactorsCard> createState() => _AllocationFactorsCardState();
+  ConsumerState<AllocationFactorsCard> createState() => _AllocationFactorsCardState();
 }
 
-class _AllocationFactorsCardState extends State<AllocationFactorsCard> with SingleTickerProviderStateMixin {
+class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _hasAnimated = false;
@@ -31,6 +34,20 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
 
   @override
   Widget build(BuildContext context) {
+    final allocAsync = ref.watch(portfolioAllocationProvider);
+    final summaryAsync = ref.watch(dashboardSummaryProvider);
+
+    final alloc = allocAsync.value;
+    final totalWealth = summaryAsync.value?.totalWealth ?? 0.0;
+
+    final double debtPct = alloc?.debtPct ?? 0.0;
+    final double equityPct = alloc?.equityPct ?? 0.0;
+    final double otherPct = alloc?.otherPct ?? 0.0;
+
+    final int stableAmount = ((debtPct / 100) * totalWealth).toInt();
+    final int equityAmount = ((equityPct / 100) * totalWealth).toInt();
+    final int inflationAmount = ((otherPct / 100) * totalWealth).toInt();
+
     return VisibilityDetector(
       key: const Key('AllocationFactorsCard'),
       onVisibilityChanged: (info) {
@@ -42,118 +59,118 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
-        margin: const EdgeInsets.only(top: 8),
-        decoration: ShapeDecoration(
-          color: Colors.white,
-          shape: const _NotchBorder(),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: const [
-                      Text(
-                        'ALLOCATION FACTORS',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 2.0,
-                          color: Color(0xFF94A3B8),
+          margin: const EdgeInsets.only(top: 8),
+          decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            shadows: const [
+              BoxShadow(
+                color: Color(0x05000000),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'ALLOCATION FACTORS',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 2.0,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          builder: (context) => const AllocationInfoSheet(level: AllocationLevel.veryAggressive),
+                        );
+                      },
+                      behavior: HitTestBehavior.opaque,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const _DottedDivider(),
+              
+              // Animated Progress Bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+                child: AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, child) {
+                    return SizedBox(
+                      height: 8,
+                      width: double.infinity,
+                      child: CustomPaint(
+                        painter: _FactorsProgressBarPainter(
+                          progress: _animation.value,
+                          debtPct: debtPct,
+                          equityPct: equityPct,
+                          otherPct: otherPct,
                         ),
                       ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        backgroundColor: Colors.transparent,
-                        isScrollControlled: true,
-                        builder: (context) => const AllocationInfoSheet(level: AllocationLevel.veryAggressive),
-                      );
-                    },
-                    behavior: HitTestBehavior.opaque,
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(Icons.info_outline, size: 16, color: Color(0xFF64748B)),
-                    ),
-                  ),
-                ],
+                    );
+                  },
+                ),
               ),
-            ),
-            const _DottedDivider(),
-            
-            // Animated Progress Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
-              child: AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  return SizedBox(
-                    height: 8,
-                    width: double.infinity,
-                    child: CustomPaint(
-                      painter: _FactorsProgressBarPainter(progress: _animation.value),
-                    ),
-                  );
-                }
+              
+              _buildFactorItem(
+                context: context,
+                index: 0,
+                icon: Icons.change_history,
+                title: 'Stable assets',
+                subtitle: 'Bank Accounts, FDs, Surplus & Liquid Funds',
+                amount: '₹ ${stableAmount.toString().replaceAllMapped(RegExp(r"(\d)(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}',
+                percentage: '${debtPct.toStringAsFixed(1)}%',
+                iconColor: const Color(0xFF38A169),
               ),
-            ),
-            
-            _buildFactorItem(
-              context: context,
-              index: 0,
-              icon: Icons.change_history,
-              title: 'Stable assets',
-              subtitle: 'Bank Accounts, FDs, Surplus & Liquid Funds',
-              amount: '₹ 3,058',
-              percentage: '1%',
-              iconColor: const Color(0xFF38A169),
-            ),
-            const _DottedDivider(),
-            _buildFactorItem(
-              context: context,
-              index: 1,
-              icon: Icons.call_split,
-              title: 'Low volatility assets',
-              subtitle: 'Mostly steady, small ups and downs',
-              amount: '₹ 0',
-              percentage: '0%',
-              iconColor: const Color(0xFF38A169),
-            ),
-            const _DottedDivider(),
-            _buildFactorItem(
-              context: context,
-              index: 2,
-              icon: Icons.star_border,
-              title: 'Medium volatility assets',
-              subtitle: 'Moderate swings, growth potential',
-              amount: '₹ 0',
-              percentage: '0%',
-              iconColor: const Color(0xFFDD6B20),
-            ),
-            const _DottedDivider(),
-            _buildFactorItem(
-              context: context,
-              index: 3,
-              icon: Icons.ac_unit,
-              title: 'High volatility assets',
-              subtitle: 'High swings, high potential',
-              amount: '₹ 3,45,126',
-              percentage: '99%',
-              iconColor: const Color(0xFFE53E3E),
-            ),
-            const SizedBox(height: 8),
-          ],
+              const _DottedDivider(),
+              _buildFactorItem(
+                context: context,
+                index: 1,
+                icon: Icons.show_chart,
+                title: 'Growth assets',
+                subtitle: 'Mutual Funds & Stocks',
+                amount: '₹ ${equityAmount.toString().replaceAllMapped(RegExp(r"(\d)(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}',
+                percentage: '${equityPct.toStringAsFixed(1)}%',
+                iconColor: const Color(0xFF0F172A),
+              ),
+              const _DottedDivider(),
+              _buildFactorItem(
+                context: context,
+                index: 2,
+                icon: Icons.security,
+                title: 'Inflation protection',
+                subtitle: 'Gold, Real Estate & Commodities',
+                amount: '₹ ${inflationAmount.toString().replaceAllMapped(RegExp(r"(\d)(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]},")}',
+                percentage: '${otherPct.toStringAsFixed(1)}%',
+                iconColor: const Color(0xFFD69E2E),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   Widget _buildFactorItem({
@@ -166,7 +183,7 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
     required String percentage,
     required Color iconColor,
   }) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         showModalBottomSheet(
           context: context,
@@ -175,81 +192,150 @@ class _AllocationFactorsCardState extends State<AllocationFactorsCard> with Sing
           builder: (context) => AllocationFactorInfoSheet(initialIndex: index),
         );
       },
-      behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 20, color: iconColor),
             ),
-            child: Icon(icon, size: 12, color: iconColor),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  title,
+                  amount,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
                     color: Color(0xFF0F172A),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
-                  subtitle,
+                  percentage,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 12,
-                    color: Color(0xFF94A3B8),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF64748B),
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                amount,
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0F172A),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                percentage,
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF64748B),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 12),
-          const Icon(
-            Icons.chevron_right,
-            size: 16,
-            color: Color(0xFFCBD5E1),
-          ),
-        ],
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right_rounded, size: 16, color: Color(0xFFCBD5E1)),
+          ],
+        ),
       ),
-    ),
     );
+  }
+}
+
+class _FactorsProgressBarPainter extends CustomPainter {
+  final double progress;
+  final double debtPct;
+  final double equityPct;
+  final double otherPct;
+
+  _FactorsProgressBarPainter({
+    required this.progress,
+    required this.debtPct,
+    required this.equityPct,
+    required this.otherPct,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bgPaint = Paint()
+      ..color = const Color(0xFFF1F5F9)
+      ..style = PaintingStyle.fill;
+
+    final rrect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      const Radius.circular(4),
+    );
+    canvas.drawRRect(rrect, bgPaint);
+
+    final double total = debtPct + equityPct + otherPct;
+    if (total == 0) return;
+
+    final double stableW = (debtPct / total) * size.width * progress;
+    final double equityW = (equityPct / total) * size.width * progress;
+    final double otherW = (otherPct / total) * size.width * progress;
+
+    double currentX = 0;
+
+    if (stableW > 0) {
+      final stablePaint = Paint()..color = const Color(0xFF38A169);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(currentX, 0, stableW, size.height),
+          const Radius.circular(4),
+        ),
+        stablePaint,
+      );
+      currentX += stableW;
+    }
+
+    if (equityW > 0) {
+      final equityPaint = Paint()..color = const Color(0xFF0F172A);
+      canvas.drawRect(
+        Rect.fromLTWH(currentX, 0, equityW, size.height),
+        equityPaint,
+      );
+      currentX += equityW;
+    }
+
+    if (otherW > 0) {
+      final otherPaint = Paint()..color = const Color(0xFFD69E2E);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(currentX, 0, otherW, size.height),
+          const Radius.circular(4),
+        ),
+        otherPaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _FactorsProgressBarPainter oldDelegate) {
+    return progress != oldDelegate.progress ||
+        debtPct != oldDelegate.debtPct ||
+        equityPct != oldDelegate.equityPct;
   }
 }
 
@@ -258,130 +344,9 @@ class _DottedDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final boxWidth = constraints.constrainWidth();
-          const dashWidth = 4.0;
-          const dashHeight = 1.0;
-          final dashCount = (boxWidth / (2 * dashWidth)).floor();
-          return Flex(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            direction: Axis.horizontal,
-            children: List.generate(dashCount, (_) {
-              return const SizedBox(
-                width: dashWidth,
-                height: dashHeight,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(color: Color(0xFFE2E8F0)),
-                ),
-              );
-            }),
-          );
-        },
-      ),
+    return Container(
+      height: 1,
+      color: const Color(0xFFF1F5F9),
     );
   }
 }
-
-class _NotchBorder extends OutlinedBorder {
-  const _NotchBorder({super.side = const BorderSide(color: Color.fromARGB(255, 188, 187, 187), width: 1.0)});
-
-  @override
-  OutlinedBorder copyWith({BorderSide? side}) => _NotchBorder(side: side ?? this.side);
-
-  @override
-  EdgeInsetsGeometry get dimensions => EdgeInsets.all(side.width);
-
-  @override
-  Path getInnerPath(Rect rect, {TextDirection? textDirection}) => _getPath(rect.deflate(side.width));
-
-  @override
-  Path getOuterPath(Rect rect, {TextDirection? textDirection}) => _getPath(rect);
-
-  Path _getPath(Rect rect) {
-    final path = Path();
-    const notchWidth = 12.0;
-    const notchHeight = 6.0;
-    const radius = 4.0;
-    
-    path.moveTo(rect.left + radius, rect.top);
-    
-    // Top edge with notch
-    path.lineTo(rect.center.dx - (notchWidth / 2), rect.top);
-    path.lineTo(rect.center.dx, rect.top - notchHeight);
-    path.lineTo(rect.center.dx + (notchWidth / 2), rect.top);
-    
-    path.lineTo(rect.right - radius, rect.top);
-    path.arcToPoint(Offset(rect.right, rect.top + radius), radius: const Radius.circular(radius));
-    
-    path.lineTo(rect.right, rect.bottom - radius);
-    path.arcToPoint(Offset(rect.right - radius, rect.bottom), radius: const Radius.circular(radius));
-    
-    path.lineTo(rect.left + radius, rect.bottom);
-    path.arcToPoint(Offset(rect.left, rect.bottom - radius), radius: const Radius.circular(radius));
-    
-    path.lineTo(rect.left, rect.top + radius);
-    path.arcToPoint(Offset(rect.left + radius, rect.top), radius: const Radius.circular(radius));
-    
-    path.close();
-    return path;
-  }
-
-  @override
-  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
-    canvas.drawPath(_getPath(rect), side.toPaint());
-  }
-  
-  @override
-  ShapeBorder scale(double t) => _NotchBorder(side: side.scale(t));
-}
-
-class _FactorsProgressBarPainter extends CustomPainter {
-  final double progress;
-
-  _FactorsProgressBarPainter({required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final values = [0.01, 0.0, 0.0, 0.99];
-    final colors = [
-      const Color(0xFF38A169),
-      const Color(0xFF38A169),
-      const Color(0xFFDD6B20),
-      const Color(0xFFE53E3E),
-    ];
-    
-    canvas.clipRRect(RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(4)));
-    canvas.drawRect(Offset.zero & size, Paint()..color = const Color(0xFFF1F5F9));
-    
-    double currentX = 0;
-    final totalWidth = size.width * progress; 
-    
-    for (int i = 0; i < values.length; i++) {
-      if (values[i] == 0) continue;
-      
-      final segmentWidth = size.width * values[i];
-      double drawWidth = segmentWidth;
-      if (currentX + segmentWidth > totalWidth) {
-        drawWidth = totalWidth - currentX;
-      }
-      
-      if (drawWidth > 0) {
-        canvas.drawRect(
-          Rect.fromLTWH(currentX, 0, drawWidth, size.height),
-          Paint()..color = colors[i]
-        );
-      }
-      currentX += segmentWidth;
-      if (currentX >= totalWidth) break;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _FactorsProgressBarPainter oldDelegate) {
-    return oldDelegate.progress != progress;
-  }
-}
-

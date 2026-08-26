@@ -13,6 +13,11 @@ final mfHoldingsProvider = FutureProvider<MfHoldingsResponse>((ref) async {
   return repo.holdings();
 });
 
+/// Convenient selector returning just the list of [MfFolio]s from [mfHoldingsProvider].
+final mfFoliosProvider = Provider<AsyncValue<List<MfFolio>>>((ref) {
+  return ref.watch(mfHoldingsProvider).whenData((response) => response.folios);
+});
+
 /// Invalidates the holdings provider so widgets refetch (e.g. after an
 /// order settles or a pull-to-refresh).
 void invalidateMfHoldingsProviders(WidgetRef ref) {

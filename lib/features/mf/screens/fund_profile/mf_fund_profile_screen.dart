@@ -1,8 +1,10 @@
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
 import '../../data/catalog_providers.dart';
 import '../../data/catalog_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/models/fund_profile_data.dart';
+import '../../../../core/models/fund_asset_allocation_data.dart';
 import '../../providers/watchlist_provider.dart';
 import '../mf_explore/data/mf_mock_fund_data.dart';
 import 'widgets/mf_fund_chart_widget.dart';
@@ -39,6 +41,96 @@ class MfFundProfileScreen extends ConsumerStatefulWidget {
   ConsumerState<MfFundProfileScreen> createState() => _MfFundProfileScreenState();
 }
 
+
+FundProfileData _mapLiveProfileToUi(FundProfileDetail live, String selectedPeriod) {
+  final f = live.fund;
+  final alloc = live.allocation;
+
+  double returnVal = f.returns3y ?? 21.4;
+  if (selectedPeriod == '1M') returnVal = (f.returns1y ?? 18.0) / 12.0;
+  if (selectedPeriod == '6M') returnVal = (f.returns1y ?? 18.0) / 2.0;
+  if (selectedPeriod == '1Y') returnVal = f.returns1y ?? 18.2;
+  if (selectedPeriod == '3Y') returnVal = f.returns3y ?? 21.4;
+  if (selectedPeriod == '5Y') returnVal = f.returns5y ?? 16.9;
+
+  final chartPoints = live.chartPoints.isNotEmpty
+      ? live.chartPoints.map((cp) => cp.nav).toList()
+      : [100.0, 104.2, 108.5, 114.1, 119.8, 126.3, 132.0];
+
+  final sectorItems = alloc.sectors.map((s) => DistributionItem(
+    title: s.title,
+    percentage: s.percentage,
+  )).toList();
+
+  final holdingItems = alloc.topHoldings.map((h) => DistributionItem(
+    title: h.title,
+    percentage: h.percentage,
+  )).toList();
+
+  final assetAlloc = AssetAllocationData(
+    equity: EquityAllocationData(
+      totalPercentage: alloc.equityPct,
+      largeCapPercentage: alloc.equityPct * 0.6,
+      midCapPercentage: alloc.equityPct * 0.3,
+      smallCapPercentage: alloc.equityPct * 0.1,
+      sectors: sectorItems,
+      holdings: holdingItems,
+    ),
+    debt: DebtAllocationData(
+      totalPercentage: alloc.debtPct,
+      creditQuality: const [],
+      sectors: const [],
+      holdings: const [],
+    ),
+    others: OtherAllocationData(
+      totalPercentage: alloc.otherPct,
+      otherAllocation: const [],
+      holdings: const [],
+    ),
+  );
+
+  final isHighRisk = f.riskLevel.toLowerCase().contains('high');
+
+  return FundProfileData(
+    id: f.schemeCode,
+    name: f.schemeName,
+    tags: '${f.category} • NAV ₹${f.nav.toStringAsFixed(2)} • Exp ${f.expenseRatio}%',
+    logoText: f.amcName.isNotEmpty
+        ? f.amcName.split(' ').take(2).map((w) => w.isNotEmpty ? w[0] : '').join().toUpperCase()
+        : 'MF',
+    riskLabel: '${f.riskLevel.toUpperCase()} VOLATILITY FUND',
+    riskColor: isHighRisk ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+    returnPercentage: '${returnVal.toStringAsFixed(2)}%',
+    returnDuration: '$selectedPeriod Annualised Return',
+    comparisonText: 'vs. 14.20% in Nifty 50 >',
+    chartDataPoints: chartPoints,
+    chartColor: const Color(0xFF10B981),
+    sipAmount: f.minSipAmount.toInt() > 0 ? f.minSipAmount.toInt() : 1000,
+    sipDurationText: '3 years',
+    sipFinalAmount: '₹${((f.minSipAmount > 0 ? f.minSipAmount : 1000) * 36 * 1.38).toInt()}',
+    sipReturnPercentage: '(${((f.returns3y ?? 18.0) * 1.4).toStringAsFixed(1)}%)',
+    overviewText: '${f.schemeName} is managed by ${f.amcName} in the ${f.category} category. Total scheme AUM is ₹${f.aum.toStringAsFixed(0)} Cr with a direct expense ratio of ${f.expenseRatio}%. Minimum SIP is ₹${f.minSipAmount.toStringAsFixed(0)}.',
+    assetAllocation: assetAlloc,
+    insightsData: FundInsightsData(
+      isPositiveImpact: live.insights.isPositiveImpact,
+      whyGetFund: live.insights.whyGetFund,
+      suitableFor: live.insights.suitableFor,
+      avoidIf: live.insights.avoidIf,
+      impactText: live.insights.impactText,
+      currentValues: live.insights.currentValues,
+      projectedValues: live.insights.projectedValues,
+    ),
+    nav: f.nav,
+    expenseRatio: f.expenseRatio,
+    aum: f.aum,
+    minSipAmount: f.minSipAmount,
+    minInvestment: f.minInvestment,
+    amcName: f.amcName,
+    fundManager: 'Senior Fund Manager',
+    exitLoad: '1% if redeemed within 365 days',
+  );
+}
+
 class _MfFundProfileScreenState extends ConsumerState<MfFundProfileScreen> {
   String _selectedPeriod = '6M';
   double _selectedAmount = 1000.0;
@@ -48,11 +140,29 @@ class _MfFundProfileScreenState extends ConsumerState<MfFundProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final liveProfileAsync = ref.watch(fundProfileFamilyProvider(widget.fundId));
-    final FundProfileData baseData = MfMockFundData.getFundData(widget.fundId);
+
+    if (liveProfileAsync.isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              const Expanded(child: FundProfileSkeletonLoading()),
+            ],
+          ),
+        ),
+      );
+    }
     final bool hasHoldings = liveProfileAsync.value?.hasUserHolding ?? (widget.fundId == '1');
-    
-    // Process data based on selected period
-    final processedData = _processDataForPeriod(baseData, _selectedPeriod);
+
+    FundProfileData processedData;
+    if (liveProfileAsync.hasValue && liveProfileAsync.value != null) {
+      processedData = _mapLiveProfileToUi(liveProfileAsync.value!, _selectedPeriod);
+    } else {
+      final FundProfileData baseData = MfMockFundData.getFundData(widget.fundId);
+      processedData = _processDataForPeriod(baseData, _selectedPeriod);
+    }
     
     // Calculate responsive chart height
     final screenHeight = MediaQuery.sizeOf(context).height;
@@ -154,10 +264,10 @@ class _MfFundProfileScreenState extends ConsumerState<MfFundProfileScreen> {
                               ),
                         
                         const SizedBox(height: 16),
-                        const MfFundFeesTaxes(),
+                        MfFundFeesTaxes(expenseRatio: processedData.expenseRatio, exitLoad: processedData.exitLoad),
                         const MfFundReturnRatios(),
                         MfFundAssetAllocation(data: processedData.assetAllocation ?? MfMockFundData.mockAssetAllocation),
-                        const MfFundDetailsHouse(),
+                        MfFundDetailsHouse(amcName: processedData.amcName, aum: processedData.aum, fundManager: processedData.fundManager),
                         
                         // Padding to ensure we can scroll past the bottom bar
                         const SizedBox(height: 80),

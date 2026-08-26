@@ -14,6 +14,8 @@ import '../../../../../core/providers/privacy_provider.dart';
 import '../../../../asset_connection/providers/asset_connection_provider.dart';
 import '../../../data/mf_holdings_models.dart';
 import '../../../data/mf_holdings_providers.dart';
+import '../../../../stocks/data/stocks_providers.dart';
+import '../../../../stocks/data/stocks_models.dart';
 
 class ConnectedHoldingsView extends ConsumerStatefulWidget {
   const ConnectedHoldingsView({super.key});
@@ -657,9 +659,43 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
           WidgetsBinding.instance.addPostFrameCallback((_) => _animationController.forward());
         }
 
-        final allHoldings = holdings.folios.map(HoldingItem.fromFolio).toList();
+        // Load stock holdings and merge them into the unified list.
+        // Stock positions come from the separate /api/v1/stocks/holdings endpoint.
+        final stocksAsync = ref.watch(stocksHoldingsProvider);
+        final stockItems = stocksAsync.value ?? <StockHoldingItem>[];
+        final mfItems = holdings.folios.map(HoldingItem.fromFolio).toList();
+        final stockHoldingItems = stockItems.map(HoldingItem.fromStock).toList();
+        final allHoldings = [...mfItems, ...stockHoldingItems];
         final displayHoldings = _filterAndSort(allHoldings);
-        final summary = holdings.summary;
+
+        // Build a combined summary that includes stock values on top of MF values.
+        final stockCurrentValue = stockItems.fold<double>(0.0, (sum, s) => sum + s.currentValue);
+        final stockInvestedValue = stockItems.fold<double>(0.0, (sum, s) => sum + s.investedValue);
+        final stockPnl = stockItems.fold<double>(0.0, (sum, s) => sum + s.pnl);
+        final stockOneDayChange = stockItems.fold<double>(0.0, (sum, s) => sum + s.oneDayChangeAmount);
+
+        final combinedCurrentValue = holdings.summary.currentValue + stockCurrentValue;
+        final combinedInvestedValue = holdings.summary.investedValue + stockInvestedValue;
+        final combinedReturns = holdings.summary.returnsAmount + stockPnl;
+        final combinedReturnsPct = combinedInvestedValue > 0
+            ? (combinedReturns / combinedInvestedValue) * 100
+            : 0.0;
+        final combinedOneDayChange = holdings.summary.oneDayChangeAmount + stockOneDayChange;
+        final combinedOneDayChangePct = (combinedCurrentValue - combinedOneDayChange) > 0
+            ? (combinedOneDayChange / (combinedCurrentValue - combinedOneDayChange)) * 100
+            : 0.0;
+
+        // Use a synthetic summary that covers both asset classes.
+        final summary = MfHoldingsSummary(
+          currentValue: combinedCurrentValue,
+          investedValue: combinedInvestedValue,
+          returnsAmount: combinedReturns,
+          returnsPct: combinedReturnsPct,
+          xirrPct: holdings.summary.xirrPct,
+          oneDayChangeAmount: combinedOneDayChange,
+          oneDayChangePct: combinedOneDayChangePct,
+          folioCount: holdings.summary.folioCount + stockItems.length,
+        );
 
         return Scaffold(
           backgroundColor: const Color(0xFFF9FAFB),
