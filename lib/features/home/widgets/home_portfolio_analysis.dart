@@ -5,31 +5,24 @@ import 'dart:math' as math;
 import '../../portfolio_analysis/models/portfolio_analysis_models.dart';
 import '../../portfolio_analysis/data/portfolio_analysis_providers.dart';
 
-final ValueNotifier<bool> hasSeenAnalysisWalkthrough = ValueNotifier<bool>(
-  false,
-);
+final ValueNotifier<bool> hasSeenAnalysisWalkthrough = ValueNotifier<bool>(false);
 
 class HomePortfolioAnalysis extends ConsumerWidget {
   const HomePortfolioAnalysis({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final disciplineAsync = ref.watch(portfolioDisciplineProvider);
-    final allocationAsync = ref.watch(portfolioAllocationProvider);
-    final performanceAsync = ref.watch(portfolioPerformanceProvider);
+    final allocAsync = ref.watch(portfolioAllocationProvider);
+    final discAsync = ref.watch(portfolioDisciplineProvider);
+    final perfAsync = ref.watch(portfolioPerformanceProvider);
 
-    final disciplineLevel = disciplineAsync.value?.level;
-    final allocationLevel = allocationAsync.value?.level;
-    final performanceLevel = performanceAsync.value?.level;
-
-    // Only show unlocked cards if the user has completed the walkthrough
-    // AND all three providers have real backend data
-    final hasData = disciplineLevel != null && allocationLevel != null && performanceLevel != null;
+    final allocationLevel = allocAsync.value?.level ?? AllocationLevel.veryAggressive;
+    final disciplineLevel = discAsync.value?.level ?? DisciplineLevel.moderate;
+    final performanceLevel = perfAsync.value?.level ?? PerformanceLevel.veryStrong;
 
     return ValueListenableBuilder<bool>(
       valueListenable: hasSeenAnalysisWalkthrough,
       builder: (context, hasSeen, child) {
-        final showUnlocked = hasSeen && hasData;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -75,192 +68,227 @@ class HomePortfolioAnalysis extends ConsumerWidget {
                 color: Color(0xFF64748B),
               ),
             ),
-            const SizedBox(height: 16),
-            showUnlocked
-                ? _buildUnlockedCards(context, disciplineLevel!, allocationLevel!, performanceLevel!)
-                : _buildLockedCards(context),
+            const SizedBox(height: 24),
+            hasSeen
+                ? _buildUnlockedView(context, disciplineLevel, allocationLevel, performanceLevel)
+                : _buildLockedView(context),
           ],
         );
       },
     );
   }
 
-  Widget _buildLockedCards(BuildContext context) {
+  Widget _buildUnlockedView(
+    BuildContext context,
+    DisciplineLevel disciplineLevel,
+    AllocationLevel allocationLevel,
+    PerformanceLevel performanceLevel,
+  ) {
     return Row(
       children: [
-        _buildLockedCard(
-          context: context,
-          title: 'Discipline',
-          bottomText: 'Check habit score',
-          color: const Color(0xFF0278D9),
+        Expanded(
+          child: _buildAnalysisCard(
+            context: context,
+            title: 'Discipline',
+            tabIndex: 0,
+            icon: Icons.track_changes,
+            valueText: disciplineLevel.label,
+            valueColor: disciplineLevel.color,
+            gradientColors: disciplineLevel.gradientColors,
+            bottomText: 'VIEW >',
+            painter: _MiniDisciplinePainter(level: disciplineLevel),
+          ),
         ),
         const SizedBox(width: 8),
-        _buildLockedCard(
-          context: context,
-          title: 'Allocation',
-          bottomText: 'Check risk level',
-          color: const Color(0xFFF09536),
+        Expanded(
+          child: _buildAnalysisCard(
+            context: context,
+            title: 'Allocation',
+            tabIndex: 1,
+            icon: Icons.view_in_ar_outlined,
+            valueText: allocationLevel.label,
+            valueColor: allocationLevel.activeColor,
+            gradientColors: allocationLevel.gradientColors,
+            bottomText: '• 2 INSIGHTS >',
+            bottomBgColor: const Color(0xFFFEF3C7),
+            bottomTextColor: const Color(0xFF92400E),
+            painter: _MiniAllocationPainter(
+              level: allocationLevel,
+            ),
+          ),
         ),
         const SizedBox(width: 8),
-        _buildLockedCard(
-          context: context,
-          title: 'Performance',
-          bottomText: 'Compare with peers',
-          color: const Color(0xFF16A34A),
+        Expanded(
+          child: _buildAnalysisCard(
+            context: context,
+            title: 'Performance',
+            tabIndex: 2,
+            icon: Icons.change_history,
+            valueText: performanceLevel.label,
+            valueColor: performanceLevel.activeColor,
+            gradientColors: performanceLevel.gradientColors,
+            bottomText: 'VIEW >',
+            painter: _MiniPerformancePainter(
+              level: performanceLevel,
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildUnlockedCards(BuildContext context, DisciplineLevel disciplineLevel, AllocationLevel allocationLevel, PerformanceLevel performanceLevel) {
-    return Row(
+  Widget _buildLockedView(BuildContext context) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      clipBehavior: Clip.none,
       children: [
-        _buildAnalysisCard(
-          context: context,
-          title: 'Discipline',
-          value: disciplineLevel.label,
-          valueColor: disciplineLevel.color,
-          bottomText: '${(disciplineLevel.score * 100).toInt()}% consistency',
-          painter: _MiniDisciplinePainter(level: disciplineLevel),
-          tabIndex: 0,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 24.0),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: _buildLockedCard(
+                    title: 'Discipline',
+                    icon: Icons.track_changes,
+                    color: const Color(0xFF4299E1),
+                    brailleDots: '⠓⠕⠗⠍',
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildLockedCard(
+                    title: 'Allocation',
+                    icon: Icons.layers_outlined,
+                    color: const Color(0xFF6B46C1),
+                    brailleDots: '⠓⠕⠗⠍',
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildLockedCard(
+                    title: 'Performance',
+                    icon: Icons.change_history,
+                    color: const Color(0xFF48BB78),
+                    brailleDots: '⠓⠕⠗⠍',
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-        const SizedBox(width: 8),
-        _buildAnalysisCard(
-          context: context,
-          title: 'Allocation',
-          value: allocationLevel.label,
-          valueColor: allocationLevel.activeColor,
-          bottomText: '${allocationLevel.activeSegments}/5 Risk tier',
-          painter: _MiniAllocationPainter(level: allocationLevel),
-          tabIndex: 1,
-        ),
-        const SizedBox(width: 8),
-        _buildAnalysisCard(
-          context: context,
-          title: 'Performance',
-          value: performanceLevel.label,
-          valueColor: performanceLevel.activeColor,
-          bottomText: '${performanceLevel.activeSegments}/5 Returns tier',
-          painter: _MiniPerformancePainter(level: performanceLevel),
-          tabIndex: 2,
+
+        // "REVEAL ANALYSIS" glowing pill
+        Positioned(
+          bottom: 10,
+          child: GestureDetector(
+            onTap: () {
+              context.push('/analysis-walkthrough');
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF27272A), Color(0xFF09090B)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  width: 1,
+                ),
+              ),
+              child: const Text(
+                'REVEAL ANALYSIS',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 
   Widget _buildLockedCard({
-    required BuildContext context,
     required String title,
-    required String bottomText,
+    required IconData icon,
     required Color color,
+    required String brailleDots,
   }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => context.push('/analysis-walkthrough'),
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Center(
-                      child: SizedBox(
-                        width: 50,
-                        height: 25,
-                        child: CustomPaint(
-                          painter: _LockedSemiCircleGaugePainter(color: color),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.lock_outline,
-                              size: 10,
-                              color: Color(0xFF64748B),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'Locked',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF64748B),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Semi-circle gauge
+          SizedBox(
+            width: 70,
+            height: 40,
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                CustomPaint(
+                  size: const Size(70, 40),
+                  painter: _LockedSemiCircleGaugePainter(color: color),
                 ),
-              ),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(4),
-                    bottomRight: Radius.circular(4),
-                  ),
-                  border: Border(
-                    top: BorderSide(color: Color(0xFFE2E8F0)),
-                  ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4.0),
+                  child: Icon(icon, size: 16, color: const Color(0xFF475569)),
                 ),
-                child: Text(
-                  bottomText,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF64748B),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            style: const TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            brailleDots,
+            style: const TextStyle(
+              fontSize: 16,
+              letterSpacing: 2.0,
+              color: Color(0xFFCBD5E1),
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'LOCKED',
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 9,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.8,
+              color: Color(0xFF94A3B8),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -268,96 +296,118 @@ class HomePortfolioAnalysis extends ConsumerWidget {
   Widget _buildAnalysisCard({
     required BuildContext context,
     required String title,
-    required String value,
-    required Color valueColor,
-    required String bottomText,
-    required CustomPainter painter,
     required int tabIndex,
+    required IconData icon,
+    required String valueText,
+    required Color valueColor,
+    required List<Color> gradientColors,
+    required String bottomText,
     Color? bottomBgColor,
     Color? bottomTextColor,
+    required CustomPainter painter,
   }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => context.push('/portfolio-analysis?tab=$tabIndex'),
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Center(
-                      child: SizedBox(
-                        width: 50,
-                        height: 25,
-                        child: CustomPaint(painter: painter),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Center(
-                      child: Text(
-                        value,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
+    return GestureDetector(
+      onTap: () {
+        context.push('/portfolio-analysis?tab=$tabIndex');
+      },
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(icon, size: 14, color: const Color(0xFF64748B)),
+                      const SizedBox(width: 4),
+                      Text(
+                        title,
+                        style: const TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: valueColor,
+                          color: Color(0xFF0F172A),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: 60,
+                    height: 35,
+                    child: CustomPaint(painter: painter),
+                  ),
+                  const SizedBox(height: 8),
+                  gradientColors.isNotEmpty
+                      ? ShaderMask(
+                          blendMode: BlendMode.srcIn,
+                          shaderCallback: (bounds) => LinearGradient(
+                            colors: gradientColors,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            valueText,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          valueText,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: valueColor,
+                          ),
+                        ),
+                ],
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: bottomBgColor ?? const Color(0xFFF8FAFC),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(4),
+                  bottomRight: Radius.circular(4),
+                ),
+                border: const Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+              ),
+              child: Text(
+                bottomText,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: bottomTextColor ?? const Color(0xFF64748B),
                 ),
               ),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  color: bottomBgColor ?? const Color(0xFFF8FAFC),
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(4),
-                    bottomRight: Radius.circular(4),
-                  ),
-                  border: const Border(top: BorderSide(color: Color(0xFFE2E8F0))),
-                ),
-                child: Text(
-                  bottomText,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: bottomTextColor ?? const Color(0xFF64748B),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

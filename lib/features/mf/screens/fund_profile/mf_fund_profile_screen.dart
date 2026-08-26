@@ -310,6 +310,8 @@ class _MfFundProfileScreenState extends ConsumerState<MfFundProfileScreen> {
                                   isPositiveImpact: processedData.insightsData?.isPositiveImpact ?? true,
                                   whatItDoesRightNow: processedData.insightsData?.whatItDoesRightNow ?? '',
                                   whatBuyingMoreWillDo: processedData.insightsData?.whatBuyingMoreWillDo ?? '',
+                                  currentValues: processedData.insightsData?.currentValues,
+                                  projectedValues: processedData.insightsData?.projectedValues,
                                 ),
                               )
                             : MfFundInsights(

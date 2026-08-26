@@ -1,14 +1,11 @@
 import 'dart:ui' show lerpDouble, ImageFilter;
 import 'package:flutter/material.dart';
-import '../../../core/widgets/arch_background.dart';
 
 class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
   final String totalAmount;
   final String todayChange;
   final VoidCallback onBackTap;
-  final String lastRefreshedText;
-  final VoidCallback onRefreshTap;
   final VoidCallback onAddAccountsTap;
   final bool isLocked;
   final VoidCallback onLockTap;
@@ -18,8 +15,6 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.totalAmount,
     required this.todayChange,
     required this.onBackTap,
-    required this.lastRefreshedText,
-    required this.onRefreshTap,
     required this.onAddAccountsTap,
     required this.isLocked,
     required this.onLockTap,
@@ -29,7 +24,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => safeAreaTop + 84.0;
 
   @override
-  double get maxExtent => safeAreaTop + 260.0;
+  double get maxExtent => safeAreaTop + 220.0;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -53,14 +48,20 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Background Arch
-          Positioned(
-            top: -shrinkOffset * 0.5,
-            left: 0,
-            right: 0,
-            child: Opacity(
-              opacity: 1.0 - shrinkRatio,
-              child: ArchBackground(height: 250),
+          // Clean solid/gradient backdrop matching MF Holdings
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white,
+                    Colors.white.withValues(alpha: 0.95),
+                    const Color(0xFFF8FAFC),
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -169,58 +170,7 @@ class StocksHeaderDelegate extends SliverPersistentHeaderDelegate {
               ),
             ),
 
-          // Refresh Pill
-          if (shrinkRatio < 1.0)
-            Positioned(
-              top: currentTop + 72.0,
-              left: 0,
-              right: 0,
-              child: Opacity(
-                opacity: (1.0 - (shrinkRatio * 4.0)).clamp(0.0, 1.0),
-                child: Center(
-                  child: GestureDetector(
-                    onTap: onRefreshTap,
-                    behavior: HitTestBehavior.opaque,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.sync_rounded,
-                            size: 12,
-                            color: const Color(0xFF0F172A),
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            lastRefreshedText,
-                            style: TextStyle(
-                              fontFamily: 'SpaceGrotesk',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0F172A),
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+
 
           // Top Row Buttons (Back, Lock)
           Positioned(

@@ -1,5 +1,51 @@
 import 'package:astra_frontend/features/portfolio_analysis/models/portfolio_analysis_models.dart';
 
+class PortfolioGenomeData {
+  final double growth;
+  final double income;
+  final double capitalPreservation;
+  final double inflationDefense;
+  final double liquidity;
+  final double sustainability;
+  final double realAssets;
+  final List<double> values;
+
+  const PortfolioGenomeData({
+    required this.growth,
+    required this.income,
+    required this.capitalPreservation,
+    required this.inflationDefense,
+    required this.liquidity,
+    required this.sustainability,
+    required this.realAssets,
+    required this.values,
+  });
+
+  factory PortfolioGenomeData.fromJson(Map<String, dynamic> json) {
+    final rawValues = (json['values'] as List?)
+            ?.map((v) => (v as num).toDouble())
+            .toList() ??
+        [];
+
+    return PortfolioGenomeData(
+      growth: (json['growth'] as num?)?.toDouble() ?? 0.85,
+      income: (json['income'] as num?)?.toDouble() ?? 0.30,
+      capitalPreservation:
+          (json['capital_preservation'] as num?)?.toDouble() ?? 0.15,
+      inflationDefense:
+          (json['inflation_defense'] as num?)?.toDouble() ?? 0.40,
+      liquidity: (json['liquidity'] as num?)?.toDouble() ?? 0.80,
+      sustainability: (json['sustainability'] as num?)?.toDouble() ?? 0.50,
+      realAssets: (json['real_assets'] as num?)?.toDouble() ?? 0.10,
+      values: rawValues.isNotEmpty
+          ? rawValues
+          : [0.85, 0.30, 0.15, 0.40, 0.80, 0.50, 0.10],
+    );
+  }
+}
+
+
+
 class VolatilityBucketData {
   final String label;
   final double amount;
@@ -52,6 +98,7 @@ class AllocationData {
   final double otherPct;
   final List<VolatilityBucketData> volatilityBuckets;
   final List<SectorExposureData> sectorExposure;
+  final PortfolioGenomeData? genome;
 
   const AllocationData({
     required this.level,
@@ -65,6 +112,7 @@ class AllocationData {
     required this.otherPct,
     required this.volatilityBuckets,
     required this.sectorExposure,
+    this.genome,
   });
 
   static AllocationLevel parseLevel(String? val) {
@@ -108,6 +156,9 @@ class AllocationData {
       otherPct: (json['other_pct'] as num?)?.toDouble() ?? 0.0,
       volatilityBuckets: buckets,
       sectorExposure: sectors,
+      genome: json['genome'] is Map<String, dynamic>
+          ? PortfolioGenomeData.fromJson(json['genome'] as Map<String, dynamic>)
+          : null,
     );
   }
 }
@@ -274,6 +325,7 @@ class FundPerformanceData {
   final double gainAmount;
   final double returnsPct;
   final String performanceRank;
+  final double expenseRatio;
 
   const FundPerformanceData({
     required this.schemeCode,
@@ -283,6 +335,7 @@ class FundPerformanceData {
     required this.gainAmount,
     required this.returnsPct,
     required this.performanceRank,
+    this.expenseRatio = 0.85,
   });
 
   factory FundPerformanceData.fromJson(Map<String, dynamic> json) {
@@ -294,6 +347,7 @@ class FundPerformanceData {
       gainAmount: (json['gain_amount'] as num?)?.toDouble() ?? 0.0,
       returnsPct: (json['returns_pct'] as num?)?.toDouble() ?? 0.0,
       performanceRank: json['performance_rank']?.toString() ?? 'AVERAGE',
+      expenseRatio: (json['expense_ratio'] as num?)?.toDouble() ?? 0.85,
     );
   }
 }

@@ -22,16 +22,6 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
 
   final Set<String> _activeFilters = {'Stocks'};
   String _activeSort = 'Current Value';
-  DateTime _lastRefreshed = DateTime.now().subtract(const Duration(days: 10));
-
-  String _getLastRefreshedText() {
-    final now = DateTime.now();
-    final difference = now.difference(_lastRefreshed);
-    if (difference.inSeconds < 60) return 'LAST REFRESHED - JUST NOW';
-    if (difference.inMinutes < 60) return 'LAST REFRESHED - ${difference.inMinutes} MINS AGO';
-    if (difference.inHours < 24) return 'LAST REFRESHED - ${difference.inHours} HOURS AGO';
-    return 'LAST REFRESHED - ${difference.inDays} DAYS AGO';
-  }
 
 
   final List<StockData> _mockStocks = [
@@ -102,12 +92,16 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
     final isLocked = ref.watch(privacyProvider);
     final holdingsAsync = ref.watch(stocksHoldingsProvider);
 
-    List<StockData> stockList = _mockStocks;
+    List<StockData> stockList = [];
+    double totalWealth = 0.0;
+    double total1DChange = 0.0;
+
     if (holdingsAsync.hasValue && holdingsAsync.value!.isNotEmpty) {
       final holdings = holdingsAsync.value!;
-      final total = holdings.fold<double>(0.0, (acc, h) => acc + h.currentValue);
+      totalWealth = holdings.fold<double>(0.0, (acc, h) => acc + h.currentValue);
+      total1DChange = holdings.fold<double>(0.0, (acc, h) => acc + h.oneDayChangeAmount);
       stockList = holdings.map((h) {
-        final alloc = total > 0 ? (h.currentValue / total * 100) : 0.0;
+        final alloc = totalWealth > 0 ? (h.currentValue / totalWealth * 100) : 0.0;
         return StockData(
           name: h.tradingSymbol,
           sector: h.tradingSymbol.contains("BEES") || h.tradingSymbol.contains("ETF") ? "ETF" : "Equity",
@@ -119,7 +113,18 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
           ltp: h.lastPrice,
         );
       }).toList();
+    } else if (!holdingsAsync.hasValue && !holdingsAsync.isLoading) {
+      stockList = _mockStocks;
+      totalWealth = _mockStocks.fold<double>(0.0, (acc, s) => acc + s.currentVal);
+      total1DChange = _mockStocks.fold<double>(0.0, (acc, s) => acc + s.oneDayChange);
     }
+
+    final double total1DPct = (totalWealth - total1DChange) > 0
+        ? (total1DChange / (totalWealth - total1DChange) * 100)
+        : 0.0;
+    final bool is1DPositive = total1DChange >= 0;
+    final String liveTotalStr = '₹${intl.NumberFormat('#,##,###').format(totalWealth.round())}';
+    final String live1DStr = '${is1DPositive ? '↑' : '↓'} ₹${intl.NumberFormat('#,##,###').format(total1DChange.abs().round())} (${total1DPct.abs().toStringAsFixed(2)}%) today';
     
     final filteredStocks = stockList.where((s) {
       bool passType = true;
@@ -173,8 +178,8 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
             pinned: true,
             delegate: StocksHeaderDelegate(
               safeAreaTop: MediaQuery.paddingOf(context).top,
-              totalAmount: PrivacyFormatter.obscure('₹1,47,908', isLocked),
-              todayChange: PrivacyFormatter.obscure('↑ ₹5,635 (3.96%) today', isLocked),
+              totalAmount: PrivacyFormatter.obscure(liveTotalStr, isLocked),
+              todayChange: PrivacyFormatter.obscure(live1DStr, isLocked),
               onBackTap: () {
                 if (context.canPop()) {
                   context.pop();
@@ -184,15 +189,6 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
               },
               onAddAccountsTap: () {
                 context.push('/aa-stocks-otp', extra: {'isOnboarding': false});
-              },
-              lastRefreshedText: _getLastRefreshedText(),
-              onRefreshTap: () async {
-                await context.push('/mf-fetch-confirm');
-                if (mounted) {
-                  setState(() {
-                    _lastRefreshed = DateTime.now();
-                  });
-                }
               },
               isLocked: isLocked,
               onLockTap: () {
@@ -360,9 +356,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                   ),
                 ),
                 // Rows
-                ...filteredStocks.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final stock = entry.value;
+                ...filteredStocks.map((stock) {
                   return Container(
                     height: rowHeight,
                     padding: EdgeInsets.symmetric(horizontal: 16),

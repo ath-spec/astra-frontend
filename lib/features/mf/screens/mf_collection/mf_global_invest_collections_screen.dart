@@ -29,9 +29,9 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
       'name': f.schemeName,
       'category': f.category,
       'returns': {
-        '1Y': '${(f.returns1y ?? 18.2).toStringAsFixed(1)}%',
-        '3Y': '${(f.returns3y ?? 21.4).toStringAsFixed(1)}%',
-        '5Y': '${(f.returns5y ?? 16.9).toStringAsFixed(1)}%',
+        '1Y': f.returns1y != null ? '${f.returns1y!.toStringAsFixed(1)}%' : '—',
+        '3Y': f.returns3y != null ? '${f.returns3y!.toStringAsFixed(1)}%' : '—',
+        '5Y': f.returns5y != null ? '${f.returns5y!.toStringAsFixed(1)}%' : '—',
       },
     }).toList();
 

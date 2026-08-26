@@ -1,3 +1,4 @@
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'widgets/mf_holdings_empty_state.dart';
@@ -37,10 +38,7 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
     );
 
     if (holdingsAsync.isLoading && !holdingsAsync.hasValue) {
-      return const Scaffold(
-        backgroundColor: Color(0xFFF9FAFB),
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const HoldingsSkeletonLoading();
     }
 
     if (mfHasHoldings) {

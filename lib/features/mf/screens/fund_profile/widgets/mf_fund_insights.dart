@@ -1,11 +1,12 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../../../core/widgets/animated_gradient_text.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'dart:math' as math;
+import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../portfolio_analysis/widgets/portfolio_analysis/allocation_components/spider_chart_info_sheet.dart';
-import '../../../../../core/responsive/size_config.dart';
+import '../../../../portfolio_analysis/data/portfolio_analysis_providers.dart';
 
-class MfFundInsights extends StatefulWidget {
+class MfFundInsights extends ConsumerStatefulWidget {
   final bool isPositiveImpact;
   final String whyGetFund;
   final String suitableFor;
@@ -15,7 +16,7 @@ class MfFundInsights extends StatefulWidget {
   final List<double>? projectedValues;
 
   const MfFundInsights({
-    super.key, 
+    super.key,
     required this.isPositiveImpact,
     required this.whyGetFund,
     required this.suitableFor,
@@ -26,10 +27,10 @@ class MfFundInsights extends StatefulWidget {
   });
 
   @override
-  State<MfFundInsights> createState() => _MfFundInsightsState();
+  ConsumerState<MfFundInsights> createState() => _MfFundInsightsState();
 }
 
-class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProviderStateMixin {
+class _MfFundInsightsState extends ConsumerState<MfFundInsights> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _hasAnimated = false;
@@ -44,9 +45,6 @@ class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProvid
     'Real Assets'
   ];
 
-  late List<double> _currentValues;
-  late List<double> _projectedValues;
-
   @override
   void initState() {
     super.initState();
@@ -58,14 +56,6 @@ class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProvid
       parent: _controller,
       curve: Curves.easeOutCubic,
     );
-    
-    // Use provided values or defaults
-    _currentValues = widget.currentValues ?? [0.50, 0.40, 0.60, 0.30, 0.70, 0.40, 0.20];
-    _projectedValues = widget.projectedValues ?? (
-        widget.isPositiveImpact 
-            ? [0.75, 0.45, 0.70, 0.35, 0.75, 0.50, 0.25] 
-            : [0.95, 0.20, 0.30, 0.20, 0.80, 0.30, 0.10]
-    );
   }
 
   @override
@@ -74,8 +64,36 @@ class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProvid
     super.dispose();
   }
 
+  
   @override
   Widget build(BuildContext context) {
+    final liveDna = ref.watch(portfolioDnaProvider);
+    final currentValues = (widget.currentValues != null && widget.currentValues!.length == 7)
+        ? widget.currentValues!
+        : liveDna;
+
+    final projectedValues = (widget.projectedValues != null && widget.projectedValues!.length == 7)
+        ? widget.projectedValues!
+        : (widget.isPositiveImpact
+            ? [
+                (currentValues[0] + 0.08).clamp(0.1, 0.95),
+                currentValues[1],
+                (currentValues[2] + 0.05).clamp(0.1, 0.90),
+                currentValues[3],
+                currentValues[4],
+                (currentValues[5] + 0.05).clamp(0.1, 0.90),
+                currentValues[6],
+              ]
+            : [
+                (currentValues[0] - 0.05).clamp(0.1, 0.95),
+                currentValues[1],
+                currentValues[2],
+                currentValues[3],
+                currentValues[4],
+                currentValues[5],
+                currentValues[6],
+              ]);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -119,44 +137,48 @@ class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProvid
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFF1F5F9)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildQaBlock(
-                  'Why would someone get this fund?',
-                  widget.whyGetFund
-                ),
-                const SizedBox(height: 16),
-                
-                _buildQaBlock(
-                  'Who is it suitable for?',
-                  widget.suitableFor
-                ),
-                const SizedBox(height: 16),
-                
-                _buildQaBlock(
-                  'Who should avoid it?',
-                  widget.avoidIf
-                ),
-                const SizedBox(height: 16),
-                
-                _buildQaBlock(
-                  'What will investing in this fund do for your portfolio?',
-                  widget.impactText
-                ),
+                _buildQaBlock('Why get this fund?', widget.whyGetFund),
+                const SizedBox(height: 20),
+                _buildQaBlock('Suitable for', widget.suitableFor),
+                const SizedBox(height: 20),
+                _buildQaBlock('Avoid if', widget.avoidIf),
+                const SizedBox(height: 20),
+                _buildQaBlock('Impact on your portfolio', widget.impactText),
                 
                 const SizedBox(height: 32),
                 
-                // Spider Chart Legend
+                // Radar / Spider Chart
+                Text(
+                  'PORTFOLIO IMPACT VISUALIZER',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.0,
+                    color: const Color(0xFF94A3B8),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                // Legend
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildLegendItem('Current DNA', const Color(0xFF2563EB)),
-                    SizedBox(width: getProportionateScreenWidth(16)),
+                    const SizedBox(width: 16),
                     _buildLegendItem('After Investing', widget.isPositiveImpact ? const Color(0xFF10B981) : const Color(0xFFF43F5E)),
                   ],
                 ),
@@ -166,13 +188,13 @@ class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProvid
                 VisibilityDetector(
                   key: const Key('MfFundInsightsChart'),
                   onVisibilityChanged: (info) {
-                    if (!_hasAnimated && info.visibleFraction >= 0.6) {
+                    if (!_hasAnimated && info.visibleFraction >= 0.4) {
                       _hasAnimated = true;
                       _controller.forward();
                     }
                   },
                   child: SizedBox(
-                    height: getProportionateScreenHeight(240),
+                    height: 240,
                     width: double.infinity,
                     child: Stack(
                       children: [
@@ -182,8 +204,8 @@ class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProvid
                             behavior: HitTestBehavior.opaque,
                             child: CustomPaint(
                               painter: _DualSpiderChartPainter(
-                                currentValues: _currentValues,
-                                projectedValues: _projectedValues,
+                                currentValues: currentValues,
+                                projectedValues: projectedValues,
                                 labels: _labels,
                                 animation: _animation,
                                 projectedColor: widget.isPositiveImpact ? const Color(0xFF10B981) : const Color(0xFFF43F5E),
@@ -196,9 +218,9 @@ class _MfFundInsightsState extends State<MfFundInsights> with SingleTickerProvid
                           right: 0,
                           child: GestureDetector(
                             onTap: () => SpiderChartInfoSheet.show(context),
-                            child: Padding(
-                              padding: EdgeInsets.all(getProportionateScreenWidth(8)),
-                              child: Icon(Icons.info_outline_rounded, size: getProportionateScreenWidth(16), color: const Color(0xFF94A3B8)),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF94A3B8)),
                             ),
                           ),
                         ),
@@ -333,11 +355,11 @@ class _DualSpiderChartPainter extends CustomPainter {
       
       textPainter.text = TextSpan(
         text: labels[j],
-        style: TextStyle(
+        style: const TextStyle(
           fontFamily: 'DMSans',
-          fontSize: getProportionateScreenWidth(10),
+          fontSize: 10,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF64748B),
+          color: Color(0xFF64748B),
         ),
       );
       textPainter.layout();

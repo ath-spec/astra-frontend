@@ -40,18 +40,35 @@ class _MfFundFeesTaxesState extends State<MfFundFeesTaxes> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Fees & Taxes on investment',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F172A),
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Fees & Taxes on investment',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      if (!_isExpanded)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            'Expense ratio, exit load',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              color: Color(0xFF94A3B8),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   Icon(
                     _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                    color: const Color(0xFF64748B),
+                    color: const Color(0xFF0F172A),
                     size: 20,
                   ),
                 ],

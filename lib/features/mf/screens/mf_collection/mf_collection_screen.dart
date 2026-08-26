@@ -39,15 +39,39 @@ class _MfCollectionScreenState extends ConsumerState<MfCollectionScreen> {
   Widget build(BuildContext context) {
     final catalogAsync = ref.watch(allCatalogFundsProvider);
 
-    final displayFunds = (catalogAsync.valueOrNull ?? const [])
+    final allFunds = catalogAsync.valueOrNull ?? const [];
+    final filteredFunds = allFunds.where((f) {
+      final titleLower = widget.title.toLowerCase();
+      final catLower = f.category.toLowerCase();
+      final riskLower = f.riskLevel.toLowerCase();
+
+      if (titleLower.contains('growth')) {
+        return catLower.contains('equity') ||
+            catLower.contains('small') ||
+            catLower.contains('mid') ||
+            catLower.contains('thematic') ||
+            catLower.contains('flexi') ||
+            riskLower == 'high';
+      } else if (titleLower.contains('safe')) {
+        return catLower.contains('debt') ||
+            catLower.contains('liquid') ||
+            catLower.contains('bond') ||
+            catLower.contains('conservative') ||
+            catLower.contains('hybrid') ||
+            riskLower == 'low';
+      }
+      return true;
+    }).toList();
+
+    final displayFunds = filteredFunds
         .map((f) => {
               'scheme_code': f.schemeCode,
               'name': f.schemeName,
               'category': f.category,
               'returns': {
-                '1Y': '${(f.returns1y ?? 18.0).toStringAsFixed(1)}%',
-                '3Y': '${(f.returns3y ?? 21.0).toStringAsFixed(1)}%',
-                '5Y': '${(f.returns5y ?? 16.0).toStringAsFixed(1)}%',
+                '1Y': f.returns1y != null ? '${f.returns1y!.toStringAsFixed(1)}%' : '—',
+                '3Y': f.returns3y != null ? '${f.returns3y!.toStringAsFixed(1)}%' : '—',
+                '5Y': f.returns5y != null ? '${f.returns5y!.toStringAsFixed(1)}%' : '—',
               },
             })
         .toList();
@@ -108,7 +132,7 @@ class _MfCollectionScreenState extends ConsumerState<MfCollectionScreen> {
                                 style: const TextStyle(
                                   fontFamily: 'DMSans',
                                   fontSize: 10,
-                                  color: Color(0xFF64748B), // Slate 500
+                                  color: Color(0xFF64748B),
                                   height: 1.4,
                                 ),
                               ),
@@ -134,30 +158,7 @@ class _MfCollectionScreenState extends ConsumerState<MfCollectionScreen> {
                           ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    // Period Selector
-                    Row(
-                      children: ['1Y', '3Y', '5Y'].map((p) {
-                        final isSelected = _returnPeriod == p;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: ChoiceChip(
-                            label: Text('$p Returns'),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              if (selected) setState(() => _returnPeriod = p);
-                            },
-                            selectedColor: const Color(0xFF0F172A),
-                            labelStyle: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontWeight: FontWeight.w600,
-                              color: isSelected ? Colors.white : const Color(0xFF64748B),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 32),
                     // Fund List
                     if (catalogAsync.isLoading)
                       ..._buildLoadingRows()
@@ -200,7 +201,7 @@ class _MfCollectionScreenState extends ConsumerState<MfCollectionScreen> {
       (index) => const Padding(
         padding: EdgeInsets.only(bottom: 12.0),
         child: AppThemeShimmerCard(
-          height: 72,
+          height: 140,
           borderRadius: BorderRadius.all(Radius.circular(12)),
           barWidths: [140, 100, 60, 60],
         ),
@@ -306,7 +307,7 @@ class _MfCollectionScreenState extends ConsumerState<MfCollectionScreen> {
             ),
           ),
         ),
-        // Dashed border (simulated with a standard very light border for now)
+        // Divider
         Container(
           height: 1,
           color: const Color(0xFFF8F9FA),

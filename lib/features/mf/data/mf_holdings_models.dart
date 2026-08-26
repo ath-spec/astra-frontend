@@ -1,4 +1,5 @@
 // Typed models for the `/api/v1/mf/holdings` backend API.
+import 'package:astra_frontend/core/utils/fund_name_formatter.dart';
 
 class MfHoldingsSummary {
   const MfHoldingsSummary({
@@ -97,6 +98,7 @@ class MfFolio {
   DateTime get navDateTime => DateTime.fromMillisecondsSinceEpoch(navDateEpoch * 1000);
   DateTime get firstPurchaseDateTime =>
       DateTime.fromMillisecondsSinceEpoch(firstPurchaseDateEpoch * 1000);
+  String get cleanSchemeName => cleanFundName(schemeName);
 
   factory MfFolio.fromJson(Map<String, dynamic> json) {
     return MfFolio(

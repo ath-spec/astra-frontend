@@ -160,11 +160,11 @@ class _MfBondsCollectionScreenState extends ConsumerState<MfBondsCollectionScree
                     padding: EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        AppThemeShimmerCard(height: 80),
+                        AppThemeShimmerCard(height: 140),
                         SizedBox(height: 12),
-                        AppThemeShimmerCard(height: 80),
+                        AppThemeShimmerCard(height: 140),
                         SizedBox(height: 12),
-                        AppThemeShimmerCard(height: 80),
+                        AppThemeShimmerCard(height: 140),
                       ],
                     ),
                   )

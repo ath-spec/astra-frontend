@@ -1,3 +1,4 @@
+import 'package:astra_frontend/core/utils/fund_name_formatter.dart';
 import 'package:astra_frontend/features/mf/data/mf_holdings_models.dart';
 import 'package:astra_frontend/features/stocks/data/stocks_models.dart';
 
@@ -14,6 +15,7 @@ class HoldingDeepDiveData {
 }
 
 class HoldingItem {
+  final String? schemeCode;
   final String name;
   final String category;
   final double current;
@@ -34,6 +36,7 @@ class HoldingItem {
   final String filterBucket;
 
   HoldingItem({
+    this.schemeCode,
     required this.name,
     required this.category,
     required this.current,
@@ -59,7 +62,8 @@ class HoldingItem {
   /// Builds a [HoldingItem] from a real `/api/v1/mf/holdings` folio.
   factory HoldingItem.fromFolio(MfFolio folio) {
     return HoldingItem(
-      name: folio.schemeName.isNotEmpty ? folio.schemeName : folio.amcName,
+      schemeCode: folio.schemeCode,
+      name: folio.schemeName.isNotEmpty ? cleanFundName(folio.schemeName) : folio.amcName,
       category: folio.category,
       current: folio.currentValue,
       invested: folio.investedValue,

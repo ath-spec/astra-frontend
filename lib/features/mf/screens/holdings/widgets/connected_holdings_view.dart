@@ -1,3 +1,4 @@
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'sort_by_bottom_sheet.dart';
@@ -624,10 +625,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
     final holdingsAsync = ref.watch(mfHoldingsProvider);
 
     return holdingsAsync.when(
-      loading: () => const Scaffold(
-        backgroundColor: Color(0xFFF9FAFB),
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () => const HoldingsSkeletonLoading(),
       error: (error, stack) => Scaffold(
         backgroundColor: const Color(0xFFF9FAFB),
         body: Center(

@@ -35,7 +35,7 @@ class _MfGlobalFundsCollectionScreenState extends ConsumerState<MfGlobalFundsCol
       '5Y' => f.returns5y,
       _ => f.returns1y,
     };
-    return '${(value ?? 20.5).toStringAsFixed(2)}%';
+    return value != null ? '${value.toStringAsFixed(2)}%' : '—';
   }
 
   @override
@@ -208,7 +208,7 @@ class _MfGlobalFundsCollectionScreenState extends ConsumerState<MfGlobalFundsCol
       (index) => const Padding(
         padding: EdgeInsets.only(bottom: 12.0),
         child: AppThemeShimmerCard(
-          height: 72,
+          height: 140,
           borderRadius: BorderRadius.all(Radius.circular(12)),
           barWidths: [140, 100, 60, 60],
         ),

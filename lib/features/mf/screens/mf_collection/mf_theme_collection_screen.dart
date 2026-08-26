@@ -148,30 +148,7 @@ class _MfThemeCollectionScreenState extends ConsumerState<MfThemeCollectionScree
                           ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    // Period Selector
-                    Row(
-                      children: ['1Y', '3Y', '5Y'].map((p) {
-                        final isSelected = _returnPeriod == p;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: ChoiceChip(
-                            label: Text('$p Returns'),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              if (selected) setState(() => _returnPeriod = p);
-                            },
-                            selectedColor: const Color(0xFF0F172A),
-                            labelStyle: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontWeight: FontWeight.w600,
-                              color: isSelected ? Colors.white : const Color(0xFF64748B),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 32),
                     // Fund List
                     if (!usingProvidedFunds && catalogAsync.isLoading)
                       ..._buildLoadingRows()
@@ -214,7 +191,7 @@ class _MfThemeCollectionScreenState extends ConsumerState<MfThemeCollectionScree
       (index) => const Padding(
         padding: EdgeInsets.only(bottom: 12.0),
         child: AppThemeShimmerCard(
-          height: 72,
+          height: 140,
           borderRadius: BorderRadius.all(Radius.circular(12)),
           barWidths: [140, 100, 60, 60],
         ),

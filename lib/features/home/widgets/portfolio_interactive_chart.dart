@@ -112,8 +112,8 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
             onPanCancel: () => _handleTouchEnd(),
             child: TweenAnimationBuilder<double>(
               tween: Tween<double>(
-                begin: 145.0,
-                end: _isExpanded ? 160.0 : 145.0,
+                begin: 162.0,
+                end: _isExpanded ? 180.0 : 162.0,
               ),
               duration: const Duration(milliseconds: 250),
               curve: Curves.easeOutCubic,
@@ -196,28 +196,36 @@ class _PortfolioInteractiveChartState extends State<PortfolioInteractiveChart> w
                             // View 1 (Simple)
                             firstChild: Container(
                               height: 36,
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    point.dateStr.toUpperCase(),
-                                    style: const TextStyle(
-                                      fontFamily: 'DMMono',
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF94A3B8),
+                                  Flexible(
+                                    child: Text(
+                                      point.dateStr.toUpperCase(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontFamily: 'DMMono',
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF94A3B8),
+                                      ),
                                     ),
                                   ),
-                                  Text(
-                                    _formatCurrency(point.value),
-                                    style: const TextStyle(
-                                      fontFamily: 'SpaceGrotesk',
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color(0xFF0F172A),
-                                      letterSpacing: -0.5,
+                                  const SizedBox(width: 6),
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      _formatCurrency(point.value),
+                                      style: const TextStyle(
+                                        fontFamily: 'SpaceGrotesk',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFF0F172A),
+                                        letterSpacing: -0.5,
+                                      ),
                                     ),
                                   ),
                                 ],

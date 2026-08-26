@@ -140,36 +140,42 @@ class _StockCardState extends State<StockCard> {
                             : CrossFadeState.showFirst,
                         firstChild: Text(
                           '${widget.stock.sector} • ${widget.stock.allocation}% of stocks',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                             color: Color(0xFF94A3B8),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        secondChild: Row(
-                          children: [
-                            Text(
-                              '1D Change: ',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF94A3B8),
-                              ),
+                        secondChild: Text.rich(
+                          TextSpan(
+                            text: '1D Change: ',
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF94A3B8),
                             ),
-                            Text(
-                              widget.isLocked ? PrivacyFormatter.cypher : '${widget.stock.oneDayChange >= 0 ? '↑' : '↓'} ${_currencyFormat.format(widget.stock.oneDayChange.abs())} (${widget.stock.oneDayChangePct}%)',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: widget.stock.oneDayChange >= 0
-                                    ? const Color(0xFF10B981)
-                                    : const Color(0xFFEF4444),
+                            children: [
+                              TextSpan(
+                                text: widget.isLocked
+                                    ? PrivacyFormatter.cypher
+                                    : '${widget.stock.oneDayChange >= 0 ? '↑' : '↓'} ${_currencyFormat.format(widget.stock.oneDayChange.abs())} (${widget.stock.oneDayChangePct}%)',
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: widget.stock.oneDayChange >= 0
+                                      ? const Color(0xFF10B981)
+                                      : const Color(0xFFEF4444),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],

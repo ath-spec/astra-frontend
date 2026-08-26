@@ -1,3 +1,4 @@
+import '../../../core/widgets/shimmer_card_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:astra_frontend/features/dashboard/data/dashboard_providers.dart';
@@ -18,31 +19,15 @@ class HomePortfolioGrowth extends ConsumerStatefulWidget {
   ConsumerState<HomePortfolioGrowth> createState() => _HomePortfolioGrowthState();
 }
 
-/// Lookback window (in days) requested from `/api/v1/dashboard/growth` for
-/// each timeframe toggle. The backend only has real history from whenever
-/// the user's dashboard was first read onward (no backfilled past data), so
-/// these are just upper bounds — a new user's series will simply come back
-/// shorter than the requested window.
-const Map<String, int> _periodDays = {
-  '1M': 30,
-  '6M': 182,
-  '1Y': 365,
-  'ALL': 3650,
-};
-
 class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
   String _selectedPeriod = 'ALL';
+  static const List<String> _timeframes = ['1M', '6M', '1Y', 'ALL'];
 
   String _formatDate(DateTime date) {
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     return '${date.day} ${months[date.month - 1]} \'${date.year.toString().substring(2)}';
   }
 
-  /// Converts the raw growth series into chart points. When the backend has
-  /// fewer than 2 points of real history (a brand-new account), duplicates
-  /// the single point into a flat 2-point line so the chart can render
-  /// without dividing by zero — it does not fabricate any value, both
-  /// points share the same real total-wealth figure.
   List<ChartDataPoint> _toChartData(List<DashboardGrowthPoint> points) {
     if (points.isEmpty) return const [];
     if (points.length == 1) {
@@ -57,8 +42,35 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
         .toList();
   }
 
-  String _getStartLabel(String period, List<DashboardGrowthPoint> points) {
-    if (points.isNotEmpty) return _formatDate(points.first.date).toUpperCase();
+  List<DashboardGrowthPoint> _slicePointsForPeriod(List<DashboardGrowthPoint> allPoints, String period) {
+    if (allPoints.isEmpty) return const [];
+    int takeDays;
+    switch (period) {
+      case '1M':
+        takeDays = 30;
+        break;
+      case '6M':
+        takeDays = 182;
+        break;
+      case '1Y':
+        takeDays = 365;
+        break;
+      case 'ALL':
+      default:
+        takeDays = allPoints.length;
+        break;
+    }
+
+    if (allPoints.length <= takeDays) {
+      return allPoints;
+    }
+    return allPoints.sublist(allPoints.length - takeDays);
+  }
+
+  String _getStartLabel(String period, List<DashboardGrowthPoint> currentPoints) {
+    if (currentPoints.isNotEmpty) {
+      return _formatDate(currentPoints.first.date).toUpperCase();
+    }
     switch (period) {
       case '1M':
         return '1 MONTH AGO';
@@ -74,57 +86,33 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
 
   @override
   Widget build(BuildContext context) {
-    final days = _periodDays[_selectedPeriod] ?? 3650;
-    final growthAsync = ref.watch(dashboardGrowthProvider(days));
+    // Always request the full 365-day dataset so all timeframe buttons work instantly
+    final growthAsync = ref.watch(dashboardGrowthProvider(365));
 
     return growthAsync.when(
-      loading: () => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 48),
-        child: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () => _buildSkeletonLoading(),
       error: (error, stack) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-        child: Text(
+        child: const Text(
           'Portfolio growth is unavailable right now.',
-          style: const TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF94A3B8)),
+          style: TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF94A3B8)),
         ),
       ),
-      data: (points) => _buildContent(points),
+      data: (allPoints) => _buildContent(allPoints),
     );
   }
 
-  /// Which timeframe toggles are worth showing, given how much real history
-  /// actually exists. A toggle only appears once the account has at least
-  /// half of that window's worth of real data — otherwise every longer
-  /// toggle would just render the same short, flat line as 1M, which isn't
-  /// a meaningful choice to offer.
-  List<String> _availableTimeframes(List<DashboardGrowthPoint> points) {
-    if (points.isEmpty) return const [];
-    final spanDays = DateTime.now().difference(points.first.date).inDays;
-    final available = <String>['1M'];
-    if (spanDays >= 91) available.add('6M');
-    if (spanDays >= 182) available.add('1Y');
-    if (spanDays >= 45) available.add('ALL');
-    return available;
-  }
-
-  Widget _buildContent(List<DashboardGrowthPoint> points) {
-    if (points.isEmpty) {
+  Widget _buildContent(List<DashboardGrowthPoint> allPoints) {
+    if (allPoints.isEmpty) {
       return _buildEmptyState();
     }
 
-    final availableTimeframes = _availableTimeframes(points);
-    if (!availableTimeframes.contains(_selectedPeriod)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) setState(() => _selectedPeriod = availableTimeframes.last);
-      });
-    }
+    final activePoints = _slicePointsForPeriod(allPoints, _selectedPeriod);
+    final currentData = _toChartData(activePoints);
+    final hasEnoughHistory = allPoints.length >= 2;
 
-    final currentData = _toChartData(points);
-    final hasEnoughHistory = points.length >= 2;
-
-    final double displayValue = points.isNotEmpty
-        ? points.last.totalWealth
+    final double displayValue = activePoints.isNotEmpty
+        ? activePoints.last.totalWealth
         : 0.0;
     final bool isPositive =
         currentData.isEmpty || currentData.last.value >= currentData.first.value;
@@ -139,11 +127,10 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
             'Portfolio Growth',
             style: TextStyle(
               fontFamily: 'DMSans',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -1.0,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -1.0,
               color: Color(0xFF0F172A),
-
             ),
           ),
         ),
@@ -212,7 +199,7 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
                 data: currentData,
                 lineColor: chartColor,
                 height: 180,
-                startDateLabel: _getStartLabel(_selectedPeriod, points),
+                startDateLabel: _getStartLabel(_selectedPeriod, activePoints),
                 endDateLabel: 'TODAY',
               ),
             ),
@@ -220,22 +207,20 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
 
         const SizedBox(height: 32),
 
-        // Timeline toggles — only ones with enough real history to be
-        // meaningful are shown (see _availableTimeframes).
-        if (availableTimeframes.length > 1)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Center(
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  for (final label in availableTimeframes) _buildTimeframeToggle(label),
-                ],
-              ),
+        // Timeline toggles — ALWAYS visible and selectable
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Center(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                for (final label in _timeframes) _buildTimeframeToggle(label),
+              ],
             ),
           ),
+        ),
 
         const SizedBox(height: 16),
 
@@ -248,12 +233,9 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
     );
   }
 
-  /// Shown when there is genuinely zero recorded history yet (should be
-  /// rare — the first dashboard read already writes today's snapshot — but
-  /// covers a brand-new account's very first render before that completes).
-  Widget _buildEmptyState() {
+  Widget _buildSkeletonLoading() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -267,41 +249,24 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
               color: Color(0xFF0F172A),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 100, height: 10, borderRadius: 3),
+          const SizedBox(height: 8),
+          const ShimmerBar(width: 200, height: 36, borderRadius: 6),
+          const SizedBox(height: 12),
+          const ShimmerBar(width: 260, height: 12, borderRadius: 4),
+          const SizedBox(height: 32),
           Container(
+            height: 180,
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Column(
-              children: [
-                const Icon(Icons.show_chart_rounded, size: 28, color: Color(0xFF94A3B8)),
-                const SizedBox(height: 12),
-                const Text(
-                  'Your growth chart starts today',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF334155),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Come back tomorrow to see your first trend line',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF94A3B8),
-                  ),
-                ),
-              ],
-            ),
+          ),
+          const SizedBox(height: 24),
+          const Center(
+            child: ShimmerBar(width: 180, height: 28, borderRadius: 4),
           ),
           const SizedBox(height: 16),
           const Divider(color: Color(0xFFE2E8F0), thickness: 1, height: 1),
@@ -310,35 +275,68 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
     );
   }
 
-  Widget _buildTimeframeToggle(String label) {
-    final isSelected = _selectedPeriod == label;
-    return GestureDetector(
-      onTap: () {
-        if (!isSelected) {
-          setState(() {
-            _selectedPeriod = label;
-          });
-        }
-      },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(100),
-            border: Border.all(
-            color: isSelected ? const Color(0xFF0F172A) : Colors.transparent,
-              width: 1.5,
+  Widget _buildEmptyState() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Portfolio Growth',
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -1.0,
+              color: Color(0xFF0F172A),
             ),
           ),
-          child: Text(
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFF1F5F9)),
+            ),
+            child: const Center(
+              child: Text(
+                'Connect Mutual Funds or Stocks to track your growth trend',
+                style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: Color(0xFF64748B)),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeframeToggle(String label) {
+    final bool isSelected = _selectedPeriod == label;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedPeriod = label;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF0F172A) : Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0),
+          ),
+        ),
+        child: Text(
           label,
-            style: TextStyle(
-              fontFamily: 'DMMono',
-              fontSize: 12,
+          style: TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 10,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-            color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
+            color: isSelected ? Colors.white : const Color(0xFF64748B),
           ),
         ),
       ),

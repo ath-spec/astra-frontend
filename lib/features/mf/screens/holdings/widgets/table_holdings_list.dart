@@ -51,7 +51,14 @@ class TableHoldingsList extends StatelessWidget {
                   const Divider(height: 1, color: Color(0xFFF1F5F9)),
                   ...displayHoldings.map((item) {
                     return InkWell(
-                      onTap: () => Navigator.of(context, rootNavigator: true).push( MaterialPageRoute(builder: (_) => const YourFundProfileScreen())),
+                      onTap: () => Navigator.of(context, rootNavigator: true).push(
+                        MaterialPageRoute(
+                          builder: (_) => YourFundProfileScreen(
+                            schemeCode: item.schemeCode,
+                            holdingItem: item,
+                          ),
+                        ),
+                      ),
                       child: Container(
                         height: 72,
                         padding: const EdgeInsets.only(left: 16, right: 8),
@@ -88,7 +95,14 @@ class TableHoldingsList extends StatelessWidget {
                       bool isPosRet = item.returns >= 0;
                       bool isPos1D = item.oneDayChange >= 0;
                       return InkWell(
-                        onTap: () => Navigator.of(context, rootNavigator: true).push( MaterialPageRoute(builder: (_) => const YourFundProfileScreen())),
+                        onTap: () => Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (_) => YourFundProfileScreen(
+                              schemeCode: item.schemeCode,
+                              holdingItem: item,
+                            ),
+                          ),
+                        ),
                         child: Container(
                           height: 72,
                           decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9)))),

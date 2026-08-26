@@ -1,3 +1,4 @@
+import '../../../core/widgets/shimmer_card_skeleton.dart';
 import 'dart:ui' show lerpDouble, ImageFilter;
 import 'dart:math' hide log;
 import 'package:flutter/foundation.dart';
@@ -691,6 +692,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final VoidCallback onProfileTap;
   final VoidCallback onLockTap;
   final bool isLocked;
+  final bool isLoading;
 
   _HomeHeaderDelegate({
     required this.safeAreaTop,
@@ -702,6 +704,7 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.onProfileTap,
     required this.onLockTap,
     required this.isLocked,
+    this.isLoading = false,
   });
 
   @override
@@ -834,17 +837,23 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      totalWealth,
-                      style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
-                        color: const Color(0xFF0F172A),
-                        fontSize: currentFontSize,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: lerpDouble(-1.0, 0.0, easedRatio)!,
-                        height: 1.1,
-                      ),
-                    ),
+                    isLoading
+                        ? ShimmerBar(
+                            width: lerpDouble(170.0, 80.0, easedRatio)!,
+                            height: currentFontSize,
+                            borderRadius: 6,
+                          )
+                        : Text(
+                            totalWealth,
+                            style: TextStyle(
+                              fontFamily: 'SpaceGrotesk',
+                              color: const Color(0xFF0F172A),
+                              fontSize: currentFontSize,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: lerpDouble(-1.0, 0.0, easedRatio)!,
+                              height: 1.1,
+                            ),
+                          ),
                     // Shrinking Refresh Icon
                     if (shrinkRatio < 1.0) ...[
                       SizedBox(width: lerpDouble(12.0, 0.0, easedRatio)!),
@@ -875,18 +884,25 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
           ),
 
           // Returns Pill below the wealth number
-          if (shrinkRatio < 1.0 && showReturnsPill)
+          if (shrinkRatio < 1.0)
             Positioned(
-              top: currentTop + 64.0, // Move it further down so it never covers the text
+              top: currentTop + 64.0,
               left: 0,
               right: 0,
               child: Align(
                 alignment: Alignment.topCenter,
-                child: _ReturnsPill(
-                  opacity: (1.0 - (shrinkRatio * 3.0)).clamp(0.0, 1.0),
-                  oneDayText: pillOneDayText,
-                  totalText: pillTotalText,
-                ),
+                child: isLoading
+                    ? Opacity(
+                        opacity: (1.0 - (shrinkRatio * 3.0)).clamp(0.0, 1.0),
+                        child: const ShimmerBar(width: 140, height: 20, borderRadius: 20),
+                      )
+                    : (showReturnsPill
+                        ? _ReturnsPill(
+                            opacity: (1.0 - (shrinkRatio * 3.0)).clamp(0.0, 1.0),
+                            oneDayText: pillOneDayText,
+                            totalText: pillTotalText,
+                          )
+                        : const SizedBox.shrink()),
               ),
             ),
 
@@ -946,7 +962,8 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
            totalWealth != oldDelegate.totalWealth ||
            showReturnsPill != oldDelegate.showReturnsPill ||
            pillOneDayText != oldDelegate.pillOneDayText ||
-           pillTotalText != oldDelegate.pillTotalText;
+           pillTotalText != oldDelegate.pillTotalText ||
+           isLoading != oldDelegate.isLoading;
   }
 }
 

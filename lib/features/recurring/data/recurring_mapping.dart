@@ -76,6 +76,42 @@ final Map<String, _BrandVisual> _brandVisuals = {
     backgroundColor: Color(0xFF00C4CC),
     dotColor: Color(0xFF00C4CC),
   ),
+  'prime': const _BrandVisual(
+    icon: Icons.movie_creation_outlined,
+    isDark: true,
+    backgroundColor: Color(0xFF00A8E1),
+    dotColor: Color(0xFF00A8E1),
+  ),
+  'amazon': const _BrandVisual(
+    icon: Icons.shopping_bag_outlined,
+    isDark: true,
+    backgroundColor: Color(0xFF232F3E),
+    dotColor: Color(0xFFFF9900),
+  ),
+  'apple': const _BrandVisual(
+    icon: Icons.apple,
+    isDark: true,
+    backgroundColor: Colors.black,
+    dotColor: Colors.white,
+  ),
+  'google': const _BrandVisual(
+    icon: Icons.cloud_outlined,
+    isDark: false,
+    backgroundColor: Colors.white,
+    dotColor: Color(0xFF4285F4),
+  ),
+  'airtel': const _BrandVisual(
+    icon: Icons.wifi,
+    isDark: true,
+    backgroundColor: Color(0xFFE40000),
+    dotColor: Color(0xFFE40000),
+  ),
+  'cult': const _BrandVisual(
+    icon: Icons.fitness_center_rounded,
+    isDark: true,
+    backgroundColor: Colors.black87,
+    dotColor: Color(0xFFFF3278),
+  ),
 };
 
 _BrandVisual _visualForName(String name) {

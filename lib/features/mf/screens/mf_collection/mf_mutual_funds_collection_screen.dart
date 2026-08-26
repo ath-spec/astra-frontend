@@ -35,7 +35,7 @@ class _MfMutualFundsCollectionScreenState extends ConsumerState<MfMutualFundsCol
       '5Y' => f.returns5y,
       _ => f.returns3y,
     };
-    return value != null ? '${value.toStringAsFixed(1)}%' : '18.2%';
+    return value != null ? '${value.toStringAsFixed(1)}%' : '—';
   }
 
   @override
@@ -153,11 +153,11 @@ class _MfMutualFundsCollectionScreenState extends ConsumerState<MfMutualFundsCol
                     padding: EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        AppThemeShimmerCard(height: 80),
+                        AppThemeShimmerCard(height: 140),
                         SizedBox(height: 12),
-                        AppThemeShimmerCard(height: 80),
+                        AppThemeShimmerCard(height: 140),
                         SizedBox(height: 12),
-                        AppThemeShimmerCard(height: 80),
+                        AppThemeShimmerCard(height: 140),
                       ],
                     ),
                   )
