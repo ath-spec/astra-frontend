@@ -138,7 +138,8 @@ class MfFundListCard extends StatelessWidget {
 
   Widget _buildFundRow(BuildContext context, MfFundItemData fund) {
     return GestureDetector(
-      onTap: () => MfFundProfileScreen.showModal(context, fund.name),
+      onTap: () => MfFundProfileScreen.showModal(
+          context, fund.schemeCode.isNotEmpty ? fund.schemeCode : fund.name),
       child: Container(
         decoration: const BoxDecoration(
           border: Border(
@@ -168,12 +169,13 @@ class MfFundListCard extends StatelessWidget {
                 children: [
                   Text(
                     fund.name,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
+                      height: 1.2,
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
@@ -229,6 +231,7 @@ class MfFundItemData {
   final String returns;
   final IconData logoIcon;
   final Color logoColor;
+  final String schemeCode;
 
   const MfFundItemData({
     required this.name,
@@ -236,5 +239,6 @@ class MfFundItemData {
     required this.returns,
     required this.logoIcon,
     required this.logoColor,
+    this.schemeCode = '',
   });
 }

@@ -16,5 +16,13 @@ final stocksHoldingsProvider =
 final stocksOrdersProvider =
     FutureProvider<List<StockOrderRecord>>((ref) async {
   final repo = ref.watch(stocksRepositoryProvider);
-  return repo.getOrders();
+  return repo.listOrders();
+});
+
+/// Stock orders narrowed to a single status (`OPEN`, `COMPLETE`,
+/// `CANCELLED`, `REJECTED`). Pass `null` to fetch all statuses.
+final stocksOrdersByStatusProvider =
+    FutureProvider.family<List<StockOrderRecord>, String?>((ref, statusFilter) async {
+  final repo = ref.watch(stocksRepositoryProvider);
+  return repo.listOrders(statusFilter: statusFilter);
 });

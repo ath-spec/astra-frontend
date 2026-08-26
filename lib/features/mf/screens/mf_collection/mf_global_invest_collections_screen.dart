@@ -70,6 +70,7 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
         returns: ret,
         logoIcon: defaultIcon,
         logoColor: defaultColor,
+        schemeCode: f.schemeCode,
       );
     }).toList();
   }
@@ -197,7 +198,7 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
                       const SizedBox(height: 16),
                       const AppThemeShimmerCard(height: 140),
                     ] else ...[
-                      _buildCardsList(catalogAsync.value ?? []),
+                      _buildCardsList(catalogAsync.valueOrNull ?? []),
                     ],
                     const SizedBox(height: 32),
                   ],

@@ -32,7 +32,7 @@ class MfExploreScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final assetState = ref.watch(assetConnectionProvider);
     final summaryAsync = ref.watch(dashboardSummaryProvider);
-    final summary = summaryAsync.value;
+    final summary = summaryAsync.valueOrNull;
 
     final double totalWealth = summary?.totalWealth ?? 0.0;
     final double oneDayChange = summary?.oneDayChangeAmount ?? 0.0;

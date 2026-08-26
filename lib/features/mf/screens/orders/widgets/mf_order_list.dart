@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/widgets/shimmer_card_skeleton.dart';
-import '../../../../stocks/data/stocks_providers.dart';
+import '../data/orders_feed.dart';
 import 'mf_order_item_card.dart';
 
 class MfOrderList extends ConsumerWidget {
@@ -10,10 +10,11 @@ class MfOrderList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ordersAsync = ref.watch(stocksOrdersProvider);
+    final feedAsync = ref.watch(ordersFeedProvider);
+    final filter = ref.watch(ordersFeedFilterProvider);
     final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 2);
 
-    if (ordersAsync.isLoading) {
+    if (feedAsync.isLoading) {
       return const Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -26,29 +27,35 @@ class MfOrderList extends ConsumerWidget {
       );
     }
 
-    if (ordersAsync.hasValue && ordersAsync.value != null && ordersAsync.value!.isNotEmpty) {
-      final orders = ordersAsync.value!;
+    final allItems = feedAsync.value ?? const <OrderFeedItem>[];
+    final items = filter == OrderFeedFilter.all
+        ? allItems
+        : allItems.where((item) => item.category == filter).toList();
+
+    if (items.isNotEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: orders.map((order) {
-          final dateStr = order.timestampEpoch > 0
-              ? DateFormat('dd MMM').format(order.timestamp).toUpperCase()
-              : 'TODAY';
-          final logoColor = order.transactionType == 'BUY'
-              ? const Color(0xFF0EA5E9)
-              : const Color(0xFFEF4444);
+        children: items.map((item) {
+          final dateStr = DateFormat('dd MMM').format(item.date).toUpperCase();
+          final logoColor = item.category == OrderFeedFilter.sell
+              ? const Color(0xFFEF4444)
+              : item.category == OrderFeedFilter.sip
+                  ? const Color(0xFF8B5CF6)
+                  : item.category == OrderFeedFilter.surplus
+                      ? const Color(0xFFF59E0B)
+                      : const Color(0xFF0EA5E9);
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildDateHeader(dateStr),
               MfOrderItemCard(
-                logoText: order.tradingSymbol.split(' ').take(2).map((e) => e.isNotEmpty ? e[0] : '').join(),
+                logoText: item.title.split(' ').take(2).map((e) => e.isNotEmpty ? e[0] : '').join(),
                 logoColor: logoColor,
-                fundName: '${order.tradingSymbol} (${order.exchange})',
-                amount: currencyFormat.format(order.price * (order.quantity > 0 ? order.quantity : 1)),
-                type: order.transactionType,
-                status: order.status,
+                fundName: item.title,
+                amount: currencyFormat.format(item.amount),
+                type: item.typeLabel,
+                status: item.status,
               ),
             ],
           );

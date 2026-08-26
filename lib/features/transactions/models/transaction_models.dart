@@ -1,9 +1,7 @@
 // ============================================================
 // FILE: lib/features/transactions/models/transaction_models.dart
-// Transactions feature models. Field names/json keys mirror the
-// shape of a future GET /v1/transactions endpoint (paginated,
-// filterable by category/merchant/month/year) so wiring a real
-// API later only means replacing TransactionsRepository's bodies.
+// Transactions feature models, backed by
+// GET /api/v1/analytics/spend/transactions.
 // ============================================================
 
 enum TransactionStatus { pending, completed, failed }
@@ -18,6 +16,38 @@ extension TransactionStatusX on TransactionStatus {
       default:
         return TransactionStatus.completed;
     }
+  }
+}
+
+/// Raw row as returned by `GET /api/v1/analytics/spend/transactions`.
+/// `occurred_at` is epoch seconds (integer) — never an ISO string.
+class TransactionListItem {
+  final String id;
+  final double amount;
+  final bool isDebit; // type == "DEBIT" (vs "CREDIT")
+  final String category;
+  final String merchant;
+  final DateTime occurredAt;
+
+  const TransactionListItem({
+    required this.id,
+    required this.amount,
+    required this.isDebit,
+    required this.category,
+    required this.merchant,
+    required this.occurredAt,
+  });
+
+  factory TransactionListItem.fromJson(Map<String, dynamic> json) {
+    final epochSeconds = (json['occurred_at'] as num?)?.toInt() ?? 0;
+    return TransactionListItem(
+      id: json['id'] as String? ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      isDebit: (json['type'] as String? ?? 'DEBIT').toUpperCase() != 'CREDIT',
+      category: json['category'] as String? ?? '',
+      merchant: json['merchant'] as String? ?? '',
+      occurredAt: DateTime.fromMillisecondsSinceEpoch(epochSeconds * 1000),
+    );
   }
 }
 
@@ -49,19 +79,22 @@ class TransactionItem {
     required this.merchant,
   });
 
-  factory TransactionItem.fromJson(Map<String, dynamic> json) {
+  /// Builds the UI-facing row from a raw `/analytics/spend/transactions` item.
+  /// The endpoint has no title/subtitle/account/bank/status fields, so those
+  /// are derived or left null — never fabricated.
+  factory TransactionItem.fromApiRow(TransactionListItem raw) {
     return TransactionItem(
-      id: json['id'] as String? ?? '',
-      title: json['title'] as String? ?? json['merchant_name'] as String? ?? '',
-      subtitle: json['subtitle'] as String? ?? json['category_display_name'] as String? ?? '',
-      accountLast4: json['account_last4'] as String?,
-      bankName: json['bank_name'] as String?,
-      time: DateTime.tryParse(json['transaction_time'] as String? ?? '') ?? DateTime.now(),
-      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
-      isDebit: (json['transaction_type'] as String? ?? 'debit') == 'debit',
-      status: TransactionStatusX.fromString(json['status'] as String?),
-      category: json['category'] as String? ?? '',
-      merchant: json['merchant_name'] as String? ?? json['title'] as String? ?? '',
+      id: raw.id,
+      title: raw.merchant.isNotEmpty ? raw.merchant : raw.category,
+      subtitle: raw.category,
+      accountLast4: null,
+      bankName: null,
+      time: raw.occurredAt,
+      amount: raw.amount,
+      isDebit: raw.isDebit,
+      status: TransactionStatus.completed,
+      category: raw.category,
+      merchant: raw.merchant,
     );
   }
 }
@@ -92,15 +125,6 @@ class CategorySummary {
     required this.transactionCount,
     required this.totalAmount,
   });
-
-  factory CategorySummary.fromJson(Map<String, dynamic> json) {
-    return CategorySummary(
-      category: json['category'] as String? ?? '',
-      displayName: json['display_name'] as String? ?? json['category'] as String? ?? '',
-      transactionCount: json['transaction_count'] as int? ?? 0,
-      totalAmount: (json['total_amount'] as num?)?.toDouble() ?? 0.0,
-    );
-  }
 }
 
 /// Aggregate row for the "Merchants" tab.
@@ -114,14 +138,6 @@ class MerchantSummary {
     required this.transactionCount,
     required this.totalAmount,
   });
-
-  factory MerchantSummary.fromJson(Map<String, dynamic> json) {
-    return MerchantSummary(
-      merchant: json['merchant'] as String? ?? '',
-      transactionCount: json['transaction_count'] as int? ?? 0,
-      totalAmount: (json['total_amount'] as num?)?.toDouble() ?? 0.0,
-    );
-  }
 }
 
 /// Full detail record for a single transaction, shown on
@@ -157,21 +173,24 @@ class TransactionDetail {
     required this.status,
   });
 
-  factory TransactionDetail.fromJson(Map<String, dynamic> json) {
+  /// There is no single-transaction-by-id endpoint. The detail screen finds
+  /// the matching row client-side from an already-fetched list and derives
+  /// the detail record from it — nothing here is fabricated.
+  factory TransactionDetail.fromItem(TransactionItem item) {
     return TransactionDetail(
-      id: json['id'] as String? ?? '',
-      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
-      isDebit: (json['transaction_type'] as String? ?? 'debit') == 'debit',
-      category: json['category'] as String? ?? '',
-      subcategory: json['subcategory'] as String?,
-      description: json['description'] as String?,
-      merchantName: json['merchant_name'] as String?,
-      merchantCategory: json['merchant_category'] as String?,
-      transactionDate: DateTime.tryParse(json['transaction_date'] as String? ?? '') ?? DateTime.now(),
-      referenceNumber: json['reference_number'] as String?,
-      accountNumberMasked: json['account_number_masked'] as String?,
-      bankName: json['bank_name'] as String?,
-      status: TransactionStatusX.fromString(json['status'] as String?),
+      id: item.id,
+      amount: item.amount,
+      isDebit: item.isDebit,
+      category: item.category,
+      subcategory: null,
+      description: null,
+      merchantName: item.merchant.isNotEmpty ? item.merchant : null,
+      merchantCategory: item.category.isNotEmpty ? item.category : null,
+      transactionDate: item.time,
+      referenceNumber: null,
+      accountNumberMasked: null,
+      bankName: null,
+      status: item.status,
     );
   }
 }

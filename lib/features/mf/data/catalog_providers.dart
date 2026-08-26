@@ -12,6 +12,14 @@ final allCatalogFundsProvider = FutureProvider<List<CatalogFund>>((ref) async {
   return repo.searchFunds(limit: 50);
 });
 
+/// Catalog funds narrowed to a single server-side `category`, e.g.
+/// `Debt - Corporate Bond` or `Other - REIT`.
+final catalogFundsByCategoryProvider =
+    FutureProvider.family<List<CatalogFund>, String>((ref, category) async {
+  final repo = ref.watch(catalogRepositoryProvider);
+  return repo.searchFunds(category: category, limit: 50);
+});
+
 final catalogNfosProvider = FutureProvider<List<NfoItem>>((ref) async {
   final repo = ref.watch(catalogRepositoryProvider);
   return repo.listNfos();

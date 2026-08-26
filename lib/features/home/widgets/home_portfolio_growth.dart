@@ -93,7 +93,33 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
     );
   }
 
+  /// Which timeframe toggles are worth showing, given how much real history
+  /// actually exists. A toggle only appears once the account has at least
+  /// half of that window's worth of real data — otherwise every longer
+  /// toggle would just render the same short, flat line as 1M, which isn't
+  /// a meaningful choice to offer.
+  List<String> _availableTimeframes(List<DashboardGrowthPoint> points) {
+    if (points.isEmpty) return const [];
+    final spanDays = DateTime.now().difference(points.first.date).inDays;
+    final available = <String>['1M'];
+    if (spanDays >= 91) available.add('6M');
+    if (spanDays >= 182) available.add('1Y');
+    if (spanDays >= 45) available.add('ALL');
+    return available;
+  }
+
   Widget _buildContent(List<DashboardGrowthPoint> points) {
+    if (points.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    final availableTimeframes = _availableTimeframes(points);
+    if (!availableTimeframes.contains(_selectedPeriod)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _selectedPeriod = availableTimeframes.last);
+      });
+    }
+
     final currentData = _toChartData(points);
     final hasEnoughHistory = points.length >= 2;
 
@@ -194,23 +220,22 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
 
         const SizedBox(height: 32),
 
-        // Timeline toggles
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Center(
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                _buildTimeframeToggle('1M'),
-                _buildTimeframeToggle('6M'),
-                _buildTimeframeToggle('1Y'),
-                _buildTimeframeToggle('ALL'),
-              ],
+        // Timeline toggles — only ones with enough real history to be
+        // meaningful are shown (see _availableTimeframes).
+        if (availableTimeframes.length > 1)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Center(
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  for (final label in availableTimeframes) _buildTimeframeToggle(label),
+                ],
+              ),
             ),
           ),
-        ),
 
         const SizedBox(height: 16),
 
@@ -220,6 +245,68 @@ class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
           child: Divider(color: Color(0xFFE2E8F0), thickness: 1, height: 1),
         ),
       ],
+    );
+  }
+
+  /// Shown when there is genuinely zero recorded history yet (should be
+  /// rare — the first dashboard read already writes today's snapshot — but
+  /// covers a brand-new account's very first render before that completes).
+  Widget _buildEmptyState() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Portfolio Growth',
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -1.0,
+              color: Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Column(
+              children: [
+                const Icon(Icons.show_chart_rounded, size: 28, color: Color(0xFF94A3B8)),
+                const SizedBox(height: 12),
+                const Text(
+                  'Your growth chart starts today',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF334155),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Come back tomorrow to see your first trend line',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF94A3B8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Divider(color: Color(0xFFE2E8F0), thickness: 1, height: 1),
+        ],
+      ),
     );
   }
 

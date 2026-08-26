@@ -4,26 +4,29 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/responsive/context_responsive.dart';
 import '../../../core/widgets/responsive_body.dart';
-import '../data/transactions_repository.dart';
+import '../../../core/widgets/shimmer_card_skeleton.dart';
+import '../data/transactions_providers.dart';
 import '../models/transaction_models.dart';
 import '../widgets/date_group_section.dart';
 import 'transaction_detail_screen.dart';
 
-class CategoryTransactionsScreen extends StatefulWidget {
+class CategoryTransactionsScreen extends ConsumerStatefulWidget {
   final String categoryName;
   final double? totalAmount;
 
   const CategoryTransactionsScreen({super.key, required this.categoryName, this.totalAmount});
 
   @override
-  State<CategoryTransactionsScreen> createState() => _CategoryTransactionsScreenState();
+  ConsumerState<CategoryTransactionsScreen> createState() => _CategoryTransactionsScreenState();
 }
 
-class _CategoryTransactionsScreenState extends State<CategoryTransactionsScreen> {
+class _CategoryTransactionsScreenState extends ConsumerState<CategoryTransactionsScreen> {
   List<TransactionDateGroup>? _groups;
+  String? _error;
 
   @override
   void initState() {
@@ -32,9 +35,15 @@ class _CategoryTransactionsScreenState extends State<CategoryTransactionsScreen>
   }
 
   Future<void> _load() async {
-    final groups = await TransactionsRepository.instance.fetchGrouped(category: widget.categoryName);
-    if (!mounted) return;
-    setState(() => _groups = groups);
+    setState(() => _error = null);
+    try {
+      final groups = await ref.read(transactionsRepositoryProvider).fetchGrouped(category: widget.categoryName);
+      if (!mounted) return;
+      setState(() => _groups = groups);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _error = e.toString());
+    }
   }
 
   @override
@@ -64,25 +73,61 @@ class _CategoryTransactionsScreenState extends State<CategoryTransactionsScreen>
         ),
       ),
       body: ResponsiveBody(
-        child: _groups == null
-            ? const Center(child: CircularProgressIndicator())
-            : _groups!.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No transactions in this category',
-                      style: TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF94A3B8)),
+        child: _groups == null && _error == null
+            ? ListView(
+                padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 32),
+                physics: const NeverScrollableScrollPhysics(),
+                children: const [
+                  AppThemeShimmerCard(height: 72),
+                  SizedBox(height: 12),
+                  AppThemeShimmerCard(height: 72),
+                  SizedBox(height: 12),
+                  AppThemeShimmerCard(height: 72),
+                ],
+              )
+            : _error != null
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.error_outline_rounded, size: 32, color: Color(0xFFCBD5E1)),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Text(
+                            _error!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF94A3B8)),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextButton(
+                          onPressed: _load,
+                          child: const Text(
+                            'Retry',
+                            style: TextStyle(fontFamily: 'DMSans', fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                          ),
+                        ),
+                      ],
                     ),
                   )
-                : ListView.builder(
-                    padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 32),
-                    itemCount: _groups!.length,
-                    itemBuilder: (context, index) => DateGroupSection(
-                      group: _groups![index],
-                      onTapItem: (item) => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => TransactionDetailScreen(transactionId: item.id)),
+                : _groups!.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No transactions in this category',
+                          style: TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF94A3B8)),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 32),
+                        itemCount: _groups!.length,
+                        itemBuilder: (context, index) => DateGroupSection(
+                          group: _groups![index],
+                          onTapItem: (item) => Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => TransactionDetailScreen(transactionId: item.id)),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
       ),
     );
   }

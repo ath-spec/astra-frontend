@@ -14,6 +14,15 @@ final class AuthInitial extends AuthState {
   const AuthInitial();
 }
 
+/// Transient state held from app launch until [AuthNotifier.restoreSession]
+/// resolves. The router's `redirect` treats this the same as an onboarding
+/// route (never force-navigates away) so a slow/in-flight session restore
+/// can never be mistaken for "definitely logged out" and bounce the user to
+/// `/intro` before the stored token has had a chance to be checked.
+final class AuthChecking extends AuthState {
+  const AuthChecking();
+}
+
 final class AuthLoading extends AuthState {
   const AuthLoading();
 }
@@ -30,7 +39,7 @@ final class AuthError extends AuthState {
 
 /// StateNotifier managing user authentication lifecycle.
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier() : super(const AuthInitial());
+  AuthNotifier() : super(const AuthChecking());
 
   Future<void> login(String email, String password) async {
     state = const AuthLoading();
@@ -220,8 +229,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// token and leaves state as [AuthInitial] on failure (invalid/expired
   /// token, or no network). Returns `true` if the session was restored.
   Future<bool> restoreSession() async {
-    final token = await _secureStorage.read(key: 'auth_token');
-    if (token == null || token.isEmpty) return false;
+    String? token;
+    try {
+      token = await _secureStorage.read(key: 'auth_token');
+    } catch (_) {
+      // Secure storage can throw (e.g. an invalidated Android keystore key)
+      // — treat that the same as "no stored session" rather than leaving
+      // state stuck on AuthChecking and letting the exception propagate
+      // unhandled out of the fire-and-forget call in SplashScreen.
+      token = null;
+    }
+    if (token == null || token.isEmpty) {
+      state = const AuthInitial();
+      return false;
+    }
 
     try {
       final response = await dioApiClient.dio.get('/api/auth/me');

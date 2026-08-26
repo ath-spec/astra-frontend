@@ -67,6 +67,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authProvider);
       final isLoggedIn = authState is AuthAuthenticated;
+      // Session restore (SplashScreen -> AuthNotifier.restoreSession) is
+      // still in flight — never treat this as "definitely logged out".
+      // Without this guard, any navigation/redirect re-evaluation that
+      // happens to land outside the onboarding whitelist while the stored
+      // token is still being validated would force an incorrect bounce to
+      // /intro even for a user who is actually logged in.
+      final isCheckingAuth = authState is AuthChecking;
       final loc = state.matchedLocation;
 
       final isOnboardingRoute = loc == '/login' ||
@@ -92,7 +99,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           loc == '/profiling-status' ||
           loc == '/no-internet';
 
-      if (!isLoggedIn && !isOnboardingRoute) return '/intro';
+      if (!isLoggedIn && !isCheckingAuth && !isOnboardingRoute) return '/intro';
       return null;
     },
     routes: [

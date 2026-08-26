@@ -76,6 +76,8 @@ class FundInsightsData {
   final String suitableFor;
   final String avoidIf;
   final String impactText;
+  final String whatItDoesRightNow;
+  final String whatBuyingMoreWillDo;
   final List<double>? currentValues;
   final List<double>? projectedValues;
 
@@ -85,6 +87,8 @@ class FundInsightsData {
     required this.suitableFor,
     required this.avoidIf,
     required this.impactText,
+    this.whatItDoesRightNow = '',
+    this.whatBuyingMoreWillDo = '',
     this.currentValues,
     this.projectedValues,
   });

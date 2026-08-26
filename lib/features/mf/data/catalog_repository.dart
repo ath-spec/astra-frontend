@@ -38,7 +38,8 @@ class CatalogRepository {
 
   Future<FundProfileDetail> getFundProfile(String schemeCode) async {
     try {
-      final response = await _client.dio.get('/api/v1/catalog/funds//profile');
+      final response =
+          await _client.dio.get('/api/v1/catalog/funds/$schemeCode/profile');
       return _client.unwrap(
         response.data as Map<String, dynamic>,
         FundProfileDetail.fromJson,

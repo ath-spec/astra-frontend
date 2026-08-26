@@ -18,9 +18,16 @@ class StocksRepository {
     }
   }
 
-  Future<List<StockOrderRecord>> getOrders() async {
+  /// Lists stock orders, optionally narrowed to one [statusFilter]
+  /// (`OPEN`, `COMPLETE`, `CANCELLED`, `REJECTED`). Omit to fetch all.
+  Future<List<StockOrderRecord>> listOrders({String? statusFilter}) async {
     try {
-      final response = await _client.dio.get('/api/v1/stocks/orders');
+      final response = await _client.dio.get(
+        '/api/v1/stocks/orders',
+        queryParameters: statusFilter != null && statusFilter.isNotEmpty
+            ? {'status_filter': statusFilter}
+            : null,
+      );
       return _client.unwrapList(
         response.data as Map<String, dynamic>,
         StockOrderRecord.fromJson,
@@ -29,4 +36,7 @@ class StocksRepository {
       throw _client.toApiException(e);
     }
   }
+
+  /// Back-compat alias for [listOrders] with no filter.
+  Future<List<StockOrderRecord>> getOrders() => listOrders();
 }

@@ -9,8 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/responsive/context_responsive.dart';
 import '../../../core/widgets/responsive_body.dart';
 import '../../../core/widgets/unconnected_bank_empty_state.dart';
+import '../../../core/widgets/shimmer_card_skeleton.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
-import '../data/transactions_repository.dart';
+import '../data/transactions_providers.dart';
 import '../models/transaction_models.dart';
 import '../widgets/type_switcher_pill.dart';
 import '../widgets/date_group_section.dart';
@@ -28,12 +29,13 @@ class TransactionsScreen extends ConsumerStatefulWidget {
 }
 
 class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
-  final _repo = TransactionsRepository.instance;
-
   int _selectedTab = 0;
   List<TransactionDateGroup>? _groups;
   List<CategorySummary>? _categories;
   List<MerchantSummary>? _merchants;
+  String? _groupsError;
+  String? _categoriesError;
+  String? _merchantsError;
   bool _demoMode = false;
 
   @override
@@ -43,21 +45,40 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
   }
 
   Future<void> _loadTab(int index) async {
+    final repo = ref.read(transactionsRepositoryProvider);
     switch (index) {
       case 0:
-        final groups = await _repo.fetchGrouped();
-        if (!mounted) return;
-        setState(() => _groups = groups);
+        setState(() => _groupsError = null);
+        try {
+          final groups = await repo.fetchGrouped();
+          if (!mounted) return;
+          setState(() => _groups = groups);
+        } catch (e) {
+          if (!mounted) return;
+          setState(() => _groupsError = e.toString());
+        }
         break;
       case 1:
-        final categories = await _repo.fetchCategories();
-        if (!mounted) return;
-        setState(() => _categories = categories);
+        setState(() => _categoriesError = null);
+        try {
+          final categories = await repo.fetchCategories();
+          if (!mounted) return;
+          setState(() => _categories = categories);
+        } catch (e) {
+          if (!mounted) return;
+          setState(() => _categoriesError = e.toString());
+        }
         break;
       case 2:
-        final merchants = await _repo.fetchMerchants();
-        if (!mounted) return;
-        setState(() => _merchants = merchants);
+        setState(() => _merchantsError = null);
+        try {
+          final merchants = await repo.fetchMerchants();
+          if (!mounted) return;
+          setState(() => _merchants = merchants);
+        } catch (e) {
+          if (!mounted) return;
+          setState(() => _merchantsError = e.toString());
+        }
         break;
     }
   }
@@ -129,8 +150,13 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
 
   Widget _buildTransactionsTab(double hPad) {
     final groups = _groups;
-    if (groups == null) return const Center(child: CircularProgressIndicator());
-    if (groups.isEmpty) {
+    if (groups == null && _groupsError == null) {
+      return _LoadingSkeleton(hPad: hPad);
+    }
+    if (_groupsError != null) {
+      return _ErrorState(message: _groupsError!, onRetry: () => _loadTab(0));
+    }
+    if (groups!.isEmpty) {
       return const _EmptyState(
         icon: Icons.receipt_long_outlined,
         message: 'No transactions yet',
@@ -156,8 +182,13 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
 
   Widget _buildCategoriesTab(double hPad) {
     final categories = _categories;
-    if (categories == null) return const Center(child: CircularProgressIndicator());
-    if (categories.isEmpty) {
+    if (categories == null && _categoriesError == null) {
+      return _LoadingSkeleton(hPad: hPad);
+    }
+    if (_categoriesError != null) {
+      return _ErrorState(message: _categoriesError!, onRetry: () => _loadTab(1));
+    }
+    if (categories!.isEmpty) {
       return const _EmptyState(
         icon: Icons.category_outlined,
         message: 'No categories yet',
@@ -195,8 +226,13 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
 
   Widget _buildMerchantsTab(double hPad) {
     final merchants = _merchants;
-    if (merchants == null) return const Center(child: CircularProgressIndicator());
-    if (merchants.isEmpty) {
+    if (merchants == null && _merchantsError == null) {
+      return _LoadingSkeleton(hPad: hPad);
+    }
+    if (_merchantsError != null) {
+      return _ErrorState(message: _merchantsError!, onRetry: () => _loadTab(2));
+    }
+    if (merchants!.isEmpty) {
       return const _EmptyState(
         icon: Icons.storefront_outlined,
         message: 'No merchants yet',
@@ -228,6 +264,70 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _LoadingSkeleton extends StatelessWidget {
+  final double hPad;
+
+  const _LoadingSkeleton({required this.hPad});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 32),
+      physics: const NeverScrollableScrollPhysics(),
+      children: const [
+        AppThemeShimmerCard(height: 72),
+        SizedBox(height: 12),
+        AppThemeShimmerCard(height: 72),
+        SizedBox(height: 12),
+        AppThemeShimmerCard(height: 72),
+        SizedBox(height: 12),
+        AppThemeShimmerCard(height: 72),
+      ],
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _ErrorState({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.error_outline_rounded, size: 36, color: Color(0xFFCBD5E1)),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF94A3B8),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextButton(
+            onPressed: onRetry,
+            child: const Text(
+              'Retry',
+              style: TextStyle(fontFamily: 'DMSans', fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+            ),
+          ),
+        ],
       ),
     );
   }

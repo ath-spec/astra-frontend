@@ -15,57 +15,138 @@ class MfMutualFundsCollectionScreen extends ConsumerStatefulWidget {
 class _MfMutualFundsCollectionScreenState extends ConsumerState<MfMutualFundsCollectionScreen> {
   String _activeFilter = 'All';
   final _filters = ['All', 'Large Cap', 'Mid Cap', 'Small Cap'];
+  String _returnPeriod = '3Y';
+
+  List<CatalogFund> _filteredFunds(List<CatalogFund> allFunds) {
+    return allFunds.where((f) {
+      if (_activeFilter == 'All') return true;
+      final cat = f.category.toLowerCase();
+      final name = f.schemeName.toLowerCase();
+      if (_activeFilter == 'Large Cap') return cat.contains('large') || name.contains('large') || name.contains('nifty');
+      if (_activeFilter == 'Mid Cap') return cat.contains('mid') || name.contains('mid');
+      if (_activeFilter == 'Small Cap') return cat.contains('small') || name.contains('small');
+      return true;
+    }).toList();
+  }
+
+  String _returnFor(CatalogFund f) {
+    final value = switch (_returnPeriod) {
+      '1Y' => f.returns1y,
+      '5Y' => f.returns5y,
+      _ => f.returns3y,
+    };
+    return value != null ? '${value.toStringAsFixed(1)}%' : '18.2%';
+  }
 
   @override
   Widget build(BuildContext context) {
     final catalogAsync = ref.watch(allCatalogFundsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          'Mutual Funds',
-          style: TextStyle(
-            fontFamily: 'SpaceGrotesk',
-            fontWeight: FontWeight.w600,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Center(
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              borderRadius: BorderRadius.circular(4),
+              child: const SizedBox(
+                width: 40,
+                height: 40,
+                child: Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Color(0xFF1E1E1E)),
+              ),
+            ),
           ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF0F172A),
-        elevation: 0,
+        title: const Text(
+          'Mutual Funds Collection',
+          style: TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF0F172A),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (_returnPeriod == '1Y') {
+                    _returnPeriod = '3Y';
+                  } else if (_returnPeriod == '3Y') {
+                    _returnPeriod = '5Y';
+                  } else {
+                    _returnPeriod = '1Y';
+                  }
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '$_returnPeriod Returns',
+                  style: const TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
-          // Filter Pills
+          // Filter Tabs
           Container(
-            height: 48,
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: ListView.builder(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+            child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _filters.length,
-              itemBuilder: (context, index) {
-                final filter = _filters[index];
-                final isSelected = _activeFilter == filter;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(filter),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      if (selected) setState(() => _activeFilter = filter);
-                    },
-                    selectedColor: const Color(0xFF0F172A),
-                    labelStyle: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontWeight: FontWeight.w600,
-                      color: isSelected ? Colors.white : const Color(0xFF64748B),
+              child: Row(
+                children: _filters.map((filter) {
+                  final isActive = _activeFilter == filter;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _activeFilter = filter),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: isActive ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          filter,
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: isActive ? Colors.white : const Color(0xFF64748B),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                }).toList(),
+              ),
             ),
           ),
+          // Divider
+          Container(height: 1, color: const Color(0xFFF1F5F9)),
           Expanded(
             child: catalogAsync.isLoading
                 ? const Padding(
@@ -80,99 +161,162 @@ class _MfMutualFundsCollectionScreenState extends ConsumerState<MfMutualFundsCol
                       ],
                     ),
                   )
-                : _buildFundsList(catalogAsync.value ?? []),
+                : catalogAsync.hasError
+                    ? const Center(
+                        child: Text(
+                          "Couldn't load mutual funds.",
+                          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                        ),
+                      )
+                    : _buildFundsList(_filteredFunds(catalogAsync.valueOrNull ?? [])),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFundsList(List<CatalogFund> allFunds) {
-    final filteredFunds = allFunds.where((f) {
-      if (_activeFilter == 'All') return true;
-      final cat = f.category.toLowerCase();
-      final name = f.schemeName.toLowerCase();
-      if (_activeFilter == 'Large Cap') return cat.contains('large') || name.contains('large') || name.contains('nifty');
-      if (_activeFilter == 'Mid Cap') return cat.contains('mid') || name.contains('mid');
-      if (_activeFilter == 'Small Cap') return cat.contains('small') || name.contains('small');
-      return true;
-    }).toList();
-
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      itemCount: filteredFunds.length,
-      itemBuilder: (context, index) {
-        final f = filteredFunds[index];
-        final ret3y = f.returns3y != null ? '${f.returns3y!.toStringAsFixed(1)}%' : (f.returns1y != null ? '${f.returns1y!.toStringAsFixed(1)}%' : '18.2%');
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
-          child: InkWell(
-            onTap: () => MfFundProfileScreen.showModal(context, f.schemeCode),
-            borderRadius: BorderRadius.circular(10.0),
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: const Color(0xFFF1F5F9)),
+  Widget _buildFundsList(List<CatalogFund> funds) {
+    if (funds.isEmpty) {
+      return const Center(
+        child: Text(
+          'No mutual funds available yet.',
+          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+        ),
+      );
+    }
+    return Column(
+      children: [
+        // Fund count hint
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            children: [
+              Text(
+                '${funds.length} funds',
+                style: const TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF94A3B8),
+                ),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          f.schemeName,
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            itemCount: funds.length,
+            separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
+            itemBuilder: (context, index) {
+              final fund = funds[index];
+              return _buildFundRow(fund);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFundRow(CatalogFund fund) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Row(
+              children: [
+                // Logo — same style as MfCollectionScreen
+                Stack(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: const Color(0xFFF1F5F9)),
+                      ),
+                      child: Center(
+                        child: Text(
+                          fund.schemeName.isNotEmpty ? fund.schemeName.substring(0, 1) : '?',
                           style: const TextStyle(
                             fontFamily: 'DMSans',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF0F172A),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E1E1E),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          f.category,
-                          style: const TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 11,
-                            color: Color(0xFF64748B),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        ret3y,
-                        style: const TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF10B981),
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      const Text(
-                        '3Y CAGR',
-                        style: TextStyle(
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.stars, color: Colors.deepOrange, size: 12),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 16),
+                // Details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        fund.schemeName,
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                          color: Color(0xFF1E1E1E),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        fund.category,
+                        style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 10,
-                          color: Color(0xFF94A3B8),
+                          color: Color(0xFF64748B),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 8),
+                // Returns
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: Text(
+                    _returnFor(fund),
+                    key: ValueKey<String>('${fund.schemeCode}_$_returnPeriod'),
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF00C75A),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        );
-      },
+        ),
+        Container(
+          height: 1,
+          color: const Color(0xFFF8F9FA),
+        ),
+      ],
     );
   }
 }

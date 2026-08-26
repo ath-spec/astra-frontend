@@ -4,23 +4,28 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/responsive/context_responsive.dart';
 import '../../../core/widgets/responsive_body.dart';
-import '../data/transactions_repository.dart';
+import '../../../core/widgets/shimmer_card_skeleton.dart';
+import '../data/transactions_providers.dart';
 import '../models/transaction_models.dart';
 
-class TransactionDetailScreen extends StatefulWidget {
+class TransactionDetailScreen extends ConsumerStatefulWidget {
   final String transactionId;
 
   const TransactionDetailScreen({super.key, required this.transactionId});
 
   @override
-  State<TransactionDetailScreen> createState() => _TransactionDetailScreenState();
+  ConsumerState<TransactionDetailScreen> createState() => _TransactionDetailScreenState();
 }
 
-class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
+class _TransactionDetailScreenState extends ConsumerState<TransactionDetailScreen> {
   TransactionDetail? _detail;
+  String? _error;
+  bool _loading = true;
+  bool _notFound = false;
 
   @override
   void initState() {
@@ -29,9 +34,26 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   }
 
   Future<void> _load() async {
-    final detail = await TransactionsRepository.instance.fetchDetail(widget.transactionId);
-    if (!mounted) return;
-    setState(() => _detail = detail);
+    setState(() {
+      _loading = true;
+      _error = null;
+      _notFound = false;
+    });
+    try {
+      final detail = await ref.read(transactionsRepositoryProvider).fetchDetail(widget.transactionId);
+      if (!mounted) return;
+      setState(() {
+        _detail = detail;
+        _notFound = detail == null;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -50,9 +72,50 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         ),
       ),
       body: ResponsiveBody(
-        child: detail == null
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
+        child: _loading
+          ? ListView(
+              padding: EdgeInsets.fromLTRB(context.pageHorizontalPadding, 8, context.pageHorizontalPadding, 32),
+              physics: const NeverScrollableScrollPhysics(),
+              children: const [
+                AppThemeShimmerCard(height: 140, barWidths: [90, 200, 100, 110]),
+                SizedBox(height: 20),
+                AppThemeShimmerCard(height: 220, barWidths: [70, 140, 80, 90]),
+              ],
+            )
+          : _error != null
+            ? Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.error_outline_rounded, size: 32, color: Color(0xFFCBD5E1)),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Text(
+                        _error!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF94A3B8)),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: _load,
+                      child: const Text(
+                        'Retry',
+                        style: TextStyle(fontFamily: 'DMSans', fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : _notFound || detail == null
+              ? const Center(
+                  child: Text(
+                    'Transaction not found',
+                    style: TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF94A3B8)),
+                  ),
+                )
+              : ListView(
               padding: EdgeInsets.fromLTRB(context.pageHorizontalPadding, 8, context.pageHorizontalPadding, 32),
               children: [
                 _AmountHeader(detail: detail),

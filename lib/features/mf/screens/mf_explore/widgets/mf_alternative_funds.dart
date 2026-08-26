@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import '../../../data/catalog_providers.dart';
 import '../../../data/catalog_models.dart';
 import '../../fund_profile/mf_fund_profile_screen.dart';
@@ -19,7 +20,12 @@ class MfAlternativeFunds extends ConsumerWidget {
                f.category.toLowerCase().contains('liquid') ||
                f.category.toLowerCase().contains('arbitrage') ||
                f.category.toLowerCase().contains('hybrid'),
-      ).take(4).toList();
+      ).take(5).toList();
+    }
+
+    // Hide the whole section once loaded successfully with no matching funds.
+    if (!catalogAsync.isLoading && !catalogAsync.hasError && altFunds.isEmpty) {
+      return const SizedBox.shrink();
     }
 
     return Column(
@@ -43,39 +49,55 @@ class MfAlternativeFunds extends ConsumerWidget {
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -1.0,
-                        color: Color(0xFF0F172A),
+                        color: Color.fromARGB(255, 0, 0, 0),
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
-                      'Higher returns than traditional FDs with high liquidity',
+                      'Better returns than FDs, liquid and tax efficient',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 12,
-                        color: Color(0xFF64748B),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF9CA3AF),
+                        height: 1.4,
                       ),
                     ),
                   ],
                 ),
               ),
-              InkWell(
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () {
                   Navigator.of(context, rootNavigator: true).push(
                     MaterialPageRoute(
-                      builder: (context) => const MfAlternativeCollectionScreen(
+                      builder: (_) => const MfAlternativeCollectionScreen(
                         title: 'Alternative to FD',
-                        subtitle: 'Curated liquid and debt funds',
+                        subtitle: 'Better returns than FDs, liquid and tax efficient',
                       ),
                     ),
                   );
                 },
-                child: const Text(
-                  'See All',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF2563EB),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                  child: Row(
+                    children: [
+                      const Text(
+                        'View all',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        size: 16,
+                        color: Color(0xFF9CA3AF),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -83,82 +105,186 @@ class MfAlternativeFunds extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 16),
-        if (altFunds.isEmpty)
+        if (catalogAsync.isLoading)
+          SizedBox(
+            height: 140,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: 3,
+              separatorBuilder: (_, _) => const SizedBox(width: 16),
+              itemBuilder: (context, index) => const AppThemeShimmerCard(
+                width: 220,
+                height: 140,
+                barWidths: [80, 140, 60, 70],
+              ),
+            ),
+          )
+        else if (catalogAsync.hasError)
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text('Loading alternative funds...', style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B))),
+            child: Text("Couldn't load alternative funds.", style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B))),
           )
         else
-          SizedBox(
-            height: 150,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              scrollDirection: Axis.horizontal,
-              itemCount: altFunds.length,
-              itemBuilder: (context, index) {
-                final fund = altFunds[index];
-                return Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: InkWell(
-                    onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: Container(
-                      width: 220,
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12.0),
-                        border: Border.all(color: const Color(0xFFF1F5F9)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                fund.schemeName,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF0F172A),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                fund.category,
-                                style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF64748B)),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('3Y Returns', style: TextStyle(fontFamily: 'DMSans', fontSize: 9, color: Color(0xFF94A3B8))),
-                                  Text(
-                                    '${(fund.returns3y ?? 7.8).toStringAsFixed(1)}%',
-                                    style: const TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF10B981)),
-                                  ),
-                                ],
-                              ),
-                              const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFF94A3B8)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+          AspectRatio(
+            aspectRatio: 390 / 140,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final cardWidth = constraints.maxWidth * (280 / 390);
+                return ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: altFunds.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 16),
+                  itemBuilder: (context, index) {
+                    final fund = altFunds[index];
+                    final style = _iconForIndex(index);
+                    return _buildAlternativeCard(
+                      context: context,
+                      width: cardWidth,
+                      schemeCode: fund.schemeCode,
+                      name: fund.schemeName,
+                      category: fund.category,
+                      expense: '${fund.expenseRatio.toStringAsFixed(2)}%',
+                      aum: '₹${fund.aum.toStringAsFixed(0)} Crs',
+                      returns: '${(fund.returns3y ?? 7.8).toStringAsFixed(1)}%',
+                      logoIcon: style.$1,
+                      logoColor: style.$2,
+                    );
+                  },
                 );
               },
             ),
           ),
+      ],
+    );
+  }
+
+  (IconData, Color) _iconForIndex(int index) {
+    const styles = [
+      (Icons.water_drop_outlined, Colors.blue),
+      (Icons.balance, Color(0xFFDC2626)),
+      (Icons.eco, Color(0xFF15803D)),
+      (Icons.account_balance, Colors.red),
+      (Icons.money, Colors.amber),
+    ];
+    return styles[index % styles.length];
+  }
+
+  Widget _buildAlternativeCard({
+    required BuildContext context,
+    required double width,
+    required String schemeCode,
+    required String name,
+    required String category,
+    required String expense,
+    required String aum,
+    required String returns,
+    required IconData logoIcon,
+    required Color logoColor,
+  }) {
+    return GestureDetector(
+      onTap: () => MfFundProfileScreen.showModal(context, schemeCode),
+      child: Container(
+        width: width,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                  ),
+                  child: Icon(logoIcon, color: logoColor, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        category,
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF9CA3AF),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Container(
+              height: 1,
+              color: const Color(0xFFF1F5F9),
+              margin: const EdgeInsets.only(bottom: 12),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildStat('Expense ratio', expense),
+                _buildStat('AUM', aum),
+                _buildStat('3Y Returns', returns, isGreen: true),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStat(String label, String value, {bool isGreen = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF9CA3AF),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: isGreen ? const Color(0xFF10B981) : const Color.fromARGB(255, 0, 0, 0),
+          ),
+        ),
       ],
     );
   }

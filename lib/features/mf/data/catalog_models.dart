@@ -17,6 +17,9 @@ class CatalogFund {
   final double? returns3y;
   final double? returns5y;
   final String? benchmarkIndex;
+  final String? fundManager;
+  final double exitLoadPct;
+  final int exitLoadPeriodDays;
 
   const CatalogFund({
     required this.schemeCode,
@@ -35,7 +38,17 @@ class CatalogFund {
     this.returns3y,
     this.returns5y,
     this.benchmarkIndex,
+    this.fundManager,
+    this.exitLoadPct = 0,
+    this.exitLoadPeriodDays = 0,
   });
+
+  /// e.g. "1% if redeemed within 365 days" / "No exit load" — derived from
+  /// the real `exit_load_pct`/`exit_load_period_days` fields, never a fixed
+  /// string.
+  String get exitLoadText => exitLoadPct > 0
+      ? '${exitLoadPct.toStringAsFixed(exitLoadPct.truncateToDouble() == exitLoadPct ? 0 : 2)}% if redeemed within $exitLoadPeriodDays days'
+      : 'No exit load';
 
   factory CatalogFund.fromJson(Map<String, dynamic> json) {
     return CatalogFund(
@@ -55,6 +68,9 @@ class CatalogFund {
       returns3y: (json['returns_3y'] as num?)?.toDouble(),
       returns5y: (json['returns_5y'] as num?)?.toDouble(),
       benchmarkIndex: json['benchmark_index']?.toString(),
+      fundManager: json['fund_manager']?.toString(),
+      exitLoadPct: (json['exit_load_pct'] as num?)?.toDouble() ?? 0.0,
+      exitLoadPeriodDays: (json['exit_load_period_days'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -173,17 +189,11 @@ class DeepDiveData {
 
   factory DeepDiveData.fromJson(Map<String, dynamic>? json) {
     if (json == null) {
-      return const DeepDiveData(
-        primaryRole: 'Core Growth',
-        secondaryRole: 'Capital Preservation',
-        strengths: 'Solid fundamentals and resilient market position.',
-        tradeOffs: 'Moderate market beta.',
-        contribution: 'Provides stability and steady compounding.',
-      );
+      return const DeepDiveData(primaryRole: '', secondaryRole: '', strengths: '', tradeOffs: '', contribution: '');
     }
     return DeepDiveData(
-      primaryRole: json['primary_role']?.toString() ?? 'Core Growth',
-      secondaryRole: json['secondary_role']?.toString() ?? 'Capital Preservation',
+      primaryRole: json['primary_role']?.toString() ?? '',
+      secondaryRole: json['secondary_role']?.toString() ?? '',
       strengths: json['strengths']?.toString() ?? '',
       tradeOffs: json['trade_offs']?.toString() ?? '',
       contribution: json['contribution']?.toString() ?? '',
@@ -218,14 +228,14 @@ class FundInsightsDetail {
     if (json == null) {
       return const FundInsightsDetail(
         isPositiveImpact: true,
-        whyGetFund: 'Provides risk-adjusted capital growth.',
-        suitableFor: 'Long-term disciplined wealth accumulation.',
-        avoidIf: 'Seeking immediate cash redemption.',
-        impactText: 'Improves portfolio diversification.',
-        whatItDoesRightNow: 'Provides market compounding and risk balance.',
-        whatBuyingMoreWillDo: 'Accelerates capital growth with controlled volatility.',
-        currentValues: [0.5, 0.4, 0.6, 0.3, 0.7, 0.4, 0.2],
-        projectedValues: [0.7, 0.5, 0.7, 0.4, 0.7, 0.5, 0.3],
+        whyGetFund: '',
+        suitableFor: '',
+        avoidIf: '',
+        impactText: '',
+        whatItDoesRightNow: '',
+        whatBuyingMoreWillDo: '',
+        currentValues: [],
+        projectedValues: [],
       );
     }
     final curr = (json['current_values'] as List?)?.map((e) => (e as num).toDouble()).toList() ?? [];
@@ -252,6 +262,7 @@ class FundProfileDetail {
   final DeepDiveData deepDive;
   final FundInsightsDetail insights;
   final UserHoldingData? userHolding;
+  final bool isWatched;
 
   const FundProfileDetail({
     required this.fund,
@@ -260,6 +271,7 @@ class FundProfileDetail {
     required this.deepDive,
     required this.insights,
     this.userHolding,
+    this.isWatched = false,
   });
 
   bool get hasUserHolding => userHolding != null;
@@ -289,6 +301,7 @@ class FundProfileDetail {
       deepDive: deepDive,
       insights: insights,
       userHolding: holding,
+      isWatched: json['is_watched'] == true,
     );
   }
 }
