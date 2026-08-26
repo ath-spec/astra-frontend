@@ -53,6 +53,8 @@ import 'package:astra_frontend/features/portfolio_analysis/screens/insights_scre
 import '../../features/mf/screens/mf_container_screen.dart';
 import '../../features/stocks/screens/owned_stocks_screen.dart';
 import '../../features/cart/screens/cart_screen.dart';
+import '../../features/analytics/screens/analytics_screen.dart';
+import '../../features/transactions/screens/transactions_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/corner_fade_reveal_transition.dart';
 import 'nav_keys.dart';
@@ -329,6 +331,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/cart',
         builder: (context, state) => const CartScreen(),
       ),
+      GoRoute(
+        path: '/transactions',
+        builder: (context, state) => const TransactionsScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return AppShell(navigationShell: navigationShell);
@@ -429,6 +435,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     },
                   ),
                 ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: analyticsNavKey,
+            routes: [
+              GoRoute(
+                path: '/analytics',
+                builder: (context, state) => const AnalyticsScreen(),
               ),
             ],
           ),
