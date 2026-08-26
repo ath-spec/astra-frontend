@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../data/catalog_providers.dart';
+import '../../../data/catalog_models.dart';
 import '../../fund_profile/mf_fund_profile_screen.dart';
 import '../../mf_collection/mf_alternative_collection_screen.dart';
 
-class MfAlternativeFunds extends StatelessWidget {
+class MfAlternativeFunds extends ConsumerWidget {
   const MfAlternativeFunds({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+
+    List<CatalogFund> altFunds = [];
+    if (catalogAsync.hasValue && catalogAsync.value != null) {
+      altFunds = catalogAsync.value!.where(
+        (f) => f.category.toLowerCase().contains('debt') ||
+               f.category.toLowerCase().contains('liquid') ||
+               f.category.toLowerCase().contains('arbitrage') ||
+               f.category.toLowerCase().contains('hybrid'),
+      ).take(4).toList();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -28,249 +43,122 @@ class MfAlternativeFunds extends StatelessWidget {
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -1.0,
-                        color: Color.fromARGB(255, 0, 0, 0),
+                        color: Color(0xFF0F172A),
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
-                      'Better returns than FDs, liquid and tax efficient',
+                      'Higher returns than traditional FDs with high liquidity',
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF9CA3AF),
-                        height: 1.4,
+                        fontSize: 12,
+                        color: Color(0xFF64748B),
                       ),
                     ),
                   ],
                 ),
               ),
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
+              InkWell(
                 onTap: () {
                   Navigator.of(context, rootNavigator: true).push(
                     MaterialPageRoute(
-                      builder: (_) => const MfAlternativeCollectionScreen(
+                      builder: (context) => const MfAlternativeCollectionScreen(
                         title: 'Alternative to FD',
-                        subtitle: 'Better returns than FDs, liquid and tax efficient',
+                        subtitle: 'Curated liquid and debt funds',
                       ),
                     ),
                   );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                  child: Row(
-                    children: [
-                    const Text(
-                      'View all',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A),
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    const Icon(
-                      Icons.chevron_right_rounded,
-                      size: 16,
-                      color: Color(0xFF9CA3AF),
-                    ),
-                  ],
+                child: const Text(
+                  'See All',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF2563EB),
+                  ),
                 ),
-              ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        AspectRatio(
-          aspectRatio: 390 / 140,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final cardWidth = constraints.maxWidth * (280 / 390);
-              return ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  _buildAlternativeCard(
-                    context: context,
-                    width: cardWidth,
-                    name: 'Union Liquid Fund',
-                    category: 'Debt • Liquid',
-                    expense: '0.06%',
-                    aum: '₹6649 Crs',
-                    returns: '7.0%',
-                    logoIcon: Icons.water_drop_outlined,
-                    logoColor: Colors.blue,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildAlternativeCard(
-                    context: context,
-                    width: cardWidth,
-                    name: 'Nippon India Arbitrage Fund',
-                    category: 'Alternative to FD',
-                    expense: '0.35%',
-                    aum: '14,352',
-                    returns: '7.8%',
-                    logoIcon: Icons.balance,
-                    logoColor: const Color(0xFFDC2626),
-                  ),
-                  const SizedBox(width: 16),
-                  _buildAlternativeCard(
-                    context: context,
-                    width: cardWidth,
-                    name: 'SBI Equity Savings Fund',
-                    category: 'Alternative to FD',
-                    expense: '0.41%',
-                    aum: '3,210',
-                    returns: '9.2%',
-                    logoIcon: Icons.eco,
-                    logoColor: const Color(0xFF15803D),
-                  ),
-                  const SizedBox(width: 16),
-                  _buildAlternativeCard(
-                    context: context,
-                    width: cardWidth,
-                    name: 'HDFC Liquid Fund',
-                    category: 'Debt • Liquid',
-                    expense: '0.08%',
-                    aum: '8,000',
-                    returns: '7.1%',
-                    logoIcon: Icons.account_balance,
-                    logoColor: Colors.red,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildAlternativeCard(
-                    context: context,
-                    width: cardWidth,
-                    name: 'Kotak Equity Arbitrage',
-                    category: 'Alternative to FD',
-                    expense: '0.38%',
-                    aum: '5,420',
-                    returns: '7.5%',
-                    logoIcon: Icons.money,
-                    logoColor: Colors.amber,
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAlternativeCard({
-    required BuildContext context,
-    required double width,
-    required String name,
-    required String category,
-    required String expense,
-    required String aum,
-    required String returns,
-    required IconData logoIcon,
-    required Color logoColor,
-  }) {
-    return GestureDetector(
-      onTap: () => MfFundProfileScreen.showModal(context, name),
-      child: Container(
-        width: width,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                ),
-                child: Icon(logoIcon, color: logoColor, size: 20),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromARGB(255, 0, 0, 0),
+        if (altFunds.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text('Loading alternative funds...', style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B))),
+          )
+        else
+          SizedBox(
+            height: 150,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              scrollDirection: Axis.horizontal,
+              itemCount: altFunds.length,
+              itemBuilder: (context, index) {
+                final fund = altFunds[index];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: InkWell(
+                    onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: Container(
+                      width: 220,
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(color: const Color(0xFFF1F5F9)),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      category,
-                      style: const TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF9CA3AF),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                fund.schemeName,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF0F172A),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                fund.category,
+                                style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF64748B)),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('3Y Returns', style: TextStyle(fontFamily: 'DMSans', fontSize: 9, color: Color(0xFF94A3B8))),
+                                  Text(
+                                    '${(fund.returns3y ?? 7.8).toStringAsFixed(1)}%',
+                                    style: const TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF10B981)),
+                                  ),
+                                ],
+                              ),
+                              const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFF94A3B8)),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ],
+                  ),
+                );
+              },
+            ),
           ),
-          const Spacer(),
-          Container(
-            height: 1,
-            color: const Color(0xFFF1F5F9),
-            margin: const EdgeInsets.only(bottom: 12),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildStat('Expense ratio', expense),
-              _buildStat('AUM', aum),
-              _buildStat('3Y Returns', returns, isGreen: true),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-  Widget _buildStat(String label, String value, {bool isGreen = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF9CA3AF),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: isGreen ? const Color(0xFF10B981) : const Color.fromARGB(255, 0, 0, 0),
-          ),
-        ),
       ],
     );
   }

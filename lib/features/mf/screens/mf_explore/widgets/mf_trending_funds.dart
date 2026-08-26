@@ -1,215 +1,160 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../data/catalog_providers.dart';
+import '../../../data/catalog_models.dart';
 import '../../fund_profile/mf_fund_profile_screen.dart';
 
-class MfTrendingFunds extends StatelessWidget {
+class MfTrendingFunds extends ConsumerWidget {
   const MfTrendingFunds({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+
+    List<CatalogFund> trendingList = [];
+    if (catalogAsync.hasValue && catalogAsync.value != null) {
+      trendingList = List<CatalogFund>.from(catalogAsync.value!)
+        ..sort((a, b) => (b.returns3y ?? 0.0).compareTo(a.returns3y ?? 0.0));
+      if (trendingList.length > 5) {
+        trendingList = trendingList.take(5).toList();
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              const Text(
-                'Trending Funds',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -1.0,
-                  color: Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-              Row(
-                children: [
-                  Text(
-                    'View all',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF9CA3AF),
-                    ),
-                  ),
-                  const SizedBox(width: 2),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 16,
-                    color: Color(0xFF9CA3AF),
-                  ),
-                ],
-              ),
-            ],
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            'Trending Funds',
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -1.0,
+              color: Color(0xFF0F172A),
+            ),
           ),
         ),
-        const SizedBox(height: 16),
-        AspectRatio(
-          aspectRatio: 390 / 160,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final cardWidth = constraints.maxWidth * (300 / 390);
-              return ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  _buildTrendingCard(
-                    context,
-                    width: cardWidth,
-                    name: 'Parag Parikh Flexi Cap Fund',
-                    category: 'Equity • Flexi Cap',
-                    rating: '5',
-                    expense: '0.53%',
-                    returns: '13.8%',
-                    logoIcon: Icons.pets, // Just a placeholder icon
-                    logoColor: Colors.teal,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildTrendingCard(
-                    context,
-                    width: cardWidth,
-                    name: 'Quant Small Cap Fund',
-                    category: 'Equity • Small Cap',
-                    rating: '4',
-                    expense: '0.62%',
-                    returns: '21.4%',
-                    logoIcon: Icons.bar_chart,
-                    logoColor: Colors.deepPurple,
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTrendingCard(
-    BuildContext context, {
-    required double width,
-    required String name,
-    required String category,
-    required String rating,
-    required String expense,
-    required String returns,
-    required IconData logoIcon,
-    required Color logoColor,
-  }) {
-    return GestureDetector(
-      onTap: () => MfFundProfileScreen.showModal(context, name),
-      child: Container(
-        width: width,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: const Color(0xFFF1F5F9), // Slate 100
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                ),
-                child: Icon(logoIcon, color: logoColor, size: 20),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Color.fromARGB(255, 0, 0, 0),
+        const SizedBox(height: 12),
+        if (trendingList.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Loading trending funds...',
+              style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+            ),
+          )
+        else
+          SizedBox(
+            height: 160,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              scrollDirection: Axis.horizontal,
+              itemCount: trendingList.length,
+              itemBuilder: (context, index) {
+                final fund = trendingList[index];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: InkWell(
+                    onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: Container(
+                      width: 220,
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(color: const Color(0xFFF1F5F9)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      category,
-                      style: const TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF9CA3AF),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                fund.schemeName,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF0F172A),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                fund.category,
+                                style: const TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 10,
+                                  color: Color(0xFF64748B),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    '3Y Returns',
+                                    style: TextStyle(
+                                      fontFamily: 'DMSans',
+                                      fontSize: 9,
+                                      color: Color(0xFF94A3B8),
+                                    ),
+                                  ),
+                                  Text(
+                                    '${(fund.returns3y ?? 18.5).toStringAsFixed(1)}%',
+                                    style: const TextStyle(
+                                      fontFamily: 'DMSans',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF10B981),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF8FAFC),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                                ),
+                                child: Text(
+                                  fund.riskLevel,
+                                  style: const TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF475569),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ],
+                  ),
+                );
+              },
+            ),
           ),
-          const Spacer(),
-          // Dashed divider natively using a linear gradient or just a solid line
-          Container(
-            height: 1,
-            color: const Color(0xFFF1F5F9),
-            margin: const EdgeInsets.only(bottom: 12),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildStat('Rating', '$rating ★'),
-              _buildStat('Expense ratio', expense),
-              _buildStat('3Y Returns', returns, isGreen: true),
-            ],
-          ),
-        ],
-      ),
-      ),
-    );
-  }
-
-  Widget _buildStat(String label, String value, {bool isGreen = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF9CA3AF),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: isGreen ? const Color(0xFF10B981) : const Color.fromARGB(255, 0, 0, 0),
-          ),
-        ),
       ],
     );
   }

@@ -1,23 +1,38 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
+import '../providers/auth_provider.dart';
 
 /// Splash Screen displaying ASTRA branding and fading-in ISO certification badge.
-/// Navigates automatically to the phone onboarding screen after 2.5 seconds.
-class SplashScreen extends StatefulWidget {
+/// First attempts to restore an existing session (stored auth token validated
+/// against `GET /api/auth/me`); if that succeeds, skips onboarding entirely
+/// and goes straight to home. Otherwise falls through to the normal
+/// video-preload → intro/login flow.
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _preloadVideoAndNavigate();
+    _restoreSessionThenNavigate();
+  }
+
+  Future<void> _restoreSessionThenNavigate() async {
+    final restored = await ref.read(authProvider.notifier).restoreSession();
+    if (!mounted) return;
+    if (restored) {
+      context.go('/');
+      return;
+    }
+    await _preloadVideoAndNavigate();
   }
 
   Future<void> _preloadVideoAndNavigate() async {

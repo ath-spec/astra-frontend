@@ -1,3 +1,5 @@
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/models/fund_profile_data.dart';
@@ -20,7 +22,7 @@ import '../holdings/widgets/holding_instrument_card.dart';
 import '../../../fund_profile/widgets/holding_fund_insights.dart';
 
 
-class MfFundProfileScreen extends StatefulWidget {
+class MfFundProfileScreen extends ConsumerStatefulWidget {
   final String fundId;
 
   const MfFundProfileScreen({super.key, required this.fundId});
@@ -34,10 +36,10 @@ class MfFundProfileScreen extends StatefulWidget {
   }
 
   @override
-  State<MfFundProfileScreen> createState() => _MfFundProfileScreenState();
+  ConsumerState<MfFundProfileScreen> createState() => _MfFundProfileScreenState();
 }
 
-class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
+class _MfFundProfileScreenState extends ConsumerState<MfFundProfileScreen> {
   String _selectedPeriod = '6M';
   double _selectedAmount = 1000.0;
   bool _isSip = true;
@@ -45,8 +47,9 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final liveProfileAsync = ref.watch(fundProfileFamilyProvider(widget.fundId));
     final FundProfileData baseData = MfMockFundData.getFundData(widget.fundId);
-    final bool hasHoldings = widget.fundId == '1';
+    final bool hasHoldings = liveProfileAsync.value?.hasUserHolding ?? (widget.fundId == '1');
     
     // Process data based on selected period
     final processedData = _processDataForPeriod(baseData, _selectedPeriod);

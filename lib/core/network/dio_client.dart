@@ -81,7 +81,7 @@ class DioClient {
       // Make a direct request without interceptors to avoid loops
       final refreshDio = Dio(BaseOptions(baseUrl: _dio.options.baseUrl));
       final response = await refreshDio.post(
-        '/auth/refresh',
+        '/api/auth/refresh',
         data: {'refresh_token': refreshToken},
       );
 

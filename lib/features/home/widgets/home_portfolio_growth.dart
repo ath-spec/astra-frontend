@@ -1,8 +1,10 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:astra_frontend/features/dashboard/data/dashboard_providers.dart';
+import 'package:astra_frontend/features/dashboard/data/dashboard_models.dart';
 import 'portfolio_interactive_chart.dart';
 
-class HomePortfolioGrowth extends StatefulWidget {
+class HomePortfolioGrowth extends ConsumerStatefulWidget {
   final bool mfConnected;
   final bool stocksConnected;
 
@@ -13,112 +15,93 @@ class HomePortfolioGrowth extends StatefulWidget {
   });
 
   @override
-  State<HomePortfolioGrowth> createState() => _HomePortfolioGrowthState();
+  ConsumerState<HomePortfolioGrowth> createState() => _HomePortfolioGrowthState();
 }
 
-class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
+/// Lookback window (in days) requested from `/api/v1/dashboard/growth` for
+/// each timeframe toggle. The backend only has real history from whenever
+/// the user's dashboard was first read onward (no backfilled past data), so
+/// these are just upper bounds — a new user's series will simply come back
+/// shorter than the requested window.
+const Map<String, int> _periodDays = {
+  '1M': 30,
+  '6M': 182,
+  '1Y': 365,
+  'ALL': 3650,
+};
+
+class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
   String _selectedPeriod = 'ALL';
-
-  List<ChartDataPoint> _generateMockData(String period) {
-    final random = Random(period.hashCode);
-    final now = DateTime.now();
-    int count = 30;
-    double startVal = 0;
-    
-    double endVal = 0;
-    if (widget.mfConnected) endVal += 352962;
-    if (widget.stocksConnected) endVal += 147908;
-    
-    // Fallback if somehow both are false but it was rendered
-    if (endVal == 0) endVal = 343158;
-    Duration step = const Duration(days: 1);
-
-    switch (period) {
-      case '1M':
-        startVal = 330000;
-        count = 30;
-        step = const Duration(days: 1);
-        break;
-      case '6M':
-        startVal = 280000;
-        count = 26; // approx weeks
-        step = const Duration(days: 7);
-        break;
-      case '1Y':
-        startVal = 200000;
-        count = 52; // weeks
-        step = const Duration(days: 7);
-        break;
-      case 'ALL':
-      default:
-        startVal = endVal * 0.35; // 35% of current value
-        count = 60; // months
-        step = const Duration(days: 30);
-        break;
-    }
-    
-    // adjust startVal proportionately
-    if (period == '1M') startVal = endVal * 0.95;
-    if (period == '6M') startVal = endVal * 0.82;
-    if (period == '1Y') startVal = endVal * 0.58;
-
-    final data = <ChartDataPoint>[];
-    double currentVal = startVal;
-    
-    for (int i = 0; i < count; i++) {
-      // Add some random walk noise leaning upwards
-      final progress = i / (count - 1);
-      final expectedVal = startVal + (endVal - startVal) * (progress * progress); // curve
-      
-      currentVal = expectedVal + (random.nextDouble() * 10000 - 5000); // noise
-      if (i == count - 1) currentVal = endVal; // force end value
-
-      final date = now.subtract(step * (count - 1 - i));
-      final dateStr = _formatDate(date);
-      
-      double mfValue = 0;
-      double stocksValue = 0;
-      
-      if (widget.mfConnected && widget.stocksConnected) {
-        mfValue = currentVal * (352962 / 500870);
-        stocksValue = currentVal * (147908 / 500870);
-      } else if (widget.mfConnected) {
-        mfValue = currentVal;
-      } else if (widget.stocksConnected) {
-        stocksValue = currentVal;
-      }
-      
-      data.add(ChartDataPoint(
-        value: currentVal, 
-        mfValue: mfValue,
-        stocksValue: stocksValue,
-        surplusValue: 0.0,
-        dateStr: dateStr,
-      ));
-    }
-
-    return data;
-  }
 
   String _formatDate(DateTime date) {
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     return '${date.day} ${months[date.month - 1]} \'${date.year.toString().substring(2)}';
   }
 
-  String _getStartLabel(String period) {
+  /// Converts the raw growth series into chart points. When the backend has
+  /// fewer than 2 points of real history (a brand-new account), duplicates
+  /// the single point into a flat 2-point line so the chart can render
+  /// without dividing by zero — it does not fabricate any value, both
+  /// points share the same real total-wealth figure.
+  List<ChartDataPoint> _toChartData(List<DashboardGrowthPoint> points) {
+    if (points.isEmpty) return const [];
+    if (points.length == 1) {
+      final p = points.first;
+      return [
+        ChartDataPoint(value: p.totalWealth, dateStr: _formatDate(p.date)),
+        ChartDataPoint(value: p.totalWealth, dateStr: 'TODAY'),
+      ];
+    }
+    return points
+        .map((p) => ChartDataPoint(value: p.totalWealth, dateStr: _formatDate(p.date)))
+        .toList();
+  }
+
+  String _getStartLabel(String period, List<DashboardGrowthPoint> points) {
+    if (points.isNotEmpty) return _formatDate(points.first.date).toUpperCase();
     switch (period) {
-      case '1M': return '1 MONTH AGO';
-      case '6M': return '6 MONTHS AGO';
-      case '1Y': return '1 YEAR AGO';
+      case '1M':
+        return '1 MONTH AGO';
+      case '6M':
+        return '6 MONTHS AGO';
+      case '1Y':
+        return '1 YEAR AGO';
       case 'ALL':
-      default: return 'APR \'24';
+      default:
+        return 'START';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentData = _generateMockData(_selectedPeriod);
-    final isPositive = currentData.last.value >= currentData.first.value;
+    final days = _periodDays[_selectedPeriod] ?? 3650;
+    final growthAsync = ref.watch(dashboardGrowthProvider(days));
+
+    return growthAsync.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: 48),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Text(
+          'Portfolio growth is unavailable right now.',
+          style: const TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF94A3B8)),
+        ),
+      ),
+      data: (points) => _buildContent(points),
+    );
+  }
+
+  Widget _buildContent(List<DashboardGrowthPoint> points) {
+    final currentData = _toChartData(points);
+    final hasEnoughHistory = points.length >= 2;
+
+    final double displayValue = points.isNotEmpty
+        ? points.last.totalWealth
+        : 0.0;
+    final bool isPositive =
+        currentData.isEmpty || currentData.last.value >= currentData.first.value;
     final chartColor = isPositive ? const Color(0xFF10B981) : const Color(0xFFEF4444);
 
     return Column(
@@ -155,7 +138,7 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
-            '₹${currentData.last.value.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+            '₹${displayValue.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
             style: TextStyle(
               fontFamily: 'SpaceGrotesk',
               fontSize: 36,
@@ -175,7 +158,9 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Portfolio growth does not include your bank balance',
+                  hasEnoughHistory
+                      ? 'Portfolio growth does not include your bank balance'
+                      : 'Not enough history yet — check back after a few days to see your growth trend',
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 11,
@@ -187,27 +172,28 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 110), // Pushed down so tooltip doesn't overlap text
-        
+
         // Chart
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: PortfolioInteractiveChart(
-              key: ValueKey(_selectedPeriod),
-              data: currentData,
-              lineColor: chartColor,
-              height: 180,
-              startDateLabel: _getStartLabel(_selectedPeriod),
-              endDateLabel: 'TODAY',
+        if (currentData.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: PortfolioInteractiveChart(
+                key: ValueKey(_selectedPeriod),
+                data: currentData,
+                lineColor: chartColor,
+                height: 180,
+                startDateLabel: _getStartLabel(_selectedPeriod, points),
+                endDateLabel: 'TODAY',
+              ),
             ),
           ),
-        ),
-        
+
         const SizedBox(height: 32),
-        
+
         // Timeline toggles
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -225,9 +211,9 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
             ),
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Bottom divider matching the design
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 24),
@@ -272,4 +258,3 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
     );
   }
 }
-

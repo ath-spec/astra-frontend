@@ -6,6 +6,7 @@ import 'widgets/mf_holdings_header.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../asset_connection/providers/asset_connection_provider.dart';
 import '../../../../core/providers/privacy_provider.dart';
+import '../../data/mf_holdings_providers.dart';
 import 'widgets/connected_holdings_view.dart';
 
 class HoldingsScreen extends ConsumerStatefulWidget {
@@ -23,8 +24,26 @@ class _HoldingsScreenState extends ConsumerState<HoldingsScreen> {
     // We import riverpod provider here to avoid too many file changes
     final assetState = ref.watch(assetConnectionProvider);
     final isLocked = ref.watch(privacyProvider);
-    
-    if (assetState.mfConnected) {
+    final holdingsAsync = ref.watch(mfHoldingsProvider);
+
+    // The backend now always seeds starter MF holdings, so "connected" is
+    // driven by whether the fetched summary actually has value rather than
+    // the old onboarding-flow mock flag. While the request is in flight we
+    // optimistically fall back to the mock flag so returning users don't
+    // flash the empty/import state.
+    final bool mfHasHoldings = holdingsAsync.maybeWhen(
+      data: (holdings) => holdings.summary.currentValue > 0,
+      orElse: () => assetState.mfConnected,
+    );
+
+    if (holdingsAsync.isLoading && !holdingsAsync.hasValue) {
+      return const Scaffold(
+        backgroundColor: Color(0xFFF9FAFB),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (mfHasHoldings) {
       return const ConnectedHoldingsView();
     }
 

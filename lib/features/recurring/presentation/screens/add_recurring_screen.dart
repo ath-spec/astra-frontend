@@ -1,13 +1,75 @@
 
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:astra_frontend/core/network/api_exception.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_providers.dart';
 
-class AddRecurringScreen extends StatelessWidget {
+class AddRecurringScreen extends ConsumerStatefulWidget {
   const AddRecurringScreen({super.key});
+
+  @override
+  ConsumerState<AddRecurringScreen> createState() => _AddRecurringScreenState();
+}
+
+class _AddRecurringScreenState extends ConsumerState<AddRecurringScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  bool _isSubmitting = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final name = _nameController.text.trim();
+    final amount = double.tryParse(_amountController.text.trim());
+
+    if (name.isEmpty) {
+      setState(() => _error = 'Enter a subscription name');
+      return;
+    }
+    if (amount == null || amount <= 0) {
+      setState(() => _error = 'Enter a valid amount');
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+      _error = null;
+    });
+
+    try {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final startDateEpochSeconds = today.millisecondsSinceEpoch ~/ 1000;
+
+      await ref.read(recurringRepositoryProvider).createMandate(
+            payeeName: name,
+            mandateAmount: amount,
+            mandateFrequency: 'MONTHLY',
+            mandateStartDate: startDateEpochSeconds,
+            category: 'SUBSCRIPTION',
+          );
+
+      invalidateRecurringProviders(ref);
+      if (!mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      final message = e is ApiException ? e.message : 'Could not add subscription. Please try again.';
+      if (!mounted) return;
+      setState(() => _error = message);
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +91,6 @@ class AddRecurringScreen extends StatelessWidget {
 
             Expanded(
               child: CustomScrollView(
-                physics: const NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverPadding(
                     padding: EdgeInsets.symmetric(
@@ -82,9 +143,39 @@ class AddRecurringScreen extends StatelessWidget {
                         SizedBox(height: getProportionateScreenHeight(14)),
                         _buildPopularIcons(),
                         SizedBox(height: getProportionateScreenHeight(32)),
-                        _buildManualInput("Subscription name"),
+                        _buildManualInput(
+                          "Subscription name",
+                          controller: _nameController,
+                        ),
                         SizedBox(height: getProportionateScreenHeight(12)),
-                        _buildManualInput("Plan"),
+                        _buildManualInput(
+                          "Amount (₹ per month)",
+                          controller: _amountController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                          ],
+                        ),
+                        if (_error != null) ...[
+                          SizedBox(height: getProportionateScreenHeight(12)),
+                          Container(
+                            padding: EdgeInsets.all(getProportionateScreenWidth(12)),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
+                              border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
+                            ),
+                            child: Text(
+                              _error!,
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: getProportionateScreenWidth(12),
+                                color: Colors.redAccent,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                       ]),
                     ),
                   ),
@@ -103,9 +194,7 @@ class AddRecurringScreen extends StatelessWidget {
                               height: getProportionateScreenHeight(24),
                             ), // Minimum gap
                             GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
+                              onTap: _isSubmitting ? null : _submit,
                               child: Container(
                                 height: getProportionateScreenHeight(48),
                                 alignment: Alignment.center,
@@ -115,15 +204,24 @@ class AddRecurringScreen extends StatelessWidget {
                                     getProportionateScreenWidth(4),
                                   ),
                                 ),
-                                child: Text(
-                                  "Continue",
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: getProportionateScreenWidth(15),
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                                child: _isSubmitting
+                                    ? const SizedBox(
+                                        height: 18,
+                                        width: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.0,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Text(
+                                        "Continue",
+                                        style: TextStyle(
+                                          fontFamily: 'DMSans',
+                                          fontSize: getProportionateScreenWidth(15),
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                               ),
                             ),
                             SizedBox(height: getProportionateScreenHeight(20)),
@@ -314,25 +412,33 @@ class AddRecurringScreen extends StatelessWidget {
         children: popular.map((item) {
           return Padding(
             padding: EdgeInsets.only(right: getProportionateScreenWidth(18)),
-            child: Column(
-              children: [
-                SvgPicture.asset(
-                  item['logo'].toString(),
-                  fit: BoxFit.contain,
-                  width: getProportionateScreenWidth(48),
-                  height: getProportionateScreenWidth(48),
-                ),
-                SizedBox(height: getProportionateScreenHeight(8)),
-                Text(
-                  item['name'].toString().toCapitalized(),
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: getProportionateScreenWidth(9),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black.withValues(alpha: 0.5),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _nameController.text = item['name'].toString();
+                  _error = null;
+                });
+              },
+              child: Column(
+                children: [
+                  SvgPicture.asset(
+                    item['logo'].toString(),
+                    fit: BoxFit.contain,
+                    width: getProportionateScreenWidth(48),
+                    height: getProportionateScreenWidth(48),
                   ),
-                ),
-              ],
+                  SizedBox(height: getProportionateScreenHeight(8)),
+                  Text(
+                    item['name'].toString().toCapitalized(),
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: getProportionateScreenWidth(9),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         }).toList(),
@@ -340,7 +446,12 @@ class AddRecurringScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildManualInput(String hint) {
+  Widget _buildManualInput(
+    String hint, {
+    required TextEditingController controller,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     return Container(
       height: getProportionateScreenHeight(48),
       padding: EdgeInsets.symmetric(
@@ -352,12 +463,27 @@ class AddRecurringScreen extends StatelessWidget {
         border: Border.all(color: const Color(0xFFECEBDB)),
       ),
       alignment: Alignment.centerLeft,
-      child: Text(
-        hint,
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         style: TextStyle(
           fontFamily: 'DMSans',
           fontSize: getProportionateScreenWidth(12),
-          color: Colors.black.withValues(alpha: 0.4),
+          color: Colors.black,
+        ),
+        decoration: InputDecoration(
+          isDense: true,
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          contentPadding: EdgeInsets.zero,
+          hintText: hint,
+          hintStyle: TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: getProportionateScreenWidth(12),
+            color: Colors.black.withValues(alpha: 0.4),
+          ),
         ),
       ),
     );

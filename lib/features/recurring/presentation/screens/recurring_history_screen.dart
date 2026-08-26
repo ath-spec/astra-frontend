@@ -2,22 +2,28 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:astra_frontend/core/extensions/string_extensions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_models.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_providers.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
 
-class RecurringHistoryScreen extends StatefulWidget {
+class RecurringHistoryScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> payment;
 
   const RecurringHistoryScreen({super.key, required this.payment});
 
   @override
-  State<RecurringHistoryScreen> createState() => _RecurringHistoryScreenState();
+  ConsumerState<RecurringHistoryScreen> createState() => _RecurringHistoryScreenState();
 }
 
-class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
+class _RecurringHistoryScreenState extends ConsumerState<RecurringHistoryScreen> {
   final ScrollController _scrollController = ScrollController();
   double _scrollOffset = 0.0;
+
+  String get _mandateId => (widget.payment['mandateId'] ?? widget.payment['id']).toString();
 
   @override
   void initState() {
@@ -40,6 +46,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     final double topPadding = MediaQuery.paddingOf(context).top;
+    final historyAsync = ref.watch(mandateHistoryProvider(_mandateId));
 
     // Animation thresholds for sticky header title fade
     final double titleFadeStart = getProportionateScreenHeight(40);
@@ -48,99 +55,66 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
         ((_scrollOffset - titleFadeStart) / (titleFadeEnd - titleFadeStart))
             .clamp(0.0, 1.0);
 
+    final history = historyAsync.valueOrNull ?? const <MandateExecution>[];
+    final successful = history.where((h) => h.status.toUpperCase() == 'SUCCESS');
+    final totalPaid = successful.fold<double>(0.0, (sum, h) => sum + h.amount);
+
     return Material(
       color: Colors.white,
       child: Stack(
         children: [
           // Content
           Positioned.fill(
-            child: ListView(
-              controller: _scrollController,
-              padding: EdgeInsets.fromLTRB(
-                getProportionateScreenWidth(20),
-                topPadding + getProportionateScreenHeight(80),
-                getProportionateScreenWidth(20),
-                MediaQuery.paddingOf(context).bottom +
-                    getProportionateScreenHeight(24),
-              ),
-              children: [
-                _buildSummaryStat(_scrollOffset),
-                SizedBox(height: getProportionateScreenHeight(32)),
-                Text(
-                  "Detailed history",
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: getProportionateScreenWidth(16),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
+            child: historyAsync.isLoading && history.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : ListView(
+                    controller: _scrollController,
+                    padding: EdgeInsets.fromLTRB(
+                      getProportionateScreenWidth(20),
+                      topPadding + getProportionateScreenHeight(80),
+                      getProportionateScreenWidth(20),
+                      MediaQuery.paddingOf(context).bottom +
+                          getProportionateScreenHeight(24),
+                    ),
+                    children: [
+                      _buildSummaryStat(_scrollOffset, totalPaid, successful.length),
+                      SizedBox(height: getProportionateScreenHeight(32)),
+                      Text(
+                        "Detailed history",
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: getProportionateScreenWidth(16),
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: getProportionateScreenHeight(16)),
+                      if (history.isEmpty)
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: getProportionateScreenHeight(24)),
+                          child: Text(
+                            "No payment history yet",
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: getProportionateScreenWidth(13),
+                              color: Colors.black.withValues(alpha: 0.4),
+                            ),
+                          ),
+                        )
+                      else
+                        ...history.map((execution) {
+                          final isSuccess = execution.status.toUpperCase() == 'SUCCESS';
+                          final date = execution.scheduledDateTime;
+                          return _buildHistoryRow(
+                            date != null ? DateFormat('MMM d, yyyy').format(date) : '—',
+                            "₹${execution.amount.toInt()}",
+                            isSuccess ? "Paid" : "Failed",
+                            isSuccess ? const Color(0xFFDFF0D8) : const Color(0xFFF2E7D5),
+                            isSuccess ? const Color(0xFF3C763D) : const Color(0xFF8A6D3B),
+                          );
+                        }),
+                    ],
                   ),
-                ),
-                SizedBox(height: getProportionateScreenHeight(16)),
-                _buildHistoryRow(
-                  "Apr 7, 2026",
-                  "₹${widget.payment['amount'].toInt()}",
-                  "Paid",
-                  const Color(0xFFDFF0D8),
-                  const Color(0xFF3C763D),
-                ),
-                _buildHistoryRow(
-                  "Mar 7, 2026",
-                  "₹${widget.payment['amount'].toInt()}",
-                  "Paid",
-                  const Color(0xFFDFF0D8),
-                  const Color(0xFF3C763D),
-                ),
-                _buildHistoryRow(
-                  "Feb 7, 2026",
-                  "₹${widget.payment['amount'].toInt()}",
-                  "Paid",
-                  const Color(0xFFDFF0D8),
-                  const Color(0xFF3C763D),
-                ),
-                _buildHistoryRow(
-                  "Jan 7, 2026",
-                  "₹${widget.payment['amount'].toInt()}",
-                  "Paid",
-                  const Color(0xFFDFF0D8),
-                  const Color(0xFF3C763D),
-                ),
-                _buildHistoryRow(
-                  "Dec 7, 2025",
-                  "₹${widget.payment['amount'].toInt()}",
-                  "Paid",
-                  const Color(0xFFDFF0D8),
-                  const Color(0xFF3C763D),
-                ),
-                _buildHistoryRow(
-                  "Nov 7, 2025",
-                  "₹${widget.payment['amount'].toInt()}",
-                  "Paid",
-                  const Color(0xFFDFF0D8),
-                  const Color(0xFF3C763D),
-                ),
-                _buildHistoryRow(
-                  "Oct 7, 2025",
-                  "₹${widget.payment['amount'].toInt()}",
-                  "Paid",
-                  const Color(0xFFDFF0D8),
-                  const Color(0xFF3C763D),
-                ),
-                _buildHistoryRow(
-                  "Sep 7, 2025",
-                  "₹${widget.payment['amount'].toInt()}",
-                  "Failed",
-                  const Color(0xFFF2E7D5),
-                  const Color(0xFF8A6D3B),
-                ),
-                _buildHistoryRow(
-                  "Aug 7, 2025",
-                  "₹${widget.payment['amount'].toInt()}",
-                  "Paid",
-                  const Color(0xFFDFF0D8),
-                  const Color(0xFF3C763D),
-                ),
-              ],
-            ),
           ),
 
           // Custom Sticky Header
@@ -203,8 +177,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                "total: ₹${(widget.payment['amount'] * (widget.payment['name']?.toString().toLowerCase() == 'canva' || widget.payment['isYearly'] == true ? 3.0 : 8.5)).toInt()}"
-                                    .toCapitalized(),
+                                "total: ₹${totalPaid.toInt()}".toCapitalized(),
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
                                   fontSize: getProportionateScreenWidth(10),
@@ -231,12 +204,8 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
     );
   }
 
-  Widget _buildSummaryStat(double scrollOffset) {
+  Widget _buildSummaryStat(double scrollOffset, double totalPaid, int paymentCount) {
     final double heroOpacity = (1.0 - (scrollOffset / 100.0)).clamp(0.0, 1.0);
-    final bool isYearly =
-        widget.payment['name']?.toString().toLowerCase() == 'canva' ||
-        widget.payment['isYearly'] == true;
-    final double summaryMultiplier = isYearly ? 3.0 : 8.5;
 
     return Opacity(
       opacity: heroOpacity,
@@ -341,7 +310,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
               ),
               SizedBox(height: getProportionateScreenHeight(12)),
               Text(
-                "₹${(widget.payment['amount'] * summaryMultiplier).toInt()}",
+                "₹${totalPaid.toInt()}",
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: getProportionateScreenWidth(32),
@@ -359,23 +328,13 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      (isYearly ? "3 payments" : "9 payments").toCapitalized(),
+                      "$paymentCount payment${paymentCount == 1 ? '' : 's'}".toCapitalized(),
                       style: TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: getProportionateScreenWidth(9),
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    (isYearly ? "since 2023" : "since last year").toCapitalized(),
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: getProportionateScreenWidth(10),
-                      color: Colors.white.withValues(alpha: 0.4),
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -467,7 +426,7 @@ class _RecurringHistoryScreenState extends State<RecurringHistoryScreen> {
                 ),
               ),
               Text(
-                "Confirmed",
+                status == 'Paid' ? "Confirmed" : "Retry pending",
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: getProportionateScreenWidth(8),

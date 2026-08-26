@@ -55,16 +55,30 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> w
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_otpController.text.length == 6) {
-      context.push('/notification-permission');
+      final notifier = ref.read(authProvider.notifier);
+      final phone = notifier.pendingPhone;
+      final isNewUser = await notifier.verifyOtp(phone, _otpController.text);
+      if (!mounted) return;
+      final state = ref.read(authProvider);
+      if (state is AuthAuthenticated) {
+        if (isNewUser == false) {
+          // Returning user — skip onboarding entirely.
+          context.go('/');
+        } else {
+          context.push('/notification-permission');
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final phone = ref.watch(authProvider.notifier).pendingPhone;
-    final isEnabled = _otpController.text.length == 6;
+    final authState = ref.watch(authProvider);
+    final isLoading = authState is AuthLoading;
+    final isEnabled = _otpController.text.length == 6 && !isLoading;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -101,6 +115,28 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> w
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 12),
+                          if (authState is AuthError) ...[
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.redAccent.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.redAccent.withValues(alpha: 0.3),
+                                ),
+                              ),
+                              child: Text(
+                                authState.message,
+                                style: const TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ],
                           const Text(
                             'Enter the OTP.',
                             style: TextStyle(
@@ -275,27 +311,38 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> w
                               end: Alignment.bottomRight,
                             ),
                           ),
-                          child: const Stack(
+                          child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              Text(
-                                'CONTINUE',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.0,
+                              if (isLoading)
+                                const SizedBox(
+                                  height: 18,
+                                  width: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.0,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              else ...[
+                                const Text(
+                                  'CONTINUE',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1.0,
+                                  ),
                                 ),
-                              ),
-                              Positioned(
-                                right: 20,
-                                child: Icon(
-                                  Icons.arrow_forward_rounded,
-                                  color: Colors.white,
-                                  size: 18,
+                                const Positioned(
+                                  right: 20,
+                                  child: Icon(
+                                    Icons.arrow_forward_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
                         ),

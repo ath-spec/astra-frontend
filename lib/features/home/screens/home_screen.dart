@@ -11,6 +11,8 @@ import '../../../core/providers/nav_context_provider.dart';
 import '../../../core/providers/privacy_provider.dart';
 import '../../../core/utils/privacy_formatter.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../dashboard/data/dashboard_models.dart';
+import '../../dashboard/data/dashboard_providers.dart';
 
 import '../widgets/home_today_portfolio_changes.dart';
 import '../widgets/home_portfolio_insights.dart';
@@ -78,29 +80,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final isLocked = ref.watch(privacyProvider);
     final authState = ref.watch(authProvider);
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
-    
+    final dashboardAsync = ref.watch(dashboardSummaryProvider);
+    // The backend now always seeds realistic starter MF/Stocks holdings, so
+    // there's no real "not connected" state for them any more — empty-state
+    // gating below is driven by whether a bucket's `value` is 0 (via
+    // DashboardSummary.mfConnected/stocksConnected), not the old
+    // assetConnectionProvider onboarding-flow mock flags. Those flags are
+    // still used for bank-account linking, which has no backend endpoint
+    // yet, and as a loading-state fallback so returning users don't flash
+    // an empty header while the summary request is in flight.
+    final DashboardSummary summary = dashboardAsync.maybeWhen(
+      data: (s) => s,
+      orElse: () => DashboardSummary.empty,
+    );
+    final bool summaryLoaded = dashboardAsync.hasValue;
+    final bool mfConnected = summaryLoaded ? summary.mfConnected : assetState.mfConnected;
+    final bool stocksConnected = summaryLoaded ? summary.stocksConnected : assetState.stocksConnected;
+
     final String userName = authState is AuthAuthenticated ? authState.user.name.toUpperCase() : 'USER';
 
-    final double totalWealthValue = (assetState.mfConnected ? 352962.0 : 0.0) + (assetState.stocksConnected ? 147908.0 : 0.0);
+    final double totalWealthValue = summary.totalWealth;
     final formattedTotal = PrivacyFormatter.obscure(
       totalWealthValue == 0 ? '₹0' : '₹${NumberFormat('#,##,###').format(totalWealthValue)}',
       isLocked
-    ); 
+    );
 
-    final bool showReturnsPill = assetState.mfConnected || assetState.stocksConnected;
-    String pillOneDayText = '';
-    String pillTotalText = '';
+    final bool showReturnsPill = summaryLoaded && totalWealthValue > 0;
 
-    if (assetState.mfConnected && assetState.stocksConnected) {
-      pillOneDayText = '↑ ₹3,402 (0.65%) 1D change';
-      pillTotalText = '↑ ₹67,960 (13.50%) Total Returns';
-    } else if (assetState.mfConnected) {
-      pillOneDayText = '↑ ₹2,202 (0.62%) 1D change';
-      pillTotalText = '↑ ₹52,960 (17.65%) Total Returns';
-    } else if (assetState.stocksConnected) {
-      pillOneDayText = '↑ ₹1,200 (0.81%) 1D change';
-      pillTotalText = '↑ ₹15,000 (10.14%) Total Returns';
-    }
+    // Total returns aggregated from the real per-bucket invested/returns
+    // figures the backend provides (mutual funds + stocks + fixed deposits;
+    // bank balance has no invested/returns concept). There's no single
+    // "total returns" field in the API response, so this is a client-side
+    // sum of real numbers, not a fabricated figure.
+    final double totalInvested = summary.mutualFunds.investedValue +
+        summary.stocks.investedValue +
+        summary.fixedDeposits.investedValue;
+    final double totalReturnsAmount = summary.mutualFunds.returnsAmount +
+        summary.stocks.returnsAmount +
+        summary.fixedDeposits.returnsAmount;
+    final double totalReturnsPct =
+        totalInvested > 0 ? (totalReturnsAmount / totalInvested) * 100 : 0.0;
+
+    final String oneDayArrow = summary.oneDayChangeAmount >= 0 ? '↑' : '↓';
+    final String totalReturnsArrow = totalReturnsAmount >= 0 ? '↑' : '↓';
+    final String pillOneDayText = showReturnsPill
+        ? '$oneDayArrow ₹${NumberFormat('#,##,###').format(summary.oneDayChangeAmount.abs())} (${summary.oneDayChangePct.abs().toStringAsFixed(2)}%) 1D change'
+        : '';
+    final String pillTotalText = showReturnsPill
+        ? '$totalReturnsArrow ₹${NumberFormat('#,##,###').format(totalReturnsAmount.abs())} (${totalReturnsPct.abs().toStringAsFixed(2)}%) Total Returns'
+        : '';
 
     if (assetState.step == AssetConnectionStep.banksLinkingProgress) {
       if (!_pulseController.isAnimating) _pulseController.repeat(reverse: true);
@@ -175,15 +203,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
                 
                 // Asset List
-                
-                if (assetState.mfConnected)
+
+                if (mfConnected)
                   _buildConnectedAssetRow(
                     icon: Icons.signal_cellular_alt_rounded,
                     title: 'Mutual Funds',
-                    percentage: '67.9%',
-                    amount: PrivacyFormatter.obscure('₹3,52,962', isLocked),
-                    subtitle: PrivacyFormatter.obscure('↑ ₹52.96K (17.65%) Returns', isLocked),
-                    subtitleColor: const Color(0xFF22C55E),
+                    percentage: '${summary.mutualFunds.sharePct.toStringAsFixed(1)}%',
+                    amount: PrivacyFormatter.obscure(
+                      '₹${NumberFormat('#,##,###').format(summary.mutualFunds.value)}',
+                      isLocked,
+                    ),
+                    subtitle: PrivacyFormatter.obscure(
+                      '${summary.mutualFunds.returnsAmount >= 0 ? '↑' : '↓'} ${_formatCompact(summary.mutualFunds.returnsAmount.abs())} (${summary.mutualFunds.returnsPct.abs().toStringAsFixed(2)}%) Returns',
+                      isLocked,
+                    ),
+                    subtitleColor: summary.mutualFunds.returnsAmount >= 0
+                        ? const Color(0xFF22C55E)
+                        : const Color(0xFFEF4444),
                     onTap: () {
                       ref.read(navContextProvider.notifier).state = NavContext.mf;
                       context.go('/mf');
@@ -197,15 +233,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     onPressed: () => context.push('/mf-fetch-confirm'),
                   ),
                 _buildDottedDivider(),
-                
-                if (assetState.stocksConnected)
+
+                if (stocksConnected)
                   _buildConnectedAssetRow(
                     icon: Icons.candlestick_chart_rounded,
                     title: 'Stocks',
-                    percentage: '32.1%',
-                    amount: PrivacyFormatter.obscure('₹1,47,908', isLocked),
-                    subtitle: PrivacyFormatter.obscure('↑ ₹16.7K (12.7%) Returns', isLocked),
-                    subtitleColor: const Color(0xFF22C55E),
+                    percentage: '${summary.stocks.sharePct.toStringAsFixed(1)}%',
+                    amount: PrivacyFormatter.obscure(
+                      '₹${NumberFormat('#,##,###').format(summary.stocks.value)}',
+                      isLocked,
+                    ),
+                    subtitle: PrivacyFormatter.obscure(
+                      '${summary.stocks.returnsAmount >= 0 ? '↑' : '↓'} ${_formatCompact(summary.stocks.returnsAmount.abs())} (${summary.stocks.returnsPct.abs().toStringAsFixed(2)}%) Returns',
+                      isLocked,
+                    ),
+                    subtitleColor: summary.stocks.returnsAmount >= 0
+                        ? const Color(0xFF22C55E)
+                        : const Color(0xFFEF4444),
                     onTap: () {
                       context.push('/stocks');
                     },
@@ -218,13 +262,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     onPressed: () => context.push('/aa-stocks-otp'),
                   ),
                 _buildDottedDivider(),
-                
+
                 if (assetState.banksConnected)
                   _buildConnectedAssetRow(
                     icon: Icons.account_balance_rounded,
                     title: 'Bank Accounts',
-                    percentage: '3.7%',
-                    amount: '₹19,544',
+                    percentage: '${summary.bankBalance.sharePct.toStringAsFixed(1)}%',
+                    amount: PrivacyFormatter.obscure(
+                      '₹${NumberFormat('#,##,###').format(summary.bankBalance.value)}',
+                      isLocked,
+                    ),
                     onTap: () {
                       context.push('/linked-bank-accounts');
                     },
@@ -234,23 +281,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     isLinked: false,
                     isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
                   ),
-                  
-                
+
+
                 const SizedBox(height: 48),
                 HomePortfolioInsights(isLocked: isLocked),
-                
+
                 const SizedBox(height: 48),
                 const HomePortfolioAnalysis(),
-                
+
                 const SizedBox(height: 48),
                 const HomeQuickActions(),
                 const SizedBox(height: 48),
-                if (assetState.mfConnected || assetState.stocksConnected)
+                if (mfConnected || stocksConnected)
                   HomeTodayPortfolioChanges(
-                    mfConnected: assetState.mfConnected,
-                    stocksConnected: assetState.stocksConnected,
+                    summary: summary,
                   ),
-                
+
               ]),
             ),
           ),
@@ -259,11 +305,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             child: SizedBox(height: 48),
           ),
           // 4. Edge-to-edge Portfolio Growth Graph
-          if (assetState.mfConnected || assetState.stocksConnected)
+          if (mfConnected || stocksConnected)
             SliverToBoxAdapter(
               child: HomePortfolioGrowth(
-                mfConnected: assetState.mfConnected,
-                stocksConnected: assetState.stocksConnected,
+                mfConnected: mfConnected,
+                stocksConnected: stocksConnected,
               ),
             ),
           const SliverToBoxAdapter(child: SizedBox(height: 48)),
@@ -590,6 +636,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
       ),
     );
+  }
+
+  /// Compact currency formatting for row subtitles, e.g. ₹52.96K / ₹3.53L.
+  String _formatCompact(double value) {
+    if (value >= 100000) {
+      return '₹${(value / 100000).toStringAsFixed(2)}L';
+    } else if (value >= 1000) {
+      return '₹${(value / 1000).toStringAsFixed(2)}K';
+    }
+    return '₹${value.toStringAsFixed(0)}';
   }
 
   Widget _buildDottedDivider() {

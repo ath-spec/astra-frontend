@@ -97,7 +97,7 @@ class SimpleHoldingsList extends StatelessWidget {
                     ),
                   ),
                   ),
-                  if (idx < mockHoldings.length - 1)
+                  if (idx < displayHoldings.length - 1)
                     const Divider(height: 1, color: Color(0xFFF1F5F9), indent: 16, endIndent: 16),
                 ],
               );

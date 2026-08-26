@@ -6,13 +6,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// Mirrors Zeyro's RecurringSection widget from the home screen.
 ///
 /// Two visual states:
-///  - **Empty** (`hasSetupRecurring == false`): shows [_NoRecurringCard] with image + CTA
-///  - **Active** (`hasSetupRecurring == true`): shows DuePaymentCards + bill stats
-///
-/// Currently uses static mock data. When connecting to the Zeyro backend,
-/// add a `RecurringPaymentsSummary? summary` parameter and drive state from it.
+///  - **Empty**: no ACTIVE mandates on the backend — shows [_NoRecurringCard]
+///  - **Active**: shows DuePaymentCards (from the real mandate list, sorted
+///    by next debit date) + bill stats (from the real summary endpoint)
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:astra_frontend/services/service_providers.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_mapping.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_models.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_providers.dart';
 
 class RecurringSection extends ConsumerStatefulWidget {
   const RecurringSection({
@@ -26,7 +26,10 @@ class RecurringSection extends ConsumerStatefulWidget {
 class _RecurringSectionState extends ConsumerState<RecurringSection> {
   @override
   Widget build(BuildContext context) {
-    final showActive = ref.watch(budgetStateProvider).hasSetupRecurring;
+    final activeMandatesAsync = ref.watch(mandatesProvider('ACTIVE'));
+    final activeMandates = activeMandatesAsync.valueOrNull ?? const <RecurringMandate>[];
+    final showActive = activeMandates.isNotEmpty;
+    final summary = ref.watch(recurringSummaryProvider).valueOrNull ?? RecurringSummary.empty;
 
     return GestureDetector(
       onTap: () {
@@ -84,7 +87,7 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: showActive
-                  ? _buildActiveView()
+                  ? _buildActiveView(activeMandates, summary)
                   : const _NoRecurringCard(),
             ),
           ],
@@ -93,7 +96,13 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
     );
   }
 
-  Widget _buildActiveView() {
+  Widget _buildActiveView(List<RecurringMandate> activeMandates, RecurringSummary summary) {
+    final sorted = [...activeMandates]
+      ..sort((a, b) => (a.nextDebitDate ?? 0).compareTo(b.nextDebitDate ?? 0));
+    final preview = sorted.take(5).toList();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -103,34 +112,25 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
           clipBehavior: Clip.none,
           child: Row(
             children: [
-              DuePaymentCard(
-                payeeName: 'Youtube',
-                payeedeet: '',
-                dueInDays: '1',
-                amount: '360',
-                isDark: true,
-                logoAsset: 'lib/core/images/youtube-icon.svg',
-                backgroundColor: const Color(0xFFCB202D),
-              ),
-              const SizedBox(width: 12),
-              const DuePaymentCard(
-                payeeName: 'House Rent',
-                payeedeet: 'Owner',
-                dueInDays: '9',
-                amount: '26,000',
-                isDark: false,
-                icon: Icons.home_rounded,
-              ),
-              const SizedBox(width: 12),
-              DuePaymentCard(
-                payeeName: 'Spotify',
-                payeedeet: '',
-                dueInDays: '12',
-                amount: '79',
-                isDark: true,
-                logoAsset: 'lib/core/images/spotify-icon.svg',
-                backgroundColor: const Color(0xFF1DB954),
-              ),
+              for (int i = 0; i < preview.length; i++) ...[
+                if (i > 0) const SizedBox(width: 12),
+                Builder(builder: (context) {
+                  final mandate = preview[i];
+                  final visual = paymentMapFromMandate(mandate);
+                  final due = mandate.nextDebitDateTime;
+                  final dueInDays = due != null ? due.difference(today).inDays : 0;
+                  return DuePaymentCard(
+                    payeeName: mandate.payeeName,
+                    payeedeet: mandate.category ?? '',
+                    dueInDays: dueInDays < 0 ? '0' : dueInDays.toString(),
+                    amount: NumberFormat.decimalPattern('en_IN').format(mandate.maxAmount),
+                    isDark: visual['isDark'] as bool? ?? true,
+                    logoAsset: visual['logoAsset'] as String?,
+                    icon: visual['icon'] as IconData?,
+                    backgroundColor: visual['backgroundColor'] as Color?,
+                  );
+                }),
+              ],
             ],
           ),
         ),
@@ -168,9 +168,9 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: _buildBillStat('Upcoming', '₹373')),
-                  Expanded(child: _buildBillStat('Overdue', '₹54')),
-                  Expanded(child: _buildBillStat('Paid', '₹0')),
+                  Expanded(child: _buildBillStat('Upcoming', '₹${summary.upcomingTotal.toInt()}')),
+                  Expanded(child: _buildBillStat('Overdue', '₹${summary.overdueTotal.toInt()}')),
+                  Expanded(child: _buildBillStat('Paid', '₹${summary.paidThisMonthTotal.toInt()}')),
                 ],
               ),
             ),

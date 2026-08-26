@@ -13,6 +13,13 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final VoidCallback onRefreshTap;
   final bool mfConnected;
   final bool stocksConnected;
+  /// Real total value to display (MF current value on the Holdings screen).
+  /// Falls back to the legacy mfConnected/stocksConnected-derived mock total
+  /// when omitted.
+  final double? totalValue;
+  /// Preformatted 1D change text, e.g. "₹800 (0.33%)". Falls back to the
+  /// legacy mock text when omitted.
+  final String? oneDayChangeText;
 
   HoldingsHeaderDelegate({
     required this.safeAreaTop,
@@ -24,6 +31,8 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.onRefreshTap,
     this.mfConnected = false,
     this.stocksConnected = false,
+    this.totalValue,
+    this.oneDayChangeText,
   });
 
   @override
@@ -66,16 +75,12 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
     if (mfConnected && !stocksConnected) subtitleText = 'MUTUAL FUNDS VALUE';
     if (!mfConnected && stocksConnected) subtitleText = 'STOCKS VALUE';
 
-    double totalWealthValue = (mfConnected ? 352962.0 : 0.0) + (stocksConnected ? 147908.0 : 0.0);
-    
-    String pillOneDayText = '';
-    if (mfConnected && stocksConnected) {
-      pillOneDayText = '₹3,402 (0.65%)';
-    } else if (mfConnected) {
-      pillOneDayText = '₹2,202 (0.62%)';
-    } else if (stocksConnected) {
-      pillOneDayText = '₹1,200 (0.81%)';
-    }
+    // Real values come from the caller (the MF holdings summary); default to
+    // 0/empty (not a hardcoded mock lookup) when the caller has none to show
+    // (e.g. the pre-import empty state, where hasImportedPortfolio is false
+    // anyway and this value is never displayed).
+    final double totalWealthValue = totalValue ?? 0.0;
+    final String pillOneDayText = oneDayChangeText ?? '';
 
     return Container(
       color: Colors.transparent,
@@ -391,10 +396,12 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant HoldingsHeaderDelegate oldDelegate) {
-    return safeAreaTop != oldDelegate.safeAreaTop || 
+    return safeAreaTop != oldDelegate.safeAreaTop ||
            screenHeight != oldDelegate.screenHeight ||
            hasImportedPortfolio != oldDelegate.hasImportedPortfolio ||
-           isLocked != oldDelegate.isLocked;
+           isLocked != oldDelegate.isLocked ||
+           totalValue != oldDelegate.totalValue ||
+           oneDayChangeText != oldDelegate.oneDayChangeText;
   }
 }
 

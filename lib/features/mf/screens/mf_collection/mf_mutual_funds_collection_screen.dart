@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfMutualFundsCollectionScreen extends StatefulWidget {
+class MfMutualFundsCollectionScreen extends ConsumerStatefulWidget {
   const MfMutualFundsCollectionScreen({super.key});
 
   @override
-  State<MfMutualFundsCollectionScreen> createState() => _MfMutualFundsCollectionScreenState();
+  ConsumerState<MfMutualFundsCollectionScreen> createState() => _MfMutualFundsCollectionScreenState();
 }
 
-class _MfMutualFundsCollectionScreenState extends State<MfMutualFundsCollectionScreen> {
+class _MfMutualFundsCollectionScreenState extends ConsumerState<MfMutualFundsCollectionScreen> {
   String _activeFilter = 'All';
-
   final _filters = ['All', 'Large Cap', 'Mid Cap', 'Small Cap'];
 
-  final List<Map<String, dynamic>> _allFunds = [
-    // Large Cap
+  final List<Map<String, dynamic>> _mockFunds = [
     {
+      'scheme_code': 'INF846K01EW2',
       'name': 'Mirae Asset Large Cap Fund',
       'category': 'Equity • Large Cap',
       'cap': 'Large Cap',
@@ -23,261 +25,139 @@ class _MfMutualFundsCollectionScreenState extends State<MfMutualFundsCollectionS
       'rating': 5,
     },
     {
+      'scheme_code': 'INF209K01157',
       'name': 'HDFC Top 100 Fund',
       'category': 'Equity • Large Cap',
       'cap': 'Large Cap',
       'returns': {'1Y': '26.10%', '3Y': '15.90%', '5Y': '13.80%'},
       'rating': 4,
     },
-    {
-      'name': 'ICICI Pru Bluechip Fund',
-      'category': 'Equity • Large Cap',
-      'cap': 'Large Cap',
-      'returns': {'1Y': '25.60%', '3Y': '15.20%', '5Y': '13.20%'},
-      'rating': 5,
-    },
-    {
-      'name': 'SBI Bluechip Fund',
-      'category': 'Equity • Large Cap',
-      'cap': 'Large Cap',
-      'returns': {'1Y': '23.80%', '3Y': '14.70%', '5Y': '12.90%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Axis Bluechip Fund',
-      'category': 'Equity • Large Cap',
-      'cap': 'Large Cap',
-      'returns': {'1Y': '21.40%', '3Y': '13.50%', '5Y': '11.80%'},
-      'rating': 3,
-    },
-    // Mid Cap
-    {
-      'name': 'Quant Mid Cap Fund',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '52.10%', '3Y': '32.40%', '5Y': '24.50%'},
-      'rating': 5,
-    },
-    {
-      'name': 'Nippon India Growth Fund',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '46.80%', '3Y': '28.60%', '5Y': '21.20%'},
-      'rating': 4,
-    },
-    {
-      'name': 'HDFC Mid-Cap Opportunities',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '43.20%', '3Y': '26.90%', '5Y': '20.10%'},
-      'rating': 5,
-    },
-    {
-      'name': 'Motilal Oswal Midcap Fund',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '41.50%', '3Y': '25.30%', '5Y': '19.40%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Edelweiss Mid Cap Fund',
-      'category': 'Equity • Mid Cap',
-      'cap': 'Mid Cap',
-      'returns': {'1Y': '38.90%', '3Y': '23.80%', '5Y': '18.60%'},
-      'rating': 3,
-    },
-    // Small Cap
-    {
-      'name': 'Quant Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '65.20%', '3Y': '42.10%', '5Y': '32.80%'},
-      'rating': 5,
-    },
-    {
-      'name': 'Nippon India Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '58.40%', '3Y': '38.60%', '5Y': '29.50%'},
-      'rating': 5,
-    },
-    {
-      'name': 'SBI Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '52.80%', '3Y': '34.20%', '5Y': '26.80%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Axis Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '46.10%', '3Y': '29.80%', '5Y': '23.40%'},
-      'rating': 4,
-    },
-    {
-      'name': 'DSP Small Cap Fund',
-      'category': 'Equity • Small Cap',
-      'cap': 'Small Cap',
-      'returns': {'1Y': '42.30%', '3Y': '27.50%', '5Y': '21.90%'},
-      'rating': 3,
-    },
   ];
-
-  String _returnPeriod = '3Y';
-
-  List<Map<String, dynamic>> get _filteredFunds {
-    if (_activeFilter == 'All') return _allFunds;
-    return _allFunds.where((f) => f['cap'] == _activeFilter).toList();
-  }
-
-  Color _capColor(String cap) {
-    switch (cap) {
-      case 'Large Cap': return const Color(0xFF3B82F6);
-      case 'Mid Cap': return const Color(0xFF8B5CF6);
-      case 'Small Cap': return const Color(0xFF10B981);
-      default: return const Color(0xFF64748B);
-    }
-  }
-
-  Color _capBgColor(String cap) {
-    switch (cap) {
-      case 'Large Cap': return const Color(0xFFEFF6FF);
-      case 'Mid Cap': return const Color(0xFFF5F3FF);
-      case 'Small Cap': return const Color(0xFFECFDF5);
-      default: return const Color(0xFFF1F5F9);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final funds = _filteredFunds;
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+
+    List<Map<String, dynamic>> fundsList = _mockFunds;
+    if (catalogAsync.hasValue && catalogAsync.value != null && catalogAsync.value!.isNotEmpty) {
+      fundsList = catalogAsync.value!.map((f) {
+        String cap = 'Large Cap';
+        if (f.category.toLowerCase().contains('mid')) cap = 'Mid Cap';
+        if (f.category.toLowerCase().contains('small')) cap = 'Small Cap';
+
+        return {
+          'scheme_code': f.schemeCode,
+          'name': f.schemeName,
+          'category': f.category,
+          'cap': cap,
+          'returns': {
+            '1Y': '${(f.returns1y ?? 18.0).toStringAsFixed(1)}%',
+            '3Y': '${(f.returns3y ?? 21.0).toStringAsFixed(1)}%',
+            '5Y': '${(f.returns5y ?? 16.0).toStringAsFixed(1)}%',
+          },
+          'rating': 5,
+        };
+      }).toList();
+    }
+
+    final filteredFunds = _activeFilter == 'All'
+        ? fundsList
+        : fundsList.where((f) => f['cap'] == _activeFilter).toList();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
+        title: const Text('Mutual Funds', style: TextStyle(fontFamily: 'SpaceGrotesk', fontWeight: FontWeight.w600)),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        foregroundColor: const Color(0xFF0F172A),
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Center(
-            child: InkWell(
-              onTap: () => Navigator.pop(context),
-              borderRadius: BorderRadius.circular(4),
-              child: const SizedBox(
-                width: 40,
-                height: 40,
-                child: Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Color(0xFF1E1E1E)),
-              ),
-            ),
-          ),
-        ),
-        title: const Text(
-          'Mutual Funds Collection',
-          style: TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF0F172A),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  if (_returnPeriod == '1Y') {
-                    _returnPeriod = '3Y';
-                  } else if (_returnPeriod == '3Y') _returnPeriod = '5Y';
-                  else _returnPeriod = '1Y';
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '$_returnPeriod Returns',
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0F172A),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
       body: Column(
         children: [
-          // Filter Tabs
           Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-            child: Row(
-              children: _filters.map((filter) {
-                final isActive = _activeFilter == filter;
+            height: 48,
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _filters.length,
+              itemBuilder: (context, index) {
+                final f = _filters[index];
+                final isSelected = _activeFilter == f;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: GestureDetector(
-                    onTap: () => setState(() => _activeFilter = filter),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOut,
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  child: ChoiceChip(
+                    label: Text(f),
+                    selected: isSelected,
+                    onSelected: (val) {
+                      if (val) setState(() => _activeFilter = f);
+                    },
+                    selectedColor: const Color(0xFF0F172A),
+                    labelStyle: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? Colors.white : const Color(0xFF64748B),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: filteredFunds.length,
+              itemBuilder: (context, index) {
+                final fund = filteredFunds[index];
+                final schemeCode = fund['scheme_code']?.toString() ?? '1';
+                final returns = fund['returns'] as Map<String, dynamic>? ?? {};
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: InkWell(
+                    onTap: () => MfFundProfileScreen.showModal(context, schemeCode),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: isActive ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFF1F5F9)),
                       ),
-                      child: Text(
-                        filter,
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: isActive ? Colors.white : const Color(0xFF64748B),
-                        ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  fund['name']?.toString() ?? '',
+                                  style: const TextStyle(fontFamily: 'DMSans', fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  fund['category']?.toString() ?? '',
+                                  style: const TextStyle(fontFamily: 'DMSans', fontSize: 11, color: Color(0xFF64748B)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                returns['3Y']?.toString() ?? '20.0%',
+                                style: const TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF10B981)),
+                              ),
+                              const SizedBox(height: 2),
+                              const Text('3Y CAGR', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF94A3B8))),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 );
-              }).toList(),
-            ),
-          ),
-          // Divider
-          Container(height: 1, color: const Color(0xFFF1F5F9)),
-          // Fund count hint
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-            child: Row(
-              children: [
-                Text(
-                  '${funds.length} funds',
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF94A3B8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // List
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: funds.length,
-              separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
-              itemBuilder: (context, index) {
-                final fund = funds[index];
-                return _buildFundRow(fund);
               },
             ),
           ),
@@ -285,106 +165,4 @@ class _MfMutualFundsCollectionScreenState extends State<MfMutualFundsCollectionS
       ),
     );
   }
-
-  Widget _buildFundRow(Map<String, dynamic> fund) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: () => MfFundProfileScreen.showModal(context, fund['name'] as String),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Row(
-              children: [
-                // Logo — same style as MfCollectionScreen
-                Stack(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFF1F5F9)),
-                      ),
-                      child: Center(
-                        child: Text(
-                          (fund['name'] as String).substring(0, 1),
-                          style: const TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E1E1E),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.stars, color: Colors.deepOrange, size: 12),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 16),
-                // Details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        fund['name'] as String,
-                        style: const TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF1E1E1E),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        fund['category'] as String,
-                        style: const TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 10,
-                          color: Color(0xFF64748B),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Returns
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: Text(
-                    (fund['returns'] as Map<String, dynamic>)[_returnPeriod] as String,
-                    key: ValueKey<String>('${fund['name']}_$_returnPeriod'),
-                    style: const TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF00C75A),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Container(
-          height: 1,
-          color: const Color(0xFFF8F9FA),
-        ),
-      ],
-    );
-  }
 }
-
-

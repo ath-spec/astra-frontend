@@ -4,8 +4,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:astra_frontend/core/network/api_exception.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_providers.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/pause_autopay_bottom_sheet.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/upi_pin_bottom_sheet.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/cancel_success_bottom_sheet.dart';
@@ -13,20 +16,49 @@ import 'package:astra_frontend/features/recurring/presentation/widgets/recurring
 import 'package:astra_frontend/features/recurring/presentation/screens/recurring_history_screen.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
 
-class ManageAutopayScreen extends StatefulWidget {
+class ManageAutopayScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> payment;
 
   const ManageAutopayScreen({super.key, required this.payment});
 
   @override
-  State<ManageAutopayScreen> createState() => _ManageAutopayScreenState();
+  ConsumerState<ManageAutopayScreen> createState() => _ManageAutopayScreenState();
 }
 
-class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
+class _ManageAutopayScreenState extends ConsumerState<ManageAutopayScreen> {
   final ScrollController _scrollController = ScrollController();
   double _scrollOffset = 0.0;
   bool _remindMe = true;
   final bool _scrollEnabled = false;
+  bool _isProcessing = false;
+
+  String get _mandateId => (widget.payment['mandateId'] ?? widget.payment['id']).toString();
+
+  /// Calls the backend mandate action endpoint. Returns true on success;
+  /// on failure shows a SnackBar (e.g. for a 409 invalid-transition error)
+  /// and returns false so callers can avoid popping/closing further sheets.
+  Future<bool> _performAction(String action, {int? pauseUntilDate}) async {
+    setState(() => _isProcessing = true);
+    try {
+      await ref.read(recurringRepositoryProvider).mandateAction(
+            _mandateId,
+            action,
+            pauseUntilDate: pauseUntilDate,
+          );
+      invalidateRecurringProviders(ref);
+      return true;
+    } catch (e) {
+      final message = e is ApiException ? e.message : 'Something went wrong. Please try again.';
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+      return false;
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
 
   @override
   void initState() {
@@ -466,8 +498,8 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isActive) ...[
-            ZeyroTapDetector(eventName: 'manage_autopay_screen_pause_tapped', 
-              onTap: () => _handlePauseInitiation(context),
+            ZeyroTapDetector(eventName: 'manage_autopay_screen_pause_tapped',
+              onTap: _isProcessing ? null : () => _handlePauseInitiation(context),
               child: Container(
                 width: double.infinity,
                 height: 56, // Exact height from budget intro
@@ -488,8 +520,8 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
               ),
             ),
             SizedBox(height: getProportionateScreenHeight(12)),
-            ZeyroTapDetector(eventName: 'manage_autopay_screen_cancel_tapped', 
-              onTap: () => _handleCancelInitiation(context),
+            ZeyroTapDetector(eventName: 'manage_autopay_screen_cancel_tapped',
+              onTap: _isProcessing ? null : () => _handleCancelInitiation(context),
               child: Container(
                 width: double.infinity,
                 height: 56, // Exact height from budget intro
@@ -511,8 +543,8 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
               ),
             ),
           ] else ...[
-            ZeyroTapDetector(eventName: 'manage_autopay_screen_resume_tapped', 
-              onTap: () => _handleResumeInitiation(context),
+            ZeyroTapDetector(eventName: 'manage_autopay_screen_resume_tapped',
+              onTap: _isProcessing ? null : () => _handleResumeInitiation(context),
               child: Container(
                 width: double.infinity,
                 height: 56,
@@ -563,7 +595,12 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
       transitionDuration: const Duration(milliseconds: 300),
     );
     if (result != null && context.mounted) {
-      Navigator.of(context).pop({'status': 'paused', 'pauseUntil': result});
+      final dateOnly = DateTime(result.year, result.month, result.day);
+      final epochSeconds = dateOnly.millisecondsSinceEpoch ~/ 1000;
+      final ok = await _performAction('PAUSE', pauseUntilDate: epochSeconds);
+      if (ok && context.mounted) {
+        Navigator.of(context).pop({'status': 'paused', 'pauseUntil': result});
+      }
     }
   }
 
@@ -589,7 +626,10 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
       transitionDuration: const Duration(milliseconds: 300),
     );
     if (result == true && context.mounted) {
-      Navigator.of(context).pop('resumed');
+      final ok = await _performAction('RESUME');
+      if (ok && context.mounted) {
+        Navigator.of(context).pop('resumed');
+      }
     }
   }
 
@@ -610,6 +650,8 @@ class _ManageAutopayScreenState extends State<ManageAutopayScreen> {
             child: child),
         transitionDuration: const Duration(milliseconds: 300));
     if (pinSuccess == true && context.mounted) {
+      final ok = await _performAction('CANCEL');
+      if (!ok || !context.mounted) return;
       final finalResult = await showGeneralDialog<bool>(
           context: context,
           barrierDismissible: true,

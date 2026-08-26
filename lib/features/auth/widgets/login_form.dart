@@ -59,10 +59,16 @@ class _LoginFormState extends ConsumerState<LoginForm>
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_phoneController.text.length == 10 && _isConsented) {
-      ref.read(authProvider.notifier).setPendingPhone(_phoneController.text);
-      context.push('/otp');
+      final notifier = ref.read(authProvider.notifier);
+      notifier.setPendingPhone(_phoneController.text);
+      await notifier.sendOtp(_phoneController.text);
+      if (!mounted) return;
+      final state = ref.read(authProvider);
+      if (state is! AuthError) {
+        context.push('/otp');
+      }
     }
   }
 

@@ -122,7 +122,7 @@ class DetailedHoldingsList extends StatelessWidget {
           ),
           );
         },
-        childCount: mockHoldings.length,
+        childCount: displayHoldings.length,
       ),
     );
   }

@@ -1,3 +1,4 @@
+import '../data/stocks_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -99,8 +100,28 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
   @override
   Widget build(BuildContext context) {
     final isLocked = ref.watch(privacyProvider);
+    final holdingsAsync = ref.watch(stocksHoldingsProvider);
+
+    List<StockData> stockList = _mockStocks;
+    if (holdingsAsync.hasValue && holdingsAsync.value!.isNotEmpty) {
+      final holdings = holdingsAsync.value!;
+      final total = holdings.fold<double>(0.0, (acc, h) => acc + h.currentValue);
+      stockList = holdings.map((h) {
+        final alloc = total > 0 ? (h.currentValue / total * 100) : 0.0;
+        return StockData(
+          name: h.tradingSymbol,
+          sector: h.tradingSymbol.contains("BEES") || h.tradingSymbol.contains("ETF") ? "ETF" : "Equity",
+          allocation: double.parse(alloc.toStringAsFixed(1)),
+          currentVal: h.currentValue,
+          oneDayChange: h.oneDayChangeAmount,
+          oneDayChangePct: double.parse(h.oneDayChangePct.toStringAsFixed(2)),
+          quantity: h.quantity,
+          ltp: h.lastPrice,
+        );
+      }).toList();
+    }
     
-    final filteredStocks = _mockStocks.where((s) {
+    final filteredStocks = stockList.where((s) {
       bool passType = true;
       bool passPerformance = true;
 

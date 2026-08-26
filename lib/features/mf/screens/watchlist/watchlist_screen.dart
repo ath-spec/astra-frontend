@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/watchlist_provider.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import '../mf_explore/data/mf_mock_fund_data.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
-
 import 'widgets/mf_watchlist_empty_state.dart';
 
 class WatchlistScreen extends ConsumerWidget {
   const WatchlistScreen({super.key});
-  
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final watchlist = ref.watch(watchlistProvider);
-    
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       body: SafeArea(
@@ -40,12 +42,33 @@ class WatchlistScreen extends ConsumerWidget {
                       itemCount: watchlist.length,
                       itemBuilder: (context, index) {
                         final fundId = watchlist[index];
-                        final fundData = MfMockFundData.getFundData(fundId);
-                        
+
+                        // Check if item exists in live catalog
+                        CatalogFund? liveFund;
+                        if (catalogAsync.hasValue && catalogAsync.value != null) {
+                          try {
+                            liveFund = catalogAsync.value!.firstWhere(
+                              (f) => f.schemeCode == fundId || f.isin == fundId,
+                            );
+                          } catch (_) {}
+                        }
+
+                        final name = liveFund?.schemeName ??
+                            MfMockFundData.getFundData(fundId).name;
+                        final tags = liveFund?.category ??
+                            MfMockFundData.getFundData(fundId).tags;
+                        final returnVal = liveFund != null
+                            ? '${(liveFund.returns3y ?? liveFund.returns1y ?? 15.0).toStringAsFixed(1)}%'
+                            : MfMockFundData.getFundData(fundId).returnPercentage;
+                        final logoText = (liveFund?.amcName.isNotEmpty ?? false)
+                            ? liveFund!.amcName.split(' ').take(2).map((e) => e.isNotEmpty ? e[0] : '').join()
+                            : MfMockFundData.getFundData(fundId).logoText;
+
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
                           child: InkWell(
-                            onTap: () => MfFundProfileScreen.showModal(context, fundId),
+                            onTap: () => MfFundProfileScreen.showModal(
+                                context, liveFund?.schemeCode ?? fundId),
                             borderRadius: BorderRadius.circular(8.0),
                             child: Container(
                               padding: const EdgeInsets.all(16.0),
@@ -67,7 +90,7 @@ class WatchlistScreen extends ConsumerWidget {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        fundData.logoText.toUpperCase(),
+                                        logoText.toUpperCase(),
                                         style: const TextStyle(
                                           fontFamily: 'DMSans',
                                           fontSize: 12,
@@ -83,7 +106,7 @@ class WatchlistScreen extends ConsumerWidget {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          fundData.name,
+                                          name,
                                           style: const TextStyle(
                                             fontFamily: 'DMSans',
                                             fontSize: 14,
@@ -93,7 +116,7 @@ class WatchlistScreen extends ConsumerWidget {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          fundData.tags,
+                                          tags,
                                           style: const TextStyle(
                                             fontFamily: 'DMSans',
                                             fontSize: 10,
@@ -110,18 +133,18 @@ class WatchlistScreen extends ConsumerWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        fundData.returnPercentage,
-                                        style: TextStyle(
+                                        returnVal,
+                                        style: const TextStyle(
                                           fontFamily: 'DMSans',
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: fundData.chartColor,
+                                          color: Color(0xFF10B981),
                                         ),
                                       ),
                                       const SizedBox(height: 4),
-                                      Text(
-                                        fundData.returnDuration,
-                                        style: const TextStyle(
+                                      const Text(
+                                        '3Y Returns',
+                                        style: TextStyle(
                                           fontFamily: 'DMSans',
                                           fontSize: 10,
                                           color: Color(0xFF64748B),
