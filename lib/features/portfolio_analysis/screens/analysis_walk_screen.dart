@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/analysis_walk/analysis_intro_view.dart';
 import '../widgets/analysis_walk/analysis_result_view.dart';
-import '../models/portfolio_analysis_models.dart';
 import '../data/portfolio_analysis_providers.dart';
 
 enum WalkStep {
@@ -137,6 +136,136 @@ class _AnalysisWalkScreenState extends ConsumerState<AnalysisWalkScreen> {
     );
   }
 
+  /// Renders the intro/"analyzing" view for a walk step. While a result step's
+  /// data is still loading it is shown again as a hold state (the thinking orb
+  /// reads as "computing") with taps disabled — never a fabricated result.
+  Widget _intro(WalkStep step, {bool holding = false}) {
+    final onNext = holding ? () {} : _nextStep;
+    switch (step) {
+      case WalkStep.allocationIntro:
+      case WalkStep.allocationResult:
+        return AnalysisIntroView(
+          key: const ValueKey('allocationIntro'),
+          title: 'Allocation',
+          description: 'We analyze how your money is spread across stocks, gold, and debt to ensure you are not over-exposed.',
+          icon: Icons.layers_outlined,
+          onNext: onNext,
+        );
+      case WalkStep.performanceIntro:
+      case WalkStep.performanceResult:
+        return AnalysisIntroView(
+          key: const ValueKey('performanceIntro'),
+          title: 'Performance',
+          description: 'We compare your personal returns against the market index to see how much your money is truly growing.',
+          icon: Icons.change_history,
+          onNext: onNext,
+        );
+      case WalkStep.disciplineIntro:
+      case WalkStep.disciplineResult:
+        return AnalysisIntroView(
+          key: const ValueKey('disciplineIntro'),
+          title: 'Discipline',
+          description: 'We analyze your contribution patterns to see how consistently you have been investing.',
+          icon: Icons.track_changes,
+          onNext: onNext,
+        );
+    }
+  }
+
+  /// Re-fetches all three analyses (used by the error view's "Try again").
+  void _retry() {
+    ref.invalidate(portfolioDisciplineProvider);
+    ref.invalidate(portfolioAllocationProvider);
+    ref.invalidate(portfolioPerformanceProvider);
+    setState(() {});
+  }
+
+  /// Leaves the walk for the Portfolio Analysis screen (which renders its own
+  /// skeleton / empty states) without ever showing placeholder numbers here.
+  void _continueToAnalysis() {
+    ref.read(portfolioAnalysisUnlockedProvider.notifier).setUnlocked(true);
+    context.pushReplacement('/portfolio-analysis');
+  }
+
+  /// Shown when an analysis fails to load — an explicit, friendly message with
+  /// a retry, never a silent skip and never fabricated data.
+  Widget _buildError(String section) {
+    return Padding(
+      key: const ValueKey('walkError'),
+      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.cloud_off_rounded, size: 44, color: Color(0xFF94A3B8)),
+          const SizedBox(height: 20),
+          Text(
+            "We couldn't load your $section analysis",
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF0F172A),
+              height: 1.3,
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Please check your connection and try again.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+              color: Color(0xFF64748B),
+            ),
+          ),
+          const SizedBox(height: 32),
+          GestureDetector(
+            onTap: _retry,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 18),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: Colors.black,
+              ),
+              child: const Center(
+                child: Text(
+                  'Try Again',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: _continueToAnalysis,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                'Continue to portfolio',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCurrentView() {
     final disciplineAsync = ref.watch(portfolioDisciplineProvider);
     final allocationAsync = ref.watch(portfolioAllocationProvider);
@@ -144,22 +273,17 @@ class _AnalysisWalkScreenState extends ConsumerState<AnalysisWalkScreen> {
 
     switch (_currentStep) {
       case WalkStep.disciplineIntro:
-        return AnalysisIntroView(
-          key: const ValueKey('disciplineIntro'),
-          title: 'Discipline',
-          description: 'We analyze your contribution patterns to see how consistently you have been investing.',
-          icon: Icons.track_changes,
-          onNext: _nextStep,
-        );
+        return _intro(WalkStep.disciplineIntro);
       case WalkStep.disciplineResult:
+        if (disciplineAsync.hasError) return _buildError('discipline');
         final disc = disciplineAsync.value;
-        final model = disc != null ? disc.level : DisciplineLevel.good;
-        final streak = disc?.currentStreakMonths ?? 4;
+        if (disc == null) return _intro(WalkStep.disciplineResult, holding: true);
+        final model = disc.level;
         return AnalysisResultView(
           key: const ValueKey('disciplineResult'),
           type: ResultType.discipline,
           mode: model.label,
-          scoreText: 'You have a $streak-month disciplined investing streak.',
+          scoreText: 'You have a ${disc.currentStreakMonths}-month disciplined investing streak.',
           description: 'Your monthly contributions and SIP commitments are actively compounding your net worth.',
           gaugeColor: model.color,
           gradientColors: model.gradientColors,
@@ -167,45 +291,35 @@ class _AnalysisWalkScreenState extends ConsumerState<AnalysisWalkScreen> {
           onNext: _nextStep,
         );
       case WalkStep.allocationIntro:
-        return AnalysisIntroView(
-          key: const ValueKey('allocationIntro'),
-          title: 'Allocation',
-          description: 'We analyze how your money is spread across stocks, gold, and debt to ensure you are not over-exposed.',
-          icon: Icons.layers_outlined,
-          onNext: _nextStep,
-        );
+        return _intro(WalkStep.allocationIntro);
       case WalkStep.allocationResult:
+        if (allocationAsync.hasError) return _buildError('allocation');
         final alloc = allocationAsync.value;
-        final model = alloc != null ? alloc.level : AllocationLevel.balanced;
-        final eqPct = alloc?.equityPct ?? 65.0;
+        if (alloc == null) return _intro(WalkStep.allocationResult, holding: true);
+        final model = alloc.level;
         return AnalysisResultView(
           key: const ValueKey('allocationResult'),
           type: ResultType.allocation,
           mode: model.label,
           scoreText: 'Your asset allocation is ${model.label.toLowerCase()}.',
-          description: '${eqPct.toStringAsFixed(0)}% equity allocation calibrated against fixed income and liquid reserves.',
+          description: '${alloc.equityPct.toStringAsFixed(0)}% equity allocation calibrated against fixed income and liquid reserves.',
           gaugeColor: model.activeColor,
           gradientColors: model.gradientColors,
           fillPercentage: model.activeSegments / 5,
           onNext: _nextStep,
         );
       case WalkStep.performanceIntro:
-        return AnalysisIntroView(
-          key: const ValueKey('performanceIntro'),
-          title: 'Performance',
-          description: 'We compare your personal returns against the market index to see how much your money is truly growing.',
-          icon: Icons.change_history,
-          onNext: _nextStep,
-        );
+        return _intro(WalkStep.performanceIntro);
       case WalkStep.performanceResult:
+        if (performanceAsync.hasError) return _buildError('performance');
         final perf = performanceAsync.value;
-        final model = perf != null ? perf.level : PerformanceLevel.strong;
-        final retPct = perf?.totalReturnPct ?? 18.5;
+        if (perf == null) return _intro(WalkStep.performanceResult, holding: true);
+        final model = perf.level;
         return AnalysisResultView(
           key: const ValueKey('performanceResult'),
           type: ResultType.performance,
           mode: model.label,
-          scoreText: 'Blended return of +${retPct.toStringAsFixed(1)}% across holdings.',
+          scoreText: 'Blended return of +${perf.totalReturnPct.toStringAsFixed(1)}% across holdings.',
           description: 'Your portfolio performance is actively beating broad fixed deposits and benchmark indices.',
           gaugeColor: model.activeColor,
           gradientColors: model.gradientColors,
