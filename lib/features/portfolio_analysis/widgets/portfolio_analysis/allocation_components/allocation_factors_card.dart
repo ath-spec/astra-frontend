@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import '../../../data/portfolio_analysis_providers.dart';
-import '../../../models/portfolio_analysis_models.dart';
 import 'allocation_info_sheet.dart';
 import 'allocation_factor_info_sheet.dart';
 
@@ -56,16 +56,24 @@ class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard>
   Widget build(BuildContext context) {
     final allocAsync = ref.watch(portfolioAllocationProvider);
     final alloc = allocAsync.value;
-    final buckets = alloc?.volatilityBuckets ?? const [];
 
-    String stableAmt = '₹ 3,450', stablePct = '1%';
+    // No fabricated values: skeleton while loading, nothing on failure.
+    if (alloc == null) {
+      return allocAsync.isLoading
+          ? const _AllocationFactorsSkeleton()
+          : const SizedBox.shrink();
+    }
+
+    final buckets = alloc.volatilityBuckets;
+
+    String stableAmt = '₹ 0', stablePct = '0%';
     String lowAmt = '₹ 0', lowPct = '0%';
     String medAmt = '₹ 0', medPct = '0%';
-    String highAmt = '₹ 3,45,126', highPct = '99%';
+    String highAmt = '₹ 0', highPct = '0%';
 
-    double sFrac = 0.01, lFrac = 0.0, mFrac = 0.0, hFrac = 0.99;
+    double sFrac = 0.0, lFrac = 0.0, mFrac = 0.0, hFrac = 0.0;
 
-    if (buckets.isNotEmpty) {
+    {
       for (final b in buckets) {
         final lbl = b.label.toLowerCase();
         final formattedAmt = _formatInr(b.amount);
@@ -92,7 +100,7 @@ class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard>
       }
     }
 
-    final level = alloc?.level ?? AllocationLevel.veryAggressive;
+    final level = alloc.level;
 
     return VisibilityDetector(
       key: const Key('AllocationFactorsCard'),
@@ -316,6 +324,63 @@ class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard>
   }
 }
 
+class _AllocationFactorsSkeleton extends StatelessWidget {
+  const _AllocationFactorsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        margin: const EdgeInsets.only(top: 8),
+        decoration: const ShapeDecoration(
+          color: Colors.white,
+          shape: _NotchBorder(),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: ShimmerBar(width: 140, height: 10),
+            ),
+            const _DottedDivider(),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+              child: ShimmerBar(width: double.infinity, height: 8, borderRadius: 4),
+            ),
+            for (int i = 0; i < 4; i++) ...[
+              if (i > 0) const _DottedDivider(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                child: Row(
+                  children: [
+                    ShimmerBar(width: 20, height: 20, borderRadius: 10),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ShimmerBar(width: 120, height: 12),
+                          SizedBox(height: 6),
+                          ShimmerBar(width: 180, height: 10),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    ShimmerBar(width: 56, height: 12),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _DottedDivider extends StatelessWidget {
   const _DottedDivider();
 
@@ -415,7 +480,7 @@ class _FactorsProgressBarPainter extends CustomPainter {
 
   _FactorsProgressBarPainter({
     required this.progress,
-    this.values = const [0.01, 0.0, 0.0, 0.99],
+    this.values = const [0.0, 0.0, 0.0, 0.0],
   });
 
   @override

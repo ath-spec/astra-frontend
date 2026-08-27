@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:astra_frontend/core/network/api.dart';
 import 'package:astra_frontend/features/portfolio_analysis/data/portfolio_analysis_models.dart';
 import 'package:astra_frontend/features/portfolio_analysis/data/portfolio_analysis_repository.dart';
@@ -20,6 +21,42 @@ final portfolioDisciplineProvider = FutureProvider<DisciplineData>((ref) async {
 final portfolioPerformanceProvider = FutureProvider<PerformanceData>((ref) async {
   final repo = ref.watch(portfolioAnalysisRepositoryProvider);
   return repo.getPerformance();
+});
+
+class PortfolioAnalysisUnlockedNotifier extends StateNotifier<bool> {
+  PortfolioAnalysisUnlockedNotifier() : super(false) {
+    _loadState();
+  }
+
+  static const _storageKey = 'portfolio_analysis_unlocked';
+  static const _storage = FlutterSecureStorage();
+
+  Future<void> _loadState() async {
+    try {
+      final value = await _storage.read(key: _storageKey);
+      if (value == 'true') {
+        state = true;
+      }
+    } catch (_) {}
+  }
+
+  Future<void> setUnlocked(bool unlocked) async {
+    state = unlocked;
+    try {
+      if (unlocked) {
+        await _storage.write(key: _storageKey, value: 'true');
+      } else {
+        await _storage.delete(key: _storageKey);
+      }
+    } catch (_) {}
+  }
+}
+
+/// Tracks whether the user has unlocked / completed the Portfolio Analysis walkthrough.
+/// Persisted locally across app launches using FlutterSecureStorage.
+final portfolioAnalysisUnlockedProvider =
+    StateNotifierProvider<PortfolioAnalysisUnlockedNotifier, bool>((ref) {
+  return PortfolioAnalysisUnlockedNotifier();
 });
 
 /// Single Source of Truth for the user's Current Portfolio DNA across all screens.

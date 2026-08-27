@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import '../../../data/portfolio_analysis_providers.dart';
 import 'discipline_info_sheet.dart';
+
+const _green = Color(0xFF38A169);
+const _amber = Color(0xFFDD6B20);
+const _red = Color(0xFFE53E3E);
+const _grey = Color(0xFF94A3B8);
 
 class DisciplineFactorsCard extends ConsumerWidget {
   const DisciplineFactorsCard({super.key});
@@ -11,41 +17,82 @@ class DisciplineFactorsCard extends ConsumerWidget {
     final discAsync = ref.watch(portfolioDisciplineProvider);
     final disc = discAsync.value;
 
-    String consistencySubtitle = 'Dipped below your usual amount in 8 of the last 12 months';
-    String consistencyStatus = 'Fair';
-    Color consistencyColor = const Color(0xFFDD6B20);
+    // No fabricated values: skeleton while loading, nothing on failure.
+    if (disc == null) {
+      return discAsync.isLoading
+          ? const _DisciplineFactorsSkeleton()
+          : const SizedBox.shrink();
+    }
 
-    String sipSubtitle = 'No SIP set up yet';
-    String sipStatus = 'N/A';
-    Color sipColor = const Color(0xFF94A3B8);
+    final history = disc.monthlyHistory;
 
-    String withdrawalSubtitle = 'Took out 31% of everything you put in this year';
-    String withdrawalStatus = 'Good';
-    Color withdrawalColor = const Color(0xFF38A169);
-
-    if (disc != null) {
-      final history = disc.monthlyHistory;
-      if (history.isNotEmpty) {
-        final total = history.length;
-        final invested = history.where((m) => m.hasInvestment).length;
-        consistencySubtitle = 'Invested in $invested of the last $total months';
-        final ratio = invested / total;
-        if (ratio >= 0.8) {
-          consistencyStatus = 'Good';
-          consistencyColor = const Color(0xFF38A169);
-        } else if (ratio >= 0.5) {
-          consistencyStatus = 'Fair';
-          consistencyColor = const Color(0xFFDD6B20);
-        } else {
-          consistencyStatus = 'Low';
-          consistencyColor = const Color(0xFFE53E3E);
-        }
+    // Monthly consistency — real invested-months ratio.
+    String consistencySubtitle;
+    String consistencyStatus;
+    Color consistencyColor;
+    if (history.isEmpty) {
+      consistencySubtitle = 'No investment activity recorded yet';
+      consistencyStatus = 'N/A';
+      consistencyColor = _grey;
+    } else {
+      final total = history.length;
+      final invested = history.where((m) => m.hasInvestment).length;
+      consistencySubtitle = 'Invested in $invested of the last $total months';
+      final ratio = invested / total;
+      if (ratio >= 0.8) {
+        consistencyStatus = 'Good';
+        consistencyColor = _green;
+      } else if (ratio >= 0.5) {
+        consistencyStatus = 'Fair';
+        consistencyColor = _amber;
+      } else {
+        consistencyStatus = 'Low';
+        consistencyColor = _red;
       }
+    }
 
-      if (disc.activeMandatesCount > 0) {
-        sipSubtitle = '${disc.activeMandatesCount} active SIP mandate${disc.activeMandatesCount == 1 ? '' : 's'} running';
-        sipStatus = 'Good';
-        sipColor = const Color(0xFF38A169);
+    // SIP health — active mandates + automation share.
+    String sipSubtitle;
+    String sipStatus;
+    Color sipColor;
+    if (disc.activeMandatesCount > 0) {
+      sipSubtitle =
+          '${disc.activeMandatesCount} active SIP mandate${disc.activeMandatesCount == 1 ? '' : 's'} running';
+      sipStatus = disc.sipAutomationPct >= 50 ? 'Good' : 'Fair';
+      sipColor = disc.sipAutomationPct >= 50 ? _green : _amber;
+    } else {
+      sipSubtitle = 'No active SIP mandate';
+      sipStatus = 'N/A';
+      sipColor = _grey;
+    }
+
+    // Withdrawal pattern — real sell vs. buy flow over the 12-month window.
+    final totalBuy = history.fold<double>(0, (s, m) => s + m.buyAmount);
+    final totalSell = history.fold<double>(0, (s, m) => s + m.sellAmount);
+    String withdrawalSubtitle;
+    String withdrawalStatus;
+    Color withdrawalColor;
+    if (totalBuy <= 0 && totalSell <= 0) {
+      withdrawalSubtitle = 'No investments or withdrawals recorded yet';
+      withdrawalStatus = 'N/A';
+      withdrawalColor = _grey;
+    } else if (totalSell <= 0) {
+      withdrawalSubtitle = 'No withdrawals in the last 12 months';
+      withdrawalStatus = 'Good';
+      withdrawalColor = _green;
+    } else {
+      final pct = totalBuy > 0 ? (totalSell / totalBuy * 100) : 100.0;
+      withdrawalSubtitle =
+          'Took out ${pct.round()}% of what you invested over the last 12 months';
+      if (pct < 10) {
+        withdrawalStatus = 'Good';
+        withdrawalColor = _green;
+      } else if (pct < 30) {
+        withdrawalStatus = 'Fair';
+        withdrawalColor = _amber;
+      } else {
+        withdrawalStatus = 'Low';
+        withdrawalColor = _red;
       }
     }
 
@@ -213,6 +260,59 @@ class DisciplineFactorsCard extends ConsumerWidget {
               size: 16,
               color: Color(0xFFCBD5E1),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DisciplineFactorsSkeleton extends StatelessWidget {
+  const _DisciplineFactorsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        margin: const EdgeInsets.only(top: 8),
+        decoration: const ShapeDecoration(
+          color: Colors.white,
+          shape: _NotchBorder(),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: ShimmerBar(width: 150, height: 10),
+            ),
+            const _DottedDivider(),
+            for (int i = 0; i < 3; i++) ...[
+              if (i > 0) const _DottedDivider(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+                child: Row(
+                  children: [
+                    ShimmerBar(width: 20, height: 20, borderRadius: 10),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ShimmerBar(width: 130, height: 12),
+                          SizedBox(height: 6),
+                          ShimmerBar(width: 200, height: 10),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    ShimmerBar(width: 44, height: 20, borderRadius: 4),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 8),
           ],
         ),
       ),

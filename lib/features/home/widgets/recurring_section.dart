@@ -28,7 +28,8 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
   Widget build(BuildContext context) {
     final activeMandatesAsync = ref.watch(mandatesProvider('ACTIVE'));
     final activeMandates = activeMandatesAsync.valueOrNull ?? const <RecurringMandate>[];
-    final showActive = activeMandates.isNotEmpty;
+    final isBillsTrackingUnlocked = ref.watch(billsTrackingUnlockedProvider);
+    final showActive = isBillsTrackingUnlocked;
     final summary = ref.watch(recurringSummaryProvider).valueOrNull ?? RecurringSummary.empty;
 
     return GestureDetector(
@@ -64,15 +65,15 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-          'Track your bills',
-          style: TextStyle(
-            fontFamily: 'DMSans',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -1.0,
-            color: Color(0xFF0F172A),
-          ),
-        ),
+                    'Track your bills',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -1.0,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
                   if (showActive)
                     const Icon(
                       Icons.arrow_forward_ios_rounded,
@@ -112,25 +113,57 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
           clipBehavior: Clip.none,
           child: Row(
             children: [
-              for (int i = 0; i < preview.length; i++) ...[
-                if (i > 0) const SizedBox(width: 12),
-                Builder(builder: (context) {
-                  final mandate = preview[i];
-                  final visual = paymentMapFromMandate(mandate);
-                  final due = mandate.nextDebitDateTime;
-                  final dueInDays = due != null ? due.difference(today).inDays : 0;
-                  return DuePaymentCard(
-                    payeeName: mandate.payeeName,
-                    payeedeet: mandate.category ?? '',
-                    dueInDays: dueInDays < 0 ? '0' : dueInDays.toString(),
-                    amount: NumberFormat.decimalPattern('en_IN').format(mandate.maxAmount),
-                    isDark: visual['isDark'] as bool? ?? true,
-                    logoAsset: visual['logoAsset'] as String?,
-                    icon: visual['icon'] as IconData?,
-                    backgroundColor: visual['backgroundColor'] as Color?,
-                  );
-                }),
-              ],
+              if (preview.isEmpty)
+                GestureDetector(
+                  onTap: () => context.push('/recurring-control'),
+                  child: Container(
+                    width: 140,
+                    height: 165,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.add_circle_outline_rounded, size: 28, color: Color(0xFF64748B)),
+                        SizedBox(height: 8),
+                        Text(
+                          'Add First Bill',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF0F172A),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                for (int i = 0; i < preview.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 12),
+                  Builder(builder: (context) {
+                    final mandate = preview[i];
+                    final visual = paymentMapFromMandate(mandate);
+                    final due = mandate.nextDebitDateTime;
+                    final dueInDays = due != null ? due.difference(today).inDays : 0;
+                    return DuePaymentCard(
+                      payeeName: mandate.payeeName,
+                      payeedeet: mandate.category ?? '',
+                      dueInDays: dueInDays < 0 ? '0' : dueInDays.toString(),
+                      amount: NumberFormat.decimalPattern('en_IN').format(mandate.maxAmount),
+                      isDark: visual['isDark'] as bool? ?? true,
+                      logoAsset: visual['logoAsset'] as String?,
+                      icon: visual['icon'] as IconData?,
+                      backgroundColor: visual['backgroundColor'] as Color?,
+                    );
+                  }),
+                ],
             ],
           ),
         ),

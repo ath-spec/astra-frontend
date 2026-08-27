@@ -1,31 +1,84 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../../data/portfolio_analysis_providers.dart';
+import '../../../data/portfolio_analysis_models.dart';
 
-class AllocationFactorInfoSheet extends StatefulWidget {
+String _formatInr(double value) {
+  final rounded = value.round();
+  final neg = rounded < 0;
+  final digits = rounded.abs().toString();
+  String out;
+  if (digits.length <= 3) {
+    out = digits;
+  } else {
+    final head = digits.substring(0, digits.length - 3);
+    final tail = digits.substring(digits.length - 3);
+    out =
+        '${head.replaceAllMapped(RegExp(r'(\d)(?=(\d{2})+(?!\d))'), (m) => '${m[1]},')},$tail';
+  }
+  return '${neg ? '-₹' : '₹'}$out';
+}
+
+class _TabSpec {
+  final String label;
+  final String volatility; // STABLE / LOW / MEDIUM / HIGH
+  final String heading;
+  final String blurbBold;
+  final String blurbRest;
+  const _TabSpec(this.label, this.volatility, this.heading, this.blurbBold,
+      this.blurbRest);
+}
+
+const _tabSpecs = <_TabSpec>[
+  _TabSpec('Stable', 'STABLE', 'STABLE ASSETS', 'Stable assets: ',
+      'Includes banks, FDs, and liquid or overnight funds. These are usually the steadiest part of a portfolio, meant to keep things grounded and accessible.'),
+  _TabSpec('Low Volatility', 'LOW', 'LOW VOLATILITY', 'Low volatility assets ',
+      'include conservative hybrid and short-duration debt funds. They move gently and cushion the overall portfolio.'),
+  _TabSpec('Medium Volatility', 'MEDIUM', 'MEDIUM VOLATILITY',
+      'Medium volatility assets ',
+      'include balanced and large-cap oriented funds. They carry moderate swings in exchange for steadier long-term growth.'),
+  _TabSpec('High Volatility', 'HIGH', 'HIGH VOLATILITY',
+      'High volatility assets ',
+      'include equities and certain mutual funds. They can swing significantly in value over the short term but offer the potential for higher returns in the long run.'),
+];
+
+const _typeLabel = {
+  'BANK': 'BANKS',
+  'FD': 'FIXED DEPOSITS',
+  'MF': 'MUTUAL FUNDS',
+  'STOCK': 'STOCKS',
+};
+
+const _typeValueHeader = {
+  'BANK': 'CURRENT BALANCE',
+  'FD': 'PRINCIPAL',
+  'MF': 'HOLDINGS VALUE',
+  'STOCK': 'HOLDINGS VALUE',
+};
+
+class AllocationFactorInfoSheet extends ConsumerStatefulWidget {
   final int initialIndex;
 
   const AllocationFactorInfoSheet({super.key, required this.initialIndex});
 
   @override
-  State<AllocationFactorInfoSheet> createState() => _AllocationFactorInfoSheetState();
+  ConsumerState<AllocationFactorInfoSheet> createState() =>
+      _AllocationFactorInfoSheetState();
 }
 
-class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> with SingleTickerProviderStateMixin {
+class _AllocationFactorInfoSheetState
+    extends ConsumerState<AllocationFactorInfoSheet>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
-  final List<String> _tabs = [
-    'Stable',
-    'Low Volatility',
-    'Medium Volatility',
-    'High Volatility',
-  ];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: _tabs.length,
+      length: _tabSpecs.length,
       vsync: this,
-      initialIndex: widget.initialIndex,
+      initialIndex: widget.initialIndex.clamp(0, _tabSpecs.length - 1),
     );
   }
 
@@ -37,6 +90,9 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
 
   @override
   Widget build(BuildContext context) {
+    final allocAsync = ref.watch(portfolioAllocationProvider);
+    final alloc = allocAsync.valueOrNull;
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
@@ -47,7 +103,6 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 12),
-          // Drag handle
           Center(
             child: Container(
               width: 40,
@@ -59,8 +114,6 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
             ),
           ),
           const SizedBox(height: 24),
-          
-          // TabBar
           TabBar(
             controller: _tabController,
             isScrollable: true,
@@ -82,37 +135,64 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
             indicatorSize: TabBarIndicatorSize.label,
             indicatorWeight: 2,
             dividerColor: Colors.transparent,
-            tabs: _tabs.map((t) => Tab(text: t)).toList(),
+            tabs: _tabSpecs.map((t) => Tab(text: t.label)).toList(),
           ),
-          
           const SizedBox(height: 24),
-          
-          // TabBarView
           Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildStableTab(),
-                _buildEmptyTab('Low Volatility Assets'),
-                _buildEmptyTab('Medium Volatility Assets'),
-                _buildHighVolatilityTab(),
-              ],
-            ),
+            child: alloc == null
+                ? (allocAsync.isLoading
+                    ? _buildSkeleton()
+                    : const SizedBox.shrink())
+                : TabBarView(
+                    controller: _tabController,
+                    children:
+                        _tabSpecs.map((t) => _buildTab(t, alloc)).toList(),
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStableTab() {
+  Widget _buildTab(_TabSpec spec, AllocationData alloc) {
+    final items = alloc.holdings
+        .where((h) => h.volatility == spec.volatility)
+        .toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    if (items.isEmpty) {
+      return Center(
+        child: Text(
+          'No ${spec.label.toLowerCase()} assets currently.',
+          style: const TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 14,
+            color: Color(0xFF64748B),
+          ),
+        ),
+      );
+    }
+
+    final bucketValue = items.fold<double>(0, (s, h) => s + h.value);
+    final holdingsTotal =
+        alloc.holdings.fold<double>(0, (s, h) => s + h.value);
+    final pct = holdingsTotal > 0 ? bucketValue / holdingsTotal * 100 : 0.0;
+
+    // Group by instrument type, preserving a stable display order.
+    final order = ['BANK', 'FD', 'MF', 'STOCK'];
+    final grouped = <String, List<HoldingBreakdownData>>{};
+    for (final h in items) {
+      grouped.putIfAbsent(h.type, () => []).add(h);
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'STABLE ASSETS',
-            style: TextStyle(
+          Text(
+            spec.heading,
+            style: const TextStyle(
               fontFamily: 'DMSans',
               fontSize: 10,
               fontWeight: FontWeight.w600,
@@ -124,205 +204,20 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
-            children: const [
-              Text(
-                '₹3,058',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0F172A),
-                ),
-              ),
-              SizedBox(width: 8),
-              Text(
-                '1.0% of total holdings',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF64748B),
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 24),
-          
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: const Text.rich(
-              TextSpan(
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  height: 1.5,
-                  color: Color(0xFF64748B),
-                ),
-                children: [
-                  TextSpan(
-                    text: 'Stable assets: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F172A),
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'Includes banks, FDs, and liquid or overnight funds. These are usually the steadiest part of a portfolio, meant to keep things grounded and accessible.',
-                  ),
-                ],
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 32),
-          
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
-                'BANKS (1)',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.5,
-                  color: Color(0xFF94A3B8),
-                ),
-              ),
-              Text(
-                'CURRENT BALANCE',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.5,
-                  color: Color(0xFF94A3B8),
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 16),
-          const Divider(height: 1, color: Color(0xFFF1F5F9)),
-          const SizedBox(height: 16),
-          
-          Row(
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    'i',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFFE53E3E), // ICICI red-ish
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'ICICI Bank',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A),
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      '.. 5705',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 10,
-                        color: Color(0xFF64748B),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Text(
-                '₹3,058',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0F172A),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHighVolatilityTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: const [
               Text(
-                'HIGH VOLATILITY',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2.0,
-                  color: Color(0xFF94A3B8),
-                ),
-              ),
-              SizedBox(width: 8),
-              Icon(Icons.warning_amber_rounded, size: 12, color: Color(0xFFE53E3E)),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: const [
-              Text(
-                '₹3,45,126',
-                style: TextStyle(
+                _formatInr(bucketValue),
+                style: const TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF0F172A),
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
-                '99.0% of total holdings',
-                style: TextStyle(
+                '${pct.toStringAsFixed(1)}% of total holdings',
+                style: const TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
@@ -331,9 +226,7 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
               ),
             ],
           ),
-          
           const SizedBox(height: 24),
-          
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -341,9 +234,9 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            child: const Text.rich(
+            child: Text.rich(
               TextSpan(
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
                   height: 1.5,
@@ -351,86 +244,63 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
                 ),
                 children: [
                   TextSpan(
-                    text: 'High volatility assets ',
-                    style: TextStyle(
+                    text: spec.blurbBold,
+                    style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF0F172A),
                     ),
                   ),
-                  TextSpan(
-                    text: 'include equities and certain mutual funds. They can swing significantly in value over the short term but offer the potential for higher returns in the long run.',
-                  ),
+                  TextSpan(text: spec.blurbRest),
                 ],
               ),
             ),
           ),
-          
           const SizedBox(height: 32),
-          const Divider(height: 1, color: Color(0xFFF1F5F9)),
-          const SizedBox(height: 24),
-          
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
-                'MUTUAL FUNDS (4)',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.5,
-                  color: Color(0xFF94A3B8),
-                ),
+          for (final type in order)
+            if (grouped[type] != null) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${_typeLabel[type] ?? type} (${grouped[type]!.length})',
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.5,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                  Text(
+                    _typeValueHeader[type] ?? 'VALUE',
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.5,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                'HOLDINGS VALUE',
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.5,
-                  color: Color(0xFF94A3B8),
+              const SizedBox(height: 16),
+              const Divider(height: 1, color: Color(0xFFF1F5F9)),
+              const SizedBox(height: 16),
+              for (int i = 0; i < grouped[type]!.length; i++)
+                _buildHoldingRow(
+                  grouped[type]![i],
+                  isLast: i == grouped[type]!.length - 1,
                 ),
-              ),
+              const SizedBox(height: 32),
             ],
-          ),
-          
-          const SizedBox(height: 24),
-          
-          _buildFundItem(
-            name: 'Canara Robeco Large Cap Fund',
-            value: '₹2,36,538',
-            color: const Color(0xFF0EA5E9),
-          ),
-          _buildFundItem(
-            name: 'Quantum Gold ETF FoF',
-            value: '₹99,025',
-            color: const Color(0xFF1E3A8A),
-          ),
-          _buildFundItem(
-            name: 'Tata Gold ETF FoF',
-            value: '₹9,377',
-            color: const Color(0xFF4338CA),
-          ),
-          _buildFundItem(
-            name: 'HDFC Silver ETF FoF',
-            value: '₹186',
-            color: const Color(0xFF0284C7),
-            isLast: true,
-          ),
-          
-          const SizedBox(height: 48),
+          const SizedBox(height: 16),
         ],
       ),
     );
   }
 
-  Widget _buildFundItem({
-    required String name,
-    required String value,
-    required Color color,
-    bool isLast = false,
-  }) {
+  Widget _buildHoldingRow(HoldingBreakdownData h, {bool isLast = false}) {
+    final initial = h.name.isEmpty ? '?' : h.name[0].toUpperCase();
     return Column(
       children: [
         Row(
@@ -452,30 +322,46 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
               ),
               child: Center(
                 child: Text(
-                  name[0],
-                  style: TextStyle(
+                  initial,
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
-                    color: color,
+                    color: Color(0xFF0F172A),
                   ),
                 ),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(
-                name,
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF0F172A),
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    h.name,
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  if (h.subtitle.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      h.subtitle,
+                      style: const TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 10,
+                        color: Color(0xFF64748B),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
             Text(
-              value,
+              _formatInr(h.value),
               style: const TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 14,
@@ -492,20 +378,36 @@ class _AllocationFactorInfoSheetState extends State<AllocationFactorInfoSheet> w
             painter: _DottedLinePainter(),
           ),
           const SizedBox(height: 20),
-        ]
+        ],
       ],
     );
   }
 
-  Widget _buildEmptyTab(String title) {
-    return Center(
-      child: Text(
-        'No $title currently.',
-        style: const TextStyle(
-          fontFamily: 'DMSans',
-          fontSize: 14,
-          color: Color(0xFF64748B),
-        ),
+  Widget _buildSkeleton() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerBar(width: 120, height: 10),
+          const SizedBox(height: 8),
+          const ShimmerBar(width: 180, height: 20),
+          const SizedBox(height: 24),
+          ShimmerBar(width: MediaQuery.of(context).size.width, height: 64),
+          const SizedBox(height: 32),
+          for (int i = 0; i < 3; i++) ...[
+            Row(
+              children: const [
+                ShimmerBar(width: 40, height: 40, borderRadius: 20),
+                SizedBox(width: 16),
+                Expanded(child: ShimmerBar(width: double.infinity, height: 12)),
+                SizedBox(width: 16),
+                ShimmerBar(width: 64, height: 12),
+              ],
+            ),
+            const SizedBox(height: 28),
+          ],
+        ],
       ),
     );
   }
@@ -518,7 +420,7 @@ class _DottedLinePainter extends CustomPainter {
       ..color = const Color(0xFFE2E8F0)
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.round;
-    
+
     double dashWidth = 3;
     double dashSpace = 4;
     double startX = 0;

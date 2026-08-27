@@ -1,62 +1,110 @@
 import 'package:flutter/material.dart';
+import '../../../data/portfolio_analysis_models.dart';
+
+String _formatInr(double value) {
+  final rounded = value.round();
+  final isNegative = rounded < 0;
+  final digits = rounded.abs().toString();
+  String formatted;
+  if (digits.length <= 3) {
+    formatted = digits;
+  } else {
+    final head = digits.substring(0, digits.length - 3);
+    final tail = digits.substring(digits.length - 3);
+    final headFormatted = head.replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{2})+(?!\d))'),
+      (m) => '${m[1]},',
+    );
+    formatted = '$headFormatted,$tail';
+  }
+  return '${isNegative ? '-' : ''}₹$formatted';
+}
+
+const List<String> _monthFull = [
+  'JANUARY',
+  'FEBRUARY',
+  'MARCH',
+  'APRIL',
+  'MAY',
+  'JUNE',
+  'JULY',
+  'AUGUST',
+  'SEPTEMBER',
+  'OCTOBER',
+  'NOVEMBER',
+  'DECEMBER',
+];
+const List<String> _monthTitle = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 class SipMonthSheet extends StatefulWidget {
-  final String initialMonth;
+  /// Ordered oldest → newest.
+  final List<MonthlyInvestmentData> months;
+  final int initialIndex;
 
-  const SipMonthSheet({super.key, required this.initialMonth});
+  const SipMonthSheet({
+    super.key,
+    required this.months,
+    required this.initialIndex,
+  });
 
   @override
   State<SipMonthSheet> createState() => _SipMonthSheetState();
 }
 
 class _SipMonthSheetState extends State<SipMonthSheet> {
-  static const List<String> _months = [
-    'SEP',
-    'OCT',
-    'NOV',
-    'DEC',
-    'JAN',
-    'FEB',
-    'MAR',
-    'APR',
-    'MAY',
-    'JUN',
-    'JUL',
-    'AUG',
-  ];
   late int _currentIndex;
 
   @override
   void initState() {
     super.initState();
-    _currentIndex = _months.indexOf(widget.initialMonth);
-    if (_currentIndex == -1) _currentIndex = 11; // fallback to AUG
+    _currentIndex = widget.initialIndex.clamp(0, widget.months.length - 1);
   }
 
   void _previousMonth() {
-    if (_currentIndex > 0) {
-      setState(() {
-        _currentIndex--;
-      });
-    }
+    if (_currentIndex > 0) setState(() => _currentIndex--);
   }
 
   void _nextMonth() {
-    if (_currentIndex < _months.length - 1) {
-      setState(() {
-        _currentIndex++;
-      });
+    if (_currentIndex < widget.months.length - 1) {
+      setState(() => _currentIndex++);
     }
+  }
+
+  ({int monthNum, int year}) _parseYearMonth(String ym) {
+    final parts = ym.split('-');
+    if (parts.length >= 2) {
+      final y = int.tryParse(parts[0]) ?? 0;
+      final m = int.tryParse(parts[1]) ?? 1;
+      return (monthNum: m.clamp(1, 12), year: y);
+    }
+    return (monthNum: 1, year: 0);
   }
 
   @override
   Widget build(BuildContext context) {
-    final month = _months[_currentIndex];
+    final data = widget.months[_currentIndex];
+    final ym = _parseYearMonth(data.yearMonth);
+    final fullName = _monthFull[ym.monthNum - 1];
+    final titleName = _monthTitle[ym.monthNum - 1];
+    final yearLabel = ym.year > 0 ? "'${ym.year}" : '';
     final isFirst = _currentIndex == 0;
-    final isLast = _currentIndex == _months.length - 1;
+    final isLast = _currentIndex == widget.months.length - 1;
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.75, // 75% height
+      height: MediaQuery.of(context).size.height * 0.75,
       padding: const EdgeInsets.only(top: 12),
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -85,7 +133,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'SIP IN ${month == 'AUG' ? 'AUGUST' : month}',
+                  'SIP IN $fullName',
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 10,
@@ -120,7 +168,7 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${month[0].toUpperCase()}${month.substring(1).toLowerCase()} \'2026',
+                        '$titleName $yearLabel'.trim(),
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 10,
@@ -175,9 +223,9 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  '0',
-                  style: TextStyle(
+                Text(
+                  '${data.orderCount}',
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -216,9 +264,11 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                     color: const Color(0xFFF1F5F9),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: const Text(
-                    'Streak will close once the current month ends',
-                    style: TextStyle(
+                  child: Text(
+                    data.hasInvestment
+                        ? 'You invested in this month keeping your streak alive.'
+                        : 'No SIP recorded for this month.',
+                    style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,
                       color: Color(0xFF475569),
@@ -250,8 +300,8 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   'TOTAL AMOUNT PAID:',
                   style: TextStyle(
                     fontFamily: 'DMSans',
@@ -261,8 +311,8 @@ class _SipMonthSheetState extends State<SipMonthSheet> {
                   ),
                 ),
                 Text(
-                  '₹0',
-                  style: TextStyle(
+                  _formatInr(data.amount),
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 12,
                     fontWeight: FontWeight.w600,

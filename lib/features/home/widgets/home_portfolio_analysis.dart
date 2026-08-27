@@ -5,13 +5,12 @@ import 'dart:math' as math;
 import '../../portfolio_analysis/models/portfolio_analysis_models.dart';
 import '../../portfolio_analysis/data/portfolio_analysis_providers.dart';
 
-final ValueNotifier<bool> hasSeenAnalysisWalkthrough = ValueNotifier<bool>(false);
-
 class HomePortfolioAnalysis extends ConsumerWidget {
   const HomePortfolioAnalysis({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final hasUnlocked = ref.watch(portfolioAnalysisUnlockedProvider);
     final allocAsync = ref.watch(portfolioAllocationProvider);
     final discAsync = ref.watch(portfolioDisciplineProvider);
     final perfAsync = ref.watch(portfolioPerformanceProvider);
@@ -20,61 +19,56 @@ class HomePortfolioAnalysis extends ConsumerWidget {
     final disciplineLevel = discAsync.value?.level ?? DisciplineLevel.moderate;
     final performanceLevel = perfAsync.value?.level ?? PerformanceLevel.veryStrong;
 
-    return ValueListenableBuilder<bool>(
-      valueListenable: hasSeenAnalysisWalkthrough,
-      builder: (context, hasSeen, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ShaderMask(
-              blendMode: BlendMode.srcIn,
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [
-                  Color(0xFF5BA1F7),
-                  Color(0xFF031E6B),
-                  Color(0xFF241714),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ).createShader(bounds),
-              child: const Row(
-                children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    size: 22,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    'Analyse your wealth',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -1.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ShaderMask(
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) => const LinearGradient(
+            colors: [
+              Color(0xFF5BA1F7),
+              Color(0xFF031E6B),
+              Color(0xFF241714),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ).createShader(bounds),
+          child: const Row(
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                size: 22,
+                color: Colors.white,
               ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'See your portfolio through a new lens',
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF64748B),
+              SizedBox(width: 8),
+              Text(
+                'Analyse your wealth',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -1.0,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            hasSeen
-                ? _buildUnlockedView(context, disciplineLevel, allocationLevel, performanceLevel)
-                : _buildLockedView(context),
-          ],
-        );
-      },
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'See your portfolio through a new lens',
+          style: TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF64748B),
+          ),
+        ),
+        const SizedBox(height: 24),
+        hasUnlocked
+            ? _buildUnlockedView(context, disciplineLevel, allocationLevel, performanceLevel)
+            : _buildLockedView(context),
+      ],
     );
   }
 
@@ -224,7 +218,7 @@ class HomePortfolioAnalysis extends ConsumerWidget {
     required String brailleDots,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 6),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
@@ -259,13 +253,17 @@ class HomePortfolioAnalysis extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF0F172A),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              title,
+              maxLines: 1,
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF0F172A),
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -327,21 +325,27 @@ class HomePortfolioAnalysis extends ConsumerWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(icon, size: 14, color: const Color(0xFF64748B)),
+                      Icon(icon, size: 13, color: const Color(0xFF64748B)),
                       const SizedBox(width: 4),
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF0F172A),
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF0F172A),
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -353,41 +357,46 @@ class HomePortfolioAnalysis extends ConsumerWidget {
                     child: CustomPaint(painter: painter),
                   ),
                   const SizedBox(height: 8),
-                  gradientColors.isNotEmpty
-                      ? ShaderMask(
-                          blendMode: BlendMode.srcIn,
-                          shaderCallback: (bounds) => LinearGradient(
-                            colors: gradientColors,
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ).createShader(bounds),
-                          child: Text(
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: gradientColors.isNotEmpty
+                        ? ShaderMask(
+                            blendMode: BlendMode.srcIn,
+                            shaderCallback: (bounds) => LinearGradient(
+                              colors: gradientColors,
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ).createShader(bounds),
+                            child: Text(
+                              valueText,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : Text(
                             valueText,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            maxLines: 1,
+                            style: TextStyle(
                               fontFamily: 'DMSans',
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                              color: valueColor,
                             ),
                           ),
-                        )
-                      : Text(
-                          valueText,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: valueColor,
-                          ),
-                        ),
+                  ),
                 ],
               ),
             ),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               decoration: BoxDecoration(
                 color: bottomBgColor ?? const Color(0xFFF8FAFC),
                 borderRadius: const BorderRadius.only(
@@ -396,14 +405,18 @@ class HomePortfolioAnalysis extends ConsumerWidget {
                 ),
                 border: const Border(top: BorderSide(color: Color(0xFFE2E8F0))),
               ),
-              child: Text(
-                bottomText,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: bottomTextColor ?? const Color(0xFF64748B),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  bottomText,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: bottomTextColor ?? const Color(0xFF64748B),
+                  ),
                 ),
               ),
             ),

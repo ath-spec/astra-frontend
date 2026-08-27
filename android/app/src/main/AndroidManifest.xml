@@ -18,6 +18,7 @@
         android:label="Astra"
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

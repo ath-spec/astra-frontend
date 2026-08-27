@@ -69,8 +69,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
   String pendingName = 'Investor';
   String pendingPan = '';
 
+  /// Advisory opt-in from the login form. Sent as `wants_rm` on OTP verify;
+  /// the backend assigns a Relationship Manager only when this is true.
+  bool pendingWantsRm = false;
+
   void setPendingPhone(String phone) {
     pendingPhone = phone;
+  }
+
+  void setPendingWantsRm(bool value) {
+    pendingWantsRm = value;
   }
 
   void setPendingPan(String pan) {
@@ -192,6 +200,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           'phone_number': phoneDigits,
           'otp': otp,
           'name': pendingName,
+          'wants_rm': pendingWantsRm,
           'banks': <String>[],
         },
       );
@@ -221,6 +230,37 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = AuthError(dioApiClient.toApiException(e).message);
       return null;
+    }
+  }
+
+  /// Persists the display name collected on the onboarding name step.
+  /// The account row is created on OTP verify (before the name is known),
+  /// so this PATCH is what actually gets the real name onto the profile —
+  /// and into the RM dashboard. Best-effort: the local [pendingName] is
+  /// updated regardless so the rest of onboarding shows the right name.
+  Future<void> updateName(String name) async {
+    final trimmed = name.trim();
+    pendingName = trimmed;
+    final current = state;
+    if (current is AuthAuthenticated) {
+      state = AuthAuthenticated(
+        User(
+          id: current.user.id,
+          name: trimmed,
+          email: current.user.email,
+          isAdmin: current.user.isAdmin,
+          avatarUrl: current.user.avatarUrl,
+        ),
+      );
+    }
+    try {
+      await dioApiClient.dio.patch(
+        '/api/auth/me',
+        data: {'name': trimmed},
+      );
+    } catch (_) {
+      // Non-fatal — onboarding continues; a later app launch's session
+      // restore will still reflect whatever the server has.
     }
   }
 
@@ -255,6 +295,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final userId = data['astra_user_id']?.toString() ?? data['user_id']?.toString() ?? '';
       pendingPhone = phone;
       if (name != null && name.isNotEmpty) pendingName = name;
+      pendingWantsRm = data['wants_rm'] == true;
 
       state = AuthAuthenticated(
         User(

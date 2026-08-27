@@ -95,8 +95,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       orElse: () => DashboardSummary.empty,
     );
     final bool summaryLoaded = dashboardAsync.hasValue;
-    final bool mfConnected = summaryLoaded ? summary.mfConnected : assetState.mfConnected;
-    final bool stocksConnected = summaryLoaded ? summary.stocksConnected : assetState.stocksConnected;
+    final bool mfConnected = assetState.mfConnected || (summaryLoaded && summary.mfConnected);
+    final bool stocksConnected = assetState.stocksConnected || (summaryLoaded && summary.stocksConnected);
+    final bool banksConnected = assetState.banksConnected || (summaryLoaded && summary.bankBalancePresent);
 
     final String userName = authState is AuthAuthenticated ? authState.user.name.toUpperCase() : 'USER';
 
@@ -264,7 +265,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ),
                 _buildDottedDivider(),
 
-                if (assetState.banksConnected)
+                if (banksConnected)
                   _buildConnectedAssetRow(
                     icon: Icons.account_balance_rounded,
                     title: 'Bank Accounts',

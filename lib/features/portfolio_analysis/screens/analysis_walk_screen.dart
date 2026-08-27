@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/analysis_walk/analysis_intro_view.dart';
 import '../widgets/analysis_walk/analysis_result_view.dart';
-import '../../home/widgets/home_portfolio_analysis.dart';
 import '../models/portfolio_analysis_models.dart';
 import '../data/portfolio_analysis_providers.dart';
 
@@ -46,7 +45,7 @@ class _AnalysisWalkScreenState extends ConsumerState<AnalysisWalkScreen> {
           break;
         case WalkStep.performanceResult:
           // Complete! Navigate to portfolio analysis dashboard.
-          hasSeenAnalysisWalkthrough.value = true;
+          ref.read(portfolioAnalysisUnlockedProvider.notifier).setUnlocked(true);
           context.pushReplacement('/portfolio-analysis');
           break;
       }

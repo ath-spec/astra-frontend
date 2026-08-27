@@ -99,6 +99,8 @@ class AllocationData {
   final List<VolatilityBucketData> volatilityBuckets;
   final List<SectorExposureData> sectorExposure;
   final PortfolioGenomeData? genome;
+  final List<HoldingBreakdownData> holdings;
+  final EquityExposureData? equityExposure;
 
   const AllocationData({
     required this.level,
@@ -113,6 +115,8 @@ class AllocationData {
     required this.volatilityBuckets,
     required this.sectorExposure,
     this.genome,
+    this.holdings = const [],
+    this.equityExposure,
   });
 
   static AllocationLevel parseLevel(String? val) {
@@ -159,6 +163,94 @@ class AllocationData {
       genome: json['genome'] is Map<String, dynamic>
           ? PortfolioGenomeData.fromJson(json['genome'] as Map<String, dynamic>)
           : null,
+      holdings: (json['holdings'] as List?)
+              ?.whereType<Map<String, dynamic>>()
+              .map(HoldingBreakdownData.fromJson)
+              .toList() ??
+          const [],
+      equityExposure: json['equity_exposure'] is Map<String, dynamic>
+          ? EquityExposureData.fromJson(
+              json['equity_exposure'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+}
+
+class HoldingBreakdownData {
+  final String name;
+  final String subtitle;
+  final String type; // BANK / FD / MF / STOCK
+  final double value;
+  final double pct;
+  final String volatility; // STABLE / LOW / MEDIUM / HIGH
+
+  const HoldingBreakdownData({
+    required this.name,
+    required this.subtitle,
+    required this.type,
+    required this.value,
+    required this.pct,
+    required this.volatility,
+  });
+
+  factory HoldingBreakdownData.fromJson(Map<String, dynamic> json) {
+    return HoldingBreakdownData(
+      name: json['name']?.toString() ?? '',
+      subtitle: json['subtitle']?.toString() ?? '',
+      type: json['type']?.toString() ?? '',
+      value: (json['value'] as num?)?.toDouble() ?? 0.0,
+      pct: (json['pct'] as num?)?.toDouble() ?? 0.0,
+      volatility: json['volatility']?.toString() ?? '',
+    );
+  }
+}
+
+class MarketCapSliceData {
+  final String label;
+  final double value;
+  final double pct;
+
+  const MarketCapSliceData({
+    required this.label,
+    required this.value,
+    required this.pct,
+  });
+
+  factory MarketCapSliceData.fromJson(Map<String, dynamic> json) {
+    return MarketCapSliceData(
+      label: json['label']?.toString() ?? '',
+      value: (json['value'] as num?)?.toDouble() ?? 0.0,
+      pct: (json['pct'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+class EquityExposureData {
+  final double totalEquityValue;
+  final double indexFundValue;
+  final double indexFundPct;
+  final double peerIndexFundPct;
+  final List<MarketCapSliceData> marketCap;
+
+  const EquityExposureData({
+    required this.totalEquityValue,
+    required this.indexFundValue,
+    required this.indexFundPct,
+    required this.peerIndexFundPct,
+    required this.marketCap,
+  });
+
+  factory EquityExposureData.fromJson(Map<String, dynamic> json) {
+    return EquityExposureData(
+      totalEquityValue: (json['total_equity_value'] as num?)?.toDouble() ?? 0.0,
+      indexFundValue: (json['index_fund_value'] as num?)?.toDouble() ?? 0.0,
+      indexFundPct: (json['index_fund_pct'] as num?)?.toDouble() ?? 0.0,
+      peerIndexFundPct: (json['peer_index_fund_pct'] as num?)?.toDouble() ?? 0.0,
+      marketCap: (json['market_cap'] as List?)
+              ?.whereType<Map<String, dynamic>>()
+              .map(MarketCapSliceData.fromJson)
+              .toList() ??
+          const [],
     );
   }
 }
@@ -167,6 +259,9 @@ class MonthlyInvestmentData {
   final String monthName;
   final String yearMonth;
   final double amount;
+  final double buyAmount;
+  final double sellAmount;
+  final double netAmount;
   final int orderCount;
   final bool hasInvestment;
 
@@ -174,17 +269,51 @@ class MonthlyInvestmentData {
     required this.monthName,
     required this.yearMonth,
     required this.amount,
+    required this.buyAmount,
+    required this.sellAmount,
+    required this.netAmount,
     required this.orderCount,
     required this.hasInvestment,
   });
 
   factory MonthlyInvestmentData.fromJson(Map<String, dynamic> json) {
+    final amt = (json['amount'] as num?)?.toDouble() ?? 0.0;
+    final buy = (json['buy_amount'] as num?)?.toDouble() ?? amt;
+    final sell = (json['sell_amount'] as num?)?.toDouble() ?? 0.0;
     return MonthlyInvestmentData(
       monthName: json['month_name']?.toString() ?? '',
       yearMonth: json['year_month']?.toString() ?? '',
-      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      amount: amt,
+      buyAmount: buy,
+      sellAmount: sell,
+      netAmount: (json['net_amount'] as num?)?.toDouble() ?? (buy - sell),
       orderCount: (json['order_count'] as num?)?.toInt() ?? 0,
       hasInvestment: json['has_investment'] == true,
+    );
+  }
+}
+
+class YearlyInvestmentData {
+  final int year;
+  final double buyAmount;
+  final double sellAmount;
+  final double netAmount;
+
+  const YearlyInvestmentData({
+    required this.year,
+    required this.buyAmount,
+    required this.sellAmount,
+    required this.netAmount,
+  });
+
+  factory YearlyInvestmentData.fromJson(Map<String, dynamic> json) {
+    final buy = (json['buy_amount'] as num?)?.toDouble() ?? 0.0;
+    final sell = (json['sell_amount'] as num?)?.toDouble() ?? 0.0;
+    return YearlyInvestmentData(
+      year: (json['year'] as num?)?.toInt() ?? 0,
+      buyAmount: buy,
+      sellAmount: sell,
+      netAmount: (json['net_amount'] as num?)?.toDouble() ?? (buy - sell),
     );
   }
 }
@@ -201,6 +330,7 @@ class DisciplineData {
   final double sipAutomationPct;
   final int activeMandatesCount;
   final List<MonthlyInvestmentData> monthlyHistory;
+  final List<YearlyInvestmentData> yearlyHistory;
 
   const DisciplineData({
     required this.level,
@@ -214,6 +344,7 @@ class DisciplineData {
     required this.sipAutomationPct,
     required this.activeMandatesCount,
     required this.monthlyHistory,
+    required this.yearlyHistory,
   });
 
   static DisciplineLevel parseLevel(String? val) {
@@ -237,6 +368,11 @@ class DisciplineData {
             .map(MonthlyInvestmentData.fromJson)
             .toList() ??
         [];
+    final yearly = (json['yearly_history'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .map(YearlyInvestmentData.fromJson)
+            .toList() ??
+        [];
 
     return DisciplineData(
       level: parseLevel(rawLvl),
@@ -254,6 +390,7 @@ class DisciplineData {
       activeMandatesCount:
           (json['active_mandates_count'] as num?)?.toInt() ?? 0,
       monthlyHistory: history,
+      yearlyHistory: yearly,
     );
   }
 }

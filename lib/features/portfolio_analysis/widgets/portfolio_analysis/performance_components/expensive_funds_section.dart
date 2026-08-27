@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import '../../../data/portfolio_analysis_providers.dart';
 import '../../../data/portfolio_analysis_models.dart';
 import '../discipline_components/generic_info_sheet.dart';
@@ -62,11 +63,25 @@ class _ExpensiveFundsSectionState extends ConsumerState<ExpensiveFundsSection>
   Widget build(BuildContext context) {
     final perfAsync = ref.watch(portfolioPerformanceProvider);
     final perf = perfAsync.value;
-    final funds = perf?.fundsPerformance ?? const <FundPerformanceData>[];
+
+    // No fabricated values: skeleton while loading, nothing on failure.
+    if (perf == null) {
+      return perfAsync.isLoading
+          ? const _ExpensiveFundsSkeleton()
+          : const SizedBox.shrink();
+    }
+
+    final funds = perf.fundsPerformance;
+    final expensiveKeys = perf.expensiveFunds
+        .map((e) => e.schemeCode.isNotEmpty ? e.schemeCode : e.schemeName)
+        .where((k) => k.isNotEmpty)
+        .toSet();
+    bool isExpensive(FundPerformanceData f) =>
+        expensiveKeys.contains(f.schemeCode.isNotEmpty ? f.schemeCode : f.schemeName);
 
     double expensiveAmt = 0;
     for (final f in funds) {
-      if (f.expenseRatio > 1.2) {
+      if (isExpensive(f)) {
         expensiveAmt += f.currentValue;
       }
     }
@@ -74,6 +89,9 @@ class _ExpensiveFundsSectionState extends ConsumerState<ExpensiveFundsSection>
     final totalValue = funds.fold<double>(0.0, (sum, f) => sum + f.currentValue);
     final expensiveRatio = totalValue > 0 ? (expensiveAmt / totalValue).clamp(0.0, 1.0) : 0.0;
     final fillRatio = expensiveRatio > 0 ? expensiveRatio : 0.05;
+    final insightText = expensiveAmt > 0
+        ? 'A slice of your money sits in higher-fee funds those costs compound against you over time.'
+        : 'Fees aren\'t eating into your gains every rupee is compounding efficiently for you.';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -185,7 +203,7 @@ class _ExpensiveFundsSectionState extends ConsumerState<ExpensiveFundsSection>
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,
                 builder: (context) =>
-                    const ExpensiveFundsSheet(initialIndex: 1),
+                    ExpensiveFundsSheet(initialIndex: 1, data: perf),
               );
             },
             child: Row(
@@ -259,10 +277,10 @@ class _ExpensiveFundsSectionState extends ConsumerState<ExpensiveFundsSection>
               color: const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: const AnimatedGradientShimmer(
+            child: AnimatedGradientShimmer(
               child: TypewriterText(
-                text: 'Fees aren\'t eating into your gains every rupee is compounding efficiently for you.',
-                style: TextStyle(
+                text: insightText,
+                style: const TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 12,
                   height: 1.5,
@@ -284,6 +302,44 @@ class _ExpensiveFundsSectionState extends ConsumerState<ExpensiveFundsSection>
             ),
           ),
           const SizedBox(height: 48),
+        ],
+      ),
+    );
+  }
+}
+
+/// Loading placeholder for [ExpensiveFundsSection]; mirrors its footprint with
+/// shimmer bars so no placeholder numbers are shown while data loads.
+class _ExpensiveFundsSkeleton extends StatelessWidget {
+  const _ExpensiveFundsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerBar(width: 160, height: 20),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 220, height: 22),
+          const SizedBox(height: 12),
+          ShimmerBar(
+            width: MediaQuery.of(context).size.width,
+            height: 12,
+            borderRadius: 2,
+          ),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 90, height: 12),
+          const SizedBox(height: 32),
+          const ShimmerBar(width: 180, height: 12),
+          const SizedBox(height: 16),
+          ShimmerBar(
+            width: MediaQuery.of(context).size.width,
+            height: 44,
+            borderRadius: 4,
+          ),
+          const SizedBox(height: 64),
         ],
       ),
     );

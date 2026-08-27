@@ -18,6 +18,7 @@ class _LoginFormState extends ConsumerState<LoginForm>
   final _phoneController = TextEditingController();
   final _focusNode = FocusNode();
   bool _isConsented = false;
+  bool _wantsRm = false;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late TapGestureRecognizer _termsRecognizer;
@@ -63,6 +64,7 @@ class _LoginFormState extends ConsumerState<LoginForm>
     if (_phoneController.text.length == 10 && _isConsented) {
       final notifier = ref.read(authProvider.notifier);
       notifier.setPendingPhone(_phoneController.text);
+      notifier.setPendingWantsRm(_wantsRm);
       await notifier.sendOtp(_phoneController.text);
       if (!mounted) return;
       final state = ref.read(authProvider);
@@ -254,6 +256,61 @@ class _LoginFormState extends ConsumerState<LoginForm>
                   ),
                   const Spacer(),
                   const SizedBox(height: 40),
+                  // Relationship-manager opt-in (optional — does not gate submit)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: isLoading
+                            ? null
+                            : () => setState(() => _wantsRm = !_wantsRm),
+                        behavior: HitTestBehavior.opaque,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              right: 12, bottom: 12, top: 2, left: 4),
+                          child: SizedBox(
+                            width: 15,
+                            height: 15,
+                            child: Transform.scale(
+                              scale: 0.75,
+                              child: Checkbox(
+                                value: _wantsRm,
+                                onChanged: isLoading
+                                    ? null
+                                    : (val) => setState(
+                                        () => _wantsRm = val ?? false,
+                                      ),
+                                activeColor: const Color(0xFF111827),
+                                checkColor: Colors.white,
+                                side: const BorderSide(
+                                  color: Color(0xFF9CA3AF),
+                                  width: 1.5,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      Expanded(
+                        child: Text(
+                          'Assign me a relationship manager to review my portfolio and give advice.'
+                              .toUpperCase(),
+                          style: const TextStyle(
+                            fontFamily: 'DMMono',
+                            color: Color(0xFF6B7280),
+                            fontSize: 8,
+                            fontWeight: FontWeight.w400,
+                            height: 1.6,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   // Terms of Service Checkbox
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

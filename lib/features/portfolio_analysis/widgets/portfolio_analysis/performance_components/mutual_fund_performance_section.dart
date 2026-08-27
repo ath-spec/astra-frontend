@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import 'dart:math' as math;
 import '../../../data/portfolio_analysis_providers.dart';
 import '../../../data/portfolio_analysis_models.dart';
@@ -64,33 +65,34 @@ class _MutualFundPerformanceSectionState
     final perf = perfAsync.value;
     final funds = perf?.fundsPerformance ?? const <FundPerformanceData>[];
 
+    // No fabricated values: while the live data is loading show a skeleton,
+    // and on failure render nothing rather than placeholder numbers.
+    if (perf == null) {
+      return perfAsync.isLoading
+          ? const _MfPerformanceSkeleton()
+          : const SizedBox.shrink();
+    }
+
     double underAmt = 0, inLineAmt = 0, outAmt = 0;
-    if (funds.isNotEmpty) {
-      for (final f in funds) {
-        switch (f.performanceRank.toUpperCase()) {
-          case 'TOP':
-          case 'OUTPERFORMING':
-            outAmt += f.currentValue;
-            break;
-          case 'UNDERPERFORMER':
-          case 'UNDERPERFORMING':
-            underAmt += f.currentValue;
-            break;
-          default:
-            inLineAmt += f.currentValue;
-        }
+    for (final f in funds) {
+      switch (f.performanceRank.toUpperCase()) {
+        case 'TOP':
+        case 'OUTPERFORMING':
+          outAmt += f.currentValue;
+          break;
+        case 'UNDERPERFORMER':
+        case 'UNDERPERFORMING':
+          underAmt += f.currentValue;
+          break;
+        default:
+          inLineAmt += f.currentValue;
       }
-    } else {
-      // Clean baseline from main
-      underAmt = 0;
-      inLineAmt = 108587;
-      outAmt = 236538;
     }
 
     final totalAmt = underAmt + inLineAmt + outAmt;
     final underPct = totalAmt > 0 ? (underAmt / totalAmt * 100) : 0.0;
-    final inLinePct = totalAmt > 0 ? (inLineAmt / totalAmt * 100) : 31.0;
-    final outPct = totalAmt > 0 ? (outAmt / totalAmt * 100) : 68.0;
+    final inLinePct = totalAmt > 0 ? (inLineAmt / totalAmt * 100) : 0.0;
+    final outPct = totalAmt > 0 ? (outAmt / totalAmt * 100) : 0.0;
 
     final String insight;
     if (outAmt >= inLineAmt && outAmt >= underAmt && outAmt > 0) {
@@ -170,7 +172,7 @@ class _MutualFundPerformanceSectionState
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,
                 builder: (context) =>
-                    MutualFundPerformanceSheet(initialIndex: tabIndex),
+                    MutualFundPerformanceSheet(initialIndex: tabIndex, data: perf),
               );
             },
             behavior: HitTestBehavior.opaque,
@@ -241,7 +243,7 @@ class _MutualFundPerformanceSectionState
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
               builder: (context) =>
-                  const MutualFundPerformanceSheet(initialIndex: 2),
+                  MutualFundPerformanceSheet(initialIndex: 2, data: perf),
             );
           },
         ),
@@ -257,7 +259,7 @@ class _MutualFundPerformanceSectionState
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
               builder: (context) =>
-                  const MutualFundPerformanceSheet(initialIndex: 1),
+                  MutualFundPerformanceSheet(initialIndex: 1, data: perf),
             );
           },
         ),
@@ -273,7 +275,7 @@ class _MutualFundPerformanceSectionState
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
               builder: (context) =>
-                  const MutualFundPerformanceSheet(initialIndex: 0),
+                  MutualFundPerformanceSheet(initialIndex: 0, data: perf),
             );
           },
         ),
@@ -422,8 +424,8 @@ class _Performance3DBarPainter extends CustomPainter {
   _Performance3DBarPainter({
     required this.progress,
     this.underAmt = 0,
-    this.inLineAmt = 108587,
-    this.outAmt = 236538,
+    this.inLineAmt = 0,
+    this.outAmt = 0,
   });
 
   @override
@@ -701,4 +703,50 @@ class _DottedLinePainter2 extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Loading placeholder for [MutualFundPerformanceSection] — mirrors its overall
+/// footprint (title, total, chart block, three list rows) with shimmer bars so
+/// no fabricated numbers are ever shown.
+class _MfPerformanceSkeleton extends StatelessWidget {
+  const _MfPerformanceSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 32),
+        const ShimmerBar(width: 200, height: 20),
+        const SizedBox(height: 16),
+        const ShimmerBar(width: 160, height: 22),
+        const SizedBox(height: 48),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: ShimmerBar(
+            width: MediaQuery.of(context).size.width,
+            height: 200,
+            borderRadius: 8,
+          ),
+        ),
+        const SizedBox(height: 40),
+        for (int i = 0; i < 3; i++) ...[
+          const _DottedDivider(),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            child: Row(
+              children: [
+                ShimmerBar(width: 8, height: 8, borderRadius: 4),
+                SizedBox(width: 16),
+                Expanded(child: ShimmerBar(width: double.infinity, height: 12)),
+                SizedBox(width: 16),
+                ShimmerBar(width: 64, height: 12),
+              ],
+            ),
+          ),
+        ],
+        const SizedBox(height: 24),
+      ],
+    );
+  }
 }

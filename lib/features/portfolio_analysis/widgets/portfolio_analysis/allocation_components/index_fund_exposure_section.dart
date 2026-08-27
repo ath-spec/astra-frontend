@@ -1,20 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import 'package:visibility_detector/visibility_detector.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../../data/portfolio_analysis_providers.dart';
+import '../../../data/portfolio_analysis_models.dart';
 import '../discipline_components/generic_info_sheet.dart';
 
-class IndexFundExposureSection extends StatefulWidget {
+String _formatInr(double value) {
+  final rounded = value.round();
+  final neg = rounded < 0;
+  final digits = rounded.abs().toString();
+  String out;
+  if (digits.length <= 3) {
+    out = digits;
+  } else {
+    final head = digits.substring(0, digits.length - 3);
+    final tail = digits.substring(digits.length - 3);
+    out =
+        '${head.replaceAllMapped(RegExp(r'(\d)(?=(\d{2})+(?!\d))'), (m) => '${m[1]},')},$tail';
+  }
+  return '${neg ? '-₹' : '₹'}$out';
+}
+
+const _capColors = {
+  'Large Cap': Color(0xFF2563EB),
+  'Mid Cap': Color(0xFFF687B3),
+  'Small Cap': Color(0xFF059669),
+  'Micro Cap': Color(0xFFD97706),
+};
+
+class IndexFundExposureSection extends ConsumerStatefulWidget {
   const IndexFundExposureSection({super.key});
 
   @override
-  State<IndexFundExposureSection> createState() => _IndexFundExposureSectionState();
+  ConsumerState<IndexFundExposureSection> createState() =>
+      _IndexFundExposureSectionState();
 }
 
-class _IndexFundExposureSectionState extends State<IndexFundExposureSection> with TickerProviderStateMixin {
+class _IndexFundExposureSectionState
+    extends ConsumerState<IndexFundExposureSection>
+    with TickerProviderStateMixin {
   late AnimationController _barController;
   late Animation<double> _barAnimation;
   bool _hasBarAnimated = false;
-  
+
   late AnimationController _doughnutController;
   late Animation<double> _doughnutAnimation;
   bool _hasDoughnutAnimated = false;
@@ -26,13 +56,15 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _barAnimation = CurvedAnimation(parent: _barController, curve: Curves.easeOutCubic);
-    
+    _barAnimation =
+        CurvedAnimation(parent: _barController, curve: Curves.easeOutCubic);
+
     _doughnutController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _doughnutAnimation = CurvedAnimation(parent: _doughnutController, curve: Curves.easeOutCubic);
+    _doughnutAnimation =
+        CurvedAnimation(parent: _doughnutController, curve: Curves.easeOutCubic);
   }
 
   @override
@@ -44,6 +76,30 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
 
   @override
   Widget build(BuildContext context) {
+    final allocAsync = ref.watch(portfolioAllocationProvider);
+    final ee = allocAsync.valueOrNull?.equityExposure;
+
+    if (ee == null) {
+      return allocAsync.isLoading
+          ? const _IndexFundExposureSkeleton()
+          : const SizedBox.shrink();
+    }
+
+    final youPct = ee.indexFundPct;
+    final peerPct = ee.peerIndexFundPct;
+    final diff = youPct - peerPct;
+    final String headline;
+    if (peerPct <= 0 && youPct <= 0) {
+      headline = 'No passive exposure';
+    } else if (diff.abs() < 1) {
+      headline = 'In line with';
+    } else if (diff < 0) {
+      headline = '${diff.abs().round()}% less';
+    } else {
+      headline = '${diff.round()}% more';
+    }
+    final maxPct = math.max(math.max(youPct, peerPct), 1.0);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -91,7 +147,8 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       },
                       child: const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
+                        child: Icon(Icons.info_outline,
+                            size: 14, color: Color(0xFF64748B)),
                       ),
                     ),
                   ],
@@ -100,18 +157,18 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
-                  children: const [
+                  children: [
                     Text(
-                      '25% less',
-                      style: TextStyle(
+                      headline,
+                      style: const TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Text(
+                    const SizedBox(width: 8),
+                    const Text(
                       'than your peers',
                       style: TextStyle(
                         fontFamily: 'DMSans',
@@ -122,32 +179,18 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                   ],
                 ),
                 const SizedBox(height: 32),
-                
+
                 // Peer Comparison
                 Row(
-                  children: [
-                    const Icon(Icons.person, size: 12, color: Color(0xFF64748B)),
-                    const SizedBox(width: 8),
-                    const Text('You', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: Color(0xFF64748B),fontWeight: FontWeight.w600)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const Text('0%', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
-                const SizedBox(height: 24),
-                
-                Row(
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF9AE6B4),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.people, size: 12, color: Color(0xFF22543D)),
-                    ),
-                    const SizedBox(width: 8),
-                    const Text('Investors like you', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: Color(0xFF64748B),fontWeight: FontWeight.w600)),
+                  children: const [
+                    Icon(Icons.person, size: 12, color: Color(0xFF64748B)),
+                    SizedBox(width: 8),
+                    Text('You',
+                        style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 12,
+                            color: Color(0xFF64748B),
+                            fontWeight: FontWeight.w600)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -158,144 +201,201 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
                       children: [
                         Container(
                           height: 8,
-                          width: 100 * _barAnimation.value,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE2E8F0),
+                          width: (youPct / maxPct) * 120 * _barAnimation.value,
+                          color: const Color(0xFF2563EB),
+                        ),
+                        const SizedBox(width: 8),
+                        Text('${youPct.toStringAsFixed(youPct % 1 == 0 ? 0 : 1)}%',
+                            style: const TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF0F172A))),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                Row(
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF9AE6B4),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.people,
+                          size: 12, color: Color(0xFF22543D)),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text('Investors like you',
+                        style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 12,
+                            color: Color(0xFF64748B),
+                            fontWeight: FontWeight.w600)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                AnimatedBuilder(
+                  animation: _barAnimation,
+                  builder: (context, child) {
+                    return Row(
+                      children: [
+                        Container(
+                          height: 8,
+                          width: (peerPct / maxPct) * 120 * _barAnimation.value,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE2E8F0),
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Text('25%', style: TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
+                        Text(
+                            '${peerPct.toStringAsFixed(peerPct % 1 == 0 ? 0 : 1)}%',
+                            style: const TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF0F172A))),
                       ],
                     );
-                  }
+                  },
                 ),
               ],
             ),
           ),
           const SizedBox(height: 48),
-          
+
           Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Market Cap Split
-                Row(
-                  children: [
-                    const Text(
-                      'Equity Market cap split',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A),
-                      ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Market Cap Split
+              Row(
+                children: [
+                  const Text(
+                    'Equity Market cap split',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
                     ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          builder: (context) => const GenericInfoSheet(
-                            title: 'What is Equity Market Cap & Sector Split?',
-                            paragraphs: [
-                              'This shows how your total equity portfolio is distributed across company sizes and sectors.',
-                              'Market cap refers to the size of a company, commonly grouped into large-cap, mid-cap, small-cap and micro-cap. Sector split reflects which industries your investments are exposed to, such as financials, technology or healthcare.',
-                              'We analyse both the stocks you hold directly and the underlying stocks inside your mutual funds, so this reflects your true overall equity exposure.',
-                            ],
-                          ),
-                        );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.info_outline, size: 14, color: Color(0xFF64748B)),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: const [
-                    Text(
-                      '₹2,30,102',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      'total equity exposure',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 10,
-                        color: Color(0xFF64748B),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Breakdown of your equity exposure by company size and sector - including\nunderlying stocks within your mutual funds.',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    height: 1.5,
-                    color: Color(0xFF94A3B8),
                   ),
-                ),
-                const SizedBox(height: 40),
-                
-                // Doughnut Chart and Legend
-                VisibilityDetector(
-                  key: const Key('IndexFundExposureSection_Doughnut'),
-                  onVisibilityChanged: (info) {
-                    if (!_hasDoughnutAnimated && info.visibleFraction >= 0.15) {
-                      _hasDoughnutAnimated = true;
-                      _doughnutController.forward();
-                    }
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Legend
-                      Expanded(
-                        child: Column(
-                          children: [
-                            _buildLegendItem(const Color(0xFF2563EB), 'Large Cap', '89.36%'),
-                            const SizedBox(height: 20),
-                            _buildLegendItem(const Color(0xFFF687B3), 'Mid Cap', '10.63%'),
-                            const SizedBox(height: 20),
-                            _buildLegendItem(const Color(0xFF059669), 'Small Cap', '0.01%'),
-                            const SizedBox(height: 20),
-                            _buildLegendItem(const Color(0xFFD97706), 'Micro Cap', '0.0%'),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        builder: (context) => const GenericInfoSheet(
+                          title: 'What is Equity Market Cap & Sector Split?',
+                          paragraphs: [
+                            'This shows how your total equity portfolio is distributed across company sizes and sectors.',
+                            'Market cap refers to the size of a company, commonly grouped into large-cap, mid-cap, small-cap and micro-cap. Sector split reflects which industries your investments are exposed to, such as financials, technology or healthcare.',
+                            'We analyse both the stocks you hold directly and the underlying stocks inside your mutual funds, so this reflects your true overall equity exposure.',
                           ],
                         ),
-                      ),
-                      // Doughnut Chart
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.22,
-                        height: MediaQuery.of(context).size.width * 0.22,
-                        child: AnimatedBuilder(
-                          animation: _doughnutAnimation,
-                          builder: (context, child) {
-                            return CustomPaint(
-                              painter: _MarketCapPiePainter(progress: _doughnutAnimation.value),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                    ],
+                      );
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.info_outline,
+                          size: 14, color: Color(0xFF64748B)),
+                    ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    _formatInr(ee.totalEquityValue),
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'total equity exposure',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 10,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Breakdown of your equity exposure by company size and sector - including\nunderlying stocks within your mutual funds.',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 10,
+                  height: 1.5,
+                  color: Color(0xFF94A3B8),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 40),
+
+              // Doughnut Chart and Legend
+              VisibilityDetector(
+                key: const Key('IndexFundExposureSection_Doughnut'),
+                onVisibilityChanged: (info) {
+                  if (!_hasDoughnutAnimated && info.visibleFraction >= 0.15) {
+                    _hasDoughnutAnimated = true;
+                    _doughnutController.forward();
+                  }
+                },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Legend
+                    Expanded(
+                      child: Column(
+                        children: [
+                          for (int i = 0; i < ee.marketCap.length; i++) ...[
+                            if (i > 0) const SizedBox(height: 20),
+                            _buildLegendItem(
+                              _capColors[ee.marketCap[i].label] ??
+                                  const Color(0xFF94A3B8),
+                              ee.marketCap[i].label,
+                              '${ee.marketCap[i].pct.toStringAsFixed(2)}%',
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    // Doughnut Chart
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.22,
+                      height: MediaQuery.of(context).size.width * 0.22,
+                      child: AnimatedBuilder(
+                        animation: _doughnutAnimation,
+                        builder: (context, child) {
+                          return CustomPaint(
+                            painter: _MarketCapPiePainter(
+                              progress: _doughnutAnimation.value,
+                              slices: ee.marketCap,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                  ],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 48),
         ],
       ),
@@ -338,36 +438,92 @@ class _IndexFundExposureSectionState extends State<IndexFundExposureSection> wit
 
 class _MarketCapPiePainter extends CustomPainter {
   final double progress;
+  final List<MarketCapSliceData> slices;
 
-  _MarketCapPiePainter({required this.progress});
+  _MarketCapPiePainter({required this.progress, required this.slices});
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-    
+
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14
       ..strokeCap = StrokeCap.butt;
-    
+
     final rect = Rect.fromCircle(center: center, radius: radius - 12);
-    
-    // Large Cap (89.36%) - Blue
-    final largeCapSweep = (89.36 / 100) * math.pi * 2 * progress;
-    paint.color = const Color(0xFF2563EB);
-    canvas.drawArc(rect, -math.pi / 2, largeCapSweep, false, paint);
-    
-    // Mid Cap (10.63%) - Pink
-    final midCapSweep = (10.63 / 100) * math.pi * 2 * progress;
-    paint.color = const Color(0xFFF687B3);
-    canvas.drawArc(rect, -math.pi / 2 + largeCapSweep, midCapSweep, false, paint);
-    
-    // Small Cap and Micro Cap are practically 0, so skipping them on the chart
+
+    double startAngle = -math.pi / 2;
+    for (final s in slices) {
+      if (s.pct <= 0) continue;
+      final sweep = (s.pct / 100) * math.pi * 2 * progress;
+      paint.color = _capColors[s.label] ?? const Color(0xFF94A3B8);
+      canvas.drawArc(rect, startAngle, sweep, false, paint);
+      startAngle += sweep;
+    }
   }
 
   @override
   bool shouldRepaint(covariant _MarketCapPiePainter oldDelegate) {
-    return oldDelegate.progress != progress;
+    return oldDelegate.progress != progress ||
+        !identical(oldDelegate.slices, slices);
+  }
+}
+
+class _IndexFundExposureSkeleton extends StatelessWidget {
+  const _IndexFundExposureSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerBar(width: 190, height: 20),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 160, height: 22),
+          const SizedBox(height: 32),
+          const ShimmerBar(width: 90, height: 12),
+          const SizedBox(height: 12),
+          const ShimmerBar(width: 120, height: 8),
+          const SizedBox(height: 24),
+          const ShimmerBar(width: 140, height: 12),
+          const SizedBox(height: 12),
+          const ShimmerBar(width: 90, height: 8),
+          const SizedBox(height: 48),
+          const ShimmerBar(width: 200, height: 20),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 150, height: 22),
+          const SizedBox(height: 40),
+          Row(
+            children: [
+              const Expanded(
+                child: Column(
+                  children: [
+                    ShimmerBar(width: double.infinity, height: 12),
+                    SizedBox(height: 20),
+                    ShimmerBar(width: double.infinity, height: 12),
+                    SizedBox(height: 20),
+                    ShimmerBar(width: double.infinity, height: 12),
+                    SizedBox(height: 20),
+                    ShimmerBar(width: double.infinity, height: 12),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.22,
+                height: MediaQuery.of(context).size.width * 0.22,
+                child: const ShimmerBar(
+                    width: double.infinity, height: double.infinity, borderRadius: 999),
+              ),
+              const SizedBox(width: 16),
+            ],
+          ),
+          const SizedBox(height: 48),
+        ],
+      ),
+    );
   }
 }
