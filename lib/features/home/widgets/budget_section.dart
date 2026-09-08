@@ -14,6 +14,16 @@ class BudgetSection extends ConsumerStatefulWidget {
 }
 
 class _BudgetSectionState extends ConsumerState<BudgetSection> {
+  @override
+  void initState() {
+    super.initState();
+    // App-start restore: pull budget status + latest dashboard so the home
+    // card reflects an existing budget without re-running the wizard.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(budgetStateProvider).checkBudgetStatus();
+    });
+  }
+
   IconData _getIconForName(String name) {
     final n = name.toLowerCase();
     if (n.contains('grocer') || n.contains('food')) return Icons.shopping_basket_rounded;
@@ -85,7 +95,7 @@ class _BudgetSectionState extends ConsumerState<BudgetSection> {
 }
 
 // ---------------------------------------------------------------------------
-// Empty-state card – matches Zeyro's _BudgetCard design (cream/yellow bg)
+// Empty-state card (cream/yellow bg)
 // ---------------------------------------------------------------------------
 class _BudgetCard extends StatelessWidget {
   final VoidCallback onTap;

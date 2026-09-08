@@ -14,6 +14,7 @@ class BudgetStatusResponse {
   final int budgetCount;
   final int latestYear;
   final int latestMonth;
+  final String? pendingRolloverDraftId; // next month's draft, if the worker made one
 
   const BudgetStatusResponse({
     required this.hasActiveBudget,
@@ -22,6 +23,7 @@ class BudgetStatusResponse {
     this.budgetCount = 0,
     this.latestYear = 0,
     this.latestMonth = 0,
+    this.pendingRolloverDraftId,
   });
 
   factory BudgetStatusResponse.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class BudgetStatusResponse {
       budgetCount: json['budget_count'] as int? ?? 0,
       latestYear: json['latest_year'] as int? ?? 0,
       latestMonth: json['latest_month'] as int? ?? 0,
+      pendingRolloverDraftId: json['pending_rollover_draft_id'] as String?,
     );
   }
 }
