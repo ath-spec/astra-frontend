@@ -664,8 +664,12 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
   // accounts at most) and doing them one at a time means a single
   // fetchLiveBankAccounts() refresh at the end is trivially correct, with
   // no risk of the same overwrite race multiple concurrent refreshes had.
-  Future<void> approveAndConnectAll({required String accountType}) async {
+  Future<bool> approveAndConnectAll({required String accountType}) async {
     _timer?.cancel();
+    state = state.copyWith(
+      step: AssetConnectionStep.banksLinkingProgress,
+      banksStatusMessage: 'Linking accounts...',
+    );
     final discovered = state.bankAccounts.where((b) => b.isSelected && !b.isLinked).toList();
     final staged = List<String>.from(state.pendingBankNames);
     bool anyFailed = false;
@@ -699,6 +703,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     if (anyFailed) {
       state = state.copyWith(banksStatusMessage: 'Some accounts could not be linked — please retry.');
     }
+    return !anyFailed;
   }
 
   void resetSelectionForUnlinked() {

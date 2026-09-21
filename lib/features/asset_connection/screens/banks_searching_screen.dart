@@ -53,30 +53,32 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
     _waitAndNavigate(pending);
   }
 
-  Future<void> _waitAndNavigate(Future<void>? pending) async {
+  Future<void> _waitAndNavigate(Future<dynamic>? pending) async {
     final minDelay = Future<void>.delayed(const Duration(milliseconds: 2600));
+    bool success = false;
+    
     if (pending != null) {
-      // Swallow errors from the pending work itself here — searchAndAddBank
-      // already handles its own failures internally (offline fallback);
-      // this wait only needs to know when it's done, not whether it threw.
-      await Future.wait([minDelay, pending.catchError((_) {})]);
+      // Catch errors and default to false
+      final results = await Future.wait([minDelay, pending.catchError((_) => false)]);
+      success = results[1] == true;
     } else {
       await minDelay;
     }
+    
     if (!mounted) return;
-    final state = ref.read(assetConnectionProvider);
-    if (state.step == AssetConnectionStep.banksLinkingProgress) {
-      await ref.read(assetConnectionProvider.notifier).completeBankLinking();
+    
+    if (success) {
+      // Actually linked! Go to home screen as the user expects.
+      ref.read(assetConnectionProvider.notifier).finishAssetConnection();
+      context.go('/');
+    } else {
+      // Either we just staged (pending == null) or it failed (success == false).
+      // Return to linking screen so user can review or retry.
+      context.pushReplacement(
+        '/banks-linking',
+        extra: pending != null ? kSkipBankDiscoveryExtra : null,
+      );
     }
-    if (!mounted) return;
-    // Only an APPROVE AND CONNECT round trip (the real Future) should skip
-    // re-discovery on the way back — PROCEED's cosmetic wait (pending ==
-    // null, nothing touched the backend yet) still needs a genuine first
-    // discovery run.
-    context.pushReplacement(
-      '/banks-linking',
-      extra: pending != null ? kSkipBankDiscoveryExtra : null,
-    );
   }
 
   @override

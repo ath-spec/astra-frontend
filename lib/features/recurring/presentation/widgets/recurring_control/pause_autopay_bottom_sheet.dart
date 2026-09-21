@@ -1,9 +1,11 @@
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:astra_frontend/core/extensions/string_extensions.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
-import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/pause_date_selection_bottom_sheet.dart';
+
+enum PauseStep { warning, dateSelection, success }
 
 class PauseAutoPayBottomSheet extends StatefulWidget {
   final Map<String, dynamic> payment;
@@ -14,7 +16,38 @@ class PauseAutoPayBottomSheet extends StatefulWidget {
   State<PauseAutoPayBottomSheet> createState() => _PauseAutoPayBottomSheetState();
 }
 
-class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> {
+class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> with SingleTickerProviderStateMixin {
+  PauseStep _step = PauseStep.warning;
+  late AnimationController _checkController;
+  late Animation<double> _checkAnimation;
+  DateTime _selectedDate = DateTime.now();
+  late DateTime _initialNow;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _initialNow = DateTime(now.year, now.month, now.day);
+    _selectedDate = _initialNow.add(const Duration(days: 1));
+    _checkController = AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
+    _checkAnimation = CurvedAnimation(parent: _checkController, curve: Curves.elasticOut);
+  }
+
+  @override
+  void dispose() {
+    _checkController.dispose();
+    super.dispose();
+  }
+
+  void _onConfirmPause() async {
+    setState(() {
+      _step = PauseStep.success;
+    });
+    _checkController.forward();
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) Navigator.of(context).pop(_selectedDate);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -35,39 +68,110 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> {
           children: [
             _buildHeader(context),
             Flexible(
-              child: ListView(
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-                children: [
-                  SizedBox(height: getProportionateScreenHeight(8)),
-                  _buildServiceHero(),
-                  SizedBox(height: getProportionateScreenHeight(32)),
-                  Text(
-                    "Are you sure about pausing\nyour auto-pay",
-                    style: TextStyle(fontFamily: 'DMSans', 
-                      fontSize: getProportionateScreenWidth(20),
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                      height: 1.2,
-                      decoration: TextDecoration.none,
-                    ),
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 400),
+                curve: const Cubic(0.23, 1, 0.32, 1),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  switchInCurve: const Cubic(0.23, 1, 0.32, 1),
+                  switchOutCurve: const Cubic(0.23, 1, 0.32, 1),
+                  layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+                    return Stack(
+                      alignment: Alignment.topCenter,
+                      children: <Widget>[
+                        ...previousChildren,
+                        if (currentChild != null) currentChild,
+                      ],
+                    );
+                  },
+                  transitionBuilder: (Widget child, Animation<double> animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: ScaleTransition(
+                        scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
+                        child: AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, child) {
+                            final blurValue = (1.0 - animation.value) * 2.0;
+                            if (blurValue <= 0) return child!;
+                            return ImageFiltered(
+                              imageFilter: ImageFilter.blur(sigmaX: blurValue, sigmaY: blurValue),
+                              child: child,
+                            );
+                          },
+                          child: child,
+                        ),
+                      ),
+                    );
+                  },
+                  child: ListView(
+                    key: ValueKey<PauseStep>(_step),
+                    shrinkWrap: true,
+                    padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+                    children: [
+                      if (_step == PauseStep.warning) ...[
+                        SizedBox(height: getProportionateScreenHeight(8)),
+                        _buildServiceHero(),
+                        SizedBox(height: getProportionateScreenHeight(32)),
+                        Text(
+                          "Are you sure about pausing\nyour auto-pay",
+                          style: TextStyle(fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(20),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            height: 1.2,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        SizedBox(height: getProportionateScreenHeight(24)),
+                        _buildWarningItem(
+                          Icons.block_flipped,
+                          "Service will be discontinued",
+                          "You'll no longer have access to the service",
+                        ),
+                        SizedBox(height: getProportionateScreenHeight(20)),
+                        _buildWarningItem(
+                          Icons.currency_rupee_rounded,
+                          "Manual payments might be needed",
+                          "To access the services you enjoy",
+                        ),
+                        SizedBox(height: getProportionateScreenHeight(40)),
+                        _buildWarningActionButtons(context),
+                      ] else if (_step == PauseStep.dateSelection) ...[
+                        SizedBox(height: getProportionateScreenHeight(8)),
+                        _buildServiceHero(),
+                        SizedBox(height: getProportionateScreenHeight(32)),
+                        Text(
+                          "Select the date to pause payments until",
+                          style: TextStyle(fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(20),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            height: 1.2,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        SizedBox(height: getProportionateScreenHeight(8)),
+                        Text(
+                          "You'll be able to resume your payments anytime",
+                          style: TextStyle(fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(13),
+                            color: Colors.black.withValues(alpha: 0.4),
+                            decoration: TextDecoration.none,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        SizedBox(height: getProportionateScreenHeight(32)),
+                        _buildDatePicker(),
+                        SizedBox(height: getProportionateScreenHeight(40)),
+                        _buildDateSelectionActionButtons(context),
+                      ] else ...[
+                        _buildSuccessContent(),
+                      ],
+                      SizedBox(height: MediaQuery.paddingOf(context).bottom + 32),
+                    ],
                   ),
-                  SizedBox(height: getProportionateScreenHeight(24)),
-                  _buildWarningItem(
-                    Icons.block_flipped,
-                    "Service will be discontinued",
-                    "You'll no longer have access to the service",
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(20)),
-                  _buildWarningItem(
-                    Icons.currency_rupee_rounded,
-                    "Manual payments might be needed",
-                    "To access the services you enjoy",
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(40)),
-                  _buildActionButtons(context),
-                  SizedBox(height: MediaQuery.paddingOf(context).bottom + 32),
-                ],
+                ),
               ),
             ),
           ],
@@ -85,9 +189,8 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> {
         getProportionateScreenHeight(8),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center, // Center the title
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Drag Handle / Indicator instead of back button
           Container(
             width: getProportionateScreenWidth(40),
             height: getProportionateScreenHeight(4),
@@ -173,11 +276,44 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildDatePicker() {
+    return Container(
+      height: getProportionateScreenHeight(180),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFDF1),
+        borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
+        border: Border.all(color: const Color(0xFFECEBDB)),
+      ),
+      child: CupertinoTheme(
+        data: CupertinoThemeData(
+          textTheme: CupertinoTextThemeData(
+            dateTimePickerTextStyle: TextStyle(fontFamily: 'DMSans', 
+              fontSize: getProportionateScreenWidth(16),
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+              decoration: TextDecoration.none,
+            ),
+          ),
+        ),
+        child: CupertinoDatePicker(
+          mode: CupertinoDatePickerMode.date,
+          initialDateTime: _selectedDate,
+          minimumDate: _initialNow,
+          onDateTimeChanged: (date) => setState(() => _selectedDate = date),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWarningActionButtons(BuildContext context) {
     return Column(
       children: [
         ZeyroTapDetector(eventName: 'pause_autopay_bottom_sheet_select_date_tapped', 
-          onTap: () => _showDateSelection(context),
+          onTap: () {
+            setState(() {
+              _step = PauseStep.dateSelection;
+            });
+          },
           child: Container(
             width: double.infinity,
             height: getProportionateScreenHeight(48),
@@ -188,7 +324,7 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> {
         ),
         SizedBox(height: getProportionateScreenHeight(12)),
         GestureDetector(
-onTap: () => Navigator.pop(context),
+          onTap: () => Navigator.pop(context),
           child: Container(
             width: double.infinity,
             height: getProportionateScreenHeight(48),
@@ -201,27 +337,92 @@ onTap: () => Navigator.pop(context),
     );
   }
 
-  void _showDateSelection(BuildContext context) async {
-    final result = await showGeneralDialog<DateTime>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: "date",
-      barrierColor: Colors.black.withValues(alpha: 0.05),
-      pageBuilder: (context, anim1, anim2) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: PauseDateSelectionBottomSheet(payment: widget.payment),
+  Widget _buildDateSelectionActionButtons(BuildContext context) {
+    return Column(
+      children: [
+        ZeyroTapDetector(eventName: 'pause_date_selection_bottom_sheet_confirm_tapped', 
+          onTap: _onConfirmPause,
+          child: Container(
+            width: double.infinity,
+            height: getProportionateScreenHeight(48),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)),
+            ),
+            child: Text(
+              "Confirm pause",
+              style: TextStyle(fontFamily: 'DMSans', 
+                fontSize: getProportionateScreenWidth(14),
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                decoration: TextDecoration.none,
+              ),
+            ),
           ),
-        );
-      },
-      transitionBuilder: (context, anim1, anim2, child) => SlideTransition(position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(anim1), child: child),
-      transitionDuration: const Duration(milliseconds: 300),
+        ),
+        SizedBox(height: getProportionateScreenHeight(12)),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _step = PauseStep.warning;
+            });
+          },
+          child: Container(
+            width: double.infinity,
+            height: getProportionateScreenHeight(48),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: const Color(0xFFFFFDF1), borderRadius: BorderRadius.circular(getProportionateScreenWidth(4)), border: Border.all(color: const Color(0xFFECEBDB))),
+            child: Text("Go back", style: TextStyle(fontFamily: 'DMSans', fontSize: getProportionateScreenWidth(14), fontWeight: FontWeight.w600, color: Colors.black, decoration: TextDecoration.none)),
+          ),
+        ),
+      ],
     );
+  }
 
-    if (result != null && context.mounted) {
-      Navigator.pop(context, result);
-    }
+  Widget _buildSuccessContent() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(height: getProportionateScreenHeight(100)),
+        ScaleTransition(
+          scale: _checkAnimation,
+          child: Container(
+            width: getProportionateScreenWidth(72),
+            height: getProportionateScreenWidth(72),
+            decoration: const BoxDecoration(
+              color: Color(0xFFDFF0D8),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.check,
+              color: const Color(0xFF3C763D),
+              size: getProportionateScreenWidth(40),
+            ),
+          ),
+        ),
+        SizedBox(height: getProportionateScreenHeight(24)),
+        Text(
+          "Auto-pay paused",
+          style: TextStyle(fontFamily: 'DMSans', 
+            fontSize: getProportionateScreenWidth(20),
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+            decoration: TextDecoration.none,
+          ),
+        ),
+        SizedBox(height: getProportionateScreenHeight(12)),
+        Text(
+          "We've disabled autopay for ${(widget.payment['name'] as String).toCapitalized()}",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontFamily: 'DMSans', 
+            fontSize: getProportionateScreenWidth(13),
+            color: Colors.black54,
+            decoration: TextDecoration.none,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      ],
+    );
   }
 }
