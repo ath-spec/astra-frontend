@@ -168,6 +168,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = const AuthInitial();
   }
 
+  /// Reacts to the refresh token genuinely failing (expired past its 30-day
+  /// TTL, or revoked) mid-session — see [DioClient.onSessionExpired]. Unlike
+  /// [logout], the tokens are already gone by the time this fires (DioClient
+  /// cleared them before calling this), so there's nothing left to revoke
+  /// server-side; this just makes the app's own state catch up so the
+  /// router's auth redirect sends the user to login immediately instead of
+  /// leaving them on a screen whose API calls now silently keep failing.
+  void forceSignOut() {
+    if (state is AuthAuthenticated) {
+      state = const AuthInitial();
+    }
+  }
+
   static const _secureStorage = FlutterSecureStorage();
 
   /// Sends a (mock) OTP to [phone] via the backend. Does not authenticate —

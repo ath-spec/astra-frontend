@@ -36,6 +36,11 @@ class DioApiClient {
 
   Dio get dio => _effectiveClient.dio;
 
+  /// See [DioClient.onSessionExpired].
+  set onSessionExpired(void Function()? callback) {
+    _effectiveClient.onSessionExpired = callback;
+  }
+
   /// Unwraps a single-object `/api/v1` envelope response, returning the
   /// decoded `data` payload via [fromJson]. Throws [ApiException] if the
   /// envelope reports an error, if `data` is missing, or if the request

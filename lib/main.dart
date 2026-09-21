@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/error/global_error_handler.dart';
 import 'core/navigation/app_router.dart';
+import 'core/network/api.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/responsive_app_wrapper.dart';
+import 'features/auth/providers/auth_provider.dart';
 import 'features/recurring/data/recurring_providers.dart';
 
 void main() async {
@@ -53,11 +55,32 @@ void main() async {
   );
 }
 
-class AstraApp extends ConsumerWidget {
+class AstraApp extends ConsumerStatefulWidget {
   const AstraApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AstraApp> createState() => _AstraAppState();
+}
+
+class _AstraAppState extends ConsumerState<AstraApp> {
+  @override
+  void initState() {
+    super.initState();
+    // A refresh token that genuinely fails (expired past its 30-day TTL, or
+    // revoked) previously just cleared local tokens with nothing telling the
+    // app about it — the router has no refreshListenable wired to
+    // authProvider (same as the existing logout button, which explicitly
+    // calls context.go('/intro') itself rather than relying on the state
+    // change alone), so just flipping the auth state here would silently do
+    // nothing. Navigate explicitly, the same way logout does.
+    dioApiClient.onSessionExpired = () {
+      ref.read(authProvider.notifier).forceSignOut();
+      ref.read(appRouterProvider).go('/intro');
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(appRouterProvider);
 
     return LayoutBuilder(

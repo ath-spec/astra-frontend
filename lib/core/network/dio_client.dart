@@ -26,6 +26,14 @@ class DioClient {
 
   Dio get dio => _dio;
 
+  /// Fired when a refresh token genuinely fails (expired past its 30-day
+  /// TTL, or revoked) — as opposed to a transient network error. The app
+  /// wires this at startup to force the auth state to logged-out, so a
+  /// session that's actually over shows the login screen immediately
+  /// instead of leaving the user stranded on screens whose API calls now
+  /// silently 401 until they happen to restart the app.
+  void Function()? onSessionExpired;
+
   void _setupInterceptors() {
     _dio.interceptors.add(
       InterceptorsWrapper(
@@ -116,6 +124,7 @@ class DioClient {
       // On refresh failure, clear tokens so user is forced to re-login
       await _secureStorage.delete(key: 'auth_token');
       await _secureStorage.delete(key: 'refresh_token');
+      onSessionExpired?.call();
     }
     return false;
   }
