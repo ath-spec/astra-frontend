@@ -71,22 +71,29 @@ lib/
     ```
 
 4.  **Environment Variables:**
-    Create a `.env` file in the root directory and add your API endpoints:
-    ```env
-    API_BASE_URL=http://localhost:8080 # Or your production Railway URL
-    ```
+    Config like `API_BASE_URL` is **not** read from a `.env` file — a `.env` bundled as a Flutter asset ships as a plain, publicly-fetchable file inside the web/mobile build, which is a real leak vector once anything sensitive lands in it. Instead it's passed in at build/run time via `--dart-define`, so it's compiled directly into the binary.
 
-4.  **Run the App:**
+    Copy the example and fill in real values:
+    ```bash
+    cp dart_defines.example.json dart_defines.json
+    ```
+    `dart_defines.json` is gitignored — never commit it. If it's missing or `API_BASE_URL` isn't set, the app throws a clear `StateError` on first network call instead of silently using a wrong/hardcoded URL.
+
+5.  **Run the App:**
+    ⚠️ **Every `flutter run` / `flutter build` command needs `--dart-define-from-file=dart_defines.json`, or the app will build/run but crash with `Bad state: API_BASE_URL is not set` on first use.**
     ```bash
     # For Web
-    fvm flutter run -d chrome
-    
+    fvm flutter run -d chrome --dart-define-from-file=dart_defines.json
+
     # For Mobile dev mode
-    fvm flutter run
+    fvm flutter run --dart-define-from-file=dart_defines.json
 
     # For Mobile release
-    fvm flutter run --release
+    fvm flutter run --release --dart-define-from-file=dart_defines.json
     ```
+    Prefer VS Code's Run/Debug panel instead of the terminal — `.vscode/launch.json` already has this flag wired into every configuration, so you don't have to remember it there.
+
+    Building an Android release App Bundle for Play Store? Use `./build_android_release.sh` instead of a bare `flutter build appbundle --release` — it refuses to build if `dart_defines.json` is missing, so the flag can't be silently forgotten on a real release.
 
 ---
 
