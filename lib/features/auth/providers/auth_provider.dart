@@ -235,10 +235,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
       final isNewUser = data is Map<String, dynamic> ? data['is_new_user'] as bool? ?? true : true;
       final refreshToken = data is Map<String, dynamic> ? data['refresh_token'] as String? : null;
-      await _secureStorage.write(key: 'auth_token', value: token);
-      if (refreshToken != null && refreshToken.isNotEmpty) {
-        await _secureStorage.write(key: 'refresh_token', value: refreshToken);
+      final returnedName = data is Map<String, dynamic> ? data['name'] as String? : null;
+      if (returnedName != null && returnedName.isNotEmpty) {
+        pendingName = returnedName;
       }
+      
+      final List<Future<void>> storageTasks = [
+        _secureStorage.write(key: 'auth_token', value: token),
+      ];
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        storageTasks.add(_secureStorage.write(key: 'refresh_token', value: refreshToken));
+      }
+      if (returnedName != null && returnedName.isNotEmpty) {
+        storageTasks.add(_secureStorage.write(key: 'cached_display_name', value: returnedName).catchError((_) {}));
+      }
+      await Future.wait(storageTasks);
 
       state = AuthAuthenticated(
         User(

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/api.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../dashboard/data/dashboard_providers.dart';
 
 class BankAccountItem {
   const BankAccountItem({
@@ -204,7 +205,8 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
   // authenticated state, this refetches for real — not just once, hopefully
   // at the right time.
   AssetConnectionNotifier(Ref ref)
-      : super(
+      : _ref = ref,
+        super(
           const AssetConnectionState(
             step: AssetConnectionStep.linkingMutualFunds,
             mfConnected: false,
@@ -258,6 +260,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     );
   }
 
+  final Ref _ref;
   Timer? _timer;
   final _api = DioApiClient();
 
@@ -722,24 +725,32 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     state = state.copyWith(bankAccounts: updated);
   }
 
-  Future<void> revokeBankConnection(String id) async {
+  /// Returns true on success. A revoke of an IDBI-synced account ends the
+  /// whole IDBI sync for this user server-side (there's no per-account
+  /// revoke there — see AAHandler.UnlinkAccount), so this always refetches
+  /// the authoritative account list from the backend afterward rather than
+  /// just patching out the one `id` the user tapped: other IDBI accounts in
+  /// `state.bankAccounts` need to disappear too, not just this one. It also
+  /// invalidates the Home screen's net worth/dashboard summary so the bank
+  /// balance total and net worth reflect the removed account immediately,
+  /// instead of only updating on the next unrelated dashboard refetch.
+  Future<bool> revokeBankConnection(String id) async {
     _timer?.cancel();
     try {
       await _api.dio.delete('/api/v1/aa/accounts/$id');
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('revokeBankConnection failed: $e');
+      return false;
+    }
 
-    final updated = state.bankAccounts.map((b) {
-      if (b.id == id) {
-        return b.copyWith(isLinked: false, isSelected: false);
-      }
-      return b;
-    }).toList();
-    final hasAnyLinked = updated.any((b) => b.isLinked);
+    await fetchLiveBankAccounts();
+    final hasAnyLinked = state.bankAccounts.any((b) => b.isLinked);
     state = state.copyWith(
-      bankAccounts: updated,
       banksConnected: hasAnyLinked,
       banksStatusMessage: hasAnyLinked ? 'Successfully Linked' : 'Accounts found',
     );
+    invalidateDashboardProviders(_ref);
+    return true;
   }
 
   void skipBanks() {

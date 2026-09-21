@@ -24,8 +24,11 @@ final dashboardGrowthProvider =
 });
 
 /// Invalidates the dashboard providers so widgets refetch (e.g. after
-/// linking a new account or pulling to refresh).
-void invalidateDashboardProviders(WidgetRef ref) {
+/// linking, unlinking, or revoking an account, or pulling to refresh).
+/// Takes a plain [Ref] (not [WidgetRef]) so it can be called from inside a
+/// notifier — e.g. right after a bank account unlink/revoke commits — and
+/// not only from widget build methods.
+void invalidateDashboardProviders(Ref ref) {
   ref.invalidate(dashboardSummaryProvider);
   ref.invalidate(dashboardGrowthProvider);
 }

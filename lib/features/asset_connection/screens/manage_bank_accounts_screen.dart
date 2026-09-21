@@ -381,9 +381,14 @@ class ManageBankAccountsScreen extends ConsumerWidget {
             ),
           ),
           TextButton(
-            onPressed: () {
-              ref.read(assetConnectionProvider.notifier).revokeBankConnection(accountId);
+            onPressed: () async {
               Navigator.pop(ctx); // Close dialog only, stay on screen
+              final ok = await ref.read(assetConnectionProvider.notifier).revokeBankConnection(accountId);
+              if (!ok && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Could not revoke this account. Please try again.')),
+                );
+              }
             },
             child: const Text(
               'Revoke',

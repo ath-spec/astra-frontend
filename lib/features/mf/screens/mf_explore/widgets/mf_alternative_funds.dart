@@ -146,7 +146,7 @@ class MfAlternativeFunds extends ConsumerWidget {
                       name: fund.schemeName,
                       category: fund.category,
                       expense: '${fund.expenseRatio.toStringAsFixed(2)}%',
-                      aum: '₹${fund.aum.toStringAsFixed(0)} Crs',
+                      aum: _formatAum(fund.aum),
                       returns: '${(fund.returns3y ?? 7.8).toStringAsFixed(1)}%',
                       logoIcon: style.$1,
                       logoColor: style.$2,
@@ -158,6 +158,18 @@ class MfAlternativeFunds extends ConsumerWidget {
           ),
       ],
     );
+  }
+
+  // `fund.aum` comes straight from the catalog in raw rupees (e.g.
+  // 18450000000), not crores — labeling that number "Cr" as-is produced the
+  // "crazy amount of 0's" (₹18450000000 Crs). Standardize on Cr, folding
+  // over to "K Cr" once it crosses 1,000 Cr so the value stays short.
+  String _formatAum(double rupees) {
+    final crores = rupees / 10000000;
+    if (crores >= 1000) {
+      return '₹${(crores / 1000).toStringAsFixed(1)}K Cr';
+    }
+    return '₹${crores.toStringAsFixed(0)} Cr';
   }
 
   (IconData, Color) _iconForIndex(int index) {
@@ -249,11 +261,13 @@ class MfAlternativeFunds extends ConsumerWidget {
               margin: const EdgeInsets.only(bottom: 12),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildStat('Expense ratio', expense),
-                _buildStat('AUM', aum),
-                _buildStat('3Y Returns', returns, isGreen: true),
+                Expanded(child: _buildStat('Expense ratio', expense)),
+                const SizedBox(width: 8),
+                Expanded(child: _buildStat('AUM', aum)),
+                const SizedBox(width: 8),
+                Expanded(child: _buildStat('3Y Returns', returns, isGreen: true)),
               ],
             ),
           ],
@@ -278,6 +292,8 @@ class MfAlternativeFunds extends ConsumerWidget {
         const SizedBox(height: 4),
         Text(
           value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontFamily: 'DMSans',
             fontSize: 12,
