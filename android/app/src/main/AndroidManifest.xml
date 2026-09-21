@@ -49,6 +49,14 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2"/>
+
+        <!-- Explicitly enable Impeller (Flutter's modern rendering engine).
+             This overrides the deprecated opt-out flag that Flutter 3.x Gradle
+             plugin injects for backward compatibility. Impeller will become the
+             only renderer in a future Flutter release. -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="true"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
