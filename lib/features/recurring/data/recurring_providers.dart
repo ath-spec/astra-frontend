@@ -34,12 +34,25 @@ final mandateHistoryProvider =
 });
 
 class BillsTrackingUnlockedNotifier extends StateNotifier<bool> {
-  BillsTrackingUnlockedNotifier() : super(false) {
+  // [initialValue] lets main.dart seed the already-persisted value
+  // synchronously at startup, so there's no window where a widget reads
+  // `false` (locked) before the async secure-storage read below resolves —
+  // that race is what made "Track your bills" look reset on every launch
+  // even after the user had already unlocked it.
+  BillsTrackingUnlockedNotifier({bool initialValue = false}) : super(initialValue) {
     _loadState();
   }
 
   static const _storageKey = 'bills_tracking_unlocked';
   static const _storage = FlutterSecureStorage();
+
+  static Future<bool> readPersisted() async {
+    try {
+      return await _storage.read(key: _storageKey) == 'true';
+    } catch (_) {
+      return false;
+    }
+  }
 
   Future<void> _loadState() async {
     try {

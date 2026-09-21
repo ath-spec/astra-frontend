@@ -6,9 +6,16 @@ import 'core/error/global_error_handler.dart';
 import 'core/navigation/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/responsive_app_wrapper.dart';
+import 'features/recurring/data/recurring_providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Read this before runApp so the very first frame already knows whether
+  // "Track your bills" was previously unlocked — otherwise the provider's
+  // async secure-storage read can resolve after a widget already read the
+  // default `false`, making the feature look reset on every app launch.
+  final billsTrackingUnlocked = await BillsTrackingUnlockedNotifier.readPersisted();
 
   // Lock app to portrait mode only (disables landscape)
   await SystemChrome.setPreferredOrientations([
@@ -35,8 +42,13 @@ void main() async {
   }
 
   runApp(
-    const ProviderScope(
-      child: AstraApp(),
+    ProviderScope(
+      overrides: [
+        billsTrackingUnlockedProvider.overrideWith(
+          (ref) => BillsTrackingUnlockedNotifier(initialValue: billsTrackingUnlocked),
+        ),
+      ],
+      child: const AstraApp(),
     ),
   );
 }

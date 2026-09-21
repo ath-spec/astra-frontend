@@ -77,13 +77,13 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
                   if (showActive)
                     const Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: Colors.black54,
+                      color: Color(0xFF64748B),
                       size: 16,
                     ),
                 ],
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 12),
             // ── Content ─────────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -117,8 +117,8 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
                 GestureDetector(
                   onTap: () => context.push('/recurring-control'),
                   child: Container(
-                    width: 140,
-                    height: 165,
+                    width: 152,
+                    height: 172,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF8FAFC),
@@ -175,27 +175,27 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  DateFormat('MMM').format(DateTime.now()).toLowerCase(),
+                  DateFormat('MMM').format(DateTime.now()).toUpperCase(),
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black54,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0F172A),
                   ),
                 ),
                 Text(
                   DateFormat('yyyy').format(DateTime.now()),
                   style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black54,
+                    fontFamily: 'DMMono',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF64748B),
                   ),
                 ),
               ],
             ),
             const SizedBox(width: 16),
-            Container(height: 30, width: 1, color: Colors.grey[300]),
+            Container(height: 28, width: 1, color: const Color(0xFFE2E8F0)),
             const SizedBox(width: 16),
             Expanded(
               child: Row(
@@ -224,13 +224,13 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
             label,
             style: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: FontWeight.w500,
-              color: Colors.black54,
+              color: Color(0xFF64748B),
             ),
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 3),
         FittedBox(
           fit: BoxFit.scaleDown,
           alignment: Alignment.centerLeft,
@@ -239,8 +239,8 @@ class _RecurringSectionState extends ConsumerState<RecurringSection> {
             style: const TextStyle(
               fontFamily: 'DMSans',
               fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF0F172A),
             ),
           ),
         ),
@@ -277,12 +277,15 @@ class DuePaymentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 135,
-      height: 165,
+      width: 152,
+      height: 172,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: backgroundColor ?? (isDark ? const Color(0xFF2C2C2C) : Colors.white),
+        color: backgroundColor ?? (isDark ? const Color(0xFF0F172A) : Colors.white),
         borderRadius: BorderRadius.circular(4),
+        border: Border.all(
+          color: isDark ? Colors.transparent : const Color(0xFFE2E8F0),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,40 +301,45 @@ class DuePaymentCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      payeeName.toLowerCase(),
+                      payeeName,
                       style: TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : Colors.black87,
+                        height: 1.2,
+                        color: isDark ? Colors.white : const Color(0xFF0F172A),
                       ),
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      payeedeet.toLowerCase(),
+                      payeedeet,
                       style: TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 11,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: 6),
               // Logo bubble — SVG if available, fallback to icon
               Container(
-                width: 32,
-                height: 32,
+                width: 28,
+                height: 28,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white : const Color(0xFFF3F4F6),
+                  color: isDark ? Colors.white : const Color(0xFFF1F5F9),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
                   child: logoAsset != null
                       ? Padding(
-                          padding: const EdgeInsets.all(5.0),
+                          padding: const EdgeInsets.all(4.5),
                           child: SvgPicture.asset(
                             logoAsset!,
                             fit: BoxFit.contain,
@@ -339,8 +347,8 @@ class DuePaymentCard extends StatelessWidget {
                         )
                       : Icon(
                           icon ?? Icons.account_balance,
-                          size: 16,
-                          color: isDark ? Colors.black : Colors.black87,
+                          size: 14,
+                          color: const Color(0xFF0F172A),
                         ),
                 ),
               ),
@@ -348,7 +356,7 @@ class DuePaymentCard extends StatelessWidget {
           ),
           // Due badge
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             decoration: BoxDecoration(
               color: const Color(0xFFE5803E),
               borderRadius: BorderRadius.circular(4),
@@ -357,10 +365,10 @@ class DuePaymentCard extends StatelessWidget {
               'Due in $dueInDays days',
               style: const TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
                 color: Colors.white,
-                letterSpacing: 1,
+                letterSpacing: 0.3,
               ),
             ),
           ),
@@ -371,15 +379,15 @@ class DuePaymentCard extends StatelessWidget {
               fontFamily: 'DMSans',
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : Colors.black87,
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
             ),
           ),
           // Pay now button
           Container(
             width: double.infinity,
-            height: 35,
+            height: 32,
             decoration: BoxDecoration(
-              color: isDark ? Colors.white : Colors.black,
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Row(
@@ -389,16 +397,17 @@ class DuePaymentCard extends StatelessWidget {
                   'PAY NOW',
                   style: TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.black : Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
+                    color: isDark ? const Color(0xFF0F172A) : Colors.white,
                   ),
                 ),
                 const SizedBox(width: 4),
                 Icon(
                   Icons.arrow_forward_rounded,
-                  size: 10,
-                  color: isDark ? Colors.black : Colors.white,
+                  size: 11,
+                  color: isDark ? const Color(0xFF0F172A) : Colors.white,
                 ),
               ],
             ),
@@ -421,9 +430,9 @@ class _NoRecurringCard extends StatelessWidget {
       width: double.infinity,
       height: 140,
       decoration: BoxDecoration(
-        color: const Color(0XFFFFFFFF),
+        color: const Color(0xFFFFFFFF),
         borderRadius: BorderRadius.circular(4),
-        border:Border.all(color:const Color(0xFFE2E8F0),)
+        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(4),
@@ -436,21 +445,24 @@ class _NoRecurringCard extends StatelessWidget {
                   left: 0,
                   top: 0,
                   bottom: 0,
-                  width: constraints.maxWidth * 0.4,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: Image.asset(
-                      'lib/core/images/bills_card.webp',
-                      fit: BoxFit.contain, // Contain will show the whole image
-                      alignment: Alignment.center,
+                  width: constraints.maxWidth * 0.38,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: Image.asset(
+                        'lib/core/images/bills_card.webp',
+                        fit: BoxFit.contain,
+                        alignment: Alignment.center,
+                      ),
                     ),
                   ),
                 ),
                 // ── Right text panel ─────────────────────────────────────
                 Padding(
                   padding: EdgeInsets.only(
-                    left: constraints.maxWidth * 0.4 + 10,
-                    right: 18,
+                    left: constraints.maxWidth * 0.38 + 12,
+                    right: 16,
                     top: 12,
                     bottom: 12,
                   ),
@@ -465,29 +477,25 @@ class _NoRecurringCard extends StatelessWidget {
                           fontFamily: 'DMSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black54,
+                          height: 1.35,
+                          color: Color(0xFF64748B),
                         ),
-                        maxLines: 2,
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 22),
+                      const SizedBox(height: 14),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF27272A), Color(0xFF09090B)],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
+                          color: const Color(0xFF0F172A),
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
                         ),
                         child: const Text(
                           'TRACK NOW',
                           style: TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 10,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
                             letterSpacing: 0.5,
                           ),
