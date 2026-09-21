@@ -26,3 +26,9 @@ final stocksOrdersByStatusProvider =
   final repo = ref.watch(stocksRepositoryProvider);
   return repo.listOrders(statusFilter: statusFilter);
 });
+
+final stockProfileFamilyProvider =
+    FutureProvider.family<StockProfileDetail, String>((ref, symbol) async {
+  final repo = ref.watch(stocksRepositoryProvider);
+  return repo.getProfile(symbol);
+});

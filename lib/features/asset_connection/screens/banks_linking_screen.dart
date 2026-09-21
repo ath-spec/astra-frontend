@@ -149,14 +149,9 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
       ctaLabel = 'APPROVE AND CONNECT';
       ctaActive = true;
       onCtaTap = () {
-        // The searching screen used to navigate back on a fixed timer with
-        // no idea whether these network calls had actually finished — if
-        // they took longer than that timer, the user landed back on this
-        // screen looking at stale state, before the newly added bank(s)
-        // ever appeared. Passing the real Future lets it wait on genuine
-        // completion instead of guessing a duration.
-        final pending = notifier.approveAndConnectAll(accountType: _selectedAccountType);
-        context.push('/banks-searching', extra: pending);
+        notifier.approveAndConnectAll(accountType: _selectedAccountType);
+        notifier.finishAssetConnection();
+        context.go('/');
       };
     } else {
       ctaLabel = 'APPROVE AND CONNECT';

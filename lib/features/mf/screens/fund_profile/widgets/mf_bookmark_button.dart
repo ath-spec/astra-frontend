@@ -84,16 +84,6 @@ class _MfBookmarkButtonState extends ConsumerState<MfBookmarkButton> {
         await repo.remove(widget.fundId);
       }
       ref.invalidate(watchlistListProvider);
-      // fundProfileFamilyProvider(fundId) is a plain (non-autoDispose)
-      // FutureProvider.family — Riverpod keeps its result cached forever per
-      // scheme code, including the `is_watched` flag this button seeds its
-      // initial state from. Without invalidating it here, that cached value
-      // stays stuck at whatever it was on the very first fetch: leaving and
-      // returning to this fund's profile (a fresh MfBookmarkButton instance
-      // reading the same stale cache) shows it unbookmarked again, and
-      // toggling from the Watchlist screen's entry point hits this exact
-      // same stale cache too.
-      ref.invalidate(fundProfileFamilyProvider(widget.fundId));
     } catch (e) {
       final message =
           e is ApiException ? e.message : 'Something went wrong. Please try again.';

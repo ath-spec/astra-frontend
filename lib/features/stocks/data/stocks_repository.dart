@@ -39,4 +39,19 @@ class StocksRepository {
 
   /// Back-compat alias for [listOrders] with no filter.
   Future<List<StockOrderRecord>> getOrders() => listOrders();
+
+  Future<StockProfileDetail> getProfile(String tradingSymbol) async {
+    try {
+      final response = await _client.dio.get(
+        '/api/v1/stocks/profile',
+        queryParameters: {'trading_symbol': tradingSymbol},
+      );
+      return _client.unwrap(
+        response.data as Map<String, dynamic>,
+        StockProfileDetail.fromJson,
+      );
+    } catch (e) {
+      throw _client.toApiException(e);
+    }
+  }
 }

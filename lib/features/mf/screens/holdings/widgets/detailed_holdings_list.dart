@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'holding_item.dart';
+import 'holding_details_bottom_sheet.dart';
 import '../../../../fund_profile/screens/your_fund_profile_screen.dart';
+import '../../../../stocks/screens/your_stock_profile_screen.dart';
 
 class DetailedHoldingsList extends StatelessWidget {
   final List<HoldingItem> displayHoldings;
@@ -27,21 +29,19 @@ class DetailedHoldingsList extends StatelessWidget {
           bool isPositiveReturns = item.returns >= 0;
           return GestureDetector(
             onTap: () {
-              // YourFundProfileScreen resolves its data by matching
-              // schemeCode against the user's MF folios, and falls back to
-              // "just show the first folio" when schemeCode is null/empty —
-              // a reasonable fallback for a genuine MF lookup miss, but this
-              // list also holds stocks (HoldingItem.fromStock never sets
-              // schemeCode, since stocks were never MF folios to begin
-              // with). Routing those through here silently opened whatever
-              // the user's first mutual fund happened to be, regardless of
-              // which stock was tapped. There's no stock detail screen built
-              // yet, so this is a no-op for stocks rather than misrouting.
               if (item.schemeCode != null && item.schemeCode!.isNotEmpty) {
                 Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute(
                     builder: (_) => YourFundProfileScreen(
                       schemeCode: item.schemeCode,
+                      holdingItem: item,
+                    ),
+                  ),
+                );
+              } else {
+                Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute(
+                    builder: (_) => YourStockProfileScreen(
                       holdingItem: item,
                     ),
                   ),

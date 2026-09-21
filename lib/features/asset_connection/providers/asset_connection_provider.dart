@@ -288,8 +288,14 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
               .map((json) => BankAccountItem.fromJson(json))
               .toList();
 
+          // Preserve unlinked candidates (but filter out any that just became linked)
+          // so the UI list doesn't temporarily collapse before the next /discover call finishes.
+          final newlyLinkedIds = items.map((b) => b.id).toSet();
+          final unlinkedAccounts = state.bankAccounts.where((b) => !b.isLinked && !newlyLinkedIds.contains(b.id)).toList();
+          final merged = [...items, ...unlinkedAccounts];
+
           state = state.copyWith(
-            bankAccounts: items,
+            bankAccounts: merged,
             banksConnected: items.isNotEmpty,
             banksStatusMessage: items.isNotEmpty ? 'Successfully Linked' : 'No accounts linked',
             bankAccountsLoaded: true,

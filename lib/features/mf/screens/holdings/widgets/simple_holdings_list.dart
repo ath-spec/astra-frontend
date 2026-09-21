@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'holding_item.dart';
+import 'holding_details_bottom_sheet.dart';
 import '../../../../fund_profile/screens/your_fund_profile_screen.dart';
+import '../../../../stocks/screens/your_stock_profile_screen.dart';
 
 class SimpleHoldingsList extends StatelessWidget {
   final List<HoldingItem> displayHoldings;
@@ -45,16 +47,20 @@ class SimpleHoldingsList extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      // Same guard as DetailedHoldingsList: schemeCode is
-                      // null for non-MF holdings (stocks), and
-                      // YourFundProfileScreen falls back to showing the
-                      // user's first MF folio for a null schemeCode — do not
-                      // route those here.
                       if (item.schemeCode != null && item.schemeCode!.isNotEmpty) {
                         Navigator.of(context, rootNavigator: true).push(
                           MaterialPageRoute(
                             builder: (_) => YourFundProfileScreen(
                               schemeCode: item.schemeCode,
+                              holdingItem: item,
+                            ),
+                          ),
+                        );
+                      } else {
+                        // For stocks (no schemeCode), show the Stock Profile screen
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (_) => YourStockProfileScreen(
                               holdingItem: item,
                             ),
                           ),

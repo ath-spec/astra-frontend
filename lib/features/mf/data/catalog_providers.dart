@@ -26,7 +26,7 @@ final catalogNfosProvider = FutureProvider<List<NfoItem>>((ref) async {
 });
 
 final fundProfileFamilyProvider =
-    FutureProvider.family<FundProfileDetail, String>((ref, schemeCode) async {
+    FutureProvider.autoDispose.family<FundProfileDetail, String>((ref, schemeCode) async {
   final repo = ref.watch(catalogRepositoryProvider);
   return repo.getFundProfile(schemeCode);
 });

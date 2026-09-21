@@ -69,6 +69,7 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> with 
             _buildHeader(context),
             Flexible(
               child: AnimatedSize(
+                alignment: Alignment.topCenter,
                 duration: const Duration(milliseconds: 400),
                 curve: const Cubic(0.23, 1, 0.32, 1),
                 child: AnimatedSwitcher(
@@ -79,7 +80,12 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> with 
                     return Stack(
                       alignment: Alignment.topCenter,
                       children: <Widget>[
-                        ...previousChildren,
+                        ...previousChildren.map((child) => Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: child,
+                            )),
                         if (currentChild != null) currentChild,
                       ],
                     );
@@ -89,18 +95,7 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> with 
                       opacity: animation,
                       child: ScaleTransition(
                         scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
-                        child: AnimatedBuilder(
-                          animation: animation,
-                          builder: (context, child) {
-                            final blurValue = (1.0 - animation.value) * 2.0;
-                            if (blurValue <= 0) return child!;
-                            return ImageFiltered(
-                              imageFilter: ImageFilter.blur(sigmaX: blurValue, sigmaY: blurValue),
-                              child: child,
-                            );
-                          },
-                          child: child,
-                        ),
+                        child: child,
                       ),
                     );
                   },

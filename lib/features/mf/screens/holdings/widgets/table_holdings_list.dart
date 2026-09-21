@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'holding_item.dart';
+import 'holding_details_bottom_sheet.dart';
 import '../../../../fund_profile/screens/your_fund_profile_screen.dart';
+import '../../../../stocks/screens/your_stock_profile_screen.dart';
 
 class TableHoldingsList extends StatelessWidget {
   final List<HoldingItem> displayHoldings;
@@ -17,15 +19,20 @@ class TableHoldingsList extends StatelessWidget {
     required this.formatLargeNumber,
   });
 
-  // schemeCode is null for non-MF holdings (stocks); YourFundProfileScreen
-  // falls back to showing the user's first MF folio for a null schemeCode,
-  // so those must not be routed there — same guard as the other view modes.
   void _openHolding(BuildContext context, HoldingItem item) {
     if (item.schemeCode != null && item.schemeCode!.isNotEmpty) {
       Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute(
           builder: (_) => YourFundProfileScreen(
             schemeCode: item.schemeCode,
+            holdingItem: item,
+          ),
+        ),
+      );
+    } else {
+      Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(
+          builder: (_) => YourStockProfileScreen(
             holdingItem: item,
           ),
         ),
