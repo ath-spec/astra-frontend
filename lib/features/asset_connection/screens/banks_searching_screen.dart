@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/asset_connection_provider.dart';
 import '../../chat/widgets/thinking_orbs/thinking_orb.dart';
+import 'banks_linking_screen.dart' show kSkipBankDiscoveryExtra;
 
 /// Screen 2 of Banks Flow: Fetching Screen (Image 3) in clean light mode.
 /// Displays pulsing dots, skeleton account cards, and auto-navigates to HomeScreen.
@@ -68,7 +69,14 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
       await ref.read(assetConnectionProvider.notifier).completeBankLinking();
     }
     if (!mounted) return;
-    context.pushReplacement('/banks-linking');
+    // Only an APPROVE AND CONNECT round trip (the real Future) should skip
+    // re-discovery on the way back — PROCEED's cosmetic wait (pending ==
+    // null, nothing touched the backend yet) still needs a genuine first
+    // discovery run.
+    context.pushReplacement(
+      '/banks-linking',
+      extra: pending != null ? kSkipBankDiscoveryExtra : null,
+    );
   }
 
   @override

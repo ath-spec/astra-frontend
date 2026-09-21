@@ -135,7 +135,7 @@ class _PauseAutoPayBottomSheetState extends State<PauseAutoPayBottomSheet> {
                 ),
               ),
               Text(
-                "Amount to be paid now is rs ${widget.payment['amount'].toint()}",
+                "Amount to be paid now is rs ${widget.payment['amount'].toInt()}",
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(11),
                   color: Colors.black.withValues(alpha: 0.4),

@@ -5,6 +5,16 @@ import '../../../core/widgets/arch_background.dart';
 import '../../../core/widgets/shimmer_card_skeleton.dart';
 import '../providers/asset_connection_provider.dart';
 
+/// Passed as GoRouter `extra` when banks_searching_screen bounces straight
+/// back here after an APPROVE AND CONNECT round trip, so this screen knows
+/// not to re-run discovery. Discovery is a finite mock pool (see
+/// discoveryBankPool in aa_handler.go) — re-running it right after the user
+/// approved one candidate just offers the next pool bank, pre-checked,
+/// making it look like the connect flow never stops. A genuine new visit
+/// (onboarding's first arrival, or "ADD ACCOUNTS" from Linked Accounts)
+/// still runs discovery as normal.
+const kSkipBankDiscoveryExtra = 'skip-discovery';
+
 /// Screen 1 of Banks Flow: Shows Bank Accounts (Image 1) in clean light mode.
 /// Allows checking/unchecking accounts, viewing consent info bottom sheet (Image 2),
 /// and proceeding to account fetching.
@@ -37,18 +47,32 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     'Punjab & Sind Bank',
   ];
 
+  bool _didRunDiscovery = false;
+
   @override
-  void initState() {
-    super.initState();
-    // Fired directly (not deferred to a post-frame callback) so the fetch
-    // starts as early as this screen exists, instead of losing a frame —
-    // and build() below renders a loading skeleton for this section in the
-    // meantime, so the account list doesn't render as a blank gap that
-    // pops in after the rest of the (static) screen has already painted.
-    final state = ref.read(assetConnectionProvider);
-    if (state.bankAccounts.isEmpty) {
-      ref.read(assetConnectionProvider.notifier).showFoundBanks();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // GoRouterState.of(context) needs an inherited-widget lookup, which
+    // isn't safe in initState — didChangeDependencies (with this guard so
+    // it only fires once) is the right place, same pattern
+    // banks_searching_screen already uses for its own post-mount check.
+    if (_didRunDiscovery) return;
+    _didRunDiscovery = true;
+
+    final extra = GoRouterState.of(context).extra;
+    if (extra == kSkipBankDiscoveryExtra) {
+      // Bounced straight back from an APPROVE AND CONNECT round trip —
+      // state.bankAccounts is already current (approveAndConnectAll
+      // refreshes it before navigating back). Re-running discovery here
+      // would just surface the next mock candidate pre-checked, making the
+      // flow look like it never finishes.
+      return;
     }
+    // Any other entry (onboarding's first arrival, or "ADD ACCOUNTS" from
+    // Linked Accounts) is a genuine new visit — always re-run discovery, not
+    // just when the user has zero accounts, otherwise a returning user who
+    // already has one bank linked never gets shown fresh AA candidates.
+    ref.read(assetConnectionProvider.notifier).showFoundBanks();
   }
 
   void _showConsentBottomSheet(BuildContext context) {
@@ -83,12 +107,27 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     final notifier = ref.read(assetConnectionProvider.notifier);
     // GoRouter extra: true means we returned after a partial link
     final returnMode = GoRouterState.of(context).extra == true;
-    // In return mode: CTA active when any NEW (unlinked) account is selected
-    final hasSelected = state.bankAccounts.any(
-      (b) => b.isSelected && !b.isLinked,
-    );
     final hasAnyLinked = state.bankAccounts.any((b) => b.isLinked);
+    // First-time onboarding: showFoundBanks() pre-checks the discovered
+    // accounts (isSelected: true, isLinked: false) so the user can approve
+    // them as-is or uncheck ones they don't want — these are a second,
+    // independent source of "checked and ready to link" alongside anything
+    // staged via PROCEED below. Both must be included when APPROVE AND
+    // CONNECT actually fires, or unchecking-and-approving a first-time
+    // discovered account silently does nothing.
+    final hasSelectedDiscovered = state.bankAccounts.any((b) => b.isSelected && !b.isLinked);
 
+    // Two-stage CTA, same split as the original AA flow:
+    //   PROCEED        — stages checked picker banks into "YOUR ACCOUNTS" as
+    //                     pending. No backend call yet.
+    //   APPROVE AND CONNECT — the one action that actually links everything
+    //                     currently checked in "YOUR ACCOUNTS": both
+    //                     discovered-and-still-checked accounts and
+    //                     PROCEED-staged ones.
+    // Staged banks live on the provider (state.pendingBankNames), not local
+    // widget state — the fetching screen navigates via pushReplacement,
+    // which tears down and recreates this screen's State, so anything kept
+    // only in a local field here would be lost on the round trip.
     String ctaLabel;
     bool ctaActive;
     VoidCallback? onCtaTap;
@@ -97,42 +136,27 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
       ctaLabel = 'PROCEED';
       ctaActive = true;
       onCtaTap = () {
-        final selected = List<String>.from(_selectedMoreBanks);
+        final picked = List<String>.from(_selectedMoreBanks);
         setState(() {
           _selectedMoreBanks.clear();
         });
+        notifier.stageBanksForApproval(picked);
+        // Cosmetic-only wait here (no `extra` Future) — nothing has touched
+        // the backend yet at this step, there's nothing real to await.
+        context.push('/banks-searching');
+      };
+    } else if (hasSelectedDiscovered || state.pendingBankNames.isNotEmpty) {
+      ctaLabel = 'APPROVE AND CONNECT';
+      ctaActive = true;
+      onCtaTap = () {
         // The searching screen used to navigate back on a fixed timer with
         // no idea whether these network calls had actually finished — if
         // they took longer than that timer, the user landed back on this
         // screen looking at stale state, before the newly added bank(s)
         // ever appeared. Passing the real Future lets it wait on genuine
         // completion instead of guessing a duration.
-        //
-        // The N adds run concurrently (Future.wait), but the list refresh
-        // happens exactly ONCE here, after all of them have settled —
-        // deliberately not inside searchAndAddBank itself. Each add used to
-        // refetch and overwrite state.bankAccounts on its own success,
-        // which raced every other concurrent add's refetch for the same
-        // field: whichever GET happened to land last silently won, so a
-        // multi-bank selection could finish with the list missing some of
-        // the banks that were, in fact, already saved on the backend.
-        // whenComplete runs regardless of success/failure so the list still
-        // reflects reality even if one bank in the batch failed to add.
-        final pending = Future.wait(
-          selected.map((bank) => notifier.searchAndAddBank(bank, accountType: _selectedAccountType)),
-        ).catchError((_) {
-          // Individual failures already surfaced via banksStatusMessage
-          // (see the ref.listen SnackBar below) — swallow here so this
-          // Future's rejection doesn't skip the whenComplete refresh.
-        }).whenComplete(() => notifier.fetchLiveBankAccounts());
+        final pending = notifier.approveAndConnectAll(accountType: _selectedAccountType);
         context.push('/banks-searching', extra: pending);
-      };
-    } else if (hasSelected) {
-      ctaLabel = 'APPROVE AND CONNECT';
-      ctaActive = true;
-      onCtaTap = () {
-        notifier.startBankLinking();
-        context.go('/');
       };
     } else {
       ctaLabel = 'APPROVE AND CONNECT';
@@ -243,6 +267,17 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     // instead of nothing, so this section appears together
                     // with the rest of the (already-painted) screen content
                     // rather than as a jarring gap that pops in later.
+                    //
+                    // Only ever shows accounts still awaiting approval —
+                    // discovered-but-unlinked candidates (plain
+                    // checked/unchecked boxes, toggleable) and anything
+                    // staged via PROCEED below. Already-linked accounts
+                    // never appear here, on first-time onboarding or when a
+                    // returning user connects more later: they carry the
+                    // green "linked" badge and can't be toggled, so mixing
+                    // them into this list just looked like a stuck,
+                    // pre-ticked checkbox. Anyone who wants to see what's
+                    // already linked has "Linked Bank Accounts" for that.
                     Column(
                       children: !state.bankAccountsLoaded && state.bankAccounts.isEmpty
                           ? const [
@@ -250,12 +285,20 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                               SizedBox(height: 12),
                               AppThemeShimmerCard(height: 72),
                             ]
-                          : state.bankAccounts.map((bank) {
-                              return _buildBankCard(
-                                bank: bank,
-                                onTap: () => notifier.toggleBankSelection(bank.id),
-                              );
-                            }).toList(),
+                          : [
+                              ...state.bankAccounts.where((b) => !b.isLinked).map((bank) {
+                                return _buildBankCard(
+                                  bank: bank,
+                                  onTap: () => notifier.toggleBankSelection(bank.id),
+                                );
+                              }),
+                              ...state.pendingBankNames.map((bankName) {
+                                return _buildPendingBankCard(
+                                  bankName: bankName,
+                                  onTap: () => notifier.unstageBankForApproval(bankName),
+                                );
+                              }),
+                            ],
                     ),
 
                     const SizedBox(height: 46),
@@ -289,11 +332,36 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     // for the same flexible space.
                     SizedBox(
                       height: 280,
-                      child: ListView.builder(
+                      child: Builder(builder: (context) {
+                        // Already-linked banks (shown with a checkmark above)
+                        // no longer appear here too — picking "HDFC Bank"
+                        // again when you already have an HDFC account linked
+                        // was a pointless duplicate entry, not a real option.
+                        // A bank you've already checked, or already
+                        // PROCEEDed/staged, also disappears from here — it
+                        // moved up into "YOUR ACCOUNTS" instead of staying
+                        // selectable in two places at once.
+                        final linkedNames = state.bankAccounts
+                            .where((b) => b.isLinked)
+                            .map((b) => b.bankName.toLowerCase())
+                            .toList();
+                        // Checking a bank here keeps it visible right here,
+                        // checked, until PROCEED actually stages it up into
+                        // "YOUR ACCOUNTS" — it must not vanish from this
+                        // list the instant it's tapped, only once it's
+                        // genuinely moved (state.pendingBankNames) or
+                        // already linked.
+                        final selectableBanks = _popularBanks
+                            .where((name) =>
+                                !linkedNames.any((linked) =>
+                                    linked.contains(name.toLowerCase())) &&
+                                !state.pendingBankNames.contains(name))
+                            .toList();
+                        return ListView.builder(
                         padding: EdgeInsets.zero,
-                        itemCount: _popularBanks.length,
+                        itemCount: selectableBanks.length,
                         itemBuilder: (context, index) {
-                          final bankName = _popularBanks[index];
+                          final bankName = selectableBanks[index];
                           final isSelected = _selectedMoreBanks.contains(bankName);
                           return Container(
                             margin: const EdgeInsets.only(bottom: 8),
@@ -382,7 +450,8 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                             ),
                           );
                         },
-                      ),
+                      );
+                      }),
                     ),
                       ],
                       ),
@@ -595,7 +664,6 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
         ? bank.accountNumber.substring(bank.accountNumber.length - 4)
         : bank.accountNumber;
     final accountType = bank.accountType.toUpperCase();
-    final isLinked = bank.isLinked;
 
     return GestureDetector(
       onTap: onTap,
@@ -638,45 +706,113 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
               ),
             ),
 
-            if (isLinked) ...[
-            // Linked badge
-              const SizedBox(width: 8),
-              const Icon(
-                Icons.check_circle_rounded,
-                color: Color(0xFF10B981),
-                size: 20,
-              ),
-            ] else ...[
-              Container(
-                width: 18,
-                height: 18,
-                decoration: BoxDecoration(
-                  color: bank.isSelected ? null : Colors.transparent,
-                  gradient: bank.isSelected
-                      ? const LinearGradient(
-                          colors: [
-                            Color(0xFFFFFFFF),
-                            Color(0xFF5BA1F7),
-                            Color(0xFF031E6B),
-                            Color(0xFF241714),
-                          ],
-                          stops: [0.0, 0.25, 0.7, 1.0],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        )
-                      : null,
-                  border: bank.isSelected
-                      ? null
-                      : Border.all(
-                          color: const Color(0xFFCBD5E1),
-                          width: 1.5,
-                        ),
-                ),
-                child: bank.isSelected
-                    ? const Icon(Icons.check, color: Colors.white, size: 12)
+            Container(
+              width: 18,
+              height: 18,
+              decoration: BoxDecoration(
+                color: bank.isSelected ? null : Colors.transparent,
+                gradient: bank.isSelected
+                    ? const LinearGradient(
+                        colors: [
+                          Color(0xFFFFFFFF),
+                          Color(0xFF5BA1F7),
+                          Color(0xFF031E6B),
+                          Color(0xFF241714),
+                        ],
+                        stops: [0.0, 0.25, 0.7, 1.0],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
                     : null,
+                border: bank.isSelected
+                    ? null
+                    : Border.all(
+                        color: const Color(0xFFCBD5E1),
+                        width: 1.5,
+                      ),
               ),
-            ],
+              child: bank.isSelected
+                  ? const Icon(Icons.check, color: Colors.white, size: 12)
+                  : null,
+            ),          ],
+        ),
+      ),
+    );
+  }
+
+  /// Stable-per-bank-name placeholder last-4, purely cosmetic — shown before
+  /// the account is actually linked, same idea as the deterministic preview
+  /// balances/IFSC the discovered-accounts path already fabricates. The real
+  /// account number is whatever the backend assigns once APPROVE AND CONNECT
+  /// actually calls searchAndAddBank.
+  String _previewAccountLast4(String bankName) {
+    final hash = bankName.codeUnits.fold(0, (sum, c) => sum + c);
+    return (1000 + (hash % 9000)).toString();
+  }
+
+  /// A bank picked from "CONNECT MORE ACCOUNTS" but not yet connected —
+  /// shown here checked (same tick style as the picker) so tapping it again
+  /// un-checks it. Nothing about this bank has touched the backend yet;
+  /// that only happens once APPROVE AND CONNECT is tapped.
+  Widget _buildPendingBankCard({
+    required String bankName,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: const BoxDecoration(
+          color: Color(0xFFFFFFFF),
+        ),
+        child: Row(
+          children: [
+            _buildBankLogoWidget(bankName, size: 30),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    bankName.toUpperCase(),
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      color: Color(0xFF0F172A),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '.. ${_previewAccountLast4(bankName)} • ${_selectedAccountType.toUpperCase()}',
+                    style: const TextStyle(
+                      fontFamily: 'DMMono',
+                      color: Color(0xFF9CA3AF),
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 18,
+              height: 18,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFFFFFFF),
+                    Color(0xFF5BA1F7),
+                    Color(0xFF031E6B),
+                    Color(0xFF241714),
+                  ],
+                  stops: [0.0, 0.25, 0.7, 1.0],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: const Icon(Icons.check, color: Colors.white, size: 12),
+            ),
           ],
         ),
       ),

@@ -812,7 +812,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
   }
 }
 
-// Custom DMSansactive dial mapped exactly to standard slider API
+// Custom interactive dial mapped exactly to standard slider API
 class _BudgetDial extends StatefulWidget {
   final double value;
   final double minValue;

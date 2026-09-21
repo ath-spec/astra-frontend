@@ -175,7 +175,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
                 ),
               ),
               Text(
-                "Amount to be paid now is rs ${widget.payment['amount'].toint()}",
+                "Amount to be paid now is rs ${widget.payment['amount'].toInt()}",
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(11),
                   color: Colors.black.withValues(alpha: 0.4),
@@ -276,7 +276,7 @@ class _PauseDateSelectionBottomSheetState extends State<PauseDateSelectionBottom
         ),
         SizedBox(height: getProportionateScreenHeight(12)),
         Text(
-          "We've disabled autopay for ${widget.payment['name'].toCapitalized()}",
+          "We've disabled autopay for ${(widget.payment['name'] as String).toCapitalized()}",
           textAlign: TextAlign.center,
           style: TextStyle(fontFamily: 'DMSans', 
             fontSize: getProportionateScreenWidth(13),

@@ -4,6 +4,7 @@ import '../../../../core/network/api_exception.dart';
 import '../../../../core/widgets/shimmer_card_skeleton.dart';
 import '../../data/watchlist_models.dart';
 import '../../data/watchlist_providers.dart';
+import '../../data/catalog_providers.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
 import 'widgets/mf_watchlist_empty_state.dart';
@@ -140,6 +141,10 @@ class WatchlistScreen extends ConsumerWidget {
                     .read(watchlistRepositoryProvider)
                     .remove(item.schemeCode);
                 ref.invalidate(watchlistListProvider);
+                // Same stale-cache fix as the bookmark button: without this,
+                // opening this fund's profile afterward still shows it as
+                // bookmarked from the cached pre-removal fetch.
+                ref.invalidate(fundProfileFamilyProvider(item.schemeCode));
                 return true;
               } catch (e) {
                 final message = e is ApiException

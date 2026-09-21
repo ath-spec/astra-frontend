@@ -43,12 +43,18 @@ class BankAccountItem {
         json['branch_name']?.toString() ??
         _deriveBranch(bName);
 
+    // GetAccounts (real, already-linked) and DiscoverAccounts (simulated AA
+    // discovery, not yet linked) share this shape; is_linked distinguishes
+    // them. Defaults to true so any older/other caller that omits the field
+    // keeps its previous behaviour.
+    final linked = json['is_linked'] as bool? ?? true;
+
     return BankAccountItem(
       id: shortId,
       bankName: bName,
       accountNumber: accNum,
       isSelected: true,
-      isLinked: true,
+      isLinked: linked,
       balance: bal,
       ifsc: ifscCode,
       branch: branchName,
@@ -134,6 +140,7 @@ class AssetConnectionState {
     required this.banksStatusMessage,
     required this.bankAccounts,
     this.bankAccountsLoaded = false,
+    this.pendingBankNames = const [],
   });
 
   final AssetConnectionStep step;
@@ -149,6 +156,13 @@ class AssetConnectionState {
   // consumer tell "confirmed zero accounts" apart from "haven't checked the
   // real backend yet," which `banksConnected` alone can't distinguish.
   final bool bankAccountsLoaded;
+  // Banks staged via PROCEED (checked in the picker, "fetched" into the
+  // account list) but not yet actually linked server-side — that only
+  // happens on APPROVE AND CONNECT. Lives on the provider, not local widget
+  // state, because the fetching screen navigates with pushReplacement,
+  // which destroys and recreates BanksLinkingScreen's State — anything kept
+  // in local fields there would silently vanish on the round trip.
+  final List<String> pendingBankNames;
 
   AssetConnectionState copyWith({
     AssetConnectionStep? step,
@@ -160,6 +174,7 @@ class AssetConnectionState {
     String? banksStatusMessage,
     List<BankAccountItem>? bankAccounts,
     bool? bankAccountsLoaded,
+    List<String>? pendingBankNames,
   }) {
     return AssetConnectionState(
       step: step ?? this.step,
@@ -171,6 +186,7 @@ class AssetConnectionState {
       banksStatusMessage: banksStatusMessage ?? this.banksStatusMessage,
       bankAccounts: bankAccounts ?? this.bankAccounts,
       bankAccountsLoaded: bankAccountsLoaded ?? this.bankAccountsLoaded,
+      pendingBankNames: pendingBankNames ?? this.pendingBankNames,
     );
   }
 }
@@ -252,7 +268,20 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     try {
       final res = await _api.dio.get('/api/v1/aa/accounts');
       if (res.statusCode == 200 && res.data is Map<String, dynamic>) {
-        final list = res.data['accounts'] as List<dynamic>?;
+        // Every /api/v1 response is wrapped in the standard envelope —
+        // {"error": bool, "data": {...}} — but this was reading `accounts`
+        // directly off the envelope's top level instead of unwrapping
+        // `data` first. res.data['accounts'] was always null (the real key
+        // is res.data['data']['accounts']), so this returned 200 every time
+        // and silently fell through the `if (list != null)` branch without
+        // ever touching state.bankAccounts. That's why newly linked
+        // accounts never showed up on "Your Accounts"/"Manage Accounts" —
+        // both just read this provider's state, which this call was never
+        // actually updating — and why showFoundBanks()'s "state.bankAccounts
+        // is still empty after fetching" check kept tripping and falling
+        // back to its two fake discovered accounts.
+        final envelopeData = res.data['data'];
+        final list = envelopeData is Map<String, dynamic> ? envelopeData['accounts'] as List<dynamic>? : null;
         if (list != null) {
           final items = list
               .whereType<Map<String, dynamic>>()
@@ -401,55 +430,60 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     continueWithoutStocks();
   }
 
-  /// Shows the user's bank accounts on the linking screen. If nothing is
-  /// loaded locally yet, this used to immediately fabricate two hardcoded
-  /// "discovered" accounts — regardless of whether the constructor's
-  /// one-shot fetchLiveBankAccounts() call had actually finished, or had
-  /// silently failed (see its catch block). That meant a user whose real
-  /// accounts genuinely were already linked server-side could land here,
-  /// see fake unlinked accounts, "connect" them (POSTing duplicate rows to
-  /// /api/v1/aa/accounts), and never actually resolve the real
-  /// disconnected-looking state — the connect loop this was reported for.
-  /// Now it re-checks the real backend first and only falls back to the
-  /// simulated discovery step if the user truly has nothing linked yet.
+  /// Shows the user's bank accounts on the linking screen. This used to
+  /// immediately fabricate two hardcoded "discovered" accounts client-side —
+  /// the same fixed ICICI/HDFC pair, same fake balances, for every single
+  /// user. Now it calls a real backend endpoint (GET
+  /// /api/v1/aa/accounts/discover) that generates deterministic-per-user
+  /// discovery candidates server-side — the same pattern the app already
+  /// uses for its other mocked data sources (stocks/MF/FD), not one-off fake
+  /// data living only in this file. The backend already excludes any bank
+  /// the user has actually linked (WHERE unlinked_at IS NULL), so it's safe
+  /// to call unconditionally: a returning user with one bank connected who
+  /// wants to connect more still gets shown fresh AA candidates for the
+  /// banks they *haven't* linked, instead of discovery being skipped
+  /// entirely just because bankAccounts wasn't empty.
+  ///
+  /// This runs again every time the linking screen remounts (e.g. after
+  /// PROCEED -> banks-searching -> pushReplacement('/banks-linking') for an
+  /// unrelated manually-picked bank), and the backend always returns its
+  /// discovered candidates pre-checked (isSelected: true). Rebuilding the
+  /// list from those fresh objects on every rerun silently re-checked any
+  /// discovered candidate the user had already unchecked — it looked like
+  /// unchecking simply didn't stick. Existing selection state (matched by
+  /// id) for a still-unlinked candidate is preserved here instead of being
+  /// clobbered by the fresh fetch.
   Future<void> showFoundBanks() async {
     _timer?.cancel();
-    if (state.bankAccounts.isEmpty) {
-      await fetchLiveBankAccounts();
-    }
-    if (state.bankAccounts.isEmpty) {
-      // Account Aggregator discovers accounts linked to the user's verified phone number
-      final discoveredAccounts = [
-        BankAccountItem(
-          id: '3192',
-          bankName: 'ICICI Bank',
-          accountNumber: 'SAVINGS account - xxxx 3192',
-          isSelected: true,
-          isLinked: false,
-          balance: 245000.0,
-          ifsc: BankAccountItem._deriveIfsc('ICICI Bank', '3192'),
-          branch: BankAccountItem._deriveBranch('ICICI Bank'),
-        ),
-        BankAccountItem(
-          id: '8779',
-          bankName: 'HDFC Bank',
-          accountNumber: 'SAVINGS account - xxxx 8779',
-          isSelected: true,
-          isLinked: false,
-          balance: 185000.0,
-          ifsc: BankAccountItem._deriveIfsc('HDFC Bank', '8779'),
-          branch: BankAccountItem._deriveBranch('HDFC Bank'),
-        ),
-      ];
+    final priorSelection = {
+      for (final b in state.bankAccounts.where((b) => !b.isLinked)) b.id: b.isSelected,
+    };
+    await fetchLiveBankAccounts();
+    final linkedAccounts = state.bankAccounts.where((b) => b.isLinked).toList();
+    try {
+      final res = await _api.dio.get('/api/v1/aa/accounts/discover');
+      final envelopeData = res.data is Map<String, dynamic> ? res.data['data'] : null;
+      final list = envelopeData is Map<String, dynamic> ? envelopeData['accounts'] as List<dynamic>? : null;
+      final discoveredAccounts = (list ?? const [])
+          .whereType<Map<String, dynamic>>()
+          .map((json) => BankAccountItem.fromJson(json))
+          .map((b) => priorSelection.containsKey(b.id)
+              ? b.copyWith(isSelected: priorSelection[b.id])
+              : b)
+          .toList();
+      final merged = [...linkedAccounts, ...discoveredAccounts];
       state = state.copyWith(
         step: AssetConnectionStep.banksLinking,
-        bankAccounts: discoveredAccounts,
-        banksStatusMessage: 'Accounts found',
+        bankAccounts: merged,
+        banksStatusMessage: merged.isEmpty ? 'No accounts found' : 'Accounts found',
       );
-    } else {
+    } catch (e) {
+      debugPrint('discover accounts failed: $e');
       state = state.copyWith(
         step: AssetConnectionStep.banksLinking,
-        banksStatusMessage: 'Accounts found',
+        banksStatusMessage: linkedAccounts.isEmpty
+            ? 'Could not check for accounts. Please try again.'
+            : 'Accounts found',
       );
     }
   }
@@ -597,6 +631,74 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     state = state.copyWith(
       bankAccounts: updatedBanks,
     );
+  }
+
+  // PROCEED stages picked banks here — nothing is sent to the backend yet.
+  // Kept additive (not a replace) so staging a second batch doesn't lose one
+  // already pending from an earlier PROCEED.
+  void stageBanksForApproval(List<String> bankNames) {
+    final merged = {...state.pendingBankNames, ...bankNames}.toList();
+    state = state.copyWith(pendingBankNames: merged);
+  }
+
+  // Un-checking a staged bank on the "YOUR ACCOUNTS" list before APPROVE AND
+  // CONNECT — moves it back to being selectable in the picker.
+  void unstageBankForApproval(String bankName) {
+    state = state.copyWith(
+      pendingBankNames: state.pendingBankNames.where((b) => b != bankName).toList(),
+    );
+  }
+
+  void clearStagedBanks() {
+    state = state.copyWith(pendingBankNames: const []);
+  }
+
+  // APPROVE AND CONNECT — the one action that actually links every checked
+  // bank in "YOUR ACCOUNTS", from either source:
+  //   1. Discovered-but-not-yet-linked accounts (state.bankAccounts where
+  //      isSelected && !isLinked) — first-time onboarding's pre-checked
+  //      AA-discovery accounts, which the user can also uncheck.
+  //   2. Banks staged via PROCEED (state.pendingBankNames) from the
+  //      "CONNECT MORE ACCOUNTS" picker.
+  // Sequential, not concurrent — these lists are small (a handful of
+  // accounts at most) and doing them one at a time means a single
+  // fetchLiveBankAccounts() refresh at the end is trivially correct, with
+  // no risk of the same overwrite race multiple concurrent refreshes had.
+  Future<void> approveAndConnectAll({required String accountType}) async {
+    _timer?.cancel();
+    final discovered = state.bankAccounts.where((b) => b.isSelected && !b.isLinked).toList();
+    final staged = List<String>.from(state.pendingBankNames);
+    bool anyFailed = false;
+
+    for (final b in discovered) {
+      try {
+        await _api.dio.post<dynamic>('/api/v1/aa/accounts', data: {
+          'bank_name': b.bankName,
+          'account_type': b.accountType,
+          'balance': b.balance,
+          'ifsc': b.ifsc,
+          'branch': b.branch,
+        });
+      } catch (_) {
+        anyFailed = true;
+      }
+    }
+    for (final name in staged) {
+      try {
+        await searchAndAddBank(name, accountType: accountType);
+      } catch (_) {
+        // searchAndAddBank already sets its own banksStatusMessage on
+        // failure; just note it so the combined summary below can mention
+        // partial failure without clobbering that per-bank message.
+        anyFailed = true;
+      }
+    }
+
+    state = state.copyWith(pendingBankNames: const []);
+    await fetchLiveBankAccounts();
+    if (anyFailed) {
+      state = state.copyWith(banksStatusMessage: 'Some accounts could not be linked — please retry.');
+    }
   }
 
   void resetSelectionForUnlinked() {

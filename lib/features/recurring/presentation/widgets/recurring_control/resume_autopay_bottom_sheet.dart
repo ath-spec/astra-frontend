@@ -55,7 +55,7 @@ class _ResumeAutoPayBottomSheetState extends State<ResumeAutoPayBottomSheet> {
                   _buildInfoItem(
                     Icons.check_circle_outline_rounded,
                     "Service will be continued",
-                    "You'll have unDMSansrupted access to the service",
+                    "You'll have uninterrupted access to the service",
                   ),
                   SizedBox(height: getProportionateScreenHeight(20)),
                   _buildInfoItem(
@@ -133,7 +133,7 @@ class _ResumeAutoPayBottomSheetState extends State<ResumeAutoPayBottomSheet> {
                 ),
               ),
               Text(
-                "Amount to be paid is rs ${widget.payment['amount'].toint()}",
+                "Amount to be paid is rs ${widget.payment['amount'].toInt()}",
                 style: TextStyle(fontFamily: 'DMSans', 
                   fontSize: getProportionateScreenWidth(11),
                   color: Colors.black.withValues(alpha: 0.4),

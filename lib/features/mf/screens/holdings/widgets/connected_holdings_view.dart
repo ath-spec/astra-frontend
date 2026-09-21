@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/providers/privacy_provider.dart';
 import '../../../../asset_connection/providers/asset_connection_provider.dart';
+import '../../../../dashboard/data/dashboard_providers.dart';
 import '../../../data/mf_holdings_models.dart';
 import '../../../data/mf_holdings_providers.dart';
 import '../../../../stocks/data/stocks_providers.dart';
@@ -692,7 +693,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
             ? (combinedOneDayChange / (combinedCurrentValue - combinedOneDayChange)) * 100
             : 0.0;
 
-        // Use a synthetic summary that covers both asset classes.
+        // Use a synthetic summary that covers both asset classes. This
+        // stays MF+stocks-only deliberately — it drives the folio-level
+        // list/sort/returns logic below, which only ever lists MF and stock
+        // holdings (an FD or bank balance has no "folio" to show here).
         final summary = MfHoldingsSummary(
           currentValue: combinedCurrentValue,
           investedValue: combinedInvestedValue,
@@ -703,6 +707,17 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
           oneDayChangePct: combinedOneDayChangePct,
           folioCount: holdings.summary.folioCount + stockItems.length,
         );
+
+        // The hero total, unlike the list above, must reflect the same net
+        // worth as Home/Explore — MF + stocks + FDs + bank balances — not
+        // just MF+stocks. It previously used summary.currentValue (the
+        // MF+stocks-only figure above), which is why this screen's hero
+        // number silently excluded FDs and bank accounts. Pull the real
+        // total from the same dashboard summary endpoint Home/Explore use.
+        final dashboardSummary = ref.watch(dashboardSummaryProvider).valueOrNull;
+        final heroTotalValue = dashboardSummary?.totalWealth ?? summary.currentValue;
+        final heroOneDayChangeAmount = dashboardSummary?.oneDayChangeAmount ?? summary.oneDayChangeAmount;
+        final heroOneDayChangePct = dashboardSummary?.oneDayChangePct ?? summary.oneDayChangePct;
 
         return Scaffold(
           backgroundColor: const Color(0xFFF9FAFB),
@@ -726,10 +741,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                         onRefreshTap: () => context.push('/mf-fetch-confirm'),
                         mfConnected: assetState.mfConnected,
                         stocksConnected: assetState.stocksConnected,
-                        totalValue: summary.currentValue,
+                        totalValue: heroTotalValue,
                         oneDayChangeText: _formatSignedChange(
-                          summary.oneDayChangeAmount,
-                          summary.oneDayChangePct,
+                          heroOneDayChangeAmount,
+                          heroOneDayChangePct,
                         ),
                       ),
                     ),
