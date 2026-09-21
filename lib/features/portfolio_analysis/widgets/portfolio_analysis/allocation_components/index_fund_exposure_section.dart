@@ -162,7 +162,7 @@ class _IndexFundExposureSectionState
                       headline,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 22,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF0F172A),
                       ),

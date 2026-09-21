@@ -44,6 +44,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _isSecondCardStacked = ValueNotifier(false);
   bool _showFab = false;
+  bool _isRefreshing = false;
+
+  /// Invalidates the cached dashboard providers (Riverpod's FutureProvider
+  /// result cache — there's no separate HTTP cache in this app) and awaits
+  /// the refetch. The summary endpoint recomputes the user's portfolio value
+  /// live and upserts today's portfolio_snapshots row server-side, so this
+  /// is also what refreshes the snapshot the RM portal's book/list views
+  /// read.
+  Future<void> _handleRefreshTap() async {
+    if (_isRefreshing) return;
+    setState(() => _isRefreshing = true);
+    ref.invalidate(dashboardGrowthProvider);
+    try {
+      await ref.refresh(dashboardSummaryProvider.future);
+    } catch (_) {
+      // Errors surface through dashboardSummaryProvider's AsyncValue as usual.
+    } finally {
+      if (mounted) setState(() => _isRefreshing = false);
+    }
+  }
 
   @override
   void initState() {
@@ -191,6 +211,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               isLocked: isLocked,
               onProfileTap: () => context.push('/user-profile'),
               onLockTap: () => ref.read(privacyProvider.notifier).state = !isLocked,
+              onRefreshTap: _handleRefreshTap,
+              isRefreshing: _isRefreshing,
             ),
           ),
           // 1. Main content with consistent horizontal padding
@@ -692,8 +714,10 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String pillTotalText;
   final VoidCallback onProfileTap;
   final VoidCallback onLockTap;
+  final VoidCallback onRefreshTap;
   final bool isLocked;
   final bool isLoading;
+  final bool isRefreshing;
 
   _HomeHeaderDelegate({
     required this.safeAreaTop,
@@ -704,8 +728,10 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.pillTotalText,
     required this.onProfileTap,
     required this.onLockTap,
+    required this.onRefreshTap,
     required this.isLocked,
     this.isLoading = false,
+    this.isRefreshing = false,
   });
 
   @override
@@ -860,20 +886,35 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                       SizedBox(width: lerpDouble(12.0, 0.0, easedRatio)!),
                       Opacity(
                         opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
-                        child: Container(
-                          width: lerpDouble(28.0, 0.0, easedRatio)!,
-                          height: lerpDouble(28.0, 0.0, easedRatio)!,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFFCBD5E1),
-                              width: 1.2,
+                        child: GestureDetector(
+                          onTap: isRefreshing ? null : onRefreshTap,
+                          child: Container(
+                            width: lerpDouble(28.0, 0.0, easedRatio)!,
+                            height: lerpDouble(28.0, 0.0, easedRatio)!,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFFCBD5E1),
+                                width: 1.2,
+                              ),
                             ),
-                          ),
-                          child: Icon(
-                            Icons.refresh_rounded,
-                            size: lerpDouble(16.0, 0.0, easedRatio)!,
-                            color: const Color(0xFF64748B),
+                            child: isRefreshing
+                                ? Padding(
+                                    padding: EdgeInsets.all(
+                                      lerpDouble(6.0, 0.0, easedRatio)!,
+                                    ),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1.6,
+                                      valueColor: const AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF64748B),
+                                      ),
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.refresh_rounded,
+                                    size: lerpDouble(16.0, 0.0, easedRatio)!,
+                                    color: const Color(0xFF64748B),
+                                  ),
                           ),
                         ),
                       ),
@@ -959,12 +1000,13 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) {
-    return safeAreaTop != oldDelegate.safeAreaTop || 
+    return safeAreaTop != oldDelegate.safeAreaTop ||
            totalWealth != oldDelegate.totalWealth ||
            showReturnsPill != oldDelegate.showReturnsPill ||
            pillOneDayText != oldDelegate.pillOneDayText ||
            pillTotalText != oldDelegate.pillTotalText ||
-           isLoading != oldDelegate.isLoading;
+           isLoading != oldDelegate.isLoading ||
+           isRefreshing != oldDelegate.isRefreshing;
   }
 }
 
