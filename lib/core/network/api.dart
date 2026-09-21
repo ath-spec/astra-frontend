@@ -101,7 +101,7 @@ class DioApiClient {
           error.type == DioExceptionType.receiveTimeout ||
           error.type == DioExceptionType.sendTimeout ||
           error.type == DioExceptionType.connectionError) {
-        return const ApiException('Could not reach the server. Please check your connection.');
+        return const ApiException('Could not reach the server. Please check your internet connection.');
       }
       return ApiException(
         error.message ?? 'Network request failed',

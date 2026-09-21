@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/api.dart';
+import '../../auth/providers/auth_provider.dart';
 
 class BankAccountItem {
   const BankAccountItem({
@@ -12,6 +14,7 @@ class BankAccountItem {
     required this.ifsc,
     required this.branch,
     this.balance = 0.0,
+    this.accountType = 'SAVINGS',
   });
 
   final String id;
@@ -22,6 +25,7 @@ class BankAccountItem {
   final String ifsc;
   final String branch;
   final double balance;
+  final String accountType;
 
   factory BankAccountItem.fromJson(Map<String, dynamic> json) {
     final bName = json['bank_name']?.toString() ?? 'Bank Account';
@@ -48,6 +52,7 @@ class BankAccountItem {
       balance: bal,
       ifsc: ifscCode,
       branch: branchName,
+      accountType: aType,
     );
   }
 
@@ -87,6 +92,7 @@ class BankAccountItem {
     String? ifsc,
     String? branch,
     double? balance,
+    String? accountType,
   }) {
     return BankAccountItem(
       id: id ?? this.id,
@@ -97,6 +103,7 @@ class BankAccountItem {
       ifsc: ifsc ?? this.ifsc,
       branch: branch ?? this.branch,
       balance: balance ?? this.balance,
+      accountType: accountType ?? this.accountType,
     );
   }
 }
@@ -126,6 +133,7 @@ class AssetConnectionState {
     required this.stocksStatusMessage,
     required this.banksStatusMessage,
     required this.bankAccounts,
+    this.bankAccountsLoaded = false,
   });
 
   final AssetConnectionStep step;
@@ -136,6 +144,11 @@ class AssetConnectionState {
   final String stocksStatusMessage;
   final String banksStatusMessage;
   final List<BankAccountItem> bankAccounts;
+  // True once a live fetchLiveBankAccounts() call has actually completed
+  // (success or failure) at least once for the current session — lets a
+  // consumer tell "confirmed zero accounts" apart from "haven't checked the
+  // real backend yet," which `banksConnected` alone can't distinguish.
+  final bool bankAccountsLoaded;
 
   AssetConnectionState copyWith({
     AssetConnectionStep? step,
@@ -146,6 +159,7 @@ class AssetConnectionState {
     String? stocksStatusMessage,
     String? banksStatusMessage,
     List<BankAccountItem>? bankAccounts,
+    bool? bankAccountsLoaded,
   }) {
     return AssetConnectionState(
       step: step ?? this.step,
@@ -156,12 +170,24 @@ class AssetConnectionState {
       stocksStatusMessage: stocksStatusMessage ?? this.stocksStatusMessage,
       banksStatusMessage: banksStatusMessage ?? this.banksStatusMessage,
       bankAccounts: bankAccounts ?? this.bankAccounts,
+      bankAccountsLoaded: bankAccountsLoaded ?? this.bankAccountsLoaded,
     );
   }
 }
 
 class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
-  AssetConnectionNotifier()
+  // Fetching once at provider-construction time is a race: this provider is
+  // a plain (non-autoDispose) StateNotifierProvider, so it's built exactly
+  // once and can be created before, during, or after the auth flow settles
+  // (fresh verifyOtp, restoreSession on relaunch, token refresh, ...). A
+  // returning user whose accounts are already linked server-side could have
+  // that one-shot call race the login transition or hit a transient error
+  // (silently swallowed), permanently misreporting "not connected" for the
+  // rest of the session with nothing to ever retry it. Listening to
+  // authProvider instead means every time the app actually settles into an
+  // authenticated state, this refetches for real — not just once, hopefully
+  // at the right time.
+  AssetConnectionNotifier(Ref ref)
       : super(
           const AssetConnectionState(
             step: AssetConnectionStep.linkingMutualFunds,
@@ -175,6 +201,11 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
           ),
         ) {
     fetchLiveBankAccounts();
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next is AuthAuthenticated && previous is! AuthAuthenticated) {
+        fetchLiveBankAccounts();
+      }
+    });
   }
 
   void setMfConnected(bool connected) {
@@ -214,7 +245,9 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
   Timer? _timer;
   final _api = DioApiClient();
 
-  /// Fetches live bank accounts from backend PostgreSQL (/api/v1/aa/accounts)
+  /// Fetches live bank accounts from backend PostgreSQL (/api/v1/aa/accounts).
+  /// Always marks bankAccountsLoaded so callers (e.g. showFoundBanks) can
+  /// tell a completed check apart from one that never ran.
   Future<void> fetchLiveBankAccounts() async {
     try {
       final res = await _api.dio.get('/api/v1/aa/accounts');
@@ -230,11 +263,20 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
             bankAccounts: items,
             banksConnected: items.isNotEmpty,
             banksStatusMessage: items.isNotEmpty ? 'Successfully Linked' : 'No accounts linked',
+            bankAccountsLoaded: true,
           );
+          return;
         }
       }
-    } catch (_) {
-      // Keep existing accounts if offline or not logged in yet
+      state = state.copyWith(bankAccountsLoaded: true);
+    } catch (e) {
+      // Offline or not logged in yet — keep whatever accounts are already
+      // in state (don't destructively clear a good result on a transient
+      // network blip), but still mark the attempt as complete so a caller
+      // waiting on bankAccountsLoaded doesn't hang forever, and log it
+      // instead of swallowing it silently.
+      debugPrint('fetchLiveBankAccounts failed: $e');
+      state = state.copyWith(bankAccountsLoaded: true);
     }
   }
 
@@ -359,8 +401,22 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     continueWithoutStocks();
   }
 
-  void showFoundBanks() {
+  /// Shows the user's bank accounts on the linking screen. If nothing is
+  /// loaded locally yet, this used to immediately fabricate two hardcoded
+  /// "discovered" accounts — regardless of whether the constructor's
+  /// one-shot fetchLiveBankAccounts() call had actually finished, or had
+  /// silently failed (see its catch block). That meant a user whose real
+  /// accounts genuinely were already linked server-side could land here,
+  /// see fake unlinked accounts, "connect" them (POSTing duplicate rows to
+  /// /api/v1/aa/accounts), and never actually resolve the real
+  /// disconnected-looking state — the connect loop this was reported for.
+  /// Now it re-checks the real backend first and only falls back to the
+  /// simulated discovery step if the user truly has nothing linked yet.
+  Future<void> showFoundBanks() async {
     _timer?.cancel();
+    if (state.bankAccounts.isEmpty) {
+      await fetchLiveBankAccounts();
+    }
     if (state.bankAccounts.isEmpty) {
       // Account Aggregator discovers accounts linked to the user's verified phone number
       final discoveredAccounts = [
@@ -427,7 +483,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
         try {
           await _api.dio.post<dynamic>('/api/v1/aa/accounts', data: {
             'bank_name': b.bankName,
-            'account_type': 'SAVINGS',
+            'account_type': b.accountType,
             'balance': b.balance,
             'ifsc': b.ifsc,
             'branch': b.branch,
@@ -447,7 +503,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     );
   }
 
-  Future<void> searchAndAddBank(String bankName) async {
+  Future<void> searchAndAddBank(String bankName, {String accountType = 'SAVINGS'}) async {
     _timer?.cancel();
     final shortId = '${(1000 + DateTime.now().millisecondsSinceEpoch % 9000)}';
     final dynamicBal = _calculateRealisticBalance(bankName);
@@ -462,7 +518,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     try {
       final res = await _api.dio.post<dynamic>('/api/v1/aa/accounts', data: {
         'bank_name': bankName,
-        'account_type': 'SAVINGS',
+        'account_type': accountType,
         'balance': dynamicBal,
         'ifsc': ifsc,
         'branch': branch,
@@ -476,12 +532,13 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
       final newBank = BankAccountItem(
         id: shortId,
         bankName: bankName,
-        accountNumber: 'SAVINGS account - xxxx $shortId',
+        accountNumber: '$accountType account - xxxx $shortId',
         isSelected: true,
         isLinked: false,
         balance: dynamicBal,
         ifsc: ifsc,
         branch: branch,
+        accountType: accountType,
       );
       final updatedBanks = List<BankAccountItem>.from(state.bankAccounts)..add(newBank);
       state = state.copyWith(
@@ -573,5 +630,5 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
 
 final assetConnectionProvider =
     StateNotifierProvider<AssetConnectionNotifier, AssetConnectionState>((ref) {
-  return AssetConnectionNotifier();
+  return AssetConnectionNotifier(ref);
 });

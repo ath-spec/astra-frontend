@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/unconnected_bank_empty_state.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
+import '../../dashboard/data/dashboard_providers.dart';
 import '../data/analytics_repository.dart';
 import '../models/analytics_models.dart';
 import '../widgets/ai_mood_insight_card.dart';
@@ -90,7 +91,21 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
   @override
   Widget build(BuildContext context) {
     final assetState = ref.watch(assetConnectionProvider);
-    final isBankConnected = assetState.banksConnected || _demoMode;
+    // assetState.banksConnected is set once by AssetConnectionNotifier's
+    // constructor-time fetchLiveBankAccounts() call and never retried — if
+    // that single fetch raced the login flow (or hit any transient error,
+    // silently swallowed) it stays wrong for the rest of this app session.
+    // dashboardSummaryProvider is the same live-recomputed source the Home
+    // screen already trusts (DashboardService.Summary on the backend), so
+    // OR-ing with it here means a real backend connection is never hidden
+    // behind a stale local flag.
+    final dashboardAsync = ref.watch(dashboardSummaryProvider);
+    final backendConfirmedBankConnected = dashboardAsync.maybeWhen(
+      data: (s) => s.bankBalancePresent,
+      orElse: () => false,
+    );
+    final isBankConnected =
+        assetState.banksConnected || backendConfirmedBankConnected || _demoMode;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),

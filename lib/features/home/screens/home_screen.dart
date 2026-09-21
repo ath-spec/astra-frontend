@@ -3,6 +3,7 @@ import 'dart:ui' show lerpDouble, ImageFilter;
 import 'dart:math' hide log;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -57,12 +58,107 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     setState(() => _isRefreshing = true);
     ref.invalidate(dashboardGrowthProvider);
     try {
-      await ref.refresh(dashboardSummaryProvider.future);
+      ref.invalidate(dashboardSummaryProvider);
+      await ref.read(dashboardSummaryProvider.future);
+      HapticFeedback.lightImpact();
+      if (mounted) {
+        _showRefreshedCue();
+      }
     } catch (_) {
-      // Errors surface through dashboardSummaryProvider's AsyncValue as usual.
+      if (mounted) {
+        _showRefreshFailedCue();
+      }
     } finally {
       if (mounted) setState(() => _isRefreshing = false);
     }
+  }
+
+  void _showRefreshedCue() {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF0F172A),
+          elevation: 6,
+          margin: EdgeInsets.only(
+            bottom: 84 + MediaQuery.paddingOf(context).bottom,
+            left: 32,
+            right: 32,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(color: Color(0xFF334155), width: 1),
+          ),
+          duration: const Duration(milliseconds: 2000),
+          content: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.check_circle_rounded,
+                size: 16,
+                color: Color(0xFF10B981),
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Data refreshed',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+  }
+
+  void _showRefreshFailedCue() {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF0F172A),
+          elevation: 6,
+          margin: EdgeInsets.only(
+            bottom: 84 + MediaQuery.paddingOf(context).bottom,
+            left: 32,
+            right: 32,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(color: Color(0xFF334155), width: 1),
+          ),
+          duration: const Duration(milliseconds: 2500),
+          content: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                size: 16,
+                color: Color(0xFFEF4444),
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Failed to refresh data',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
   }
 
   @override
@@ -888,33 +984,36 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                         opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
                         child: GestureDetector(
                           onTap: isRefreshing ? null : onRefreshTap,
-                          child: Container(
-                            width: lerpDouble(28.0, 0.0, easedRatio)!,
-                            height: lerpDouble(28.0, 0.0, easedRatio)!,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: const Color(0xFFCBD5E1),
-                                width: 1.2,
+                          child: Tooltip(
+                            message: 'Refresh data',
+                            child: Container(
+                              width: lerpDouble(28.0, 0.0, easedRatio)!,
+                              height: lerpDouble(28.0, 0.0, easedRatio)!,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: const Color(0xFFCBD5E1),
+                                  width: 1.2,
+                                ),
                               ),
-                            ),
-                            child: isRefreshing
-                                ? Padding(
-                                    padding: EdgeInsets.all(
-                                      lerpDouble(6.0, 0.0, easedRatio)!,
-                                    ),
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 1.6,
-                                      valueColor: const AlwaysStoppedAnimation<Color>(
-                                        Color(0xFF64748B),
+                              child: isRefreshing
+                                  ? Padding(
+                                      padding: EdgeInsets.all(
+                                        lerpDouble(6.0, 0.0, easedRatio)!,
                                       ),
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 1.6,
+                                        valueColor: const AlwaysStoppedAnimation<Color>(
+                                          Color(0xFF64748B),
+                                        ),
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.refresh_rounded,
+                                      size: lerpDouble(16.0, 0.0, easedRatio)!,
+                                      color: const Color(0xFF64748B),
                                     ),
-                                  )
-                                : Icon(
-                                    Icons.refresh_rounded,
-                                    size: lerpDouble(16.0, 0.0, easedRatio)!,
-                                    color: const Color(0xFF64748B),
-                                  ),
+                            ),
                           ),
                         ),
                       ),

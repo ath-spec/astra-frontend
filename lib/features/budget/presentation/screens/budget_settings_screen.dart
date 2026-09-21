@@ -86,7 +86,7 @@ class _BudgetSettingsScreenState extends ConsumerState<BudgetSettingsScreen> {
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
       if (connectivityResult.contains(ConnectivityResult.none)) {
-         if (mounted) setState(() { _isLoading = false; _error = "No DMSansnet connection. Please connect and try again."; });
+         if (mounted) setState(() { _isLoading = false; _error = "No internet connection. Please connect and try again."; });
          return;
       }
       final settings = await ref.read(budgetStateProvider).fetchSettings();

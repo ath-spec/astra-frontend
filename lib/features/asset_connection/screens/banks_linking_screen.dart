@@ -16,6 +16,7 @@ class BanksLinkingScreen extends ConsumerStatefulWidget {
 
 class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
   final List<String> _selectedMoreBanks = [];
+  String _selectedAccountType = 'SAVINGS';
   final List<String> _popularBanks = [
     'HDFC Bank',
     'ICICI Bank',
@@ -82,7 +83,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
       ctaActive = true;
       onCtaTap = () {
         for (final bank in _selectedMoreBanks) {
-          notifier.searchAndAddBank(bank);
+          notifier.searchAndAddBank(bank, accountType: _selectedAccountType);
         }
         setState(() {
           _selectedMoreBanks.clear();
@@ -223,7 +224,9 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                         Icon(Icons.unfold_more, size: 16, color: Color(0xFF64748B)),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
+                    _buildAccountTypeToggle(),
+                    const SizedBox(height: 12),
 
                     Expanded(
                       child: ListView.builder(
@@ -517,6 +520,49 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     return _buildFallbackLogo(size);
   }
 
+  /// Lets the user pick which account type new banks get linked as, instead
+  /// of every newly linked account being silently tagged SAVINGS.
+  Widget _buildAccountTypeToggle() {
+    Widget chip(String label, String value) {
+      final isActive = _selectedAccountType == value;
+      return Expanded(
+        child: GestureDetector(
+          onTap: () => setState(() => _selectedAccountType = value),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            curve: Curves.easeOut,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              color: isActive ? const Color(0xFF0F172A) : Colors.white,
+              border: Border.all(
+                color: isActive ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0),
+              ),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: isActive ? Colors.white : const Color(0xFF64748B),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      children: [
+        chip('SAVINGS', 'SAVINGS'),
+        const SizedBox(width: 8),
+        chip('PRIORITY', 'PRIORITY'),
+      ],
+    );
+  }
+
   Widget _buildBankCard({
     required BankAccountItem bank,
     required VoidCallback? onTap,
@@ -524,7 +570,7 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     final accountLast4 = bank.accountNumber.length >= 4
         ? bank.accountNumber.substring(bank.accountNumber.length - 4)
         : bank.accountNumber;
-    final accountType = bank.accountNumber.split(' ').first.toUpperCase();
+    final accountType = bank.accountType.toUpperCase();
     final isLinked = bank.isLinked;
 
     return GestureDetector(

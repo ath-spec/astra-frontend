@@ -211,7 +211,7 @@ class _AnalysisWalkScreenState extends ConsumerState<AnalysisWalkScreen> {
           ),
           const SizedBox(height: 12),
           const Text(
-            'Please check your connection and try again.',
+            'Please check your internet connection and try again.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'DMSans',

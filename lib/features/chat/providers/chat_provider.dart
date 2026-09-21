@@ -92,7 +92,7 @@ class ChatNotifier extends _$ChatNotifier {
         .where((b) => b.isLinked)
         .map((b) => {
               'bankName': b.bankName,
-              'accountType': b.accountNumber.split(' ').first.toUpperCase(),
+              'accountType': b.accountType.toUpperCase(),
               'balance': b.balance > 0 ? b.balance : 150000.0, // fallback balance if none
             })
         .toList();
