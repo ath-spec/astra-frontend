@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:intl/intl.dart';
 import 'package:astra_frontend/features/budget/presentation/widgets/category_budget_summary_card.dart';
-import 'package:astra_frontend/features/budget/data/models/budget_api_models.dart';
+import 'package:astra_frontend/features/budget/data/models/budget_models.dart';
 
 
 class CategoryBudgetScreen extends StatelessWidget {

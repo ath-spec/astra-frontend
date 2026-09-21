@@ -15,20 +15,20 @@ class TransactionsRepository {
 
   final DioApiClient _client;
 
-  /// Cache of the most recent unfiltered fetch, used so [fetchDetail] can
-  /// look a transaction up by id without a dedicated by-id endpoint.
+  /// Cache of the last unfiltered fetch. The repository instance lives for
+  /// the app's lifetime (Riverpod `Provider`), so this persists across
+  /// screen visits — nothing here refetches just because a screen was
+  /// re-entered. Only [forceRefresh] (wired to each screen's pull-to-refresh)
+  /// or an empty cache triggers a real network call.
   List<TransactionItem>? _cache;
 
-  /// Fetches every transaction, optionally narrowed to one [category] or
-  /// [merchant] (server-side filters). [days] defaults to 180 and is
-  /// capped at 3650 by the backend.
-  ///
-  /// None of the screens built on this (Transactions/Categories/Merchants
-  /// tabs) have any "load more" UI — they render one flat scrollable list —
-  /// so this paginates through every page server-side (backend caps a
-  /// single page at 100) and concatenates the results, rather than
-  /// silently returning only the first page's default 25 rows.
-  Future<List<TransactionItem>> fetchAll({String? category, String? merchant, int days = 180}) async {
+  /// The full unfiltered list, from cache unless [forceRefresh] or nothing
+  /// has been fetched yet. [days] only affects an actual network fetch —
+  /// once cached, a request for a different [days] value still reuses it,
+  /// since re-deriving a *narrower* window from an already-fetched wider
+  /// one client-side is exactly as correct and avoids a redundant call.
+  Future<List<TransactionItem>> _fetchAllUnfiltered({int days = 180, bool forceRefresh = false}) async {
+    if (!forceRefresh && _cache != null) return _cache!;
     try {
       const pageSize = 100;
       final items = <TransactionItem>[];
@@ -37,13 +37,7 @@ class TransactionsRepository {
       do {
         final response = await _client.dio.get(
           '/api/v1/analytics/spend/transactions',
-          queryParameters: {
-            if (category != null && category.isNotEmpty) 'category': category,
-            if (merchant != null && merchant.isNotEmpty) 'merchant': merchant,
-            'days': days,
-            'limit': pageSize,
-            'offset': offset,
-          },
+          queryParameters: {'days': days, 'limit': pageSize, 'offset': offset},
         );
         // GET /transactions returns a TransactionPage object ({items, total,
         // limit, offset}), not a bare array — unwrapList (which requires
@@ -66,22 +60,50 @@ class TransactionsRepository {
         offset += pageSize;
       } while (offset < total);
 
-      if (category == null && merchant == null) {
-        _cache = items;
-      }
+      _cache = items;
       return items;
     } catch (e) {
       throw _client.toApiException(e);
     }
   }
 
-  Future<List<TransactionDateGroup>> fetchGrouped({String? category, String? merchant}) async {
-    final items = await fetchAll(category: category, merchant: merchant);
+  /// Fetches transactions, optionally narrowed to one [category] or
+  /// [merchant] — filtered client-side from the cached full list (see
+  /// [_fetchAllUnfiltered]) rather than as a separate server request, so a
+  /// category/merchant drill-down never forces its own network round-trip
+  /// either.
+  Future<List<TransactionItem>> fetchAll({
+    String? category,
+    String? merchant,
+    int days = 180,
+    bool forceRefresh = false,
+  }) async {
+    final all = await _fetchAllUnfiltered(days: days, forceRefresh: forceRefresh);
+    if ((category == null || category.isEmpty) && (merchant == null || merchant.isEmpty)) {
+      return all;
+    }
+    return all.where((t) {
+      if (category != null && category.isNotEmpty && t.category.toLowerCase() != category.toLowerCase()) {
+        return false;
+      }
+      if (merchant != null && merchant.isNotEmpty && t.merchant.toLowerCase() != merchant.toLowerCase()) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  Future<List<TransactionDateGroup>> fetchGrouped({
+    String? category,
+    String? merchant,
+    bool forceRefresh = false,
+  }) async {
+    final items = await fetchAll(category: category, merchant: merchant, forceRefresh: forceRefresh);
     return _groupByDate(items);
   }
 
-  Future<List<CategorySummary>> fetchCategories() async {
-    final all = await fetchAll();
+  Future<List<CategorySummary>> fetchCategories({bool forceRefresh = false}) async {
+    final all = await fetchAll(forceRefresh: forceRefresh);
     final byCategory = <String, List<TransactionItem>>{};
     for (final t in all) {
       byCategory.putIfAbsent(t.category, () => []).add(t);
@@ -99,8 +121,8 @@ class TransactionsRepository {
     return summaries;
   }
 
-  Future<List<MerchantSummary>> fetchMerchants() async {
-    final all = await fetchAll();
+  Future<List<MerchantSummary>> fetchMerchants({bool forceRefresh = false}) async {
+    final all = await fetchAll(forceRefresh: forceRefresh);
     final byMerchant = <String, List<TransactionItem>>{};
     for (final t in all) {
       byMerchant.putIfAbsent(t.merchant, () => []).add(t);
@@ -122,7 +144,7 @@ class TransactionsRepository {
   Future<TransactionDetail?> fetchDetail(String id) async {
     var all = _cache;
     if (all == null || all.every((t) => t.id != id)) {
-      all = await fetchAll();
+      all = await _fetchAllUnfiltered();
     }
     for (final item in all) {
       if (item.id == id) return TransactionDetail.fromItem(item);
@@ -138,7 +160,7 @@ class TransactionsRepository {
       groups.putIfAbsent(key, () => []).add(item);
     }
     return groups.entries.map((e) {
-      final total = e.value.fold<double>(0, (s, t) => s + (t.isDebit ? t.amount : -t.amount));
+      final total = e.value.fold<double>(0, (s, t) => s + (t.isDebit ? -t.amount : t.amount));
       return TransactionDateGroup(date: e.value.first.time, dailyTotal: total, items: e.value);
     }).toList()
       ..sort((a, b) => b.date.compareTo(a.date));

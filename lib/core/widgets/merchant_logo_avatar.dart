@@ -9,6 +9,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class MerchantLogoAvatar extends StatelessWidget {
   final String merchantName;
+  /// Optional raw merchant string from the API (e.g. "zomato"). When set,
+  /// logo lookup tries this first, then falls back to [merchantName].
+  final String? logoKey;
   final String category;
   final double size;
   final double borderRadius;
@@ -17,6 +20,7 @@ class MerchantLogoAvatar extends StatelessWidget {
   const MerchantLogoAvatar({
     super.key,
     required this.merchantName,
+    this.logoKey,
     required this.category,
     this.size = 38,
     this.borderRadius = 10,
@@ -100,7 +104,8 @@ class MerchantLogoAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logoAsset = getLogoAsset(merchantName);
+    // Try the raw API merchant key first (more reliable), then the display name.
+    final logoAsset = (logoKey != null ? getLogoAsset(logoKey!) : null) ?? getLogoAsset(merchantName);
 
     if (logoAsset != null) {
       final isSvg = logoAsset.endsWith('.svg');

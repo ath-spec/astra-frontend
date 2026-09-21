@@ -42,10 +42,10 @@ class DateGroupSection extends StatelessWidget {
                 Text(
                   '${isDown ? '-' : '+'}₹${NumberFormat('#,##0').format(group.dailyTotal.abs())}',
                   style: TextStyle(
-                    fontFamily: 'DMMono',
+                    fontFamily: 'DMSans',
                     fontSize: 11.5,
                     fontWeight: FontWeight.w500,
-                    color: isDown ? const Color(0xFF64748B) : const Color(0xFF16A34A),
+                    color: isDown ? const Color(0xFF94A3B8) : const Color(0xFF16A34A),
                   ),
                 ),
               ],

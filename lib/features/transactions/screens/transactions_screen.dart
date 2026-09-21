@@ -45,13 +45,13 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     _loadTab(0);
   }
 
-  Future<void> _loadTab(int index) async {
+  Future<void> _loadTab(int index, {bool forceRefresh = false}) async {
     final repo = ref.read(transactionsRepositoryProvider);
     switch (index) {
       case 0:
         setState(() => _groupsError = null);
         try {
-          final groups = await repo.fetchGrouped();
+          final groups = await repo.fetchGrouped(forceRefresh: forceRefresh);
           if (!mounted) return;
           setState(() => _groups = groups);
         } catch (e) {
@@ -62,7 +62,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
       case 1:
         setState(() => _categoriesError = null);
         try {
-          final categories = await repo.fetchCategories();
+          final categories = await repo.fetchCategories(forceRefresh: forceRefresh);
           if (!mounted) return;
           setState(() => _categories = categories);
         } catch (e) {
@@ -73,7 +73,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
       case 2:
         setState(() => _merchantsError = null);
         try {
-          final merchants = await repo.fetchMerchants();
+          final merchants = await repo.fetchMerchants(forceRefresh: forceRefresh);
           if (!mounted) return;
           setState(() => _merchants = merchants);
         } catch (e) {
@@ -186,7 +186,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     }
 
     return RefreshIndicator(
-      onRefresh: () => _loadTab(0),
+      onRefresh: () => _loadTab(0, forceRefresh: true),
       color: const Color(0xFF0F172A),
       child: ListView.builder(
         padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 32),
@@ -218,7 +218,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     }
 
     return RefreshIndicator(
-      onRefresh: () => _loadTab(1),
+      onRefresh: () => _loadTab(1, forceRefresh: true),
       color: const Color(0xFF0F172A),
       child: ListView.separated(
         padding: EdgeInsets.fromLTRB(hPad, 4, hPad, 32),
@@ -262,7 +262,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     }
 
     return RefreshIndicator(
-      onRefresh: () => _loadTab(2),
+      onRefresh: () => _loadTab(2, forceRefresh: true),
       color: const Color(0xFF0F172A),
       child: ListView.separated(
         padding: EdgeInsets.fromLTRB(hPad, 4, hPad, 32),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/arch_background.dart';
+import '../../../core/widgets/shimmer_card_skeleton.dart';
 import '../providers/asset_connection_provider.dart';
 
 /// Screen 1 of Banks Flow: Shows Bank Accounts (Image 1) in clean light mode.
@@ -39,13 +40,15 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
   @override
   void initState() {
     super.initState();
-    // Ensure banks are shown in state if not already populated
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final state = ref.read(assetConnectionProvider);
-      if (state.bankAccounts.isEmpty) {
-        ref.read(assetConnectionProvider.notifier).showFoundBanks();
-      }
-    });
+    // Fired directly (not deferred to a post-frame callback) so the fetch
+    // starts as early as this screen exists, instead of losing a frame —
+    // and build() below renders a loading skeleton for this section in the
+    // meantime, so the account list doesn't render as a blank gap that
+    // pops in after the rest of the (static) screen has already painted.
+    final state = ref.read(assetConnectionProvider);
+    if (state.bankAccounts.isEmpty) {
+      ref.read(assetConnectionProvider.notifier).showFoundBanks();
+    }
   }
 
   void _showConsentBottomSheet(BuildContext context) {
@@ -191,16 +194,26 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     ),
                     const SizedBox(height: 8),
 
-                    // Bank Accounts List
+                    // Bank Accounts List — while the fetch that initState
+                    // kicked off is still in flight, render skeleton cards
+                    // instead of nothing, so this section appears together
+                    // with the rest of the (already-painted) screen content
+                    // rather than as a jarring gap that pops in later.
                     Flexible(
                       child: SingleChildScrollView(
                         child: Column(
-                          children: state.bankAccounts.map((bank) {
-                            return _buildBankCard(
-                              bank: bank,
-                              onTap: () => notifier.toggleBankSelection(bank.id),
-                            );
-                          }).toList(),
+                          children: !state.bankAccountsLoaded && state.bankAccounts.isEmpty
+                              ? const [
+                                  AppThemeShimmerCard(height: 72),
+                                  SizedBox(height: 12),
+                                  AppThemeShimmerCard(height: 72),
+                                ]
+                              : state.bankAccounts.map((bank) {
+                                  return _buildBankCard(
+                                    bank: bank,
+                                    onTap: () => notifier.toggleBankSelection(bank.id),
+                                  );
+                                }).toList(),
                         ),
                       ),
                     ),

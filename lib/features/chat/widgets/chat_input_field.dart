@@ -109,10 +109,10 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
             AnimatedSize(
               duration: const Duration(milliseconds: 250),
               curve: const Cubic(0.23, 1.0, 0.32, 1.0),
-              child: ref.watch(speechProvider).isListening
+              child: (ref.watch(speechProvider).isListening || ref.watch(speechProvider).isProcessing)
                   ? Padding(
                       padding: const EdgeInsets.only(bottom: 12.0),
-                      child: Center(child: VoiceAnimationWidget(isListening: true)),
+                      child: Center(child: VoiceAnimationWidget(isListening: ref.watch(speechProvider).isListening)),
                     )
                   : const SizedBox.shrink(),
             ),

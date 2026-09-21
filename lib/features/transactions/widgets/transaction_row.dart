@@ -28,6 +28,7 @@ class TransactionRow extends StatelessWidget {
           children: [
             MerchantLogoAvatar(
               merchantName: item.title,
+              logoKey: item.merchant,
               category: item.category,
               size: 40,
               borderRadius: 4,

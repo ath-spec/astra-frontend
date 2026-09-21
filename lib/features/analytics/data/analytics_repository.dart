@@ -24,7 +24,7 @@ class AnalyticsRepository {
   AnalyticsSummary? _cachedSummary;
   AnalyticsInsights? _cachedInsights;
   final Map<String, List<FocusDataPoint>> _focusCache = {};
-  List<_DailyPoint>? _dailyTrendCache;
+  List<_RawTxn>? _rawTxnCache;
 
   Future<AnalyticsSummary> getSummary({bool forceRefresh = false}) async {
     if (_cachedSummary != null && !forceRefresh) return _cachedSummary!;
@@ -47,10 +47,10 @@ class AnalyticsRepository {
 
   /// Daily spend series for the focus-level chart, windowed to the
   /// requested cycle ('This week' / 'This month' / 'This year' / 'Custom').
-  /// Backed by GET /trends?period=daily, which only covers the last 180
-  /// days of real transaction history — a cycle reaching further back than
-  /// that will simply have fewer points, which is honest rather than
-  /// fabricated.
+  /// Aggregated client-side from the real transaction list (see
+  /// _fetchAllTransactions for why this doesn't use GET /trends) — a cycle
+  /// reaching further back than the synced history will simply have fewer
+  /// non-zero points, which is honest rather than fabricated.
   Future<List<FocusDataPoint>> getFocusLevelData({
     required String cycle,
     DateTime? fromDate,
@@ -59,8 +59,8 @@ class AnalyticsRepository {
   }) async {
     final key = _focusCacheKey(cycle, fromDate, toDate);
     if (_focusCache[key] != null && !forceRefresh) return _focusCache[key]!;
-    final daily = await _fetchDailyTrend(forceRefresh: forceRefresh);
-    final data = _buildFocusData(daily, cycle: cycle, fromDate: fromDate, toDate: toDate);
+    final txns = await _fetchAllTransactions(forceRefresh: forceRefresh);
+    final data = _buildFocusData(txns, cycle: cycle, fromDate: fromDate, toDate: toDate);
     _focusCache[key] = data;
     return data;
   }
@@ -94,24 +94,47 @@ class AnalyticsRepository {
     }
   }
 
-  Future<List<_DailyPoint>> _fetchDailyTrend({bool forceRefresh = false}) async {
-    if (_dailyTrendCache != null && !forceRefresh) return _dailyTrendCache!;
-    final data = await _getObject('/api/v1/analytics/spend/trends', query: {'period': 'daily'});
-    final points = (data['points'] as List<dynamic>? ?? const [])
-        .whereType<Map<String, dynamic>>()
-        .map(_DailyPoint.fromJson)
-        .toList();
-    _dailyTrendCache = points;
-    return points;
+  /// The full raw transaction list (paginated through, like the fixed
+  /// TransactionsRepository.fetchAll), cached and reused as the single
+  /// source both the daily focus chart and the monthly spend trends
+  /// aggregate from.
+  ///
+  /// This deliberately does NOT use GET /trends: that endpoint buckets into
+  /// fixed-width rolling windows counted backward from the request time
+  /// (e.g. "monthly" = six 30-day slices from right now, not six real
+  /// calendar months), so labeling a bucket's start date as "the month it
+  /// represents" is wrong whenever today isn't bucket-aligned — which
+  /// showed up as spend from several real months all landing under one
+  /// mislabeled month, and every other label reading zero. Aggregating the
+  /// real transaction list into real calendar days/months client-side is
+  /// correct by construction and needs no assumptions about the engine's
+  /// internal bucketing.
+  Future<List<_RawTxn>> _fetchAllTransactions({bool forceRefresh = false}) async {
+    if (_rawTxnCache != null && !forceRefresh) return _rawTxnCache!;
+    const pageSize = 100;
+    final items = <_RawTxn>[];
+    int offset = 0;
+    int total = 0;
+    do {
+      final page = await _getObject(
+        '/api/v1/analytics/spend/transactions',
+        query: {'days': 400, 'limit': pageSize, 'offset': offset},
+      );
+      final rows = page['items'] as List<dynamic>? ?? const [];
+      items.addAll(rows.whereType<Map<String, dynamic>>().map(_RawTxn.fromJson));
+      total = (page['total'] as num?)?.toInt() ?? items.length;
+      offset += pageSize;
+    } while (offset < total);
+    _rawTxnCache = items;
+    return items;
   }
 
-  /// The most recent [limit] raw transactions, newest first. Mirrors the
-  /// page-unwrapping fix in TransactionsRepository — GET /transactions
-  /// returns a {items, total, limit, offset} object, not a bare array.
+  /// The most recent [limit] transactions, newest first — a light slice of
+  /// the same cached full list rather than a separate request.
   Future<List<_RawTxn>> _fetchRecentTransactions({int limit = 5}) async {
-    final page = await _getObject('/api/v1/analytics/spend/transactions', query: {'limit': limit});
-    final items = page['items'] as List<dynamic>? ?? const [];
-    return items.whereType<Map<String, dynamic>>().map(_RawTxn.fromJson).toList();
+    final all = await _fetchAllTransactions();
+    final sorted = [...all]..sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
+    return sorted.take(limit).toList();
   }
 
   // ---------------------------------------------------------------
@@ -119,25 +142,30 @@ class AnalyticsRepository {
   // ---------------------------------------------------------------
 
   Future<AnalyticsSummary> _buildSummary() async {
-    final monthly = await _getObject('/api/v1/analytics/spend/trends', query: {'period': 'monthly'});
-    final monthlyPoints = (monthly['points'] as List<dynamic>? ?? const [])
-        .whereType<Map<String, dynamic>>()
-        .map(_DailyPoint.fromJson)
-        .toList()
-      ..sort((a, b) => a.date.compareTo(b.date));
+    final allTxns = await _fetchAllTransactions();
+    final debitByMonth = <int, double>{}; // key: year*12 + (month-1)
+    for (final t in allTxns) {
+      if (!t.isDebit) continue;
+      final key = t.occurredAt.year * 12 + (t.occurredAt.month - 1);
+      debitByMonth.update(key, (v) => v + t.amount, ifAbsent: () => t.amount);
+    }
 
-    final spendTrends = monthlyPoints
-        .skip((monthlyPoints.length - 6).clamp(0, monthlyPoints.length))
-        .map((p) => SpendTrend(
-              year: p.date.year,
-              month: p.date.month,
-              monthLabel: DateFormat('MMM').format(p.date),
-              totalSpent: p.total,
-            ))
-        .toList();
+    final now = DateTime.now();
+    final currentKey = now.year * 12 + (now.month - 1);
+    final spendTrends = List.generate(6, (i) {
+      final key = currentKey - (5 - i);
+      final year = key ~/ 12;
+      final month = (key % 12) + 1;
+      return SpendTrend(
+        year: year,
+        month: month,
+        monthLabel: DateFormat('MMM').format(DateTime(year, month)),
+        totalSpent: debitByMonth[key] ?? 0.0,
+      );
+    });
 
-    final current = monthlyPoints.isNotEmpty ? monthlyPoints.last.total : 0.0;
-    final previous = monthlyPoints.length > 1 ? monthlyPoints[monthlyPoints.length - 2].total : 0.0;
+    final current = debitByMonth[currentKey] ?? 0.0;
+    final previous = debitByMonth[currentKey - 1] ?? 0.0;
     final pctChange = previous == 0
         ? (current == 0 ? 0.0 : 100.0)
         : ((current - previous) / previous * 100);
@@ -365,12 +393,17 @@ class AnalyticsRepository {
   }
 
   List<FocusDataPoint> _buildFocusData(
-    List<_DailyPoint> daily, {
+    List<_RawTxn> txns, {
     required String cycle,
     DateTime? fromDate,
     DateTime? toDate,
   }) {
-    final byDate = {for (final p in daily) _dateKey(p.date): p.total};
+    final byDate = <String, double>{};
+    for (final t in txns) {
+      if (!t.isDebit) continue;
+      final key = _dateKey(t.occurredAt);
+      byDate.update(key, (v) => v + t.amount, ifAbsent: () => t.amount);
+    }
     final now = DateTime.now();
     List<DateTime> dates;
     final isWeek = cycle.toLowerCase() == 'this week';
@@ -483,21 +516,6 @@ class AnalyticsRepository {
     'Transfers': (icon: 'swap_horiz', color: '#64748B'),
     'Other': (icon: 'category', color: '#94A3B8'),
   };
-}
-
-class _DailyPoint {
-  final DateTime date;
-  final double total;
-
-  const _DailyPoint({required this.date, required this.total});
-
-  factory _DailyPoint.fromJson(Map<String, dynamic> json) {
-    final epochSeconds = (json['period_start'] as num?)?.toInt() ?? 0;
-    return _DailyPoint(
-      date: DateTime.fromMillisecondsSinceEpoch(epochSeconds * 1000),
-      total: (json['total'] as num?)?.toDouble() ?? 0.0,
-    );
-  }
 }
 
 class _RawTxn {

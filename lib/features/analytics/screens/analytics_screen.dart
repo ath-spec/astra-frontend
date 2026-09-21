@@ -58,6 +58,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
     final result = await showModalBottomSheet<FocusCycleResult>(
       context: context,
       isScrollControlled: true,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (_) => FocusCycleSheet(
         currentCycle: _selectedCycle,
@@ -164,21 +165,12 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
                       MaterialPageRoute(builder: (_) => const CategorySpendsScreen()),
                     ),
                   ),
-                  const SizedBox(height: 48),
-                  MonthlySpendingLevelCard(
-                    categories: _summary!.spendingLevels,
-                    onSeeAll: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const CategorySpendsScreen()),
-                    ),
-                  ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 58),
                   SpendTrendsCard(trends: _summary!.spendTrends),
                   const SizedBox(height: 48),
                 ] else if (_loadingSummary) ...[
                   const AnalyticsSkeletonView(),
                 ],
-                if (_insights != null)
-                  ActionableInsightsCard(insights: _insights!.actionableInsights),
               ],
             ],
           ),
