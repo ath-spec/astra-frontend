@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'sort_by_bottom_sheet.dart';
 import 'mf_holdings_header.dart';
-import '../../../../fund_profile/screens/your_fund_profile_screen.dart';
 import 'holding_item.dart';
 import 'simple_holdings_list.dart';
 import 'detailed_holdings_list.dart';
@@ -138,12 +137,14 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
   }
 
   String formatLargeNumber(double value) {
-    if (value >= 100000) {
-      return '₹${(value / 100000).toStringAsFixed(2)}L';
-    } else if (value >= 1000) {
-      return '₹${(value / 1000).toStringAsFixed(2)}K';
+    final absVal = value.abs();
+    final sign = value < 0 ? '-' : '';
+    if (absVal >= 100000) {
+      return '$sign₹${(absVal / 100000).toStringAsFixed(2)}L';
+    } else if (absVal >= 1000) {
+      return '$sign₹${(absVal / 1000).toStringAsFixed(2)}K';
     }
-    return '₹${value.toStringAsFixed(0)}';
+    return '$sign₹${absVal.toStringAsFixed(0)}';
   }
 
   Widget _buildTopCard(bool isLocked, MfHoldingsSummary summary) {
@@ -299,14 +300,22 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          isLocked ? '₹ * * * *' : '+${formatLargeNumber(returnsVal)} (${summary.returnsPct.toStringAsFixed(2)}%)',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF22C55E),
-                          ),
+                        Builder(
+                          builder: (context) {
+                            final isPos = summary.returnsAmount >= 0;
+                            final sign = isPos ? '+' : '-';
+                            return Text(
+                              isLocked
+                                  ? '₹ * * * *'
+                                  : '$sign${formatLargeNumber(returnsVal.abs())} (${summary.returnsPct.abs().toStringAsFixed(2)}%)',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: isPos ? const Color(0xFF22C55E) : const Color(0xFFEF4444),
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(height: 2),
                         Text(

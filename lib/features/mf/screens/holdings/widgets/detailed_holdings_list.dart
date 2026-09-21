@@ -27,14 +27,26 @@ class DetailedHoldingsList extends StatelessWidget {
           bool isPositiveReturns = item.returns >= 0;
           return GestureDetector(
             onTap: () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute(
-                  builder: (_) => YourFundProfileScreen(
-                    schemeCode: item.schemeCode,
-                    holdingItem: item,
+              // YourFundProfileScreen resolves its data by matching
+              // schemeCode against the user's MF folios, and falls back to
+              // "just show the first folio" when schemeCode is null/empty —
+              // a reasonable fallback for a genuine MF lookup miss, but this
+              // list also holds stocks (HoldingItem.fromStock never sets
+              // schemeCode, since stocks were never MF folios to begin
+              // with). Routing those through here silently opened whatever
+              // the user's first mutual fund happened to be, regardless of
+              // which stock was tapped. There's no stock detail screen built
+              // yet, so this is a no-op for stocks rather than misrouting.
+              if (item.schemeCode != null && item.schemeCode!.isNotEmpty) {
+                Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute(
+                    builder: (_) => YourFundProfileScreen(
+                      schemeCode: item.schemeCode,
+                      holdingItem: item,
+                    ),
                   ),
-                ),
-              );
+                );
+              }
             },
             child: Container(
               margin: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
@@ -94,7 +106,7 @@ class DetailedHoldingsList extends StatelessWidget {
                                 const SizedBox(width: 2),
                                 Flexible(
                                   child: Text(
-                                    '${formatCurrency.format(item.oneDayChange.abs())} (${item.oneDayChangePercent.abs()}%)',
+                                    '${formatCurrency.format(item.oneDayChange.abs())} (${item.oneDayChangePercent.abs().toStringAsFixed(2)}%)',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -195,7 +207,7 @@ class DetailedHoldingsList extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${isPositiveReturns ? '+' : '-'}${formatLargeNumber(item.returns.abs())} (${item.returnsPercent.abs()}%)',
+                              '${isPositiveReturns ? '+' : '-'}${formatLargeNumber(item.returns.abs())} (${item.returnsPercent.abs().toStringAsFixed(2)}%)',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(

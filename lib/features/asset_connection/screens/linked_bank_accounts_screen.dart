@@ -67,7 +67,13 @@ class LinkedBankAccountsScreen extends ConsumerWidget {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          context.push('/banks-searching');
+                          // This used to push straight to '/banks-searching'
+                          // with no bank picked and no pending Future, so it
+                          // showed a pointless 2.6s loading animation that
+                          // called searchAndAddBank for nothing, then landed
+                          // on the bank-picker screen anyway. Going straight
+                          // to the picker skips that dead-end loader.
+                          context.push('/banks-linking', extra: true);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

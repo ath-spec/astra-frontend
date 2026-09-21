@@ -281,9 +281,10 @@ class _MfReitsCollectionScreenState extends ConsumerState<MfReitsCollectionScree
                           fontFamily: 'DMSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          height: 1.25,
                           color: Color(0xFF1E1E1E),
                         ),
-                        maxLines: 1,
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
@@ -298,6 +299,7 @@ class _MfReitsCollectionScreenState extends ConsumerState<MfReitsCollectionScree
                     ],
                   ),
                 ),
+                const SizedBox(width: 12),
                 // Returns
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),

@@ -213,6 +213,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final bool summaryLoaded = dashboardAsync.hasValue;
     final bool mfConnected = assetState.mfConnected || (summaryLoaded && summary.mfConnected);
     final bool stocksConnected = assetState.stocksConnected || (summaryLoaded && summary.stocksConnected);
+    final bool fdConnected = summaryLoaded && summary.fixedDepositsPresent;
     final bool banksConnected = assetState.banksConnected || (summaryLoaded && summary.bankBalancePresent);
 
     final String userName = authState is AuthAuthenticated ? authState.user.name.toUpperCase() : 'USER';
@@ -389,6 +390,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     title: 'Stocks',
                     buttonText: 'IMPORT',
                     onPressed: () => context.push('/aa-stocks-otp'),
+                  ),
+                _buildDottedDivider(),
+
+                if (fdConnected)
+                  _buildConnectedAssetRow(
+                    icon: Icons.savings_rounded,
+                    title: 'Fixed Deposits',
+                    percentage: '${summary.fixedDeposits.sharePct.toStringAsFixed(1)}%',
+                    amount: PrivacyFormatter.obscure(
+                      '₹${NumberFormat('#,##,###').format(summary.fixedDeposits.value)}',
+                      isLocked,
+                    ),
+                    subtitle: PrivacyFormatter.obscure(
+                      '${summary.fixedDeposits.returnsAmount >= 0 ? '↑' : '↓'} ${_formatCompact(summary.fixedDeposits.returnsAmount.abs())} (${summary.fixedDeposits.returnsPct.abs().toStringAsFixed(2)}%) Returns',
+                      isLocked,
+                    ),
+                    subtitleColor: summary.fixedDeposits.returnsAmount >= 0
+                        ? const Color(0xFF22C55E)
+                        : const Color(0xFFEF4444),
+                    onTap: () {
+                      context.push('/fds');
+                    },
+                  )
+                else
+                  _buildAssetRow(
+                    icon: Icons.savings_rounded,
+                    title: 'Fixed Deposits',
+                    buttonText: 'OPEN',
+                    onPressed: () => context.push('/mf-fd'),
                   ),
                 _buildDottedDivider(),
 

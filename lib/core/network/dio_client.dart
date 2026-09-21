@@ -99,8 +99,16 @@ class DioClient {
       final refreshToken = await _secureStorage.read(key: 'refresh_token');
       if (refreshToken == null || refreshToken.isEmpty) return false;
 
-      // Make a direct request without interceptors to avoid loops
-      final refreshDio = Dio(BaseOptions(baseUrl: _dio.options.baseUrl));
+      // Make a direct request without interceptors to avoid loops. Explicit
+      // timeouts matter here specifically — this Dio instance is bare (no
+      // BaseOptions inherited from the main client), so without these it
+      // would hang indefinitely on a stalled connection instead of failing
+      // fast into the transient-error branch below.
+      final refreshDio = Dio(BaseOptions(
+        baseUrl: _dio.options.baseUrl,
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 15),
+      ));
       final response = await refreshDio.post(
         '/api/auth/refresh',
         data: {'refresh_token': refreshToken},
@@ -117,14 +125,31 @@ class DioClient {
           return true;
         }
       }
-    } catch (e) {
+    } on DioException catch (e) {
       if (kDebugMode) {
         debugPrint('Failed to refresh token: $e');
       }
-      // On refresh failure, clear tokens so user is forced to re-login
-      await _secureStorage.delete(key: 'auth_token');
-      await _secureStorage.delete(key: 'refresh_token');
-      onSessionExpired?.call();
+      // A definitive rejection from the server (401/400 — the refresh token
+      // really is invalid, expired, or already consumed) means the session
+      // is genuinely over: clear it and force the login redirect. Anything
+      // else — no response at all (timeout, dropped wifi, DNS hiccup,
+      // connection reset) — is transient and tells us nothing about whether
+      // the refresh token is still valid. Wiping a real, valid refresh token
+      // just because the phone briefly lost signal would log the user out
+      // for no reason; better to leave it alone and let the next request
+      // retry once connectivity is back.
+      if (e.response != null) {
+        await _secureStorage.delete(key: 'auth_token');
+        await _secureStorage.delete(key: 'refresh_token');
+        onSessionExpired?.call();
+      }
+    } catch (e) {
+      // Anything not a DioException (e.g. a secure-storage read/write
+      // failure) is also not evidence the refresh token itself is invalid —
+      // same reasoning as above, leave the stored tokens alone.
+      if (kDebugMode) {
+        debugPrint('Failed to refresh token: $e');
+      }
     }
     return false;
   }

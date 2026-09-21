@@ -478,8 +478,16 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
   Future<void> completeBankLinking() async {
     _timer?.cancel();
     final updated = <BankAccountItem>[];
+    bool anyFailed = false;
     for (final b in state.bankAccounts) {
       if (b.isSelected) {
+        // The POST is what actually persists this account server-side —
+        // marking it isLinked locally regardless of whether this call
+        // succeeded used to make the onboarding screen show a bank as
+        // connected (e.g. Axis, visible right here in "YOUR ACCOUNTS")
+        // purely from optimistic local state, while every other screen that
+        // re-fetches from the backend correctly showed nothing, because the
+        // account was never actually saved. Only mark it linked on success.
         try {
           await _api.dio.post<dynamic>('/api/v1/aa/accounts', data: {
             'bank_name': b.bankName,
@@ -488,21 +496,44 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
             'ifsc': b.ifsc,
             'branch': b.branch,
           });
-        } catch (_) {}
-        updated.add(b.copyWith(isLinked: true, isSelected: false));
+          updated.add(b.copyWith(isLinked: true, isSelected: false));
+        } catch (_) {
+          anyFailed = true;
+          // Leave it selected (not linked) so the failure is visible and
+          // the user can retry, instead of silently claiming success.
+          updated.add(b);
+        }
       } else {
         updated.add(b);
       }
     }
     final hasAnyLinked = updated.any((b) => b.isLinked);
+    final statusMessage = anyFailed
+        ? (hasAnyLinked
+            ? 'Some accounts could not be linked — please retry.'
+            : 'Could not link accounts. Please check your connection and try again.')
+        : (hasAnyLinked ? 'Successfully Linked' : 'Accounts found');
     state = state.copyWith(
       step: AssetConnectionStep.banksLinking,
       bankAccounts: updated,
       banksConnected: hasAnyLinked,
-      banksStatusMessage: hasAnyLinked ? 'Successfully Linked' : 'Accounts found',
+      banksStatusMessage: statusMessage,
     );
   }
 
+  // Deliberately does NOT call fetchLiveBankAccounts() itself. The one
+  // caller (banks_linking_screen's multi-select PROCEED) runs several of
+  // these concurrently via Future.wait when the user picks more than one
+  // bank — each call refreshing the list independently on its own success
+  // raced every other call's refresh for the same shared state.bankAccounts
+  // field. Whichever GET happened to resolve last silently won and
+  // overwrote the others, so a freshly-added bank could vanish from
+  // "YOUR ACCOUNTS" purely on network timing even though the backend had
+  // it — the actual server data (confirmed via the RM portal) was correct
+  // the whole time; only this client-side race made it look missing. The
+  // fix is structural, not a guard flag: decouple "add one account" from
+  // "refresh the list," and let the caller refresh exactly once after every
+  // concurrent add has settled.
   Future<void> searchAndAddBank(String bankName, {String accountType = 'SAVINGS'}) async {
     _timer?.cancel();
     final shortId = '${(1000 + DateTime.now().millisecondsSinceEpoch % 9000)}';
@@ -524,26 +555,26 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
         'branch': branch,
       });
 
-      if (res.statusCode == 200 || res.statusCode == 201) {
-        await fetchLiveBankAccounts();
+      if (res.statusCode != 200 && res.statusCode != 201) {
+        throw StateError('unexpected status ${res.statusCode}');
       }
-    } catch (_) {
-      // Offline fallback: construct item and add to local state
-      final newBank = BankAccountItem(
-        id: shortId,
-        bankName: bankName,
-        accountNumber: '$accountType account - xxxx $shortId',
-        isSelected: true,
-        isLinked: false,
-        balance: dynamicBal,
-        ifsc: ifsc,
-        branch: branch,
-        accountType: accountType,
-      );
-      final updatedBanks = List<BankAccountItem>.from(state.bankAccounts)..add(newBank);
+    } catch (e) {
+      // This used to fall back to adding a fake local-only entry with
+      // isLinked: false whenever the POST failed (offline, a transient
+      // 401 during the token-refresh race, timeout, etc). That entry never
+      // reached the backend, so LinkedBankAccountsScreen — which filters
+      // strictly on isLinked — never showed it, and nothing ever retried
+      // the add. The user would see the bank appear (unlinked) on this
+      // screen's "YOUR ACCOUNTS" list, then find it silently gone from the
+      // actual linked-accounts screen with no error and no way to retry.
+      // Surfacing the real failure (status message + rethrow) instead of
+      // faking success lets the caller show/retry it, same fix shape as
+      // completeBankLinking().
+      debugPrint('searchAndAddBank failed for $bankName: $e');
       state = state.copyWith(
-        bankAccounts: updatedBanks,
+        banksStatusMessage: 'Could not link $bankName. Please try again.',
       );
+      rethrow;
     }
   }
 

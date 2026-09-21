@@ -67,6 +67,18 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // searchAndAddBank now surfaces a real failure (instead of silently
+    // faking a local-only entry that never reached the backend and never
+    // appeared in LinkedBankAccountsScreen) via banksStatusMessage — show
+    // it once so the user knows to retry instead of assuming it worked.
+    ref.listen<AssetConnectionState>(assetConnectionProvider, (previous, next) {
+      if (next.banksStatusMessage.startsWith('Could not link') &&
+          next.banksStatusMessage != previous?.banksStatusMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.banksStatusMessage)),
+        );
+      }
+    });
     final state = ref.watch(assetConnectionProvider);
     final notifier = ref.read(assetConnectionProvider.notifier);
     // GoRouter extra: true means we returned after a partial link
@@ -95,9 +107,24 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
         // screen looking at stale state, before the newly added bank(s)
         // ever appeared. Passing the real Future lets it wait on genuine
         // completion instead of guessing a duration.
+        //
+        // The N adds run concurrently (Future.wait), but the list refresh
+        // happens exactly ONCE here, after all of them have settled —
+        // deliberately not inside searchAndAddBank itself. Each add used to
+        // refetch and overwrite state.bankAccounts on its own success,
+        // which raced every other concurrent add's refetch for the same
+        // field: whichever GET happened to land last silently won, so a
+        // multi-bank selection could finish with the list missing some of
+        // the banks that were, in fact, already saved on the backend.
+        // whenComplete runs regardless of success/failure so the list still
+        // reflects reality even if one bank in the batch failed to add.
         final pending = Future.wait(
           selected.map((bank) => notifier.searchAndAddBank(bank, accountType: _selectedAccountType)),
-        );
+        ).catchError((_) {
+          // Individual failures already surfaced via banksStatusMessage
+          // (see the ref.listen SnackBar below) — swallow here so this
+          // Future's rejection doesn't skip the whenComplete refresh.
+        }).whenComplete(() => notifier.fetchLiveBankAccounts());
         context.push('/banks-searching', extra: pending);
       };
     } else if (hasSelected) {

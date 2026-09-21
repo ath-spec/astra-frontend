@@ -250,7 +250,7 @@ class _HomeTodayPortfolioChangesState
           builder: (context, constraints) {
             final cardWidth = constraints.maxWidth * 0.44;
             return SizedBox(
-              height: 154,
+              height: 172,
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 switchInCurve: Curves.easeOutCubic,
@@ -427,7 +427,7 @@ class _ChangeCard extends StatelessWidget {
                 color: Color(0xFF0F172A),
                 height: 1.25,
               ),
-              maxLines: 2,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 8),

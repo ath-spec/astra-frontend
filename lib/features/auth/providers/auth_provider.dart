@@ -85,6 +85,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   void setPendingPan(String pan) {
     pendingPan = pan;
+    // Cache locally the same way updateName() caches the display name —
+    // the backend only persists a PAN once POST /api/v1/kyc/pan/verify
+    // actually runs, so this covers the gap between "user typed it on the
+    // onboarding screen" and "server has it on file" (or if that
+    // verification step never completes / isn't configured for this build).
+    unawaited(_secureStorage.write(key: 'cached_pan', value: pan).catchError((_) {}));
   }
 
   void setPendingName(String name) {
@@ -165,6 +171,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await _secureStorage.delete(key: 'auth_token');
     await _secureStorage.delete(key: 'refresh_token');
     await _secureStorage.delete(key: 'cached_display_name');
+    await _secureStorage.delete(key: 'cached_pan');
     state = const AuthInitial();
   }
 
@@ -326,6 +333,27 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final phone = data['phone_number']?.toString() ?? '';
       final userId = data['astra_user_id']?.toString() ?? data['user_id']?.toString() ?? '';
       pendingPhone = phone;
+
+      final pan = data['pan']?.toString();
+      if (pan != null && pan.isNotEmpty) {
+        pendingPan = pan;
+        try {
+          await _secureStorage.write(key: 'cached_pan', value: pan);
+        } catch (_) {}
+      } else {
+        // No verified PAN on file server-side — fall back to whatever this
+        // device has cached locally (e.g. entered during onboarding before
+        // PAN verification was ever wired to persist anywhere server-side).
+        String? cachedPan;
+        try {
+          cachedPan = await _secureStorage.read(key: 'cached_pan');
+        } catch (_) {
+          cachedPan = null;
+        }
+        if (cachedPan != null && cachedPan.isNotEmpty) {
+          pendingPan = cachedPan;
+        }
+      }
 
       if (name != null && name.isNotEmpty) {
         pendingName = name;

@@ -45,14 +45,21 @@ class SimpleHoldingsList extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute(
-                          builder: (_) => YourFundProfileScreen(
-                            schemeCode: item.schemeCode,
-                            holdingItem: item,
+                      // Same guard as DetailedHoldingsList: schemeCode is
+                      // null for non-MF holdings (stocks), and
+                      // YourFundProfileScreen falls back to showing the
+                      // user's first MF folio for a null schemeCode — do not
+                      // route those here.
+                      if (item.schemeCode != null && item.schemeCode!.isNotEmpty) {
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (_) => YourFundProfileScreen(
+                              schemeCode: item.schemeCode,
+                              holdingItem: item,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),

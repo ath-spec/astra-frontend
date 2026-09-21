@@ -17,6 +17,22 @@ class TableHoldingsList extends StatelessWidget {
     required this.formatLargeNumber,
   });
 
+  // schemeCode is null for non-MF holdings (stocks); YourFundProfileScreen
+  // falls back to showing the user's first MF folio for a null schemeCode,
+  // so those must not be routed there — same guard as the other view modes.
+  void _openHolding(BuildContext context, HoldingItem item) {
+    if (item.schemeCode != null && item.schemeCode!.isNotEmpty) {
+      Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(
+          builder: (_) => YourFundProfileScreen(
+            schemeCode: item.schemeCode,
+            holdingItem: item,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -51,14 +67,7 @@ class TableHoldingsList extends StatelessWidget {
                   const Divider(height: 1, color: Color(0xFFF1F5F9)),
                   ...displayHoldings.map((item) {
                     return InkWell(
-                      onTap: () => Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute(
-                          builder: (_) => YourFundProfileScreen(
-                            schemeCode: item.schemeCode,
-                            holdingItem: item,
-                          ),
-                        ),
-                      ),
+                      onTap: () => _openHolding(context, item),
                       child: Container(
                         height: 72,
                         padding: const EdgeInsets.only(left: 16, right: 8),
@@ -81,74 +90,106 @@ class TableHoldingsList extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Container(width: 90, height: 48, padding: const EdgeInsets.symmetric(vertical: 16), alignment: Alignment.centerRight, child: const Text('AMOUNT', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)))),
-                        Container(width: 90, height: 48, padding: const EdgeInsets.symmetric(vertical: 16), alignment: Alignment.centerRight, child: const Text('RETURNS', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)))),
-                        Container(width: 90, height: 48, padding: const EdgeInsets.symmetric(vertical: 16), alignment: Alignment.centerRight, child: const Text('1D', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)))),
-                        Container(width: 70, height: 48, padding: const EdgeInsets.only(top: 16, bottom: 16, right: 16), alignment: Alignment.centerRight, child: const Text('XIRR', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)))),
+                        Container(width: 95, height: 48, padding: const EdgeInsets.only(top: 16, bottom: 16, right: 8), alignment: Alignment.centerRight, child: const Text('AMOUNT', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)))),
+                        Container(width: 95, height: 48, padding: const EdgeInsets.only(top: 16, bottom: 16, right: 8), alignment: Alignment.centerRight, child: const Text('RETURNS', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)))),
+                        Container(width: 95, height: 48, padding: const EdgeInsets.only(top: 16, bottom: 16, right: 8), alignment: Alignment.centerRight, child: const Text('1D', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)))),
+                        Container(width: 75, height: 48, padding: const EdgeInsets.only(top: 16, bottom: 16, right: 16), alignment: Alignment.centerRight, child: const Text('XIRR', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)))),
                       ],
                     ),
                     const SizedBox(
-                      width: 340,
+                      width: 360,
                       child: Divider(height: 1, color: Color(0xFFF1F5F9)),
                     ),
                     ...displayHoldings.map((item) {
                       bool isPosRet = item.returns >= 0;
                       bool isPos1D = item.oneDayChange >= 0;
                       return InkWell(
-                        onTap: () => Navigator.of(context, rootNavigator: true).push(
-                          MaterialPageRoute(
-                            builder: (_) => YourFundProfileScreen(
-                              schemeCode: item.schemeCode,
-                              holdingItem: item,
-                            ),
-                          ),
-                        ),
+                        onTap: () => _openHolding(context, item),
                         child: Container(
                           height: 72,
                           decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9)))),
                           child: Row(
                             children: [
                               Container(
-                                width: 90,
+                                width: 95,
+                                padding: const EdgeInsets.only(right: 8),
                                 alignment: Alignment.centerRight,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text(formatCurrency.format(item.current), style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
-                                    Text(formatCurrency.format(item.invested), style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF9CA3AF))),
+                                    Text(
+                                      formatCurrency.format(item.current),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
+                                    ),
+                                    Text(
+                                      formatCurrency.format(item.invested),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, color: Color(0xFF9CA3AF)),
+                                    ),
                                   ],
                                 ),
                               ),
                               Container(
-                                width: 90,
+                                width: 95,
+                                padding: const EdgeInsets.only(right: 8),
                                 alignment: Alignment.centerRight,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text('${isPosRet ? '+' : '-'}${formatCurrency.format(item.returns.abs())}', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: isPosRet ? const Color(0xFF22C55E) : const Color(0xFFEF4444))),
-                                    Text('(${isPosRet ? '+' : '-'}${item.returnsPercent.abs()}%)', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, color: isPosRet ? const Color(0xFF22C55E) : const Color(0xFFEF4444))),
+                                    Text(
+                                      '${isPosRet ? '+' : '-'}${formatCurrency.format(item.returns.abs())}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: isPosRet ? const Color(0xFF22C55E) : const Color(0xFFEF4444)),
+                                    ),
+                                    Text(
+                                      '(${isPosRet ? '+' : '-'}${item.returnsPercent.abs().toStringAsFixed(2)}%)',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontFamily: 'DMSans', fontSize: 10, color: isPosRet ? const Color(0xFF22C55E) : const Color(0xFFEF4444)),
+                                    ),
                                   ],
                                 ),
                               ),
                               Container(
-                                width: 90,
+                                width: 95,
+                                padding: const EdgeInsets.only(right: 8),
                                 alignment: Alignment.centerRight,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text('${isPos1D ? '+' : '-'}${formatCurrency.format(item.oneDayChange.abs())}', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: isPos1D ? const Color(0xFF22C55E) : const Color(0xFFEF4444))),
-                                    Text('(${isPos1D ? '+' : '-'} ${item.oneDayChangePercent.abs()}%)', style: TextStyle(fontFamily: 'DMSans', fontSize: 10, color: isPos1D ? const Color(0xFF22C55E) : const Color(0xFFEF4444))),
+                                    Text(
+                                      '${isPos1D ? '+' : '-'}${formatCurrency.format(item.oneDayChange.abs())}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w600, color: isPos1D ? const Color(0xFF22C55E) : const Color(0xFFEF4444)),
+                                    ),
+                                    Text(
+                                      '(${isPos1D ? '+' : '-'}${item.oneDayChangePercent.abs().toStringAsFixed(2)}%)',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontFamily: 'DMSans', fontSize: 10, color: isPos1D ? const Color(0xFF22C55E) : const Color(0xFFEF4444)),
+                                    ),
                                   ],
                                 ),
                               ),
                               Container(
-                                width: 70,
+                                width: 75,
                                 padding: const EdgeInsets.only(right: 16),
                                 alignment: Alignment.centerRight,
-                                child: Text('${item.xirr}%', textAlign: TextAlign.right, style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                                child: Text(
+                                  '${item.xirr.toStringAsFixed(2)}%',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.right,
+                                  style: const TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                                ),
                               ),
                             ],
                           ),

@@ -5,9 +5,6 @@ import '../../data/catalog_providers.dart';
 import '../../data/catalog_models.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-/// There is no separate InVIT category server-side; the catalog only has
-/// `Other - REIT`. InVIT-labeled UI is folded into that closest real
-/// category rather than fabricating an "InVIT" category that doesn't exist.
 class MfInvitsCollectionScreen extends ConsumerStatefulWidget {
   const MfInvitsCollectionScreen({super.key});
 
@@ -16,7 +13,7 @@ class MfInvitsCollectionScreen extends ConsumerStatefulWidget {
 }
 
 class _MfInvitsCollectionScreenState extends ConsumerState<MfInvitsCollectionScreen> {
-  static const _category = 'Other - REIT';
+  static const _category = 'Other - InvIT';
 
   String _activeFilter = 'All';
   final _filters = ['All', 'Power', 'Roads'];
@@ -284,9 +281,10 @@ class _MfInvitsCollectionScreenState extends ConsumerState<MfInvitsCollectionScr
                           fontFamily: 'DMSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          height: 1.25,
                           color: Color(0xFF1E1E1E),
                         ),
-                        maxLines: 1,
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
@@ -301,6 +299,7 @@ class _MfInvitsCollectionScreenState extends ConsumerState<MfInvitsCollectionScr
                     ],
                   ),
                 ),
+                const SizedBox(width: 12),
                 // Returns
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),

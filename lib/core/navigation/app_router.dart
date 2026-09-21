@@ -52,6 +52,8 @@ import 'package:astra_frontend/features/portfolio_analysis/screens/portfolio_ana
 import 'package:astra_frontend/features/portfolio_analysis/screens/insights_screen.dart';
 import '../../features/mf/screens/mf_container_screen.dart';
 import '../../features/stocks/screens/owned_stocks_screen.dart';
+import '../../features/fd/screens/owned_fds_screen.dart';
+import '../../features/mf/screens/mf_fd/mf_fd_screen.dart';
 import '../../features/cart/screens/cart_screen.dart';
 import '../../features/analytics/screens/analytics_screen.dart';
 import '../../features/transactions/screens/transactions_screen.dart';
@@ -247,6 +249,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/stocks',
         builder: (context, state) => const StocksScreen(),
+      ),
+      GoRoute(
+        path: '/fds',
+        builder: (context, state) => const FDsScreen(),
+      ),
+      GoRoute(
+        path: '/mf-fd',
+        builder: (context, state) => const MfFdScreen(),
       ),
       GoRoute(
         path: '/asset-today-change',

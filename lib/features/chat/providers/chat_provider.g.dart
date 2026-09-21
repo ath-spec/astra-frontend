@@ -53,7 +53,7 @@ final isTypingProvider = AutoDisposeNotifierProvider<IsTyping, bool>.internal(
 );
 
 typedef _$IsTyping = AutoDisposeNotifier<bool>;
-String _$chatNotifierHash() => r'e2abfbc91cc52507c8d510d8027697572a6a6465';
+String _$chatNotifierHash() => r'de5346cdfc06301cd7f1297b4e6e5b62a0765085';
 
 /// See also [ChatNotifier].
 @ProviderFor(ChatNotifier)
