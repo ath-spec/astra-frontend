@@ -20,6 +20,7 @@ import '../widgets/category_allocation_card.dart';
 import '../widgets/monthly_spending_level_card.dart';
 import '../widgets/spend_trends_card.dart';
 import '../widgets/actionable_insights_card.dart';
+import '../widgets/analytics_skeleton_card.dart';
 import 'category_spends_screen.dart';
 import '../../transactions/screens/transactions_screen.dart';
 
@@ -142,39 +143,39 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
                   text: _insights?.aiInsight.text ?? '',
                   isLoading: _loadingInsights,
                 ),
-                const SizedBox(height: 28),
+                const SizedBox(height: 48),
                 if (_summary != null) ...[
                   FocusLevelChartCard(
                     selectedCycle: _selectedCycle,
                     customFromDate: _customFromDate,
                     customToDate: _customToDate,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 48),
                   RecentSpendsCard(
                     spends: _summary!.recentSpends,
                     onSeeAll: () => Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const TransactionsScreen()),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 48),
                   CategoryAllocationCard(
                     allocations: _summary!.categoryAllocations,
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const CategorySpendsScreen()),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 48),
                   MonthlySpendingLevelCard(
                     categories: _summary!.spendingLevels,
                     onSeeAll: () => Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const CategorySpendsScreen()),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 48),
                   SpendTrendsCard(trends: _summary!.spendTrends),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 48),
                 ] else if (_loadingSummary) ...[
-                  const SizedBox(height: 140, child: Center(child: CircularProgressIndicator())),
+                  const AnalyticsSkeletonView(),
                 ],
                 if (_insights != null)
                   ActionableInsightsCard(insights: _insights!.actionableInsights),
@@ -199,19 +200,9 @@ class _AnalyticsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Expanded(
-          child: Text(
-            'Analytics',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
-            ),
-          ),
-        ),
         GestureDetector(
           onTap: onCycleTap,
           behavior: HitTestBehavior.opaque,

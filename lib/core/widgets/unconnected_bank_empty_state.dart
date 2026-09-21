@@ -57,7 +57,7 @@ class _UnconnectedBankEmptyStateState extends State<UnconnectedBankEmptyState>
               padding: const EdgeInsets.all(28.0),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
                 boxShadow: [
                   BoxShadow(
@@ -145,7 +145,7 @@ class _UnconnectedBankEmptyStateState extends State<UnconnectedBankEmptyState>
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             decoration: BoxDecoration(
                               color: const Color(0xFF0F172A),
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
                                   color: const Color(0xFF0F172A).withValues(alpha: 0.15),
@@ -200,7 +200,7 @@ class _UnconnectedBankEmptyStateState extends State<UnconnectedBankEmptyState>
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
         children: [

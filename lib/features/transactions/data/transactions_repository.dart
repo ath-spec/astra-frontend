@@ -7,6 +7,7 @@
 // ============================================================
 
 import 'package:astra_frontend/core/network/api.dart';
+import 'package:astra_frontend/core/network/api_exception.dart';
 import '../models/transaction_models.dart';
 
 class TransactionsRepository {
@@ -18,23 +19,53 @@ class TransactionsRepository {
   /// look a transaction up by id without a dedicated by-id endpoint.
   List<TransactionItem>? _cache;
 
-  /// Fetches transactions, optionally narrowed to one [category] or
+  /// Fetches every transaction, optionally narrowed to one [category] or
   /// [merchant] (server-side filters). [days] defaults to 180 and is
   /// capped at 3650 by the backend.
+  ///
+  /// None of the screens built on this (Transactions/Categories/Merchants
+  /// tabs) have any "load more" UI — they render one flat scrollable list —
+  /// so this paginates through every page server-side (backend caps a
+  /// single page at 100) and concatenates the results, rather than
+  /// silently returning only the first page's default 25 rows.
   Future<List<TransactionItem>> fetchAll({String? category, String? merchant, int days = 180}) async {
     try {
-      final response = await _client.dio.get(
-        '/api/v1/analytics/spend/transactions',
-        queryParameters: {
-          if (category != null && category.isNotEmpty) 'category': category,
-          if (merchant != null && merchant.isNotEmpty) 'merchant': merchant,
-          'days': days,
-        },
-      );
-      final items = _client
-          .unwrapList(response.data as Map<String, dynamic>, TransactionListItem.fromJson)
-          .map(TransactionItem.fromApiRow)
-          .toList();
+      const pageSize = 100;
+      final items = <TransactionItem>[];
+      int offset = 0;
+      int total = 0;
+      do {
+        final response = await _client.dio.get(
+          '/api/v1/analytics/spend/transactions',
+          queryParameters: {
+            if (category != null && category.isNotEmpty) 'category': category,
+            if (merchant != null && merchant.isNotEmpty) 'merchant': merchant,
+            'days': days,
+            'limit': pageSize,
+            'offset': offset,
+          },
+        );
+        // GET /transactions returns a TransactionPage object ({items, total,
+        // limit, offset}), not a bare array — unwrapList (which requires
+        // envelope.data itself to be a List) would throw "Malformed
+        // response" on every call regardless of whether there's data.
+        // Unwrap the page object directly and pull `items` out of it.
+        final envelope = response.data as Map<String, dynamic>;
+        if (envelope['error'] == true) {
+          throw ApiException(envelope['message']?.toString() ?? 'Something went wrong');
+        }
+        final page = envelope['data'] as Map<String, dynamic>? ?? const {};
+        final itemsJson = page['items'] as List<dynamic>? ?? const [];
+        items.addAll(
+          itemsJson
+              .whereType<Map<String, dynamic>>()
+              .map(TransactionListItem.fromJson)
+              .map(TransactionItem.fromApiRow),
+        );
+        total = (page['total'] as num?)?.toInt() ?? items.length;
+        offset += pageSize;
+      } while (offset < total);
+
       if (category == null && merchant == null) {
         _cache = items;
       }

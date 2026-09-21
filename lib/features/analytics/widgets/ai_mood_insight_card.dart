@@ -63,7 +63,7 @@ class AiMoodInsightCard extends StatelessWidget {
                       text: cleaned,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 10.0,
+                        fontSize: 11.0,
                         height: 1.45,
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF0F172A),

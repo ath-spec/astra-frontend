@@ -25,12 +25,18 @@ class MonthlySpendingLevelCard extends StatelessWidget {
             children: [
               const Text(
                 'Monthly spending level',
-                style: TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -1.0,
+                  color: Color(0xFF0F172A),
+                ),
               ),
               GestureDetector(
                 onTap: onSeeAll,
                 behavior: HitTestBehavior.opaque,
-                child: const Icon(Icons.arrow_forward_ios_rounded, size: 13, color: Color(0xFF94A3B8)),
+                child: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Color(0xFF64748B)),
               ),
             ],
           ),

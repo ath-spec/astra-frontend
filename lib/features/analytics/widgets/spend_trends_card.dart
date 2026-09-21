@@ -7,6 +7,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/analytics_models.dart';
 
 class SpendTrendsCard extends StatefulWidget {
@@ -88,85 +89,115 @@ class _SpendTrendsCardState extends State<SpendTrendsCard>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-          const Text(
-            'Spend trend',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -1.0,
-              color: Color(0xFF0F172A),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Spend trend',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.5,
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  isUp
+                      ? 'Spending is higher than last month'
+                      : 'Spending is lower than last month',
+                  style: const TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF64748B),
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Text(
-                '${percentageChange.toStringAsFixed(1)}%',
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 26,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF0F172A),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+              decoration: BoxDecoration(
+                color: isUp ? const Color(0xFFFFF1F2) : const Color(0xFFF0FDF4),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: isUp ? const Color(0xFFFECDD3) : const Color(0xFFBBF7D0),
+                  width: 0.8,
                 ),
               ),
-              const SizedBox(width: 8),
-              Icon(
-                isUp ? Icons.arrow_drop_up_rounded : Icons.arrow_drop_down_rounded,
-                color: isUp ? const Color(0xFFF43F5E) : const Color(0xFF22C55E),
-                size: 34,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isUp ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                    color: isUp ? const Color(0xFFE11D48) : const Color(0xFF16A34A),
+                    size: 13,
+                  ),
+                  const SizedBox(width: 3),
+                  Text(
+                    '${percentageChange.toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      fontFamily: 'DMMono',
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: isUp ? const Color(0xFFE11D48) : const Color(0xFF16A34A),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            isUp
-                ? 'You are spending more than last month — might want to keep an eye on it.'
-                : 'Currently spending less than usual — there is room for a little extra treat.',
-            style: const TextStyle(fontFamily: 'DMSans', fontSize: 11.5, color: Color(0xFF64748B), height: 1.4),
-          ),
-          const SizedBox(height: 14),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return SizedBox(
-                height: 190,
-                width: double.infinity,
-                child: Stack(
-                  children: [
-                    Row(
-                      children: List.generate(
-                        trends.length,
-                        (index) => Expanded(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => setState(() => _selectedIndex = index),
-                            child: const SizedBox.expand(),
-                          ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            return SizedBox(
+              height: 185,
+              width: double.infinity,
+              child: Stack(
+                children: [
+                  Row(
+                    children: List.generate(
+                      trends.length,
+                      (index) => Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            HapticFeedback.selectionClick();
+                            setState(() => _selectedIndex = index);
+                          },
+                          child: const SizedBox.expand(),
                         ),
                       ),
                     ),
-                    IgnorePointer(
-                      child: AnimatedBuilder(
-                        animation: _curvedAnim,
-                        builder: (context, _) {
-                          return CustomPaint(
-                            size: Size(constraints.maxWidth, 190),
-                            painter: _SpendTrendsPainter(
-                              trends: trends,
-                              values: values,
-                              selectedIndex: safeIndex,
-                              averageValue: average,
-                              animationProgress: _curvedAnim.value,
-                            ),
-                          );
-                        },
-                      ),
+                  ),
+                  IgnorePointer(
+                    child: AnimatedBuilder(
+                      animation: _curvedAnim,
+                      builder: (context, _) {
+                        return CustomPaint(
+                          size: Size(constraints.maxWidth, 185),
+                          painter: _SpendTrendsPainter(
+                            trends: trends,
+                            values: values,
+                            selectedIndex: safeIndex,
+                            averageValue: average,
+                            animationProgress: _curvedAnim.value,
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ],
     );
   }

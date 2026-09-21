@@ -11,6 +11,7 @@ import '../../../core/widgets/responsive_body.dart';
 import '../../../core/widgets/unconnected_bank_empty_state.dart';
 import '../../../core/widgets/shimmer_card_skeleton.dart';
 import '../../asset_connection/providers/asset_connection_provider.dart';
+import '../../dashboard/data/dashboard_providers.dart';
 import '../data/transactions_providers.dart';
 import '../models/transaction_models.dart';
 import '../widgets/type_switcher_pill.dart';
@@ -98,7 +99,16 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
   Widget build(BuildContext context) {
     final hPad = context.pageHorizontalPadding;
     final assetState = ref.watch(assetConnectionProvider);
-    final isBankConnected = assetState.banksConnected || _demoMode;
+    // Same fallback as AnalyticsScreen: don't trust the locally-cached
+    // banksConnected flag alone — OR it against the live backend truth so a
+    // stale/unrefreshed local flag can never hide a real connection.
+    final dashboardAsync = ref.watch(dashboardSummaryProvider);
+    final backendConfirmedBankConnected = dashboardAsync.maybeWhen(
+      data: (s) => s.bankBalancePresent,
+      orElse: () => false,
+    );
+    final isBankConnected =
+        assetState.banksConnected || backendConfirmedBankConnected || _demoMode;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -136,11 +146,23 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                     child: TypeSwitcherPill(selectedIndex: _selectedTab, onChanged: _onTabChanged),
                   ),
                   Expanded(
-                    child: switch (_selectedTab) {
-                      0 => _buildTransactionsTab(hPad),
-                      1 => _buildCategoriesTab(hPad),
-                      _ => _buildMerchantsTab(hPad),
-                    },
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 160),
+                      switchInCurve: const Cubic(0.23, 1.0, 0.32, 1.0),
+                      switchOutCurve: const Cubic(0.23, 1.0, 0.32, 1.0),
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      ),
+                      child: KeyedSubtree(
+                        key: ValueKey(_selectedTab),
+                        child: switch (_selectedTab) {
+                          0 => _buildTransactionsTab(hPad),
+                          1 => _buildCategoriesTab(hPad),
+                          _ => _buildMerchantsTab(hPad),
+                        },
+                      ),
+                    ),
                   ),
                 ],
               ),

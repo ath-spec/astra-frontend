@@ -116,11 +116,36 @@ class _AppThemeShimmerCardState extends State<AppThemeShimmerCard>
     super.dispose();
   }
 
+  // Fixed content heights the full 3-row layout below needs (label bar +
+  // gap + title bar + gap + metrics row), independent of barWidths.
+  static const double _fullContentHeight = 10 + 10 + 22 + 12 + 12;
+  static const double _compactContentHeight = 10 + 10 + 22;
+  static const double _borderWidth = 1.2;
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
+        // A caller may pass a fixed `height` (e.g. compact 72px row
+        // skeletons on the transactions screen) that's too short for the
+        // full 3-row layout once padding is subtracted. Rather than
+        // overflow, degrade to a shorter layout that actually fits —
+        // computed from the real constraint instead of assuming callers
+        // always size the card for the full content.
+        final resolvedPadding = widget.padding.resolve(TextDirection.ltr);
+        // BoxDecoration.border adds its own implicit padding (Container
+        // merges decoration.padding with the explicit padding), so the
+        // border's thickness must be subtracted too or this still overflows
+        // by exactly 2x the border width.
+        final availableContent = widget.height == null
+            ? null
+            : widget.height! - resolvedPadding.vertical - (_borderWidth * 2);
+        final showMetricsRow =
+            availableContent == null || availableContent >= _fullContentHeight;
+        final showTitleBar =
+            availableContent == null || availableContent >= _compactContentHeight;
+
         return Container(
           width: widget.width,
           height: widget.height,
@@ -152,33 +177,37 @@ class _AppThemeShimmerCardState extends State<AppThemeShimmerCard>
                     : 80,
                 height: 10,
               ),
-              const SizedBox(height: 10),
-              // Main large title / value bar
-              _buildShimmerBar(
-                width: widget.barWidths != null && widget.barWidths!.length > 1
-                    ? widget.barWidths![1]
-                    : 180,
-                height: 22,
-              ),
-              const SizedBox(height: 12),
-              // Bottom metrics / sub-info row
-              Row(
-                children: [
-                  _buildShimmerBar(
-                    width: widget.barWidths != null && widget.barWidths!.length > 2
-                        ? widget.barWidths![2]
-                        : 80,
-                    height: 12,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildShimmerBar(
-                    width: widget.barWidths != null && widget.barWidths!.length > 3
-                        ? widget.barWidths![3]
-                        : 100,
-                    height: 12,
-                  ),
-                ],
-              ),
+              if (showTitleBar) ...[
+                const SizedBox(height: 10),
+                // Main large title / value bar
+                _buildShimmerBar(
+                  width: widget.barWidths != null && widget.barWidths!.length > 1
+                      ? widget.barWidths![1]
+                      : 180,
+                  height: 22,
+                ),
+              ],
+              if (showMetricsRow) ...[
+                const SizedBox(height: 12),
+                // Bottom metrics / sub-info row
+                Row(
+                  children: [
+                    _buildShimmerBar(
+                      width: widget.barWidths != null && widget.barWidths!.length > 2
+                          ? widget.barWidths![2]
+                          : 80,
+                      height: 12,
+                    ),
+                    const SizedBox(width: 16),
+                    _buildShimmerBar(
+                      width: widget.barWidths != null && widget.barWidths!.length > 3
+                          ? widget.barWidths![3]
+                          : 100,
+                      height: 12,
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         );

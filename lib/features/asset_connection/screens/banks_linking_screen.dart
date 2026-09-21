@@ -224,8 +224,6 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                         Icon(Icons.unfold_more, size: 16, color: Color(0xFF64748B)),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    _buildAccountTypeToggle(),
                     const SizedBox(height: 12),
 
                     Expanded(
@@ -518,49 +516,6 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     }
     
     return _buildFallbackLogo(size);
-  }
-
-  /// Lets the user pick which account type new banks get linked as, instead
-  /// of every newly linked account being silently tagged SAVINGS.
-  Widget _buildAccountTypeToggle() {
-    Widget chip(String label, String value) {
-      final isActive = _selectedAccountType == value;
-      return Expanded(
-        child: GestureDetector(
-          onTap: () => setState(() => _selectedAccountType = value),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 160),
-            curve: Curves.easeOut,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-              color: isActive ? const Color(0xFF0F172A) : Colors.white,
-              border: Border.all(
-                color: isActive ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0),
-              ),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: isActive ? Colors.white : const Color(0xFF64748B),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Row(
-      children: [
-        chip('SAVINGS', 'SAVINGS'),
-        const SizedBox(width: 8),
-        chip('PRIORITY', 'PRIORITY'),
-      ],
-    );
   }
 
   Widget _buildBankCard({

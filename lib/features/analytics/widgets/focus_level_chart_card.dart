@@ -248,7 +248,7 @@ class _FocusLevelChartCardState extends State<FocusLevelChartCard>
         SizedBox(
           height: 200,
           child: (data == null || data.isEmpty)
-              ? Center(child: _loading ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const SizedBox.shrink())
+              ? (_loading ? const _ChartShimmerLoading() : const SizedBox.shrink())
               : LayoutBuilder(
                   builder: (context, constraints) {
                     final width = constraints.maxWidth;
@@ -535,3 +535,104 @@ class _FocusChartPainter extends CustomPainter {
       oldDelegate.hoveredIndex != hoveredIndex ||
       oldDelegate.dataView != dataView;
 }
+
+class _ChartShimmerLoading extends StatefulWidget {
+  const _ChartShimmerLoading();
+
+  @override
+  State<_ChartShimmerLoading> createState() => _ChartShimmerLoadingState();
+}
+
+class _ChartShimmerLoadingState extends State<_ChartShimmerLoading>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _shimmerAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat();
+
+    _shimmerAnim = Tween<double>(begin: -1.5, end: 1.5).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _buildBar(double height) {
+    return Container(
+      width: 26,
+      height: height,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+        gradient: LinearGradient(
+          begin: Alignment(_shimmerAnim.value - 1, 0),
+          end: Alignment(_shimmerAnim.value + 1, 0),
+          colors: const [
+            Color(0xFFF8FAFC),
+            Color(0xFFF1F5F9),
+            Color(0xFFE2E8F0),
+            Color(0xFFF1F5F9),
+            Color(0xFFF8FAFC),
+          ],
+          stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        return Column(
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _buildBar(60),
+                  _buildBar(100),
+                  _buildBar(50),
+                  _buildBar(130),
+                  _buildBar(80),
+                  _buildBar(110),
+                  _buildBar(65),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(height: 1.2, color: const Color(0xFFF1F5F9)),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                7,
+                (_) => Container(
+                  width: 24,
+                  height: 9,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+

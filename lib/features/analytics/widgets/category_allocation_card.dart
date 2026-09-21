@@ -88,7 +88,7 @@ class _CategoryAllocationCardState extends State<CategoryAllocationCard>
             _headerTitle(),
             style: const TextStyle(fontFamily: 'DMSans', fontSize: 13.5, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 52),
           Center(
             child: LayoutBuilder(
               builder: (context, constraints) {

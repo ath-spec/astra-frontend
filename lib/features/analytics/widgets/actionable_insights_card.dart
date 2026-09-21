@@ -31,7 +31,13 @@ class ActionableInsightsCard extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 4),
           child: Text(
             'Actionable insights',
-            style: TextStyle(fontFamily: 'DMSans', fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -1.0,
+              color: Color(0xFF0F172A),
+            ),
           ),
         ),
         const SizedBox(height: 12),
