@@ -152,7 +152,13 @@ class _ChatBubble extends ConsumerWidget {
                       ),
                     )
                   : TypewriterMarkdown(
-                      text: message.text,
+                      // Strip the \u200B interruption sentinel before this reaches the markdown/JSON
+                      // parser \u2014 it's only a signal for the `animate` flag below, and left in place it
+                      // lands right after a closing ``` fence and breaks jsonDecode of chart/table blocks,
+                      // making them fall back to raw code rendering.
+                      text: message.text.endsWith('\u200B')
+                          ? message.text.substring(0, message.text.length - 1)
+                          : message.text,
                       style: const TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: 14,

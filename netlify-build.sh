@@ -45,11 +45,11 @@ flutter config --enable-web
 echo "Fetching Dependencies..."
 flutter pub get
 
-echo "Generating .env file from Netlify Environment Variables..."
-# This ensures flutter_dotenv has the required .env file at runtime
-echo "API_BASE_URL=$API_BASE_URL" > .env
-
 echo "Building Production Web Bundle..."
-flutter build web --release
+# API_BASE_URL is compiled in as a constant via --dart-define, not written to
+# a plaintext file. A file asset (like a bundled .env) ships into build/web
+# and is publicly fetchable by URL from anyone visiting the site; dart-define
+# values are inlined directly into the compiled JS instead.
+flutter build web --release --dart-define=API_BASE_URL="$API_BASE_URL"
 
 echo "Build Completed Successfully!"

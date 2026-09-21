@@ -131,19 +131,27 @@ class _AstraChartCardState extends State<AstraChartCard>
     final isDoughnut = widget.chartType == 'doughnut';
     int colorIdx = 0;
 
+    // Interpolating each slice's *value* toward its real proportion is barely
+    // visible: fl_chart still draws a full-radius circle on frame one, so the
+    // wedges just quietly re-angle over 2s instead of visibly "drawing in".
+    // Scaling the whole chart's radius from a small seed up to full size
+    // (with the real, correct proportions from frame one) reads as an
+    // obvious growth instead. 0.12 floor, never 0 — see "never scale(0)".
+    final sizeProgress = 0.12 + 0.88 * progress;
+    final fullRadius = isDoughnut ? 42.0 : 84.0;
+    final radius = fullRadius * sizeProgress;
+
     final sections = widget.data.entries.map((e) {
       final realVal = (e.value as num).toDouble();
-      final animatedVal = realVal * progress;
       final color = _colors[colorIdx % _colors.length];
       colorIdx++;
 
       return PieChartSectionData(
         color: color,
-        // Use a tiny floor so fl_chart doesn't divide by zero when progress≈0
-        value: animatedVal < 0.01 ? 0.01 : animatedVal,
-        // Show labels once slices are 70% of the way drawn
+        value: realVal < 0.01 ? 0.01 : realVal,
+        // Show labels once the chart is most of the way grown in
         title: progress > 0.70 ? '${realVal.toInt()}%' : '',
-        radius: isDoughnut ? 42 : 84,
+        radius: radius,
         titleStyle: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w700,
@@ -156,7 +164,7 @@ class _AstraChartCardState extends State<AstraChartCard>
     return PieChart(
       PieChartData(
         sectionsSpace: 3,
-        centerSpaceRadius: isDoughnut ? 38 : 0,
+        centerSpaceRadius: isDoughnut ? 38.0 * sizeProgress : 0,
         sections: sections,
         pieTouchData: PieTouchData(enabled: false),
       ),

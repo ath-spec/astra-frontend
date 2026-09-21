@@ -13,7 +13,6 @@ import 'package:uuid/uuid.dart';
 import '../../chat/models/chat_message.dart';
 import '../../chat/services/demo_ai_service.dart';
 import '../../../core/widgets/typewriter_markdown.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../auth/providers/auth_provider.dart';
 
 enum NavInputState { initial, typing, generating, streaming, replied }

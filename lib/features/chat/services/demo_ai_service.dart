@@ -2,12 +2,26 @@ import 'package:dio/dio.dart';
 import 'package:just_audio/just_audio.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'audio_unlock.dart';
 
 class DemoAIService {
   static const String elevenLabsVoiceId = '21m00Tcm4TlvDq8ikWAM'; // Rachel voice
-  
+
+  // Set at build/run time via `--dart-define=API_BASE_URL=...`. No fallback
+  // is hardcoded here — an unset value fails fast instead of silently
+  // pointing at a URL baked into source.
+  static const String _envBaseUrl = String.fromEnvironment('API_BASE_URL');
+
+  static String get _baseUrl {
+    if (_envBaseUrl.isEmpty) {
+      throw StateError(
+        'API_BASE_URL is not set. Pass it via '
+        '--dart-define=API_BASE_URL=<url> when running or building.',
+      );
+    }
+    return _envBaseUrl;
+  }
+
   static final DemoAIService _instance = DemoAIService._internal();
   factory DemoAIService() => _instance;
   DemoAIService._internal();
@@ -21,7 +35,7 @@ class DemoAIService {
     final messages = [...messageHistory];
 
     try {
-      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'https://astra.zeyro.in';
+      final baseUrl = _baseUrl;
       
       // 1. Authenticate via Mocked OTP Flow
       await _dio.post(
@@ -87,7 +101,7 @@ class DemoAIService {
 
   Future<List<Map<String, dynamic>>> fetchChatHistory({required String phone, required String name, required List<Map<String, dynamic>> banks}) async {
     try {
-      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'https://astra.zeyro.in';
+      final baseUrl = _baseUrl;
       
       // Authenticate via Mocked OTP Flow
       await _dio.post(
@@ -149,7 +163,7 @@ class DemoAIService {
     final currentSpeechId = ++_speechId;
     
     try {
-      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'https://astra.zeyro.in';
+      final baseUrl = _baseUrl;
       final url = '$baseUrl/api/tts';
       
       // Sarvam TTS API has a strict 500 character limit.

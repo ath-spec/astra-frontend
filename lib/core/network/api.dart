@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:astra_frontend/core/network/dio_client.dart';
 import 'package:astra_frontend/core/network/api_exception.dart';
 
@@ -16,20 +15,19 @@ class DioApiClient {
   final String? _explicitBaseUrl;
   DioClient? _client;
 
+  // Set at build/run time via `--dart-define=API_BASE_URL=...`. No fallback
+  // is hardcoded here — an unset value fails fast instead of silently
+  // pointing at a URL baked into source.
+  static const String _envBaseUrl = String.fromEnvironment('API_BASE_URL');
+
   DioClient get _effectiveClient {
     if (_client == null) {
-      String url = _explicitBaseUrl ?? '';
-      if (url.isEmpty && dotenv.isInitialized) {
-        url = dotenv.env['API_BASE_URL'] ?? '';
-      }
+      final url = _explicitBaseUrl ?? _envBaseUrl;
       if (url.isEmpty) {
-        url = const String.fromEnvironment(
-          'API_BASE_URL',
-          defaultValue: 'https://astra.zeyro.in',
+        throw StateError(
+          'API_BASE_URL is not set. Pass it via '
+          '--dart-define=API_BASE_URL=<url> when running or building.',
         );
-      }
-      if (url.isEmpty) {
-        url = 'https://astra.zeyro.in';
       }
       _client = DioClient(baseUrl: url);
     }
