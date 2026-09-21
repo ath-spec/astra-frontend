@@ -18,7 +18,7 @@ class MerchantRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(4),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
         child: Row(
@@ -27,7 +27,7 @@ class MerchantRow extends StatelessWidget {
               merchantName: summary.merchant,
               category: '',
               size: 40,
-              borderRadius: 12,
+              borderRadius: 4,
             ),
             const SizedBox(width: 12),
             Expanded(

@@ -16,9 +16,10 @@ class BanksSearchingScreen extends ConsumerStatefulWidget {
 
 class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
     with SingleTickerProviderStateMixin {
-  Timer? _timer;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+
+  bool _navigated = false;
 
   @override
   void initState() {
@@ -31,21 +32,47 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
     _pulseAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+  }
 
-    _timer = Timer(const Duration(milliseconds: 2600), () {
-      if (mounted) {
-        final state = ref.read(assetConnectionProvider);
-        if (state.step == AssetConnectionStep.banksLinkingProgress) {
-          ref.read(assetConnectionProvider.notifier).completeBankLinking();
-        }
-        context.pushReplacement('/banks-linking');
-      }
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_navigated) return;
+    _navigated = true;
+    // extra carries the real Future for whatever network work this screen
+    // is covering (e.g. banks_linking_screen's searchAndAddBank calls) when
+    // the caller provided one. Previously this screen navigated back on a
+    // flat 2600ms timer no matter what — if the actual add/search took
+    // longer than that (any real network latency), the user landed back on
+    // the previous screen before their new bank had actually appeared. Now
+    // it waits for genuine completion (still floored at 2600ms so the
+    // animation never feels like a flash for fast responses).
+    final extra = GoRouterState.of(context).extra;
+    final pending = extra is Future ? extra : null;
+    _waitAndNavigate(pending);
+  }
+
+  Future<void> _waitAndNavigate(Future<void>? pending) async {
+    final minDelay = Future<void>.delayed(const Duration(milliseconds: 2600));
+    if (pending != null) {
+      // Swallow errors from the pending work itself here — searchAndAddBank
+      // already handles its own failures internally (offline fallback);
+      // this wait only needs to know when it's done, not whether it threw.
+      await Future.wait([minDelay, pending.catchError((_) {})]);
+    } else {
+      await minDelay;
+    }
+    if (!mounted) return;
+    final state = ref.read(assetConnectionProvider);
+    if (state.step == AssetConnectionStep.banksLinkingProgress) {
+      await ref.read(assetConnectionProvider.notifier).completeBankLinking();
+    }
+    if (!mounted) return;
+    context.pushReplacement('/banks-linking');
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     _pulseController.stop();
     _pulseController.dispose();
     super.dispose();

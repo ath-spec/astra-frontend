@@ -85,13 +85,20 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
       ctaLabel = 'PROCEED';
       ctaActive = true;
       onCtaTap = () {
-        for (final bank in _selectedMoreBanks) {
-          notifier.searchAndAddBank(bank, accountType: _selectedAccountType);
-        }
+        final selected = List<String>.from(_selectedMoreBanks);
         setState(() {
           _selectedMoreBanks.clear();
         });
-        context.push('/banks-searching');
+        // The searching screen used to navigate back on a fixed timer with
+        // no idea whether these network calls had actually finished — if
+        // they took longer than that timer, the user landed back on this
+        // screen looking at stale state, before the newly added bank(s)
+        // ever appeared. Passing the real Future lets it wait on genuine
+        // completion instead of guessing a duration.
+        final pending = Future.wait(
+          selected.map((bank) => notifier.searchAndAddBank(bank, accountType: _selectedAccountType)),
+        );
+        context.push('/banks-searching', extra: pending);
       };
     } else if (hasSelected) {
       ctaLabel = 'APPROVE AND CONNECT';
@@ -117,7 +124,17 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 420),
-                    child: Column(
+                    // Both bank lists used to sit in their own Flexible/Expanded
+                    // pane inside this non-scrolling Column, splitting the
+                    // available height between them — so "YOUR ACCOUNTS" only
+                    // ever got roughly half the screen, and a newly added
+                    // account (e.g. Axis, after linking it via "CONNECT MORE
+                    // ACCOUNTS") could end up needing a scroll within that
+                    // cramped pane that wasn't obvious, or get visually
+                    // squeezed out. One SingleChildScrollView for the whole
+                    // screen removes the height competition entirely.
+                    child: SingleChildScrollView(
+                      child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                     const SizedBox(height: 24),
@@ -199,23 +216,19 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     // instead of nothing, so this section appears together
                     // with the rest of the (already-painted) screen content
                     // rather than as a jarring gap that pops in later.
-                    Flexible(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: !state.bankAccountsLoaded && state.bankAccounts.isEmpty
-                              ? const [
-                                  AppThemeShimmerCard(height: 72),
-                                  SizedBox(height: 12),
-                                  AppThemeShimmerCard(height: 72),
-                                ]
-                              : state.bankAccounts.map((bank) {
-                                  return _buildBankCard(
-                                    bank: bank,
-                                    onTap: () => notifier.toggleBankSelection(bank.id),
-                                  );
-                                }).toList(),
-                        ),
-                      ),
+                    Column(
+                      children: !state.bankAccountsLoaded && state.bankAccounts.isEmpty
+                          ? const [
+                              AppThemeShimmerCard(height: 72),
+                              SizedBox(height: 12),
+                              AppThemeShimmerCard(height: 72),
+                            ]
+                          : state.bankAccounts.map((bank) {
+                              return _buildBankCard(
+                                bank: bank,
+                                onTap: () => notifier.toggleBankSelection(bank.id),
+                              );
+                            }).toList(),
                     ),
 
                     const SizedBox(height: 46),
@@ -239,11 +252,20 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                     ),
                     const SizedBox(height: 12),
 
-                    Expanded(
+                    // Kept as its own bounded, internally-scrollable list
+                    // (rather than flowing into the page scroll like "YOUR
+                    // ACCOUNTS" above) — there are 16 banks here, so letting
+                    // it join the outer SingleChildScrollView would make the
+                    // whole page very long. A fixed height + its own
+                    // ListView keeps this section compact while "YOUR
+                    // ACCOUNTS" above it is no longer squeezed by competing
+                    // for the same flexible space.
+                    SizedBox(
+                      height: 280,
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
-                          itemCount: _popularBanks.length,
-                          itemBuilder: (context, index) {
+                        itemCount: _popularBanks.length,
+                        itemBuilder: (context, index) {
                           final bankName = _popularBanks[index];
                           final isSelected = _selectedMoreBanks.contains(bankName);
                           return Container(
@@ -263,7 +285,14 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                                 ),
                               ],
                             ),
-                            child: ListTile(
+                            // ListTile paints its background/ink-splash on the
+                            // nearest Material ancestor — without this, the
+                            // Container's decoration above hides that layer
+                            // and Flutter throws "ListTile background color
+                            // or ink splashes may be invisible" on every tap.
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: ListTile(
                               dense: true,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -322,14 +351,14 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
                                   }
                                 });
                               },
+                              ),
                             ),
                           );
                         },
                       ),
                     ),
-
-
                       ],
+                      ),
                     ),
                   ),
                 ),

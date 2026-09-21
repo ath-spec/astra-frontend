@@ -292,9 +292,12 @@ class _SpendTrendsPainter extends CustomPainter {
       dashSpace: 4,
     );
 
+    // ── Avg pill — position flips to avoid overlapping the selected tooltip ──
     if (animationProgress > 0.4) {
       final pillAlpha = ((animationProgress - 0.4) / 0.6).clamp(0.0, 1.0);
-      final avgLabel = averageValue >= 1000 ? 'avg ₹${(averageValue / 1000).toStringAsFixed(1)}K' : 'avg ₹${averageValue.toInt()}';
+      final avgLabel = averageValue >= 1000
+          ? 'avg ₹${(averageValue / 1000).toStringAsFixed(1)}K'
+          : 'avg ₹${averageValue.toInt()}';
       final avgPainter = TextPainter(
         text: TextSpan(
           text: avgLabel,
@@ -311,8 +314,54 @@ class _SpendTrendsPainter extends CustomPainter {
       const padH = 10.0, padV = 4.0;
       final pillW = avgPainter.width + padH * 2;
       final pillH = avgPainter.height + padV * 2;
+
+      // Default: pin to right edge. We'll check for tooltip collision below.
+      double pillCx = chartWidth - pillW / 2 - 4;
+
+      // Pre-compute the selected bar's tooltip bounding box so we can detect
+      // overlap before deciding where to draw the pill.
+      if (selectedIndex >= 0 && selectedIndex < trends.length) {
+        final xSel = (selectedIndex + 0.5) * spacing;
+        final bStart = (selectedIndex * 0.05).clamp(0.0, 0.4);
+        final bProg = ((animationProgress - bStart) / (1.0 - bStart)).clamp(0.0, 1.0);
+        final bH = chartHeight * values[selectedIndex] * bProg;
+        final tooltipCenter = Offset(xSel, chartHeight - bH - 10);
+
+        // Approximate tooltip box (matches _drawTooltip geometry)
+        const tPad = 8.0;
+        final tpApprox = TextPainter(
+          text: TextSpan(
+            text: trends[selectedIndex].totalSpent >= 1000
+                ? '₹${(trends[selectedIndex].totalSpent / 1000).toStringAsFixed(1)}K'
+                : '₹${trends[selectedIndex].totalSpent.toInt()}',
+            style: const TextStyle(fontFamily: 'DMSans', fontSize: 10.5, fontWeight: FontWeight.w700),
+          ),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        final tW = tpApprox.width + tPad * 2;
+        final tH = tpApprox.height + tPad;
+        // Tooltip rect (bubble sits above the bar tip + tail)
+        final tooltipRect = Rect.fromCenter(
+          center: Offset(tooltipCenter.dx, tooltipCenter.dy - tH / 2),
+          width: tW,
+          height: tH + 6 /*tail*/,
+        ).inflate(6); // generous collision margin
+
+        // Pill rect at default (right) position
+        final pillRectDefault = Rect.fromCenter(
+          center: Offset(pillCx, avgY),
+          width: pillW,
+          height: pillH,
+        ).inflate(4);
+
+        if (pillRectDefault.overlaps(tooltipRect)) {
+          // Flip pill to left edge
+          pillCx = pillW / 2 + 4;
+        }
+      }
+
       final pillRect = RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(chartWidth - pillW / 2 - 4, avgY), width: pillW, height: pillH),
+        Rect.fromCenter(center: Offset(pillCx, avgY), width: pillW, height: pillH),
         const Radius.circular(4),
       );
       canvas.drawRRect(pillRect, Paint()..color = Colors.white.withValues(alpha: pillAlpha));
@@ -323,10 +372,13 @@ class _SpendTrendsPainter extends CustomPainter {
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1,
       );
-      avgPainter.paint(canvas, Offset(pillRect.center.dx - avgPainter.width / 2, pillRect.center.dy - avgPainter.height / 2));
+      avgPainter.paint(
+        canvas,
+        Offset(pillRect.center.dx - avgPainter.width / 2, pillRect.center.dy - avgPainter.height / 2),
+      );
     }
 
-    // Selected-bar tooltip.
+    // ── Selected-bar tooltip ──────────────────────────────────────────────
     if (selectedIndex < 0 || selectedIndex >= trends.length || animationProgress <= 0.4) return;
     final tooltipAlpha = ((animationProgress - 0.4) / 0.6).clamp(0.0, 1.0);
     final xSelected = (selectedIndex + 0.5) * spacing;

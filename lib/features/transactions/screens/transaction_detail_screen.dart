@@ -123,7 +123,7 @@ class _TransactionDetailScreenState extends ConsumerState<TransactionDetailScree
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(4),
                     color: Colors.white,
                     border: Border.all(color: const Color(0xFFE6E6E6)),
                   ),
@@ -166,7 +166,7 @@ class _AmountHeader extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         color: const Color(0xFF0F172A),
       ),
       child: Column(
@@ -180,7 +180,7 @@ class _AmountHeader extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: _statusColor(detail.status).withValues(alpha: 0.16),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               _statusLabel(detail.status),

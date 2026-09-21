@@ -37,7 +37,7 @@ class CategoryRow extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(4),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
         child: Row(
@@ -47,7 +47,7 @@ class CategoryRow extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: visual.color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Icon(visual.icon, size: 19, color: visual.color),
             ),
