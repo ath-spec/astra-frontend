@@ -342,6 +342,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         : const Color(0xFFEF4444),
                     onTap: () {
                       ref.read(navContextProvider.notifier).state = NavContext.mf;
+                      // mfTabIndexProvider persists across the whole app
+                      // session (it's how quick actions like "Invest via
+                      // SIP" jump straight to a specific MF tab). The bottom
+                      // nav bar's own MF icon resets it to 0 on tap (see
+                      // app_shell.dart), but this tile is a second, separate
+                      // entry point to the same screen that bypassed that
+                      // reset — landing on whatever tab was last active
+                      // instead of Holdings. Reset it here too.
+                      ref.read(mfTabIndexProvider.notifier).state = 0;
                       context.go('/mf');
                     },
                   )

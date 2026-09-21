@@ -200,7 +200,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                       ],
                     ),
                     child: _OdometerText(
-                      targetValue: (hasImportedPortfolio && (mfConnected || stocksConnected)) ? totalWealthValue.toInt() : 0,
+                      targetValue: (hasImportedPortfolio && (mfConnected || stocksConnected || totalWealthValue > 0)) ? totalWealthValue.toInt() : 0,
                       isLocked: isLocked,
                       style: TextStyle(
                         fontFamily: 'DMSans',
@@ -229,7 +229,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                           ),
                         ),
                       ),
-                      child: !hasImportedPortfolio
+                      child: (!hasImportedPortfolio || pillOneDayText.isEmpty)
                         ? const SizedBox.shrink(key: ValueKey('empty'))
                         : Opacity(
                             key: const ValueKey('content'),
@@ -242,37 +242,48 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                                   child: Align(
                                     alignment: Alignment.center,
                                     widthFactor: lerpDouble(1.0, 0.0, easedRatio)!,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.arrow_upward_rounded,
-                                          size: lerpDouble(14.0, 0.0, easedRatio)!,
-                                          color: const Color.fromARGB(255, 5, 134, 91), // Emerald 500
-                                        ),
-                                        SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
-                                        Text(
-                                          isLocked ? '₹ * * * *' : pillOneDayText,
-                                          style: TextStyle(
-                                            fontFamily: 'DMSans',
-                                            fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color.fromARGB(255, 5, 134, 91),
-                                            letterSpacing: 0.8,
-                                          ),
-                                        ),
-                                        SizedBox(width: lerpDouble(6.0, 0.0, easedRatio)!),
-                                        Text(
-                                          '1D change',
-                                          style: TextStyle(
-                                            fontFamily: 'DMSans',
-                                            fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF9CA3AF),
-                                          ),
-                                        ),
-                                      ],
+                                    child: Builder(
+                                      builder: (context) {
+                                        final bool isNegative = pillOneDayText.startsWith('-');
+                                        final Color changeColor = isNegative
+                                            ? const Color(0xFFDC2626)
+                                            : const Color.fromARGB(255, 5, 134, 91); // Emerald 500
+                                        final IconData changeIcon = isNegative
+                                            ? Icons.arrow_downward_rounded
+                                            : Icons.arrow_upward_rounded;
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              changeIcon,
+                                              size: lerpDouble(14.0, 0.0, easedRatio)!,
+                                              color: changeColor,
+                                            ),
+                                            SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
+                                            Text(
+                                              isLocked ? '₹ * * * *' : pillOneDayText,
+                                              style: TextStyle(
+                                                fontFamily: 'DMSans',
+                                                fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
+                                                fontWeight: FontWeight.w600,
+                                                color: changeColor,
+                                                letterSpacing: 0.8,
+                                              ),
+                                            ),
+                                            SizedBox(width: lerpDouble(6.0, 0.0, easedRatio)!),
+                                            Text(
+                                              '1D change',
+                                              style: TextStyle(
+                                                fontFamily: 'DMSans',
+                                                fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFF9CA3AF),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),
@@ -401,7 +412,9 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
            hasImportedPortfolio != oldDelegate.hasImportedPortfolio ||
            isLocked != oldDelegate.isLocked ||
            totalValue != oldDelegate.totalValue ||
-           oneDayChangeText != oldDelegate.oneDayChangeText;
+           oneDayChangeText != oldDelegate.oneDayChangeText ||
+           mfConnected != oldDelegate.mfConnected ||
+           stocksConnected != oldDelegate.stocksConnected;
   }
 }
 

@@ -72,8 +72,21 @@ class DioClient {
     );
   }
 
-  /// Attempts to refresh the authentication token using stored refresh_token.
-  Future<bool> _attemptTokenRefresh() async {
+  // Concurrent requests that all expire at once (e.g. home screen firing
+  // several calls together) must not each fire their own refresh: the
+  // backend rotates the refresh token on every use, so a second caller
+  // racing with the same old token gets rejected and — before this guard —
+  // would wipe out the valid tokens the first caller had just written.
+  // Every concurrent 401 now shares this single in-flight refresh instead.
+  Future<bool>? _refreshFuture;
+
+  Future<bool> _attemptTokenRefresh() {
+    return _refreshFuture ??= _doRefresh().whenComplete(() {
+      _refreshFuture = null;
+    });
+  }
+
+  Future<bool> _doRefresh() async {
     try {
       final refreshToken = await _secureStorage.read(key: 'refresh_token');
       if (refreshToken == null || refreshToken.isEmpty) return false;

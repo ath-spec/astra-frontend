@@ -59,6 +59,13 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
   WebSocketChannel? _channel;
   StreamSubscription? _audioSub;
   StreamSubscription? _wsSub;
+  // Sarvam emits a transcript.final every time the speaker pauses between
+  // phrases (a segment boundary), not just when they're done talking — the
+  // stream keeps running and starts transcribing the next segment right
+  // after. _finalizedText accumulates each finished segment across the
+  // whole listening session so pausing mid-thought doesn't wipe out
+  // everything said before the pause.
+  String _finalizedText = '';
 
   // startListening does several awaits (permission check, secure-storage
   // read, socket connect, recorder start) before the mic/socket are fully
@@ -98,6 +105,7 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
     final initialized = await initialize();
     if (!initialized || gen != _generation) return;
 
+    _finalizedText = '';
     state = state.copyWith(isListening: true, isProcessing: false, recognizedWords: '', hasError: false, errorMessage: '');
 
     WebSocketChannel? channel;
@@ -120,14 +128,28 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
             if (message is String) {
               final data = json.decode(message);
               if (data['event'] == 'transcript.partial' || data['event'] == 'transcript.final') {
-                final text = data['text'] as String?;
-                if (text != null && text.trim().isNotEmpty) {
-                  state = state.copyWith(recognizedWords: text);
-                  _onResultCallback?.call(text);
+                final segment = data['text'] as String?;
+                final isFinal = data['event'] == 'transcript.final';
+                // Combine everything already finalized this session with
+                // either the just-finalized segment or the in-progress
+                // partial, so the exposed text always reads as one
+                // continuous, growing transcript rather than resetting to
+                // just the latest segment on every pause.
+                String combined = _finalizedText;
+                if (segment != null && segment.trim().isNotEmpty) {
+                  combined = _finalizedText.isEmpty ? segment : '$_finalizedText $segment';
                 }
-                if (data['event'] == 'transcript.final') {
-                  stopListening();
+                if (isFinal) {
+                  _finalizedText = combined;
                 }
+                if (combined.trim().isNotEmpty) {
+                  state = state.copyWith(recognizedWords: combined);
+                  _onResultCallback?.call(combined);
+                }
+                // Do NOT stop on a final — Sarvam finalizes each segment as
+                // the speaker pauses between phrases; the session should
+                // keep listening for more speech until the user explicitly
+                // stops (or the socket itself closes after a longer silence).
               }
             }
           } catch (_) {
@@ -226,6 +248,7 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
       _channel = null;
     } catch (_) {}
     _onResultCallback = null;
+    _finalizedText = '';
     state = state.copyWith(isListening: false, isProcessing: false, recognizedWords: '');
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:astra_frontend/core/network/api.dart';
@@ -162,6 +164,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
     await _secureStorage.delete(key: 'auth_token');
     await _secureStorage.delete(key: 'refresh_token');
+    await _secureStorage.delete(key: 'cached_display_name');
     state = const AuthInitial();
   }
 
@@ -236,11 +239,27 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Persists the display name collected on the onboarding name step.
   /// The account row is created on OTP verify (before the name is known),
   /// so this PATCH is what actually gets the real name onto the profile —
-  /// and into the RM dashboard. Best-effort: the local [pendingName] is
-  /// updated regardless so the rest of onboarding shows the right name.
+  /// and into the RM dashboard.
+  ///
+  /// Written to secure storage FIRST, unconditionally — not just held in the
+  /// in-memory [pendingName] field. [pendingName] resets to its 'Investor'
+  /// class default on every cold start (a fresh AuthNotifier is constructed),
+  /// so if the PATCH below silently failed (a network blip mid-onboarding)
+  /// there was previously nothing else backing the name up: the next
+  /// [restoreSession] would see an empty `name` from the server, fall back to
+  /// the freshly-reset 'Investor' default, and the user's real name would
+  /// appear to vanish after the app was killed and reopened. The local cache
+  /// makes that recoverable, and restoreSession below retries the PATCH so
+  /// the backend eventually catches up too.
   Future<void> updateName(String name) async {
     final trimmed = name.trim();
     pendingName = trimmed;
+    try {
+      await _secureStorage.write(key: 'cached_display_name', value: trimmed);
+    } catch (_) {
+      // Best-effort cache write — the in-memory pendingName still covers the
+      // rest of this session even if this fails.
+    }
     final current = state;
     if (current is AuthAuthenticated) {
       state = AuthAuthenticated(
@@ -259,8 +278,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         data: {'name': trimmed},
       );
     } catch (_) {
-      // Non-fatal — onboarding continues; a later app launch's session
-      // restore will still reflect whatever the server has.
+      // Non-fatal — onboarding continues. The locally cached name above
+      // covers this device regardless; restoreSession retries the sync.
     }
   }
 
@@ -294,13 +313,35 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final phone = data['phone_number']?.toString() ?? '';
       final userId = data['astra_user_id']?.toString() ?? data['user_id']?.toString() ?? '';
       pendingPhone = phone;
-      if (name != null && name.isNotEmpty) pendingName = name;
+
+      if (name != null && name.isNotEmpty) {
+        pendingName = name;
+      } else {
+        // The server has no name on file — likely a prior updateName() PATCH
+        // that silently failed. Fall back to this device's locally cached
+        // name (survives app restarts, unlike the in-memory default) and
+        // retry syncing it to the backend now that we have connectivity.
+        String? cached;
+        try {
+          cached = await _secureStorage.read(key: 'cached_display_name');
+        } catch (_) {
+          cached = null;
+        }
+        if (cached != null && cached.isNotEmpty) {
+          pendingName = cached;
+          unawaited(
+            dioApiClient.dio
+                .patch('/api/auth/me', data: {'name': cached})
+                .catchError((_) {}),
+          );
+        }
+      }
       pendingWantsRm = data['wants_rm'] == true;
 
       state = AuthAuthenticated(
         User(
           id: userId,
-          name: name != null && name.isNotEmpty ? name : pendingName,
+          name: pendingName,
           email: '$phone@astra.dev',
           isAdmin: false,
           avatarUrl: null,

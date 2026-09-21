@@ -16,6 +16,7 @@ class BudgetOverviewCard extends StatelessWidget {
   final String? budgetPeriodStart;
   final String? budgetPeriodEnd;
   final String title;
+  final String? periodLabel;
   final Color backgroundColor;
   final Color textColor;
   final IconData topIcon;
@@ -26,6 +27,9 @@ class BudgetOverviewCard extends StatelessWidget {
   final Color? borderColor;
   final bool isCategoryCard;
   final bool showCapAndOverspent;
+  final bool showBreakdownRow;
+  final bool showRemainingAmount;
+  final bool showTotalWithCurrentAmount;
 
   const BudgetOverviewCard({
     super.key,
@@ -38,6 +42,7 @@ class BudgetOverviewCard extends StatelessWidget {
     this.budgetPeriodStart,
     this.budgetPeriodEnd,
     this.title = "Budget",
+    this.periodLabel,
     this.backgroundColor = const Color(0xFF8EC8B3),
     this.textColor = const Color(0xFF133026),
     this.topIcon = Icons.settings_outlined,
@@ -47,6 +52,9 @@ class BudgetOverviewCard extends StatelessWidget {
     this.borderColor,
     this.isCategoryCard = false,
     this.showCapAndOverspent = true,
+    this.showBreakdownRow = true,
+    this.showRemainingAmount = true,
+    this.showTotalWithCurrentAmount = false,
   });
 
   @override
@@ -59,30 +67,32 @@ class BudgetOverviewCard extends StatelessWidget {
     final nfWhole = NumberFormat('#,##,###');
     final nf = NumberFormat('#,##,###.00');
 
-    String formatPeriod() {
-      if (budgetPeriodStart == null || budgetPeriodStart!.isEmpty || 
-          budgetPeriodEnd == null || budgetPeriodEnd!.isEmpty) {
-        return "This Month";
-      }
-      final start = DateTime.tryParse(budgetPeriodStart!);
-      final end = DateTime.tryParse(budgetPeriodEnd!);
-      if (start == null || end == null) return "This Month";
-      
-      final startFmt = DateFormat('MMM d').format(start);
-      final endFmt = DateFormat('MMM d').format(end);
-      return "$startFmt - $endFmt";
-    }
-
     String formatCompact(double value) {
       if (value >= 10000000) {
-        return '${(value / 10000000).toStringAsFixed(2).replaceAll(RegExp(r'0$'), '')}Cr';
+        final val = (value / 10000000).toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+        return '${val}Cr';
       } else if (value >= 100000) {
-        return '${(value / 100000).toStringAsFixed(2).replaceAll(RegExp(r'0$'), '')}L';
+        final val = (value / 100000).toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+        return '${val}L';
       } else if (value >= 10000) {
-        return '${(value / 1000).toStringAsFixed(2).replaceAll(RegExp(r'0$'), '')}k';
+        final val = (value / 1000).toStringAsFixed(2).replaceAll(RegExp(r'\.?0+$'), '');
+        return '${val}k';
       } else {
         return nfWhole.format(value);
       }
+    }
+
+    String getPeriodText() {
+      if (periodLabel != null && periodLabel!.isNotEmpty) {
+        return periodLabel!;
+      }
+      DateTime? dt;
+      if (budgetPeriodStart != null && budgetPeriodStart!.isNotEmpty) {
+        dt = DateTime.tryParse(budgetPeriodStart!);
+      }
+      dt ??= DateTime.now();
+      final monthName = DateFormat('MMMM').format(dt);
+      return "This month ($monthName)";
     }
 
     return ZeyroVisibilityTracker(
@@ -103,40 +113,50 @@ class BudgetOverviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header: Budget & Settings
-          if (title.isNotEmpty || !isMini) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontFamily: 'DMSans', 
+          // Header: "This month (Month)" (or Category Title) & Settings / Category Icon
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  isCategoryCard
+                      ? title
+                      : (title.isNotEmpty && title.toLowerCase() != 'budget' ? title : getPeriodText()),
+                  style: TextStyle(
+                    fontFamily: 'DMSans', 
                     fontSize: getProportionateScreenWidth(isMini ? 12 : 14),
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                if (!isMini)
-                  onTopIconTap != null
-                      ? ZeyroIconButton(
-                          eventName: 'budget_overview_card_forward_tapped',
-                          onPressed: onTopIconTap ?? () {},
-                          icon: Icon(topIcon, color: textColor),
-                        )
-                      : Icon(topIcon, color: textColor),
-              ],
-            ),
-            SizedBox(height: getProportionateScreenHeight(isMini ? 4 : 0)),
-          ],
-          if (!isCategoryCard)
+              ),
+              if (!isMini)
+                onTopIconTap != null
+                    ? ZeyroIconButton(
+                        eventName: 'budget_overview_card_forward_tapped',
+                        onPressed: onTopIconTap ?? () {},
+                        icon: Icon(topIcon, color: textColor),
+                      )
+                    : Icon(topIcon, color: textColor)
+              else if (isCategoryCard)
+                Icon(topIcon, color: textColor, size: getProportionateScreenWidth(16)),
+            ],
+          ),
+          if (!isCategoryCard) ...[
+            SizedBox(height: getProportionateScreenHeight(isMini ? 2 : 10)),
             Text(
-              formatPeriod(),
-              style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                fontSize: getProportionateScreenWidth(isMini ? 12 : 14),
-                color: textColor.withValues(alpha: 0.9),
+              "Spent",
+              style: TextStyle(
+                fontFamily: 'DMSans', 
+                fontSize: getProportionateScreenWidth(isMini ? 11 : 12),
+                fontWeight: FontWeight.w500,
+                color: textColor.withValues(alpha: 0.7),
               ),
             ),
-          SizedBox(height: getProportionateScreenHeight(isMini ? 4 : 16)),
+            SizedBox(height: getProportionateScreenHeight(isMini ? 2 : 4)),
+          ] else
+            SizedBox(height: getProportionateScreenHeight(isMini ? 4 : 16)),
           // Main amount and conditional Left/Cap
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,7 +174,8 @@ class BudgetOverviewCard extends StatelessWidget {
                       children: [
                         Text(
                           "₹",
-                          style: TextStyle(fontFamily: 'DMSans', 
+                          style: TextStyle(
+                            fontFamily: 'DMSans', 
                             fontSize: getProportionateScreenWidth(isMini ? 12 : 14),
                             fontWeight: FontWeight.w600,
                             color: textColor,
@@ -162,12 +183,33 @@ class BudgetOverviewCard extends StatelessWidget {
                         ),
                         Text(
                           formatCompact(spentAmount),
-                          style: TextStyle(fontFamily: 'DMSans', 
-                            fontSize: getProportionateScreenWidth(isMini ? 14 : 20),
-                            fontWeight: FontWeight.w600,
+                          style: TextStyle(
+                            fontFamily: 'DMSans', 
+                            fontSize: getProportionateScreenWidth(isMini ? 14 : 22),
+                            fontWeight: FontWeight.w700,
                             color: textColor,
                           ),
                         ),
+                        if (showTotalWithCurrentAmount) ...[
+                          Text(
+                            " / ",
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: getProportionateScreenWidth(isMini ? 11 : 13),
+                              fontWeight: FontWeight.w500,
+                              color: textColor.withValues(alpha: 0.5),
+                            ),
+                          ),
+                          Text(
+                            "₹${formatCompact(totalBudget)}",
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: getProportionateScreenWidth(isMini ? 11 : 13),
+                              fontWeight: FontWeight.w500,
+                              color: textColor.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -175,7 +217,8 @@ class BudgetOverviewCard extends StatelessWidget {
                     SizedBox(height: getProportionateScreenHeight(2)),
                     Text(
                       "Cap: ₹${formatCompact(totalBudget)}",
-                      style: TextStyle(fontFamily: 'DMSans', 
+                      style: TextStyle(
+                        fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(10),
                         fontWeight: FontWeight.w500,
                         color: textColor.withValues(alpha: 0.7),
@@ -191,14 +234,17 @@ class BudgetOverviewCard extends StatelessWidget {
                       if (remainingAmount < 0) ...[
                         TextSpan(
                           text: "Overspent\n",
-                          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'DMSans', 
                             fontSize: getProportionateScreenWidth(9),
                             color: textColor.withValues(alpha: 0.9),
                           ),
                         ),
                         TextSpan(
                           text: "₹${formatCompact(remainingAmount.abs())}",
-                          style: TextStyle(fontFamily: 'DMSans', 
+                          style: TextStyle(
+                            fontFamily: 'DMSans', 
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: textColor,
@@ -207,14 +253,17 @@ class BudgetOverviewCard extends StatelessWidget {
                       ] else ...[
                         TextSpan(
                           text: "Left\n",
-                          style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'DMSans', 
                             fontSize: 12,
                             color: textColor.withValues(alpha: 0.9),
                           ),
                         ),
                         TextSpan(
                           text: "₹${formatCompact(remainingAmount)}",
-                          style: TextStyle(fontFamily: 'DMSans', 
+                          style: TextStyle(
+                            fontFamily: 'DMSans', 
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: textColor,
@@ -228,22 +277,25 @@ class BudgetOverviewCard extends StatelessWidget {
                 ),
             ],
           ),
-          SizedBox(height: getProportionateScreenHeight(isMini ? 2 : 4)),
-          if (showCapAndOverspent && !(isCategoryCard && isMini))
+          if (showRemainingAmount && showCapAndOverspent && !(isCategoryCard && isMini)) ...[
+            SizedBox(height: getProportionateScreenHeight(isMini ? 2 : 4)),
             Text.rich(
               TextSpan(
                 children: [
                   if (remainingAmount < 0) ...[
                     TextSpan(
                       text: "Overspent by ",
-                      style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(isMini ? 12 : 14),
                         color: textColor.withValues(alpha: 0.9),
                       ),
                     ),
                     TextSpan(
                       text: "₹${formatCompact(remainingAmount.abs())}",
-                      style: TextStyle(fontFamily: 'DMSans', 
+                      style: TextStyle(
+                        fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(isMini ? 10 : 12),
                         fontWeight: FontWeight.w600,
                         color: textColor,
@@ -252,14 +304,18 @@ class BudgetOverviewCard extends StatelessWidget {
                   ] else ...[
                     TextSpan(
                       text: "₹${formatCompact(remainingAmount)} ",
-                      style: TextStyle(fontFamily: 'DMSans', 
+                      style: TextStyle(
+                        fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(isMini ? 12 : 14),
                         fontWeight: FontWeight.w600,
                         color: textColor,
                       ),
                     ),
-                    TextSpan(text: "Left",
-                      style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
+                    TextSpan(
+                      text: "Left",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'DMSans', 
                         fontSize: getProportionateScreenWidth(isMini ? 12 : 14),
                         color: textColor.withValues(alpha: 0.9),
                       ),
@@ -269,8 +325,13 @@ class BudgetOverviewCard extends StatelessWidget {
               ),
               overflow: TextOverflow.ellipsis,
             ),
+          ],
           if (showCapAndOverspent)
-            SizedBox(height: getProportionateScreenHeight(isMini ? 4 : 24)),
+            SizedBox(
+              height: getProportionateScreenHeight(
+                isMini ? 4 : (showRemainingAmount ? 24 : 16),
+              ),
+            ),
           // Days to go and per day amount
           if (!isMini || (isMini && !isCategoryCard))
             Row(
@@ -308,9 +369,12 @@ class BudgetOverviewCard extends StatelessWidget {
                           color: textColor,
                         ),
                       ),
-                      TextSpan(text: "Per day",
-                        style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                          fontSize: getProportionateScreenWidth(isMini ? 12 : 14),
+                      TextSpan(
+                        text: "Spent / day",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'DMSans', 
+                          fontSize: getProportionateScreenWidth(isMini ? 8 : 10),
                           color: textColor.withValues(alpha: 0.8),
                         ),
                       ),
@@ -369,9 +433,13 @@ class BudgetOverviewCard extends StatelessWidget {
             ),
           ),
           if (showCapAndOverspent)
-            SizedBox(height: getProportionateScreenHeight(isMini ? 8 : 24)),
+            SizedBox(
+              height: getProportionateScreenHeight(
+                isMini ? 8 : (showBreakdownRow ? 24 : 16),
+              ),
+            ),
           // Spent and Due breakdown
-          if (showCapAndOverspent && (!isMini || (isMini && !isCategoryCard)))
+          if (showBreakdownRow && showCapAndOverspent && (!isMini || (isMini && !isCategoryCard)))
             _buildBreakdownRow(
               isSelected: true,
               label: isCategoryCard ? "Cap" : "Budget",
@@ -379,37 +447,10 @@ class BudgetOverviewCard extends StatelessWidget {
               isMini: isMini,
             ),
 
-          if (!isMini) SizedBox(height: getProportionateScreenHeight(24)),
-          if (!isMini && showIncomeOutcome)
-            // Incoming Outgoing Cards
-            Row(
-              children: [
-                Expanded(
-                  child: BudgetSummaryCard(
-                    amountWhole: formatCompact(
-                      incomingAmount,
-                    ).replaceAll('₹', ''),
-                    amountDecimal:
-                        "", // Compact format doesn't need separate decimals
-                    label: "Incoming",
-                    backgroundColor: const Color(0xFFF9FAFB),
-                    textColor: const Color(0xFF0F172A),
-                    borderColor: const Color(0xFFE2E8F0),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: BudgetSummaryCard(
-                    amountWhole: formatCompact(spentAmount).replaceAll('₹', ''),
-                    amountDecimal: "",
-                    label: "Outgoing",
-                    backgroundColor: const Color(0xFFF9FAFB),
-                    textColor: const Color(0xFF0F172A),
-                    borderColor: const Color(0xFFE2E8F0),
-                  ),
-                ),
-              ],
-            ),
+          if (!isMini && showIncomeOutcome) ...[
+            if (showBreakdownRow)
+              SizedBox(height: getProportionateScreenHeight(24)),
+          ],
         ],
       ),
     )

@@ -205,7 +205,7 @@ class _BudgetIntroDiagnosisScreenState
                                 ),
                               ),
                               SizedBox(height: (8)),
-                              Text("Zeyro has no data on you at the moment. please connect your accounts to get accurate results.",
+                              Text("Astra has no data on you at the moment. please connect your accounts to get accurate results.",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
                                   fontSize: (14),
