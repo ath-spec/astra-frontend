@@ -23,6 +23,21 @@ final portfolioPerformanceProvider = FutureProvider<PerformanceData>((ref) async
   return repo.getPerformance();
 });
 
+final portfolioAllocationTipProvider = FutureProvider<AITipData>((ref) async {
+  final repo = ref.watch(portfolioAnalysisRepositoryProvider);
+  return repo.getAllocationTip();
+});
+
+final portfolioDisciplineTipProvider = FutureProvider<AITipData>((ref) async {
+  final repo = ref.watch(portfolioAnalysisRepositoryProvider);
+  return repo.getDisciplineTip();
+});
+
+final portfolioPerformanceTipProvider = FutureProvider<AITipData>((ref) async {
+  final repo = ref.watch(portfolioAnalysisRepositoryProvider);
+  return repo.getPerformanceTip();
+});
+
 class PortfolioAnalysisUnlockedNotifier extends StateNotifier<bool> {
   PortfolioAnalysisUnlockedNotifier() : super(false) {
     _loadState();

@@ -137,7 +137,7 @@ class _NavInputPillState extends ConsumerState<NavInputPill>
       );
 
       if (mounted) {
-        _aiResponse = response.trim();
+        _aiResponse = response.text.trim();
 
         // Trigger voice synthesis (TTS) only if user used voice and hasn't pressed stop
         if (_wasVoiceInput && _currentState == NavInputState.generating) {

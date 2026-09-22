@@ -41,4 +41,40 @@ class PortfolioAnalysisRepository {
       throw _client.toApiException(e);
     }
   }
+
+  Future<AITipData> getAllocationTip() async {
+    try {
+      final response = await _client.dio.get('/api/v1/portfolio-analysis/allocation/tip');
+      return _client.unwrap(
+        response.data as Map<String, dynamic>,
+        AITipData.fromJson,
+      );
+    } catch (e) {
+      throw _client.toApiException(e);
+    }
+  }
+
+  Future<AITipData> getDisciplineTip() async {
+    try {
+      final response = await _client.dio.get('/api/v1/portfolio-analysis/discipline/tip');
+      return _client.unwrap(
+        response.data as Map<String, dynamic>,
+        AITipData.fromJson,
+      );
+    } catch (e) {
+      throw _client.toApiException(e);
+    }
+  }
+
+  Future<AITipData> getPerformanceTip() async {
+    try {
+      final response = await _client.dio.get('/api/v1/portfolio-analysis/performance/tip');
+      return _client.unwrap(
+        response.data as Map<String, dynamic>,
+        AITipData.fromJson,
+      );
+    } catch (e) {
+      throw _client.toApiException(e);
+    }
+  }
 }

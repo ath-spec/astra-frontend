@@ -4,7 +4,41 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:astra_frontend/core/network/api.dart';
 import 'package:astra_frontend/core/network/api_exception.dart';
+import 'package:astra_frontend/features/dashboard/data/dashboard_providers.dart';
+import 'package:astra_frontend/features/portfolio_analysis/data/portfolio_analysis_providers.dart';
+import 'package:astra_frontend/features/goals/data/goals_providers.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_providers.dart';
+import 'package:astra_frontend/features/mf/data/watchlist_providers.dart';
+import 'package:astra_frontend/features/mf/screens/orders/data/orders_feed.dart';
+import 'package:astra_frontend/features/stocks/data/stocks_providers.dart';
 import '../models/user_model.dart';
+
+/// Every provider that caches data scoped to the signed-in user (portfolio
+/// analysis, dashboard, goals, mandates, FDs, watchlist, holdings, orders).
+/// These are plain (non-autoDispose) FutureProviders, so their last fetched
+/// result stays alive in the ProviderContainer across a logout/login — on a
+/// shared device, the next person to sign in would otherwise see the
+/// previous user's cached Discipline/Allocation/dashboard data for a moment
+/// (or indefinitely, if nothing ever re-triggers a fetch). Call this on
+/// every auth transition — successful login AND logout — so a fresh session
+/// always starts from a clean slate and refetches for whoever is actually
+/// signed in now.
+void _clearUserScopedCaches(Ref ref) {
+  // Covers dashboard summary/growth, MF holdings/transactions, the fund
+  // catalog, and active FDs.
+  invalidateDashboardProviders(ref);
+  ref.invalidate(portfolioAllocationProvider);
+  ref.invalidate(portfolioDisciplineProvider);
+  ref.invalidate(portfolioPerformanceProvider);
+  ref.invalidate(goalsListProvider);
+  ref.invalidate(goalsSummaryProvider);
+  ref.invalidate(allMandatesProvider);
+  ref.invalidate(mandatesProvider);
+  ref.invalidate(recurringSummaryProvider);
+  ref.invalidate(watchlistListProvider);
+  ref.invalidate(ordersFeedProvider);
+  ref.invalidate(stocksOrdersProvider);
+}
 
 /// Sealed class hierarchy for authentication state.
 /// Ensures exhaustive pattern matching across UI components.
@@ -41,20 +75,23 @@ final class AuthError extends AuthState {
 
 /// StateNotifier managing user authentication lifecycle.
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier() : super(const AuthChecking());
+  AuthNotifier(this.ref) : super(const AuthChecking());
+
+  final Ref ref;
 
   Future<void> login(String email, String password) async {
     state = const AuthLoading();
-    
+
     // Simulate network authentication delay
     await Future.delayed(const Duration(milliseconds: 900));
-    
+
     if (password == 'wrong' || password == 'error') {
       state = const AuthError('Invalid credentials. Try any valid password.');
     } else {
-      final displayName = email.contains('@') 
+      final displayName = email.contains('@')
           ? email.split('@').first.replaceAll('.', ' ').toUpperCase()
           : email;
+      _clearUserScopedCaches(ref);
       state = AuthAuthenticated(
         User(
           id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
@@ -90,6 +127,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   void skipLogin() {
+    _clearUserScopedCaches(ref);
     state = const AuthAuthenticated(
       User(
         id: 'usr_hardcoded_skip',
@@ -104,6 +142,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> loginWithPhone(String phone) async {
     state = const AuthLoading();
     await Future.delayed(const Duration(milliseconds: 600));
+    _clearUserScopedCaches(ref);
     state = AuthAuthenticated(
       User(
         id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
@@ -119,6 +158,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = const AuthLoading();
     await Future.delayed(const Duration(milliseconds: 600));
     final displayPhone = phone ?? pendingPhone;
+    _clearUserScopedCaches(ref);
     state = AuthAuthenticated(
       User(
         id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
@@ -134,6 +174,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = const AuthLoading();
     await Future.delayed(const Duration(milliseconds: 600));
     final displayPhone = phone ?? pendingPhone;
+    _clearUserScopedCaches(ref);
     state = AuthAuthenticated(
       User(
         id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
@@ -164,6 +205,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await _secureStorage.delete(key: 'refresh_token');
     await _secureStorage.delete(key: 'cached_display_name');
     await _secureStorage.delete(key: 'cached_pan');
+    _clearUserScopedCaches(ref);
     state = const AuthInitial();
   }
 
@@ -176,6 +218,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// leaving them on a screen whose API calls now silently keep failing.
   void forceSignOut() {
     if (state is AuthAuthenticated) {
+      _clearUserScopedCaches(ref);
       state = const AuthInitial();
     }
   }
@@ -243,6 +286,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
       await Future.wait(storageTasks);
 
+      _clearUserScopedCaches(ref);
       state = AuthAuthenticated(
         User(
           id: 'astra_$phoneDigits',
@@ -401,5 +445,5 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
 /// Global provider for AuthNotifier and AuthState.
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier();
+  return AuthNotifier(ref);
 });

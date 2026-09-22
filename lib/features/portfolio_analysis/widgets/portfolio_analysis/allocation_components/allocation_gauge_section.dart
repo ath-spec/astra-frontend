@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/physics.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
 import 'dart:math' as math;
+import '../../../data/portfolio_analysis_providers.dart';
 import '../../../models/portfolio_analysis_models.dart';
 import 'allocation_info_sheet.dart';
 
@@ -176,37 +178,48 @@ class _AllocationGaugeSectionState extends State<AllocationGaugeSection> with Si
         const SizedBox(height: 32),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
-          child: ShaderMask(
-            blendMode: BlendMode.srcIn,
-            shaderCallback: (bounds) => LinearGradient(
-              colors: widget.level.gradientColors,
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ).createShader(bounds),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 2.0, right: 6.0),
-                  child: Icon(
-                    Icons.auto_awesome_rounded,
-                    size: 18,
-                    color: Colors.white,
-                  ),
-                ),
-                Expanded(
-                  child: TypewriterText(
-                    text: 'You have almost no stable, low-risk assets in your portfolio. You\'re fully riding market momentum, with all your wealth geared towards growth.',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 13,
-                      color: Colors.white,
+          child: Consumer(
+            builder: (context, ref, child) {
+              final tipAsync = ref.watch(portfolioAllocationTipProvider);
+              final tipText = tipAsync.when(
+                data: (data) => data.tip.isNotEmpty ? data.tip : 'Analysis unavailable.',
+                loading: () => 'Analyzing your allocation...',
+                error: (_, __) => 'Unable to load allocation insights.',
+              );
+              
+              return ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: widget.level.gradientColors,
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ).createShader(bounds),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2.0, right: 6.0),
+                      child: Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      child: TypewriterText(
+                        text: tipText,
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ],

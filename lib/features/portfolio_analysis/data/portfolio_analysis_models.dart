@@ -1,5 +1,24 @@
 import 'package:astra_frontend/features/portfolio_analysis/models/portfolio_analysis_models.dart';
 
+class AITipData {
+  final String topic;
+  final String tip;
+  final bool available;
+
+  const AITipData({
+    required this.topic,
+    required this.tip,
+    required this.available,
+  });
+
+  factory AITipData.fromJson(Map<String, dynamic> json) {
+    return AITipData(
+      topic: json['topic']?.toString() ?? '',
+      tip: json['tip']?.toString() ?? '',
+      available: json['available'] == true,
+    );
+  }
+}
 class PortfolioGenomeData {
   final double growth;
   final double income;

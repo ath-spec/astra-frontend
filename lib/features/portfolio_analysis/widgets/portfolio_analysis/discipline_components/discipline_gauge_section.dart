@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
+import '../../../data/portfolio_analysis_providers.dart';
 import '../../../models/portfolio_analysis_models.dart';
 import 'discipline_info_sheet.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
+
 
 // Shared with _DisciplineGaugePainter so the insight text below the gauge
 // can be tinted with the exact same shade as the currently-filled segment,
@@ -185,12 +188,18 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
         const SizedBox(height: 32),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
-          child: Builder(
-            builder: (context) {
-              // Solid match to the exact shade the gauge's current segment
-              // is painted in, rather than a separate gradient constant.
+          child: Consumer(
+            builder: (context, ref, child) {
               final segmentColor =
                   _disciplineCurrentSegmentColor(widget.level.score);
+              
+              final tipAsync = ref.watch(portfolioDisciplineTipProvider);
+              final tipText = tipAsync.when(
+                data: (data) => data.tip.isNotEmpty ? data.tip : 'Analysis unavailable.',
+                loading: () => 'Analyzing your discipline...',
+                error: (_, __) => 'Unable to load discipline insights.',
+              );
+
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -205,7 +214,7 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
                   ),
                   Expanded(
                     child: TypewriterText(
-                      text: 'Small withdrawals and some active months, but the habit needs to show up more consistently to move the score higher.',
+                      text: tipText,
                       style: TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: 13,
