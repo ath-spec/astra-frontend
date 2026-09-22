@@ -93,7 +93,7 @@ class BankAccountDetailsScreen extends ConsumerWidget {
             
             // Bank Name & Account Number
             Text(
-              '${account.bankName.toUpperCase()} .. ${account.id}',
+              '${account.bankName.toUpperCase()} .. ${account.shortId}',
               style: const TextStyle(
                 fontFamily: 'DMSans',
                 fontSize: 12,

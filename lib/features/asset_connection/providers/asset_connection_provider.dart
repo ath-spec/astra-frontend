@@ -8,6 +8,7 @@ import '../../dashboard/data/dashboard_providers.dart';
 class BankAccountItem {
   const BankAccountItem({
     required this.id,
+    required this.shortId,
     required this.bankName,
     required this.accountNumber,
     required this.isSelected,
@@ -19,6 +20,11 @@ class BankAccountItem {
   });
 
   final String id;
+  // Last-4-chars display fragment — for the "• db88" style reference shown
+  // under the bank name on the linked-accounts card. Never send this to the
+  // backend; use [id] for that (see fromJson's comment on why this used to
+  // be conflated).
+  final String shortId;
   final String bankName;
   final String accountNumber;
   final bool isSelected;
@@ -31,10 +37,20 @@ class BankAccountItem {
   factory BankAccountItem.fromJson(Map<String, dynamic> json) {
     final bName = json['bank_name']?.toString() ?? 'Bank Account';
     final idStr = json['id']?.toString() ?? '0000';
-    final shortId = idStr.length > 4 ? idStr.substring(idStr.length - 4) : idStr;
     final bal = (json['balance'] as num?)?.toDouble() ?? 0.0;
     final aType = json['account_type']?.toString() ?? 'SAVINGS';
-    final accNum = json['account_number']?.toString() ??
+    // Only IDBI-synced accounts carry a real account_number (see
+    // aa_handler.go's GetAccounts) — manually added ones never collected
+    // one. shortId used to be the last 4 chars of the internal id, which is
+    // a hex UUID fragment and can contain letters (e.g. "db88") — wrong for
+    // something styled as a bank account's last-4-digits. Use the real
+    // number's last 4 when we have one; otherwise synthesize a digits-only
+    // 4-char code instead of exposing hex.
+    final rawAccNum = json['account_number']?.toString();
+    final shortId = (rawAccNum != null && rawAccNum.isNotEmpty)
+        ? (rawAccNum.length > 4 ? rawAccNum.substring(rawAccNum.length - 4) : rawAccNum.padLeft(4, '0'))
+        : _numericShortId(idStr);
+    final accNum = rawAccNum ??
         json['masked_account_number']?.toString() ??
         '$aType account - xxxx $shortId';
     final ifscCode = json['ifsc']?.toString() ??
@@ -57,6 +73,7 @@ class BankAccountItem {
       // string instead of the real UUID, so the backend's uuid.Parse always
       // failed with "invalid account ID" — every account, every time.
       id: idStr,
+      shortId: shortId,
       bankName: bName,
       accountNumber: accNum,
       isSelected: true,
@@ -66,6 +83,14 @@ class BankAccountItem {
       branch: branchName,
       accountType: aType,
     );
+  }
+
+  /// Deterministic digits-only 4-char code derived from [seed] (typically
+  /// the account's internal id) — used when there's no real account number
+  /// to take the last 4 digits from.
+  static String _numericShortId(String seed) {
+    final n = seed.hashCode.abs() % 10000;
+    return n.toString().padLeft(4, '0');
   }
 
   static String _deriveIfsc(String bankName, String shortId) {
@@ -97,6 +122,7 @@ class BankAccountItem {
 
   BankAccountItem copyWith({
     String? id,
+    String? shortId,
     String? bankName,
     String? accountNumber,
     bool? isSelected,
@@ -108,6 +134,7 @@ class BankAccountItem {
   }) {
     return BankAccountItem(
       id: id ?? this.id,
+      shortId: shortId ?? this.shortId,
       bankName: bankName ?? this.bankName,
       accountNumber: accountNumber ?? this.accountNumber,
       isSelected: isSelected ?? this.isSelected,
@@ -243,6 +270,12 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
       mfConnected: connected,
       mfStatusMessage: connected ? 'Successfully Linked' : 'Not Linked',
     );
+    // Without this, the Home screen's net worth/summary kept showing
+    // whatever it had before this link completed until the user manually
+    // pulled to refresh — same stale-provider issue as the auth-transition
+    // case above, just triggered by finishing onboarding instead of logging
+    // in.
+    if (connected) invalidateDashboardProviders(_ref);
   }
 
   void setStocksConnected(bool connected) {
@@ -250,6 +283,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
       stocksConnected: connected,
       stocksStatusMessage: connected ? '2 Demat Accounts Connected' : 'Not Linked',
     );
+    if (connected) invalidateDashboardProviders(_ref);
   }
 
   void setBanksConnected(bool connected) {
@@ -257,6 +291,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
       banksConnected: connected,
       banksStatusMessage: connected ? 'Successfully Linked' : 'Not Linked',
     );
+    if (connected) invalidateDashboardProviders(_ref);
   }
 
   void resetAll() {
@@ -574,6 +609,7 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
       banksConnected: hasAnyLinked,
       banksStatusMessage: statusMessage,
     );
+    if (hasAnyLinked) invalidateDashboardProviders(_ref);
   }
 
   // Deliberately does NOT call fetchLiveBankAccounts() itself. The one

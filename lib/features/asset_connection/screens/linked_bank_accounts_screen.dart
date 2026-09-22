@@ -276,7 +276,7 @@ class LinkedBankAccountsScreen extends ConsumerWidget {
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
-                                              account.id,
+                                              account.shortId,
                                               style: const TextStyle(
                                                 fontFamily: 'DMSans',
                                                 fontSize: 10,
