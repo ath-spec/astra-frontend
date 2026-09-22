@@ -213,11 +213,15 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
 
   Widget _buildCardsList(List<CatalogFund> allFunds) {
     // Partition funds dynamically based on categories
+    // 'Equity - US Mega Cap' is the dedicated category for the seven actual
+    // Magnificent 7 companies (backend migration 000039) — matching on that
+    // instead of the broader 'us' substring keeps this card from being
+    // dominated by unrelated Global (US) funds like Motilal Oswal Nasdaq 100
+    // FOF, which belongs on the "United States" geography card instead.
     final mag7Funds = allFunds.where((f) {
-      final name = f.schemeName.toLowerCase();
       final cat = f.category.toLowerCase();
-      return name.contains('nasdaq') || name.contains('fang') || cat.contains('us');
-    }).take(3).toList();
+      return cat.contains('mega cap');
+    }).take(7).toList();
 
     final techFunds = allFunds.where((f) {
       final name = f.schemeName.toLowerCase();
