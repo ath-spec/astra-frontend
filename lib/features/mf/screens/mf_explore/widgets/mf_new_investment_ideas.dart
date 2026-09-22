@@ -7,6 +7,9 @@ class MfNewInvestmentIdeas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final cardWidth = screenWidth * 0.88;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,16 +33,16 @@ class MfNewInvestmentIdeas extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: MediaQuery.sizeOf(context).width * 0.8,
+                width: cardWidth,
                 child: MfFundListCard(
                   margin: const EdgeInsets.only(left: 16.0, right: 8.0),
-                  borderColor: HSLColor.fromColor(Colors.white).withLightness((1.0 - 0.12).clamp(0.0, 1.0)).toColor(),
-                  sectionTitle: '', // We use our own header above
+                  borderColor: const Color(0xFFE2E8F0),
+                  sectionTitle: '',
                   cardTitle: 'High Growth',
                   cardSubtitle: 'Top ideas with high potential returns.',
                   cardGraphic: SizedBox(
-                    width: 90,
-                    height: 90,
+                    width: 80,
+                    height: 80,
                     child: Image.asset(
                       'lib/core/images/growth_collections.webp',
                       fit: BoxFit.contain,
@@ -58,40 +61,43 @@ class MfNewInvestmentIdeas extends StatelessWidget {
                   },
                   funds: const [
                     MfFundItemData(
-                      name: 'Quant Value Fund',
-                      category: 'Equity • Value',
-                      returns: '22.56%',
-                      logoIcon: Icons.account_balance,
-                      logoColor: Colors.deepPurple,
-                    ),
-                    MfFundItemData(
-                      name: 'Axis Value Fund',
-                      category: 'Equity • Value',
-                      returns: '18.73%',
+                      name: 'Axis Small Cap Fund',
+                      category: 'Equity • Small Cap',
+                      returns: '29.80%',
                       logoIcon: Icons.change_history,
                       logoColor: Colors.red,
+                      schemeCode: 'AXIS-SC-G',
                     ),
                     MfFundItemData(
-                      name: 'HSBC Value Fund',
-                      category: 'Equity • Value',
-                      returns: '18.4%',
-                      logoIcon: Icons.hdr_strong,
-                      logoColor: Colors.redAccent,
+                      name: 'Global Semiconductor Fund',
+                      category: 'Equity • Thematic',
+                      returns: '42.10%',
+                      logoIcon: Icons.memory,
+                      logoColor: Colors.deepPurple,
+                      schemeCode: 'MIRAE-SEMI-G',
+                    ),
+                    MfFundItemData(
+                      name: 'Parag Parikh Flexi Cap Fund',
+                      category: 'Equity • Flexi Cap',
+                      returns: '23.80%',
+                      logoIcon: Icons.account_balance,
+                      logoColor: Colors.teal,
+                      schemeCode: 'PARAG-FLX-G',
                     ),
                   ],
                 ),
               ),
               SizedBox(
-                width: MediaQuery.sizeOf(context).width * 0.8,
+                width: cardWidth,
                 child: MfFundListCard(
                   margin: const EdgeInsets.only(left: 8.0, right: 16.0),
-                  borderColor: HSLColor.fromColor(Colors.white).withLightness((1.0 - 0.12).clamp(0.0, 1.0)).toColor(),
+                  borderColor: const Color(0xFFE2E8F0),
                   sectionTitle: '',
                   cardTitle: 'Safe Investing',
                   cardSubtitle: 'Protect your capital with safer options.',
                   cardGraphic: SizedBox(
-                    width: 90,
-                    height: 90,
+                    width: 80,
+                    height: 80,
                     child: Image.asset(
                       'lib/core/images/safe_investments.webp',
                       fit: BoxFit.contain,
@@ -110,25 +116,28 @@ class MfNewInvestmentIdeas extends StatelessWidget {
                   },
                   funds: const [
                     MfFundItemData(
-                      name: 'HDFC Corporate Bond Fund',
+                      name: 'HDFC Corporate Bond Direct Plan',
                       category: 'Debt • Corporate Bond',
                       returns: '7.28%',
                       logoIcon: Icons.domain,
                       logoColor: Colors.blue,
+                      schemeCode: 'HDFC-CORPBOND-G',
                     ),
                     MfFundItemData(
-                      name: 'SBI Debt Fund',
+                      name: 'SBI Short Term Debt Fund',
                       category: 'Debt • Short Term',
                       returns: '7.10%',
-                      logoIcon: Icons.lens,
+                      logoIcon: Icons.shield_outlined,
                       logoColor: Colors.lightBlue,
+                      schemeCode: 'SBI-STD-G',
                     ),
                     MfFundItemData(
-                      name: 'ICICI Pru Savings Fund',
+                      name: 'ICICI Pru Liquid Fund',
                       category: 'Debt • Liquid',
                       returns: '6.75%',
                       logoIcon: Icons.water_drop,
                       logoColor: Colors.deepOrange,
+                      schemeCode: 'ICICI-LIQ-G',
                     ),
                   ],
                 ),

@@ -56,49 +56,51 @@ class MfFundListCard extends StatelessWidget {
               ),
             ],
             border: Border.all(
-              color: borderColor ?? const Color(0xFFF1F5F9), // Default Slate 100
+              color: borderColor ?? const Color(0xFFF1F5F9),
             ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 4.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            cardTitle,
-                            style: const TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color.fromARGB(255, 0, 0, 0),
+              InkWell(
+                onTap: onViewCollection,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              cardTitle,
+                              style: const TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            cardSubtitle,
-                            style: const TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF9CA3AF),
-                              height: 1.4,
+                            const SizedBox(height: 4),
+                            Text(
+                              cardSubtitle,
+                              style: const TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF9CA3AF),
+                                height: 1.3,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    // Simulated 3D Graphic
-                    cardGraphic,
-                  ],
+                      const SizedBox(width: 12),
+                      cardGraphic,
+                    ],
+                  ),
                 ),
               ),
               // List of funds
@@ -107,19 +109,19 @@ class MfFundListCard extends StatelessWidget {
               InkWell(
                 onTap: onViewCollection,
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
                   child: Row(
-                    children: [
+                    children: const [
                       Text(
                         'View collection',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(255, 0, 0, 0),
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Icon(
                         Icons.chevron_right_rounded,
                         size: 16,
@@ -138,7 +140,8 @@ class MfFundListCard extends StatelessWidget {
 
   Widget _buildFundRow(BuildContext context, MfFundItemData fund) {
     return GestureDetector(
-      onTap: () => MfFundProfileScreen.showModal(context, fund.name),
+      onTap: () => MfFundProfileScreen.showModal(
+          context, fund.schemeCode.isNotEmpty ? fund.schemeCode : fund.name),
       child: Container(
         decoration: const BoxDecoration(
           border: Border(
@@ -148,32 +151,35 @@ class MfFundListCard extends StatelessWidget {
             ),
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
                 border: Border.all(color: const Color(0xFFE2E8F0)),
               ),
-              child: Icon(fund.logoIcon, color: fund.logoColor, size: 20),
+              child: Icon(fund.logoIcon, color: fund.logoColor, size: 18),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     fund.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    overflow: TextOverflow.visible,
                     style: const TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
+                      height: 1.25,
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
@@ -185,15 +191,17 @@ class MfFundListCard extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: Color(0xFF9CA3AF),
                     ),
                   ),
                 ],
               ),
             ),
+            const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
                   '3Y Returns',
@@ -204,13 +212,13 @@ class MfFundListCard extends StatelessWidget {
                     color: Color(0xFF94A3B8),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
                   fund.returns,
                   style: const TextStyle(
                     fontFamily: 'DMSans',
-                    fontSize: 9,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                     color: Color(0xFF10B981),
                   ),
                 ),
@@ -229,6 +237,7 @@ class MfFundItemData {
   final String returns;
   final IconData logoIcon;
   final Color logoColor;
+  final String schemeCode;
 
   const MfFundItemData({
     required this.name,
@@ -236,5 +245,6 @@ class MfFundItemData {
     required this.returns,
     required this.logoIcon,
     required this.logoColor,
+    this.schemeCode = '',
   });
 }

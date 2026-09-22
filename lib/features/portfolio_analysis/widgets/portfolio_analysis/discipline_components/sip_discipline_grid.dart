@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../../data/portfolio_analysis_providers.dart';
+import '../../../data/portfolio_analysis_models.dart';
 import 'generic_info_sheet.dart';
 import 'sip_month_sheet.dart';
 
-class SipDisciplineGrid extends StatelessWidget {
+class SipDisciplineGrid extends ConsumerWidget {
   const SipDisciplineGrid({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final discAsync = ref.watch(portfolioDisciplineProvider);
+    final disc = discAsync.value;
+
+    if (disc == null) {
+      return discAsync.isLoading
+          ? const _SipGridSkeleton()
+          : const SizedBox.shrink();
+    }
+
+    final history = disc.monthlyHistory;
+    // The grid visualises the most recent 12 months.
+    final window = history.length > 12
+        ? history.sublist(history.length - 12)
+        : history;
+    final completed = window.where((m) => m.hasInvestment).length;
+    final total = window.length;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -52,11 +73,11 @@ class SipDisciplineGrid extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           RichText(
-            text: const TextSpan(
+            text: TextSpan(
               children: [
                 TextSpan(
-                  text: '0 of 0',
-                  style: TextStyle(
+                  text: '$completed of $total',
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -64,7 +85,7 @@ class SipDisciplineGrid extends StatelessWidget {
                     letterSpacing: -1.0,
                   ),
                 ),
-                TextSpan(
+                const TextSpan(
                   text: ' SIP instalments completed',
                   style: TextStyle(
                     fontFamily: 'DMSans',
@@ -97,16 +118,16 @@ class SipDisciplineGrid extends StatelessWidget {
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(
+              children: [
+                const Icon(
                   Icons.local_fire_department,
                   size: 16,
                   color: Color(0xFF3182CE),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
-                  '0 MONTH STREAK',
-                  style: TextStyle(
+                  '${disc.currentStreakMonths} MONTH STREAK',
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
@@ -117,15 +138,42 @@ class SipDisciplineGrid extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 40),
-          // 2x6 Grid
-          _buildMonthGrid(context),
+          // Month grid (up to 12, two rows)
+          _buildMonthGrid(context, history, window),
           const SizedBox(height: 48),
         ],
       ),
     );
   }
 
-  Widget _buildMonthGrid(BuildContext context) {
+  String _label(MonthlyInvestmentData m) {
+    final n = m.monthName.trim();
+    if (n.isNotEmpty) {
+      return n.substring(0, n.length >= 3 ? 3 : n.length).toUpperCase();
+    }
+    final parts = m.yearMonth.split('-');
+    if (parts.length >= 2) {
+      const abbr = [
+        'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+        'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+      ];
+      final idx = (int.tryParse(parts[1]) ?? 1).clamp(1, 12) - 1;
+      return abbr[idx];
+    }
+    return '--';
+  }
+
+  Widget _buildMonthGrid(
+    BuildContext context,
+    List<MonthlyInvestmentData> history,
+    List<MonthlyInvestmentData> window,
+  ) {
+    if (window.isEmpty) return const SizedBox.shrink();
+    final firstRow = window.take(6).toList();
+    final secondRow =
+        window.length > 6 ? window.sublist(6) : <MonthlyInvestmentData>[];
+    final lastMonth = window.last;
+
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -134,12 +182,10 @@ class SipDisciplineGrid extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               children: [
-                _buildMonthCircle(context, 'SEP', false, false),
-                _buildMonthCircle(context, 'OCT', false, false),
-                _buildMonthCircle(context, 'NOV', false, false),
-                _buildMonthCircle(context, 'DEC', false, false),
-                _buildMonthCircle(context, 'JAN', false, false),
-                _buildMonthCircle(context, 'FEB', false, false),
+                for (final m in firstRow)
+                  _buildMonthCircle(context, history, m, identical(m, lastMonth)),
+                for (int i = firstRow.length; i < 6; i++)
+                  const Expanded(child: SizedBox.shrink()),
               ],
             ),
           ),
@@ -148,12 +194,10 @@ class SipDisciplineGrid extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               children: [
-                _buildMonthCircle(context, 'MAR', false, false),
-                _buildMonthCircle(context, 'APR', false, false),
-                _buildMonthCircle(context, 'MAY', false, false),
-                _buildMonthCircle(context, 'JUN', false, false),
-                _buildMonthCircle(context, 'JUL', false, false),
-                _buildMonthCircle(context, 'AUG', true, true),
+                for (final m in secondRow)
+                  _buildMonthCircle(context, history, m, identical(m, lastMonth)),
+                for (int i = secondRow.length; i < 6; i++)
+                  const Expanded(child: SizedBox.shrink()),
               ],
             ),
           ),
@@ -164,18 +208,23 @@ class SipDisciplineGrid extends StatelessWidget {
 
   Widget _buildMonthCircle(
     BuildContext context,
-    String month,
+    List<MonthlyInvestmentData> history,
+    MonthlyInvestmentData m,
     bool isActive,
-    bool isCheck,
   ) {
+    final isCheck = m.hasInvestment;
     return Expanded(
       child: GestureDetector(
         onTap: () {
+          final idx = history.indexOf(m);
           showModalBottomSheet(
             context: context,
             backgroundColor: Colors.transparent,
             isScrollControlled: true,
-            builder: (context) => SipMonthSheet(initialMonth: month),
+            builder: (context) => SipMonthSheet(
+              months: history,
+              initialIndex: idx < 0 ? history.length - 1 : idx,
+            ),
           );
         },
         behavior: HitTestBehavior.opaque,
@@ -193,7 +242,7 @@ class SipDisciplineGrid extends StatelessWidget {
                     )
                   : null,
               child: Text(
-                month,
+                _label(m),
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 10,
@@ -214,7 +263,7 @@ class SipDisciplineGrid extends StatelessWidget {
               ),
               child: Center(
                 child: Icon(
-                  isActive || isCheck ? Icons.check : Icons.close,
+                  isCheck ? Icons.check : Icons.close,
                   size: 12,
                   color: const Color(0xFFCBD5E1),
                 ),
@@ -222,6 +271,51 @@ class SipDisciplineGrid extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SipGridSkeleton extends StatelessWidget {
+  const _SipGridSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerBar(width: 140, height: 20),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 220, height: 22),
+          const SizedBox(height: 12),
+          const ShimmerBar(width: 200, height: 12),
+          const SizedBox(height: 24),
+          const ShimmerBar(width: 130, height: 30, borderRadius: 4),
+          const SizedBox(height: 40),
+          for (int row = 0; row < 2; row++) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  for (int i = 0; i < 6; i++)
+                    const Expanded(
+                      child: Column(
+                        children: [
+                          ShimmerBar(width: 24, height: 10),
+                          SizedBox(height: 8),
+                          ShimmerBar(width: 20, height: 20, borderRadius: 10),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            if (row == 0) const SizedBox(height: 32),
+          ],
+          const SizedBox(height: 48),
+        ],
       ),
     );
   }

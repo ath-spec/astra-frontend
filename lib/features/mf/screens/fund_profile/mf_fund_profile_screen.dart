@@ -1,8 +1,9 @@
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/models/fund_profile_data.dart';
-import '../../providers/watchlist_provider.dart';
-import '../mf_explore/data/mf_mock_fund_data.dart';
 import 'widgets/mf_fund_chart_widget.dart';
 import 'widgets/mf_fund_overview_card.dart';
 import 'widgets/mf_fund_fees_taxes.dart';
@@ -10,7 +11,6 @@ import 'widgets/mf_fund_insights.dart';
 import 'widgets/mf_instrument_card.dart';
 import 'widgets/mf_fund_return_ratios.dart';
 import 'widgets/mf_fund_asset_allocation.dart';
-import 'dart:math' as math;
 import 'package:intl/intl.dart';
 import 'widgets/mf_fund_details_house.dart';
 import 'widgets/mf_amount_scroller.dart';
@@ -20,7 +20,7 @@ import '../holdings/widgets/holding_instrument_card.dart';
 import '../../../fund_profile/widgets/holding_fund_insights.dart';
 
 
-class MfFundProfileScreen extends StatefulWidget {
+class MfFundProfileScreen extends ConsumerStatefulWidget {
   final String fundId;
 
   const MfFundProfileScreen({super.key, required this.fundId});
@@ -34,10 +34,115 @@ class MfFundProfileScreen extends StatefulWidget {
   }
 
   @override
-  State<MfFundProfileScreen> createState() => _MfFundProfileScreenState();
+  ConsumerState<MfFundProfileScreen> createState() => _MfFundProfileScreenState();
 }
 
-class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
+
+FundProfileData _mapLiveProfileToUi(FundProfileDetail live, String selectedPeriod) {
+  final f = live.fund;
+  final alloc = live.allocation;
+
+  // No fake fallback number when the fund genuinely has no disclosed return
+  // for a period (common for newer funds without 3Y/5Y history yet) — null
+  // means "not available", which the UI renders as "—" rather than a made-up
+  // percentage.
+  double? returnVal = f.returns3y;
+  if (selectedPeriod == '1M' && f.returns1y != null) returnVal = f.returns1y! / 12.0;
+  if (selectedPeriod == '6M' && f.returns1y != null) returnVal = f.returns1y! / 2.0;
+  if (selectedPeriod == '1Y') returnVal = f.returns1y;
+  if (selectedPeriod == '3Y') returnVal = f.returns3y;
+  if (selectedPeriod == '5Y') returnVal = f.returns5y;
+
+  final chartPoints = live.chartPoints.map((cp) => cp.nav).toList();
+
+  final sectorItems = alloc.sectors.map((s) => DistributionItem(
+    title: s.title,
+    percentage: s.percentage,
+  )).toList();
+
+  final holdingItems = alloc.topHoldings.map((h) => DistributionItem(
+    title: h.title,
+    percentage: h.percentage,
+  )).toList();
+
+  final assetAlloc = AssetAllocationData(
+    equity: EquityAllocationData(
+      totalPercentage: alloc.equityPct,
+      largeCapPercentage: alloc.equityPct * 0.6,
+      midCapPercentage: alloc.equityPct * 0.3,
+      smallCapPercentage: alloc.equityPct * 0.1,
+      sectors: sectorItems,
+      holdings: holdingItems,
+    ),
+    debt: DebtAllocationData(
+      totalPercentage: alloc.debtPct,
+      creditQuality: const [],
+      sectors: const [],
+      holdings: const [],
+    ),
+    others: OtherAllocationData(
+      totalPercentage: alloc.otherPct,
+      otherAllocation: const [],
+      holdings: const [],
+    ),
+  );
+
+  final isHighRisk = f.riskLevel.toLowerCase().contains('high');
+
+  return FundProfileData(
+    id: f.schemeCode,
+    name: f.schemeName,
+    tags: '${f.category} • NAV ₹${f.nav.toStringAsFixed(2)} • Exp ${f.expenseRatio}%',
+    logoText: f.amcName.isNotEmpty
+        ? f.amcName.split(' ').take(2).map((w) => w.isNotEmpty ? w[0] : '').join().toUpperCase()
+        : 'MF',
+    riskLabel: '${f.riskLevel.toUpperCase()} VOLATILITY FUND',
+    riskColor: isHighRisk ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+    returnPercentage: returnVal != null ? '${returnVal.toStringAsFixed(2)}%' : '—',
+    returnDuration: '$selectedPeriod Annualised Return',
+    comparisonText: f.benchmarkIndex != null ? 'vs. ${f.benchmarkIndex} >' : '',
+    chartDataPoints: chartPoints,
+    chartColor: const Color(0xFF10B981),
+    sipAmount: f.minSipAmount.toInt() > 0 ? f.minSipAmount.toInt() : 1000,
+    sipDurationText: '3 years',
+    // Illustrative SIP projection using the fund's own real 3Y return where
+    // disclosed; if the fund has no 3Y return yet, the projection can't be
+    // computed honestly, so it's omitted rather than assumed.
+    sipFinalAmount: f.returns3y != null
+        ? '₹${((f.minSipAmount > 0 ? f.minSipAmount : 1000) * 36 * (1 + f.returns3y! / 100)).toInt()}'
+        : '—',
+    sipReturnPercentage: f.returns3y != null ? '(${f.returns3y!.toStringAsFixed(1)}%)' : '',
+    overviewText: '${f.schemeName} is managed by ${f.amcName} in the ${f.category} category. Total scheme AUM is ₹${f.aum.toStringAsFixed(0)} Cr with a direct expense ratio of ${f.expenseRatio}%. Minimum SIP is ₹${f.minSipAmount.toStringAsFixed(0)}.',
+    assetAllocation: assetAlloc,
+    instrumentData: InstrumentDeepDiveData(
+      primaryRole: live.deepDive.primaryRole,
+      secondaryRole: live.deepDive.secondaryRole,
+      strengths: live.deepDive.strengths,
+      tradeOffs: live.deepDive.tradeOffs,
+    ),
+    insightsData: FundInsightsData(
+      isPositiveImpact: live.insights.isPositiveImpact,
+      whyGetFund: live.insights.whyGetFund,
+      suitableFor: live.insights.suitableFor,
+      avoidIf: live.insights.avoidIf,
+      impactText: live.insights.impactText,
+      whatItDoesRightNow: live.insights.whatItDoesRightNow,
+      whatBuyingMoreWillDo: live.insights.whatBuyingMoreWillDo,
+      currentValues: live.insights.currentValues,
+      projectedValues: live.insights.projectedValues,
+    ),
+    nav: f.nav,
+    expenseRatio: f.expenseRatio,
+    aum: f.aum,
+    minSipAmount: f.minSipAmount,
+    minInvestment: f.minInvestment,
+    amcName: f.amcName,
+    fundManager: f.fundManager ?? '—',
+    exitLoad: f.exitLoadText,
+  );
+}
+
+class _MfFundProfileScreenState extends ConsumerState<MfFundProfileScreen> {
   String _selectedPeriod = '6M';
   double _selectedAmount = 1000.0;
   bool _isSip = true;
@@ -45,12 +150,79 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final FundProfileData baseData = MfMockFundData.getFundData(widget.fundId);
-    final bool hasHoldings = widget.fundId == '1';
-    
-    // Process data based on selected period
-    final processedData = _processDataForPeriod(baseData, _selectedPeriod);
-    
+    final liveProfileAsync = ref.watch(fundProfileFamilyProvider(widget.fundId));
+
+    if (liveProfileAsync.isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              const Expanded(child: FundProfileSkeletonLoading()),
+            ],
+          ),
+        ),
+      );
+    }
+    if (liveProfileAsync.valueOrNull == null) {
+      // Not loading (handled above) and no value — this is a real error
+      // (e.g. the fund wasn't found, or a network failure). Never fall back
+      // to mock fund data here; show the actual problem instead.
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.error_outline_rounded, size: 40, color: Color(0xFF94A3B8)),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Couldn\'t load this fund',
+                          style: TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF334155),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          liveProfileAsync.error?.toString() ?? 'Please try again in a moment.',
+                          style: const TextStyle(
+                            fontFamily: 'DMSans',
+                            fontSize: 12,
+                            color: Color(0xFF94A3B8),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        TextButton(
+                          onPressed: () => ref.invalidate(fundProfileFamilyProvider(widget.fundId)),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final bool hasHoldings = liveProfileAsync.valueOrNull?.hasUserHolding ?? false;
+    final FundProfileData processedData = _mapLiveProfileToUi(liveProfileAsync.valueOrNull!, _selectedPeriod);
+
     // Calculate responsive chart height
     final screenHeight = MediaQuery.sizeOf(context).height;
     final chartHeight = (screenHeight * 0.18).clamp(120.0, 200.0);
@@ -77,7 +249,7 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                         const SizedBox(height: 16),
                         
                         // Holdings Card (Optional, shown if user has holdings)
-                        _buildHoldingsCard(widget.fundId),
+                        _buildHoldingsCard(hasHoldings, liveProfileAsync.valueOrNull?.userHolding),
 
                         const SizedBox(height: 16),
                         
@@ -112,49 +284,52 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                         MfFundOverviewCard(data: processedData),
                         
                         const SizedBox(height: 16),
-                        hasHoldings 
+                        hasHoldings
                             ? Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                                 child: HoldingInstrumentCard(
                                   data: HoldingDeepDiveData(
-                                    primaryRole: 'Core Growth',
-                                    secondaryRole: 'Capital Preservation',
-                                    contribution: 'Provides stability and consistent growth by investing in established, large-cap companies. Acts as an anchor for the equity portion of your portfolio.',
+                                    primaryRole: processedData.instrumentData?.primaryRole ?? '',
+                                    secondaryRole: processedData.instrumentData?.secondaryRole ?? '',
+                                    contribution: liveProfileAsync.valueOrNull?.deepDive.contribution ?? '',
                                   ),
                                 ),
                               )
                             : MfInstrumentCard(
-                                primaryRole: processedData.instrumentData?.primaryRole ?? 'Grows your wealth steadily over many years.',
-                                secondaryRole: processedData.instrumentData?.secondaryRole ?? 'Keeps your money relatively safe when the market gets bumpy, thanks to its focus on giant, established companies.',
-                                strengths: processedData.instrumentData?.strengths ?? 'It usually beats the market average, costs very little in fees, and you can withdraw your money easily when needed.',
-                                tradeOffs: processedData.instrumentData?.tradeOffs ?? 'Because it plays it safe with big companies, it won\'t skyrocket as fast as smaller, riskier funds during a booming market. It also doesn\'t pay out much regular income.',
+                                primaryRole: processedData.instrumentData?.primaryRole ?? '',
+                                secondaryRole: processedData.instrumentData?.secondaryRole ?? '',
+                                strengths: processedData.instrumentData?.strengths ?? '',
+                                tradeOffs: processedData.instrumentData?.tradeOffs ?? '',
                               ),
-                        
+
                         const SizedBox(height: 16),
                         hasHoldings
-                            ? const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                                 child: HoldingFundInsights(
-                                  isPositiveImpact: true,
-                                  whatItDoesRightNow: 'Currently provides a solid foundation of large-cap equity exposure, balancing out the higher volatility of your mid and small-cap holdings.',
-                                  whatBuyingMoreWillDo: 'Adding more to this fund will pull your overall portfolio slightly towards the "Capital Preservation" and "Income" vectors, reducing overall portfolio volatility while maintaining steady growth.',
+                                  isPositiveImpact: processedData.insightsData?.isPositiveImpact ?? true,
+                                  whatItDoesRightNow: processedData.insightsData?.whatItDoesRightNow ?? '',
+                                  whatBuyingMoreWillDo: processedData.insightsData?.whatBuyingMoreWillDo ?? '',
+                                  currentValues: processedData.insightsData?.currentValues,
+                                  projectedValues: processedData.insightsData?.projectedValues,
                                 ),
                               )
                             : MfFundInsights(
                                 isPositiveImpact: processedData.insightsData?.isPositiveImpact ?? true,
-                                whyGetFund: processedData.insightsData?.whyGetFund ?? 'To gain aggressive exposure to top 100 blue-chip companies with relatively lower volatility than mid-caps.',
-                                suitableFor: processedData.insightsData?.suitableFor ?? 'Investors looking for a stable core equity holding with a 5+ year time horizon.',
-                                avoidIf: processedData.insightsData?.avoidIf ?? 'Those needing short-term liquidity or investors who already have high overlap in Large Cap indexes.',
-                                impactText: processedData.insightsData?.impactText ?? 'It will significantly strengthen your core growth engine while improving overall capital preservation during market dips.\n\nIt also aligns perfectly with your stated goal of "Buying a House in 5 Years".',
+                                whyGetFund: processedData.insightsData?.whyGetFund ?? '',
+                                suitableFor: processedData.insightsData?.suitableFor ?? '',
+                                avoidIf: processedData.insightsData?.avoidIf ?? '',
+                                impactText: processedData.insightsData?.impactText ?? '',
                                 currentValues: processedData.insightsData?.currentValues,
                                 projectedValues: processedData.insightsData?.projectedValues,
                               ),
-                        
+
                         const SizedBox(height: 16),
-                        const MfFundFeesTaxes(),
+                        MfFundFeesTaxes(expenseRatio: processedData.expenseRatio, exitLoad: processedData.exitLoad),
                         const MfFundReturnRatios(),
-                        MfFundAssetAllocation(data: processedData.assetAllocation ?? MfMockFundData.mockAssetAllocation),
-                        const MfFundDetailsHouse(),
+                        if (processedData.assetAllocation != null)
+                          MfFundAssetAllocation(data: processedData.assetAllocation!),
+                        MfFundDetailsHouse(amcName: processedData.amcName, aum: processedData.aum, fundManager: processedData.fundManager),
                         
                         // Padding to ensure we can scroll past the bottom bar
                         const SizedBox(height: 80),
@@ -175,85 +350,6 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  FundProfileData _processDataForPeriod(FundProfileData baseData, String period) {
-    List<double> newChartData = List.from(baseData.chartDataPoints);
-    double baseReturn = double.tryParse(baseData.returnPercentage.replaceAll('%', '').trim()) ?? 0.0;
-    
-    String newReturnStr;
-    String newReturnDuration;
-    String newOverviewPrefix;
-    
-    int startIdx = 0;
-    switch (period) {
-      case '1M':
-        startIdx = (newChartData.length * 0.75).toInt();
-        newReturnStr = '${(baseReturn / 12).toStringAsFixed(2)}%';
-        newReturnDuration = '1M Return';
-        break;
-      case '6M':
-        startIdx = (newChartData.length * 0.50).toInt();
-        newReturnStr = '${(baseReturn / 2).toStringAsFixed(2)}%';
-        newReturnDuration = '6M Return';
-        break;
-      case '1Y':
-        startIdx = (newChartData.length * 0.25).toInt();
-        newReturnStr = '${(baseReturn * 0.8).toStringAsFixed(2)}%';
-        newReturnDuration = '1Y Annualised Return';
-        break;
-      case '3Y':
-      default:
-        startIdx = 0;
-        newReturnStr = baseData.returnPercentage;
-        newReturnDuration = baseData.returnDuration;
-        break;
-    }
-    
-    newChartData = newChartData.sublist(startIdx);
-    
-    // Determine trend from the actual graph data shown
-    double firstPoint = newChartData.first;
-    double lastPoint = newChartData.last;
-    bool isPositiveGraph = lastPoint >= firstPoint;
-    
-    // Make sure the return string matches the graph's visual trend!
-    // If graph goes down, ensure the return is negative. If graph goes up, ensure it's positive.
-    double parsedNewReturn = double.tryParse(newReturnStr.replaceAll('%', '').trim()) ?? 0.0;
-    if (isPositiveGraph && parsedNewReturn < 0) {
-      newReturnStr = '${parsedNewReturn.abs().toStringAsFixed(2)}%';
-    } else if (!isPositiveGraph && parsedNewReturn > 0) {
-      newReturnStr = '-${parsedNewReturn.toStringAsFixed(2)}%';
-    }
-
-    if (period == '3Y') {
-      newOverviewPrefix = 'Looking at a 3-year horizon, the fund has demonstrated consistent ${isPositiveGraph ? "compounding" : "consolidation"}. ';
-    } else if (period == '1Y') {
-      newOverviewPrefix = 'Over the last 1 year, the fund has ${isPositiveGraph ? "trended upwards" : "seen a correction"}, adapting to economic cycles. ';
-    } else if (period == '6M') {
-      newOverviewPrefix = 'In the past 6 months, the fund has ${isPositiveGraph ? "successfully captured market rallies" : "faced broad market headwinds"}. ';
-    } else { // 1M
-      newOverviewPrefix = 'Over the last 1 month, the fund has shown short-term ${isPositiveGraph ? "momentum" : "volatility"}. ';
-    }
-    
-    return FundProfileData(
-      id: baseData.id,
-      name: baseData.name,
-      tags: baseData.tags,
-      logoText: baseData.logoText,
-      riskLabel: baseData.riskLabel,
-      riskColor: baseData.riskColor,
-      returnPercentage: newReturnStr,
-      returnDuration: newReturnDuration,
-      comparisonText: baseData.comparisonText,
-      chartDataPoints: newChartData,
-      chartColor: isPositiveGraph ? const Color(0xFF10B981) : const Color(0xFFEF4444),
-      sipAmount: baseData.sipAmount,
-      sipDurationText: baseData.sipDurationText,
-      sipFinalAmount: baseData.sipFinalAmount,
-      sipReturnPercentage: baseData.sipReturnPercentage,
-      overviewText: newOverviewPrefix + baseData.overviewText,
     );
   }
 
@@ -284,7 +380,14 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                 child: const Icon(Icons.shopping_cart_outlined, size: 20, color: Color(0xFF0F172A)),
               ),
               const SizedBox(width: 12),
-              MfBookmarkButton(fundId: widget.fundId),
+              MfBookmarkButton(
+                fundId: widget.fundId,
+                initialWatched: ref
+                        .watch(fundProfileFamilyProvider(widget.fundId))
+                        .valueOrNull
+                        ?.isWatched ??
+                    false,
+              ),
             ],
           ),
         ],
@@ -435,12 +538,19 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
     );
   }
 
-  Widget _buildHoldingsCard(String fundId) {
-    // This is optional and shows if user has holdings.
-    // For the mockup, we assume they have holdings if the fundId is '1' (which is passed from the Tax Harvesting insight)
-    final bool hasHoldings = fundId == '1';
-
+  Widget _buildHoldingsCard(bool hasHoldings, UserHoldingData? holding) {
+    // Shown only when the backend's fund profile response includes a real
+    // user_holding block (i.e. the user genuinely holds this fund).
     if (!hasHoldings) return const SizedBox.shrink();
+
+    final String currentValueText =
+        holding != null ? _formatAmount(holding.currentValue) : '₹0';
+    final String returnsText = holding != null
+        ? '(${holding.returnsPct.toStringAsFixed(2)}%)'
+        : '(0.00%)';
+    final Color returnsColor = (holding?.returnsPct ?? 0) >= 0
+        ? const Color(0xFF10B981)
+        : const Color(0xFFEF4444);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -471,9 +581,9 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
             ),
             Row(
               children: [
-                const Text(
-                  '₹2,36,538',
-                  style: TextStyle(
+                Text(
+                  currentValueText,
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -481,13 +591,13 @@ class _MfFundProfileScreenState extends State<MfFundProfileScreen> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Text(
-                  '(5.11%)',
+                Text(
+                  returnsText,
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF10B981),
+                    color: returnsColor,
                   ),
                 ),
               ],

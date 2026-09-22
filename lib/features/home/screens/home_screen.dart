@@ -1,7 +1,9 @@
+import '../../../core/widgets/shimmer_card_skeleton.dart';
 import 'dart:ui' show lerpDouble, ImageFilter;
 import 'dart:math' hide log;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +13,8 @@ import '../../../core/providers/nav_context_provider.dart';
 import '../../../core/providers/privacy_provider.dart';
 import '../../../core/utils/privacy_formatter.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../dashboard/data/dashboard_models.dart';
+import '../../dashboard/data/dashboard_providers.dart';
 
 import '../widgets/home_today_portfolio_changes.dart';
 import '../widgets/home_portfolio_insights.dart';
@@ -41,6 +45,121 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _isSecondCardStacked = ValueNotifier(false);
   bool _showFab = false;
+  bool _isRefreshing = false;
+
+  /// Invalidates the cached dashboard providers (Riverpod's FutureProvider
+  /// result cache — there's no separate HTTP cache in this app) and awaits
+  /// the refetch. The summary endpoint recomputes the user's portfolio value
+  /// live and upserts today's portfolio_snapshots row server-side, so this
+  /// is also what refreshes the snapshot the RM portal's book/list views
+  /// read.
+  Future<void> _handleRefreshTap() async {
+    if (_isRefreshing) return;
+    setState(() => _isRefreshing = true);
+    ref.invalidate(dashboardGrowthProvider);
+    try {
+      ref.invalidate(dashboardSummaryProvider);
+      await ref.read(dashboardSummaryProvider.future);
+      HapticFeedback.lightImpact();
+      if (mounted) {
+        _showRefreshedCue();
+      }
+    } catch (_) {
+      if (mounted) {
+        _showRefreshFailedCue();
+      }
+    } finally {
+      if (mounted) setState(() => _isRefreshing = false);
+    }
+  }
+
+  void _showRefreshedCue() {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF0F172A),
+          elevation: 6,
+          margin: EdgeInsets.only(
+            bottom: 84 + MediaQuery.paddingOf(context).bottom,
+            left: 32,
+            right: 32,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(color: Color(0xFF334155), width: 1),
+          ),
+          duration: const Duration(milliseconds: 2000),
+          content: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.check_circle_rounded,
+                size: 16,
+                color: Color(0xFF10B981),
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Data refreshed',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+  }
+
+  void _showRefreshFailedCue() {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFF0F172A),
+          elevation: 6,
+          margin: EdgeInsets.only(
+            bottom: 84 + MediaQuery.paddingOf(context).bottom,
+            left: 32,
+            right: 32,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(color: Color(0xFF334155), width: 1),
+          ),
+          duration: const Duration(milliseconds: 2500),
+          content: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                size: 16,
+                color: Color(0xFFEF4444),
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Failed to refresh data',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+  }
 
   @override
   void initState() {
@@ -78,29 +197,57 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final isLocked = ref.watch(privacyProvider);
     final authState = ref.watch(authProvider);
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
-    
+    final dashboardAsync = ref.watch(dashboardSummaryProvider);
+    // The backend now always seeds realistic starter MF/Stocks holdings, so
+    // there's no real "not connected" state for them any more — empty-state
+    // gating below is driven by whether a bucket's `value` is 0 (via
+    // DashboardSummary.mfConnected/stocksConnected), not the old
+    // assetConnectionProvider onboarding-flow mock flags. Those flags are
+    // still used for bank-account linking, which has no backend endpoint
+    // yet, and as a loading-state fallback so returning users don't flash
+    // an empty header while the summary request is in flight.
+    final DashboardSummary summary = dashboardAsync.maybeWhen(
+      data: (s) => s,
+      orElse: () => DashboardSummary.empty,
+    );
+    final bool summaryLoaded = dashboardAsync.hasValue;
+    final bool mfConnected = assetState.mfConnected || (summaryLoaded && summary.mfConnected);
+    final bool stocksConnected = assetState.stocksConnected || (summaryLoaded && summary.stocksConnected);
+    final bool fdConnected = summaryLoaded && summary.fixedDepositsPresent;
+    final bool banksConnected = assetState.banksConnected || (summaryLoaded && summary.bankBalancePresent);
+
     final String userName = authState is AuthAuthenticated ? authState.user.name.toUpperCase() : 'USER';
 
-    final double totalWealthValue = (assetState.mfConnected ? 352962.0 : 0.0) + (assetState.stocksConnected ? 147908.0 : 0.0);
+    final double totalWealthValue = summary.totalWealth;
     final formattedTotal = PrivacyFormatter.obscure(
-      totalWealthValue == 0 ? '₹0' : '₹${NumberFormat('#,##,###').format(totalWealthValue)}',
+      totalWealthValue == 0 ? '₹0' : '₹${NumberFormat('#,##,###').format(totalWealthValue.round())}',
       isLocked
-    ); 
+    );
 
-    final bool showReturnsPill = assetState.mfConnected || assetState.stocksConnected;
-    String pillOneDayText = '';
-    String pillTotalText = '';
+    final bool showReturnsPill = summaryLoaded && totalWealthValue > 0;
 
-    if (assetState.mfConnected && assetState.stocksConnected) {
-      pillOneDayText = '↑ ₹3,402 (0.65%) 1D change';
-      pillTotalText = '↑ ₹67,960 (13.50%) Total Returns';
-    } else if (assetState.mfConnected) {
-      pillOneDayText = '↑ ₹2,202 (0.62%) 1D change';
-      pillTotalText = '↑ ₹52,960 (17.65%) Total Returns';
-    } else if (assetState.stocksConnected) {
-      pillOneDayText = '↑ ₹1,200 (0.81%) 1D change';
-      pillTotalText = '↑ ₹15,000 (10.14%) Total Returns';
-    }
+    // Total returns aggregated from the real per-bucket invested/returns
+    // figures the backend provides (mutual funds + stocks + fixed deposits;
+    // bank balance has no invested/returns concept). There's no single
+    // "total returns" field in the API response, so this is a client-side
+    // sum of real numbers, not a fabricated figure.
+    final double totalInvested = summary.mutualFunds.investedValue +
+        summary.stocks.investedValue +
+        summary.fixedDeposits.investedValue;
+    final double totalReturnsAmount = summary.mutualFunds.returnsAmount +
+        summary.stocks.returnsAmount +
+        summary.fixedDeposits.returnsAmount;
+    final double totalReturnsPct =
+        totalInvested > 0 ? (totalReturnsAmount / totalInvested) * 100 : 0.0;
+
+    final String oneDayArrow = summary.oneDayChangeAmount >= 0 ? '↑' : '↓';
+    final String totalReturnsArrow = totalReturnsAmount >= 0 ? '↑' : '↓';
+    final String pillOneDayText = showReturnsPill
+        ? '$oneDayArrow ₹${NumberFormat('#,##,###').format(summary.oneDayChangeAmount.abs())} (${summary.oneDayChangePct.abs().toStringAsFixed(2)}%) 1D change'
+        : '';
+    final String pillTotalText = showReturnsPill
+        ? '$totalReturnsArrow ₹${NumberFormat('#,##,###').format(totalReturnsAmount.abs())} (${totalReturnsPct.abs().toStringAsFixed(2)}%) Total Returns'
+        : '';
 
     if (assetState.step == AssetConnectionStep.banksLinkingProgress) {
       if (!_pulseController.isAnimating) _pulseController.repeat(reverse: true);
@@ -161,6 +308,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               isLocked: isLocked,
               onProfileTap: () => context.push('/user-profile'),
               onLockTap: () => ref.read(privacyProvider.notifier).state = !isLocked,
+              onRefreshTap: _handleRefreshTap,
+              isRefreshing: _isRefreshing,
             ),
           ),
           // 1. Main content with consistent horizontal padding
@@ -175,17 +324,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
                 
                 // Asset List
-                
-                if (assetState.mfConnected)
+
+                if (mfConnected)
                   _buildConnectedAssetRow(
                     icon: Icons.signal_cellular_alt_rounded,
                     title: 'Mutual Funds',
-                    percentage: '67.9%',
-                    amount: PrivacyFormatter.obscure('₹3,52,962', isLocked),
-                    subtitle: PrivacyFormatter.obscure('↑ ₹52.96K (17.65%) Returns', isLocked),
-                    subtitleColor: const Color(0xFF22C55E),
+                    percentage: '${summary.mutualFunds.sharePct.toStringAsFixed(1)}%',
+                    amount: PrivacyFormatter.obscure(
+                      '₹${NumberFormat('#,##,###').format(summary.mutualFunds.value)}',
+                      isLocked,
+                    ),
+                    subtitle: PrivacyFormatter.obscure(
+                      '${summary.mutualFunds.returnsAmount >= 0 ? '↑' : '↓'} ${_formatCompact(summary.mutualFunds.returnsAmount.abs())} (${summary.mutualFunds.returnsPct.abs().toStringAsFixed(2)}%) Returns',
+                      isLocked,
+                    ),
+                    subtitleColor: summary.mutualFunds.returnsAmount >= 0
+                        ? const Color(0xFF22C55E)
+                        : const Color(0xFFEF4444),
                     onTap: () {
                       ref.read(navContextProvider.notifier).state = NavContext.mf;
+                      // mfTabIndexProvider persists across the whole app
+                      // session (it's how quick actions like "Invest via
+                      // SIP" jump straight to a specific MF tab). The bottom
+                      // nav bar's own MF icon resets it to 0 on tap (see
+                      // app_shell.dart), but this tile is a second, separate
+                      // entry point to the same screen that bypassed that
+                      // reset — landing on whatever tab was last active
+                      // instead of Holdings. Reset it here too.
+                      ref.read(mfTabIndexProvider.notifier).state = 0;
                       context.go('/mf');
                     },
                   )
@@ -197,15 +363,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     onPressed: () => context.push('/mf-fetch-confirm'),
                   ),
                 _buildDottedDivider(),
-                
-                if (assetState.stocksConnected)
+
+                if (stocksConnected)
                   _buildConnectedAssetRow(
                     icon: Icons.candlestick_chart_rounded,
                     title: 'Stocks',
-                    percentage: '32.1%',
-                    amount: PrivacyFormatter.obscure('₹1,47,908', isLocked),
-                    subtitle: PrivacyFormatter.obscure('↑ ₹16.7K (12.7%) Returns', isLocked),
-                    subtitleColor: const Color(0xFF22C55E),
+                    percentage: '${summary.stocks.sharePct.toStringAsFixed(1)}%',
+                    amount: PrivacyFormatter.obscure(
+                      '₹${NumberFormat('#,##,###').format(summary.stocks.value)}',
+                      isLocked,
+                    ),
+                    subtitle: PrivacyFormatter.obscure(
+                      '${summary.stocks.returnsAmount >= 0 ? '↑' : '↓'} ${_formatCompact(summary.stocks.returnsAmount.abs())} (${summary.stocks.returnsPct.abs().toStringAsFixed(2)}%) Returns',
+                      isLocked,
+                    ),
+                    subtitleColor: summary.stocks.returnsAmount >= 0
+                        ? const Color(0xFF22C55E)
+                        : const Color(0xFFEF4444),
                     onTap: () {
                       context.push('/stocks');
                     },
@@ -218,13 +392,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     onPressed: () => context.push('/aa-stocks-otp'),
                   ),
                 _buildDottedDivider(),
-                
-                if (assetState.banksConnected)
+
+                if (fdConnected)
+                  _buildConnectedAssetRow(
+                    icon: Icons.savings_rounded,
+                    title: 'Fixed Deposits',
+                    percentage: '${summary.fixedDeposits.sharePct.toStringAsFixed(1)}%',
+                    amount: PrivacyFormatter.obscure(
+                      '₹${NumberFormat('#,##,###').format(summary.fixedDeposits.value)}',
+                      isLocked,
+                    ),
+                    subtitle: PrivacyFormatter.obscure(
+                      '${summary.fixedDeposits.returnsAmount >= 0 ? '↑' : '↓'} ${_formatCompact(summary.fixedDeposits.returnsAmount.abs())} (${summary.fixedDeposits.returnsPct.abs().toStringAsFixed(2)}%) Returns',
+                      isLocked,
+                    ),
+                    subtitleColor: summary.fixedDeposits.returnsAmount >= 0
+                        ? const Color(0xFF22C55E)
+                        : const Color(0xFFEF4444),
+                    onTap: () {
+                      context.push('/fds');
+                    },
+                  )
+                else
+                  _buildAssetRow(
+                    icon: Icons.savings_rounded,
+                    title: 'Fixed Deposits',
+                    buttonText: 'OPEN',
+                    onPressed: () => context.push('/mf-fd'),
+                  ),
+                _buildDottedDivider(),
+
+                if (banksConnected)
                   _buildConnectedAssetRow(
                     icon: Icons.account_balance_rounded,
                     title: 'Bank Accounts',
-                    percentage: '3.7%',
-                    amount: '₹19,544',
+                    percentage: '${summary.bankBalance.sharePct.toStringAsFixed(1)}%',
+                    amount: PrivacyFormatter.obscure(
+                      '₹${NumberFormat('#,##,###').format(summary.bankBalance.value)}',
+                      isLocked,
+                    ),
                     onTap: () {
                       context.push('/linked-bank-accounts');
                     },
@@ -234,23 +440,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     isLinked: false,
                     isLinking: assetState.step == AssetConnectionStep.banksLinkingProgress,
                   ),
-                  
-                
+
+
                 const SizedBox(height: 48),
                 HomePortfolioInsights(isLocked: isLocked),
-                
+
                 const SizedBox(height: 48),
                 const HomePortfolioAnalysis(),
-                
+
                 const SizedBox(height: 48),
                 const HomeQuickActions(),
                 const SizedBox(height: 48),
-                if (assetState.mfConnected || assetState.stocksConnected)
+                if (mfConnected || stocksConnected)
                   HomeTodayPortfolioChanges(
-                    mfConnected: assetState.mfConnected,
-                    stocksConnected: assetState.stocksConnected,
+                    summary: summary,
                   ),
-                
+
               ]),
             ),
           ),
@@ -259,11 +464,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             child: SizedBox(height: 48),
           ),
           // 4. Edge-to-edge Portfolio Growth Graph
-          if (assetState.mfConnected || assetState.stocksConnected)
+          if (mfConnected || stocksConnected)
             SliverToBoxAdapter(
               child: HomePortfolioGrowth(
-                mfConnected: assetState.mfConnected,
-                stocksConnected: assetState.stocksConnected,
+                mfConnected: mfConnected,
+                stocksConnected: stocksConnected,
               ),
             ),
           const SliverToBoxAdapter(child: SizedBox(height: 48)),
@@ -592,6 +797,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
+  /// Compact currency formatting for row subtitles, e.g. ₹52.96K / ₹3.53L.
+  String _formatCompact(double value) {
+    if (value >= 100000) {
+      return '₹${(value / 100000).toStringAsFixed(2)}L';
+    } else if (value >= 1000) {
+      return '₹${(value / 1000).toStringAsFixed(2)}K';
+    }
+    return '₹${value.toStringAsFixed(0)}';
+  }
+
   Widget _buildDottedDivider() {
     return CustomPaint(
       size: const Size(double.infinity, 1),
@@ -634,7 +849,10 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String pillTotalText;
   final VoidCallback onProfileTap;
   final VoidCallback onLockTap;
+  final VoidCallback onRefreshTap;
   final bool isLocked;
+  final bool isLoading;
+  final bool isRefreshing;
 
   _HomeHeaderDelegate({
     required this.safeAreaTop,
@@ -645,7 +863,10 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.pillTotalText,
     required this.onProfileTap,
     required this.onLockTap,
+    required this.onRefreshTap,
     required this.isLocked,
+    this.isLoading = false,
+    this.isRefreshing = false,
   });
 
   @override
@@ -778,36 +999,60 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      totalWealth,
-                      style: TextStyle(
-                        fontFamily: 'SpaceGrotesk',
-                        color: const Color(0xFF0F172A),
-                        fontSize: currentFontSize,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: lerpDouble(-1.0, 0.0, easedRatio)!,
-                        height: 1.1,
-                      ),
-                    ),
+                    isLoading
+                        ? ShimmerBar(
+                            width: lerpDouble(170.0, 80.0, easedRatio)!,
+                            height: currentFontSize,
+                            borderRadius: 6,
+                          )
+                        : Text(
+                            totalWealth,
+                            style: TextStyle(
+                              fontFamily: 'SpaceGrotesk',
+                              color: const Color(0xFF0F172A),
+                              fontSize: currentFontSize,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: lerpDouble(-1.0, 0.0, easedRatio)!,
+                              height: 1.1,
+                            ),
+                          ),
                     // Shrinking Refresh Icon
                     if (shrinkRatio < 1.0) ...[
                       SizedBox(width: lerpDouble(12.0, 0.0, easedRatio)!),
                       Opacity(
                         opacity: (1.0 - (shrinkRatio * 2)).clamp(0.0, 1.0),
-                        child: Container(
-                          width: lerpDouble(28.0, 0.0, easedRatio)!,
-                          height: lerpDouble(28.0, 0.0, easedRatio)!,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFFCBD5E1),
-                              width: 1.2,
+                        child: GestureDetector(
+                          onTap: isRefreshing ? null : onRefreshTap,
+                          child: Tooltip(
+                            message: 'Refresh data',
+                            child: Container(
+                              width: lerpDouble(28.0, 0.0, easedRatio)!,
+                              height: lerpDouble(28.0, 0.0, easedRatio)!,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: const Color(0xFFCBD5E1),
+                                  width: 1.2,
+                                ),
+                              ),
+                              child: isRefreshing
+                                  ? Padding(
+                                      padding: EdgeInsets.all(
+                                        lerpDouble(6.0, 0.0, easedRatio)!,
+                                      ),
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 1.6,
+                                        valueColor: const AlwaysStoppedAnimation<Color>(
+                                          Color(0xFF64748B),
+                                        ),
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.refresh_rounded,
+                                      size: lerpDouble(16.0, 0.0, easedRatio)!,
+                                      color: const Color(0xFF64748B),
+                                    ),
                             ),
-                          ),
-                          child: Icon(
-                            Icons.refresh_rounded,
-                            size: lerpDouble(16.0, 0.0, easedRatio)!,
-                            color: const Color(0xFF64748B),
                           ),
                         ),
                       ),
@@ -819,18 +1064,25 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
           ),
 
           // Returns Pill below the wealth number
-          if (shrinkRatio < 1.0 && showReturnsPill)
+          if (shrinkRatio < 1.0)
             Positioned(
-              top: currentTop + 64.0, // Move it further down so it never covers the text
+              top: currentTop + 64.0,
               left: 0,
               right: 0,
               child: Align(
                 alignment: Alignment.topCenter,
-                child: _ReturnsPill(
-                  opacity: (1.0 - (shrinkRatio * 3.0)).clamp(0.0, 1.0),
-                  oneDayText: pillOneDayText,
-                  totalText: pillTotalText,
-                ),
+                child: isLoading
+                    ? Opacity(
+                        opacity: (1.0 - (shrinkRatio * 3.0)).clamp(0.0, 1.0),
+                        child: const ShimmerBar(width: 140, height: 20, borderRadius: 20),
+                      )
+                    : (showReturnsPill
+                        ? _ReturnsPill(
+                            opacity: (1.0 - (shrinkRatio * 3.0)).clamp(0.0, 1.0),
+                            oneDayText: pillOneDayText,
+                            totalText: pillTotalText,
+                          )
+                        : const SizedBox.shrink()),
               ),
             ),
 
@@ -886,11 +1138,13 @@ class _HomeHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _HomeHeaderDelegate oldDelegate) {
-    return safeAreaTop != oldDelegate.safeAreaTop || 
+    return safeAreaTop != oldDelegate.safeAreaTop ||
            totalWealth != oldDelegate.totalWealth ||
            showReturnsPill != oldDelegate.showReturnsPill ||
            pillOneDayText != oldDelegate.pillOneDayText ||
-           pillTotalText != oldDelegate.pillTotalText;
+           pillTotalText != oldDelegate.pillTotalText ||
+           isLoading != oldDelegate.isLoading ||
+           isRefreshing != oldDelegate.isRefreshing;
   }
 }
 

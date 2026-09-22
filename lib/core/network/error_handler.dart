@@ -16,7 +16,7 @@ class AppErrorHandler {
       }
 
       if (_isNetworkError(error)) {
-        return 'No internet connection. Please check network.';
+        return 'Please check your internet connection and try again.';
       }
 
       if (error is DioException) {

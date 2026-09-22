@@ -11,13 +11,24 @@ class LinkedBankAccountsScreen extends ConsumerWidget {
 
   String _getBankLogo(String bankName) {
     final lower = bankName.toLowerCase();
+    if (lower.contains('icici')) return 'lib/core/images/icici.webp';
     if (lower.contains('hdfc')) return 'lib/core/images/hdfc_logo.webp';
     if (lower.contains('axis')) return 'lib/core/images/axis_logo.webp';
     if (lower.contains('sbi') || lower.contains('state bank')) return 'lib/core/images/sbi_logo.webp';
-    if (lower.contains('icici')) return 'lib/core/images/icici.webp';
     if (lower.contains('kotak')) return 'lib/core/images/kotak.webp';
-    if (lower.contains('pnb')) return 'lib/core/images/pnb.webp';
-    return 'lib/core/images/hdfc_logo.webp';
+    if (lower.contains('pnb') || lower.contains('punjab national')) return 'lib/core/images/pnb.webp';
+    if (lower.contains('canara')) return 'lib/core/images/canara_logo.webp';
+    if (lower.contains('indusind')) return 'lib/core/images/indusind_logo.webp';
+    if (lower.contains('baroda')) return 'lib/core/images/bankofbaroda_logo.webp';
+    if (lower.contains('bank of india')) return 'lib/core/images/bankofindia_logo.webp';
+    if (lower.contains('maharashtra')) return 'lib/core/images/bank_of_maharashtra_logo.webp';
+    if (lower.contains('indian bank')) return 'lib/core/images/indian_bank_logo.webp';
+    if (lower.contains('overseas')) return 'lib/core/images/indian_overseas_bank_logo.webp';
+    if (lower.contains('punjab & sind') || lower.contains('punjab sindh')) return 'lib/core/images/punjab_sindh_bank_logo.webp';
+    if (lower.contains('uco')) return 'lib/core/images/uco_bank_logo.webp';
+    if (lower.contains('union')) return 'lib/core/images/uniobank_logo.webp';
+    if (lower.contains('yes')) return 'lib/core/images/yesbank_logo.webp';
+    return 'lib/core/images/icici.webp';
   }
 
   @override
@@ -56,7 +67,13 @@ class LinkedBankAccountsScreen extends ConsumerWidget {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          context.push('/banks-searching');
+                          // This used to push straight to '/banks-searching'
+                          // with no bank picked and no pending Future, so it
+                          // showed a pointless 2.6s loading animation that
+                          // called searchAndAddBank for nothing, then landed
+                          // on the bank-picker screen anyway. Going straight
+                          // to the picker skips that dead-end loader.
+                          context.push('/banks-linking', extra: true);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -259,7 +276,7 @@ class LinkedBankAccountsScreen extends ConsumerWidget {
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
-                                              account.id,
+                                              account.shortId,
                                               style: const TextStyle(
                                                 fontFamily: 'DMSans',
                                                 fontSize: 10,

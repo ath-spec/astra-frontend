@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:astra_frontend/services/service_providers.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_providers.dart';
 
 class RecurringIntroScreen extends ConsumerStatefulWidget {
   const RecurringIntroScreen({super.key});
@@ -105,6 +106,7 @@ class _RecurringIntroScreenState extends ConsumerState<RecurringIntroScreen> {
               child: ZeyroButton(
                 eventName: 'recurring_intro_screen_start_tapped',
                 onPressed: () {
+                  ref.read(billsTrackingUnlockedProvider.notifier).setUnlocked(true);
                   ref.read(budgetStateProvider).setRecurringSetup(true);
                   // Use go('/') to reset the stack, then push to get the normal
                   // forward slide transition, just like other screens.

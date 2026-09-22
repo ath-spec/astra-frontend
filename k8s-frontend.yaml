@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: astra-frontend-deployment
+  labels:
+    app: astra-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: astra-frontend
+  template:
+    metadata:
+      labels:
+        app: astra-frontend
+    spec:
+      containers:
+      - name: astra-frontend
+        image: astra-frontend:latest
+        imagePullPolicy: IfNotPresent # Since we are loading the image manually from the .tar file
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: astra-frontend-service
+spec:
+  type: LoadBalancer # Or ClusterIP/NodePort depending on your cluster setup
+  selector:
+    app: astra-frontend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80

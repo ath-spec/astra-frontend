@@ -52,7 +52,11 @@ import 'package:astra_frontend/features/portfolio_analysis/screens/portfolio_ana
 import 'package:astra_frontend/features/portfolio_analysis/screens/insights_screen.dart';
 import '../../features/mf/screens/mf_container_screen.dart';
 import '../../features/stocks/screens/owned_stocks_screen.dart';
+import '../../features/fd/screens/owned_fds_screen.dart';
+import '../../features/mf/screens/mf_fd/mf_fd_screen.dart';
 import '../../features/cart/screens/cart_screen.dart';
+import '../../features/analytics/screens/analytics_screen.dart';
+import '../../features/transactions/screens/transactions_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/corner_fade_reveal_transition.dart';
 import 'nav_keys.dart';
@@ -65,6 +69,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authProvider);
       final isLoggedIn = authState is AuthAuthenticated;
+      // Session restore (SplashScreen -> AuthNotifier.restoreSession) is
+      // still in flight — never treat this as "definitely logged out".
+      // Without this guard, any navigation/redirect re-evaluation that
+      // happens to land outside the onboarding whitelist while the stored
+      // token is still being validated would force an incorrect bounce to
+      // /intro even for a user who is actually logged in.
+      final isCheckingAuth = authState is AuthChecking;
       final loc = state.matchedLocation;
 
       final isOnboardingRoute = loc == '/login' ||
@@ -90,7 +101,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           loc == '/profiling-status' ||
           loc == '/no-internet';
 
-      if (!isLoggedIn && !isOnboardingRoute) return '/intro';
+      if (!isLoggedIn && !isCheckingAuth && !isOnboardingRoute) return '/intro';
       return null;
     },
     routes: [
@@ -240,6 +251,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const StocksScreen(),
       ),
       GoRoute(
+        path: '/fds',
+        builder: (context, state) => const FDsScreen(),
+      ),
+      GoRoute(
+        path: '/mf-fd',
+        builder: (context, state) => const MfFdScreen(),
+      ),
+      GoRoute(
         path: '/asset-today-change',
         builder: (context, state) {
           final data = state.extra as Map<String, dynamic>? ?? {};
@@ -328,6 +347,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/cart',
         builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: '/transactions',
+        builder: (context, state) => const TransactionsScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -429,6 +452,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     },
                   ),
                 ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: analyticsNavKey,
+            routes: [
+              GoRoute(
+                path: '/analytics',
+                builder: (context, state) => const AnalyticsScreen(),
               ),
             ],
           ),

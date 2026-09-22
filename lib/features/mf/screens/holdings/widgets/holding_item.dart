@@ -1,10 +1,13 @@
+import 'package:astra_frontend/core/utils/fund_name_formatter.dart';
+import 'package:astra_frontend/features/mf/data/mf_holdings_models.dart';
+import 'package:astra_frontend/features/stocks/data/stocks_models.dart';
 
 class HoldingDeepDiveData {
   final String primaryRole;
   final String secondaryRole;
   final String contribution;
 
-  HoldingDeepDiveData({
+  const HoldingDeepDiveData({
     required this.primaryRole,
     required this.secondaryRole,
     required this.contribution,
@@ -12,6 +15,7 @@ class HoldingDeepDiveData {
 }
 
 class HoldingItem {
+  final String? schemeCode;
   final String name;
   final String category;
   final double current;
@@ -25,7 +29,14 @@ class HoldingItem {
   final bool isSip;
   final HoldingDeepDiveData? deepDiveData;
 
+  /// Which of the Equity/Debt/Global filter chips this holding belongs to.
+  /// Derived from the backend's catalog `category` string via
+  /// [filterBucketForCategory]; defaults to inferring from [category] for
+  /// items constructed without it explicitly.
+  final String filterBucket;
+
   HoldingItem({
+    this.schemeCode,
     required this.name,
     required this.category,
     required this.current,
@@ -38,79 +49,90 @@ class HoldingItem {
     required this.logoPath,
     this.isSip = false,
     this.deepDiveData,
-  });
+    String? filterBucket,
+  }) : filterBucket = filterBucket ?? _inferFilterBucket(category);
+
+  static String _inferFilterBucket(String category) {
+    if (category.contains('Equity')) return 'Equity';
+    if (category.contains('Debt')) return 'Debt';
+    if (category.contains('Global')) return 'Global';
+    return 'Equity';
+  }
+
+  /// Builds a [HoldingItem] from a real `/api/v1/mf/holdings` folio.
+  factory HoldingItem.fromFolio(MfFolio folio) {
+    return HoldingItem(
+      schemeCode: folio.schemeCode,
+      name: folio.schemeName.isNotEmpty ? cleanFundName(folio.schemeName) : folio.amcName,
+      category: folio.category,
+      current: folio.currentValue,
+      invested: folio.investedValue,
+      returns: folio.returnsAmount,
+      returnsPercent: folio.returnsPct,
+      oneDayChange: folio.oneDayChangeAmount,
+      oneDayChangePercent: folio.oneDayChangePct,
+      xirr: folio.xirrPct,
+      logoPath: logoPathForAmc(folio.amcName),
+      isSip: folio.isSip,
+      filterBucket: filterBucketForCategory(folio.category),
+    );
+  }
+
+  /// Builds a [HoldingItem] from a real `/api/v1/stocks/holdings` demat entry.
+  factory HoldingItem.fromStock(StockHoldingItem stock) {
+    // XIRR is not available from the stocks endpoint directly;
+    // use pnlPercentage as a reasonable proxy.
+    return HoldingItem(
+      name: stock.tradingSymbol,
+      category: 'Equity - Stocks',
+      current: stock.currentValue,
+      invested: stock.investedValue,
+      returns: stock.pnl,
+      returnsPercent: stock.pnlPercentage,
+      oneDayChange: stock.oneDayChangeAmount,
+      oneDayChangePercent: stock.oneDayChangePct,
+      xirr: stock.pnlPercentage,
+      logoPath: logoPathForSymbol(stock.tradingSymbol),
+      isSip: false,
+      filterBucket: 'Equity',
+    );
+  }
 }
 
+/// Maps a backend catalog `category` (e.g. "Equity - Mid Cap",
+/// "Hybrid - Balanced Advantage", "Debt - Liquid", "Other - Gold") to one of
+/// the existing Equity/Debt/Global filter chips on the Holdings screen.
+///
+/// There's no server-provided "Global" category today, so — matching how
+/// this screen's earlier mock data used "Global" for commodities/precious
+/// metals — any "Other - *" category (e.g. gold) is bucketed under Global as
+/// the closest fit for a catch-all/alternative-assets chip.
+String filterBucketForCategory(String category) {
+  if (category.startsWith('Equity')) return 'Equity';
+  if (category.startsWith('Debt') || category.startsWith('Hybrid')) return 'Debt';
+  if (category.startsWith('Other')) return 'Global';
+  return 'Equity';
+}
 
-final List<HoldingItem> mockHoldings = [
-  HoldingItem(
-    name: 'Canara Robeco Large Cap Fund',
-    category: 'Equity • Large-Cap',
-    current: 236538,
-    invested: 225026,
-    returns: 11511,
-    returnsPercent: 5.11,
-    oneDayChange: 1038,
-    oneDayChangePercent: 0.44,
-    xirr: 3.22,
-    logoPath: 'lib/core/images/canara_robeco_logo.webp', // We will use a placeholder or generic icon if missing
-    isSip: true,
-    deepDiveData: HoldingDeepDiveData(
-      primaryRole: 'Core Growth',
-      secondaryRole: 'Capital Preservation',
-      contribution: 'Provides stability and consistent growth by investing in established, large-cap companies. Acts as an anchor for the equity portion of your portfolio.',
-    ),
-  ),
-  HoldingItem(
-    name: 'Quantum Gold ETF FoF',
-    category: 'Commodities • Precious Metals',
-    current: 99025,
-    invested: 65799,
-    returns: 33225,
-    returnsPercent: 50.49,
-    oneDayChange: -632,
-    oneDayChangePercent: -0.63,
-    xirr: 39.38,
-    logoPath: 'lib/core/images/quantum_logo.webp',
-    deepDiveData: HoldingDeepDiveData(
-      primaryRole: 'Inflation Defense',
-      secondaryRole: 'Portfolio Diversifier',
-      contribution: 'Hedges against inflation and market volatility. It typically moves inversely to equities, reducing overall portfolio risk during market downturns.',
-    ),
-  ),
-  HoldingItem(
-    name: 'Tata Gold ETF FoF',
-    category: 'Debt • Corporate Bond',
-    current: 9377,
-    invested: 8923,
-    returns: 454,
-    returnsPercent: 5.09,
-    oneDayChange: -6,
-    oneDayChangePercent: -0.07,
-    xirr: 8.79,
-    logoPath: 'lib/core/images/tata_logo.webp',
-    deepDiveData: HoldingDeepDiveData(
-      primaryRole: 'Steady Income',
-      secondaryRole: 'Capital Preservation',
-      contribution: 'Generates predictable returns with lower volatility. Helps balance the higher risk from your equity investments.',
-    ),
-  ),
-  HoldingItem(
-    name: 'HDFC Silver ETF FoF',
-    category: 'Global • Precious Metals',
-    current: 184,
-    invested: 249,
-    returns: -65,
-    returnsPercent: -26.22,
-    oneDayChange: 0,
-    oneDayChangePercent: -0.04,
-    xirr: -43.9,
-    logoPath: 'lib/core/images/hdfc_logo.webp',
-    isSip: true,
-    deepDiveData: HoldingDeepDiveData(
-      primaryRole: 'Tactical Allocation',
-      secondaryRole: 'Real Assets Exposure',
-      contribution: 'Offers exposure to industrial demand and precious metals. It brings a high-risk, high-reward element to the commodity bucket.',
-    ),
-  ),
-];
+/// Client-side logo lookup by stock trading symbol.
+String logoPathForSymbol(String symbol) {
+  final s = symbol.toUpperCase();
+  if (s.contains('HDFC')) return 'lib/core/images/hdfc_logo.webp';
+  if (s.contains('ICICI')) return 'lib/core/images/icici.png';
+  if (s.contains('TATA') || s.contains('TCS')) return 'lib/core/images/tata_logo.webp';
+  return 'lib/core/images/icici.png'; // generic fallback
+}
+
+/// Client-side logo lookup by AMC name — no logo/icon data comes from the
+/// backend. Falls back to a generic placeholder path when the AMC isn't
+/// recognized (the list widgets currently render a generic icon regardless
+/// of this path, so the fallback is inert rather than a broken image).
+String logoPathForAmc(String amcName) {
+  final lower = amcName.toLowerCase();
+  if (lower.contains('hdfc')) return 'lib/core/images/hdfc_logo.webp';
+  if (lower.contains('tata')) return 'lib/core/images/tata_logo.webp';
+  if (lower.contains('quantum')) return 'lib/core/images/quantum_logo.webp';
+  if (lower.contains('canara')) return 'lib/core/images/canara_robeco_logo.webp';
+  if (lower.contains('icici')) return 'lib/core/images/icici.png';
+  return 'lib/core/images/icici.png';
+}

@@ -1,59 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfGlobalFundsCollectionScreen extends StatefulWidget {
+class MfGlobalFundsCollectionScreen extends ConsumerStatefulWidget {
   const MfGlobalFundsCollectionScreen({super.key});
 
   @override
-  State<MfGlobalFundsCollectionScreen> createState() => _MfGlobalFundsCollectionScreenState();
+  ConsumerState<MfGlobalFundsCollectionScreen> createState() => _MfGlobalFundsCollectionScreenState();
 }
 
-class _MfGlobalFundsCollectionScreenState extends State<MfGlobalFundsCollectionScreen> {
+class _MfGlobalFundsCollectionScreenState extends ConsumerState<MfGlobalFundsCollectionScreen> {
   String _activeFilter = 'All';
-
-  final _filters = ['All', 'US Equity', 'Europe', 'Asia'];
-
-  final List<Map<String, dynamic>> _allFunds = [
-    {
-      'name': 'Motilal Oswal Nasdaq 100 ETF',
-      'category': 'Equity • US Equity',
-      'cap': 'US Equity',
-      'returns': {'1Y': '38.40%', '3Y': '22.80%', '5Y': '20.50%'},
-      'rating': 5,
-    },
-    {
-      'name': 'Mirae Asset S&P 500 Top 50 ETF',
-      'category': 'Equity • US Equity',
-      'cap': 'US Equity',
-      'returns': {'1Y': '32.10%', '3Y': '18.40%', '5Y': '16.10%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Nippon India Japan Equity Fund',
-      'category': 'Equity • Asia',
-      'cap': 'Asia',
-      'returns': {'1Y': '28.60%', '3Y': '14.80%', '5Y': '11.20%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Invesco Pan European Equity',
-      'category': 'Equity • Europe',
-      'cap': 'Europe',
-      'returns': {'1Y': '18.50%', '3Y': '8.20%', '5Y': '6.80%'},
-      'rating': 3,
-    },
-  ];
-
+  final _filters = ['All', 'US Equity', 'Global Thematic', 'Tech'];
   String _returnPeriod = '1Y';
 
-  List<Map<String, dynamic>> get _filteredFunds {
-    if (_activeFilter == 'All') return _allFunds;
-    return _allFunds.where((f) => f['cap'] == _activeFilter).toList();
+  List<CatalogFund> _globalFunds(List<CatalogFund> all) {
+    final funds = all.where((f) {
+      final cat = f.category.toLowerCase();
+      final name = f.schemeName.toLowerCase();
+      return cat.contains('global') || cat.contains('us') || cat.contains('international') ||
+          name.contains('nasdaq') || name.contains('s&p') || name.contains('global') || name.contains('us');
+    }).toList();
+
+    if (_activeFilter == 'All') return funds;
+    return funds.where((f) {
+      final cat = f.category.toLowerCase();
+      final name = f.schemeName.toLowerCase();
+      switch (_activeFilter) {
+        case 'US Equity':
+          return cat.contains('us') || name.contains('nasdaq') || name.contains('us');
+        case 'Global Thematic':
+          return name.contains('semi') || name.contains('tech') || name.contains('ai') || cat.contains('global');
+        case 'Tech':
+          return name.contains('tech') || name.contains('semi') || name.contains('nasdaq') || cat.contains('tech');
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
+  String _returnFor(CatalogFund f) {
+    final value = switch (_returnPeriod) {
+      '3Y' => f.returns3y,
+      '5Y' => f.returns5y,
+      _ => f.returns1y,
+    };
+    return value != null ? '${value.toStringAsFixed(2)}%' : '—';
   }
 
   @override
   Widget build(BuildContext context) {
-    final funds = _filteredFunds;
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+    final allFunds = catalogAsync.valueOrNull ?? <CatalogFund>[];
+    final funds = _globalFunds(allFunds);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -76,7 +78,7 @@ class _MfGlobalFundsCollectionScreenState extends State<MfGlobalFundsCollectionS
           ),
         ),
         title: const Text(
-          'Global Funds Collection',
+          'Global Investing',
           style: TextStyle(
             fontFamily: 'DMSans',
             fontSize: 16,
@@ -92,8 +94,11 @@ class _MfGlobalFundsCollectionScreenState extends State<MfGlobalFundsCollectionS
                 setState(() {
                   if (_returnPeriod == '1Y') {
                     _returnPeriod = '3Y';
-                  } else if (_returnPeriod == '3Y') _returnPeriod = '5Y';
-                  else _returnPeriod = '1Y';
+                  } else if (_returnPeriod == '3Y') {
+                    _returnPeriod = '5Y';
+                  } else {
+                    _returnPeriod = '1Y';
+                  }
                 });
               },
               child: Container(
@@ -176,26 +181,59 @@ class _MfGlobalFundsCollectionScreenState extends State<MfGlobalFundsCollectionS
           ),
           // List
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: funds.length,
-              separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
-              itemBuilder: (context, index) {
-                final fund = funds[index];
-                return _buildFundRow(fund);
-              },
-            ),
+            child: catalogAsync.isLoading
+                ? ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                    children: _buildLoadingRows(),
+                  )
+                : catalogAsync.hasError
+                    ? const Center(
+                        child: Text(
+                          "Couldn't load global funds.",
+                          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                        ),
+                      )
+                    : funds.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'No global funds available yet.',
+                              style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                            ),
+                          )
+                        : ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            itemCount: funds.length,
+                            separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
+                            itemBuilder: (context, index) {
+                              final fund = funds[index];
+                              return _buildFundRow(fund);
+                            },
+                          ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFundRow(Map<String, dynamic> fund) {
+  List<Widget> _buildLoadingRows() {
+    return List.generate(
+      6,
+      (index) => const Padding(
+        padding: EdgeInsets.only(bottom: 12.0),
+        child: AppThemeShimmerCard(
+          height: 140,
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          barWidths: [140, 100, 60, 60],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFundRow(CatalogFund fund) {
     return Column(
       children: [
         InkWell(
-          onTap: () => MfFundProfileScreen.showModal(context, fund['name'] as String),
+          onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
@@ -212,7 +250,7 @@ class _MfGlobalFundsCollectionScreenState extends State<MfGlobalFundsCollectionS
                       ),
                       child: Center(
                         child: Text(
-                          (fund['name'] as String).substring(0, 1),
+                          fund.schemeName.isNotEmpty ? fund.schemeName.substring(0, 1) : '?',
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
@@ -243,19 +281,20 @@ class _MfGlobalFundsCollectionScreenState extends State<MfGlobalFundsCollectionS
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        fund['name'] as String,
+                        fund.schemeName,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          height: 1.2,
                           color: Color(0xFF1E1E1E),
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        fund['category'] as String,
+                        fund.category,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 10,
@@ -265,12 +304,13 @@ class _MfGlobalFundsCollectionScreenState extends State<MfGlobalFundsCollectionS
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 // Returns
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   child: Text(
-                    (fund['returns'] as Map<String, dynamic>)[_returnPeriod] as String,
-                    key: ValueKey<String>('${fund['name']}_$_returnPeriod'),
+                    _returnFor(fund),
+                    key: ValueKey<String>('${fund.schemeCode}_$_returnPeriod'),
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,

@@ -1,21 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
-import 'package:flutter/physics.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import 'dart:math' as math;
-import 'package:visibility_detector/visibility_detector.dart';
+import '../../../data/portfolio_analysis_providers.dart';
+import '../../../data/portfolio_analysis_models.dart';
 import 'mutual_fund_performance_sheet.dart';
 
-class MutualFundPerformanceSection extends StatefulWidget {
+String _formatInr(double value) {
+  final rounded = value.round();
+  final isNegative = rounded < 0;
+  final digits = rounded.abs().toString();
+  String formatted;
+  if (digits.length <= 3) {
+    formatted = digits;
+  } else {
+    final head = digits.substring(0, digits.length - 3);
+    final tail = digits.substring(digits.length - 3);
+    final headFormatted = head.replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{2})+(?!\d))'),
+      (m) => '${m[1]},',
+    );
+    formatted = '$headFormatted,$tail';
+  }
+  return '${isNegative ? '-' : ''}₹ $formatted';
+}
+
+String _formatInrCompact(double value) {
+  if (value >= 100000) {
+    return '₹ ${(value / 100000).toStringAsFixed(2)}L';
+  }
+  if (value >= 1000) {
+    return '₹ ${(value / 1000).toStringAsFixed(1)}K';
+  }
+  return '₹ ${value.round()}';
+}
+
+class MutualFundPerformanceSection extends ConsumerStatefulWidget {
   const MutualFundPerformanceSection({super.key});
 
   @override
-  State<MutualFundPerformanceSection> createState() =>
+  ConsumerState<MutualFundPerformanceSection> createState() =>
       _MutualFundPerformanceSectionState();
 }
 
 class _MutualFundPerformanceSectionState
-    extends State<MutualFundPerformanceSection> {
+    extends ConsumerState<MutualFundPerformanceSection> {
   final GlobalKey _chartKey = GlobalKey();
   ScrollPosition? _scrollPosition;
 
@@ -30,6 +61,51 @@ class _MutualFundPerformanceSectionState
 
   @override
   Widget build(BuildContext context) {
+    final perfAsync = ref.watch(portfolioPerformanceProvider);
+    final perf = perfAsync.value;
+    final funds = perf?.fundsPerformance ?? const <FundPerformanceData>[];
+
+    // No fabricated values: while the live data is loading show a skeleton,
+    // and on failure render nothing rather than placeholder numbers.
+    if (perf == null) {
+      return perfAsync.isLoading
+          ? const _MfPerformanceSkeleton()
+          : const SizedBox.shrink();
+    }
+
+    double underAmt = 0, inLineAmt = 0, outAmt = 0;
+    for (final f in funds) {
+      switch (f.performanceRank.toUpperCase()) {
+        case 'TOP':
+        case 'OUTPERFORMING':
+          outAmt += f.currentValue;
+          break;
+        case 'UNDERPERFORMER':
+        case 'UNDERPERFORMING':
+          underAmt += f.currentValue;
+          break;
+        default:
+          inLineAmt += f.currentValue;
+      }
+    }
+
+    final totalAmt = underAmt + inLineAmt + outAmt;
+    final underPct = totalAmt > 0 ? (underAmt / totalAmt * 100) : 0.0;
+    final inLinePct = totalAmt > 0 ? (inLineAmt / totalAmt * 100) : 0.0;
+    final outPct = totalAmt > 0 ? (outAmt / totalAmt * 100) : 0.0;
+
+    final String insight;
+    if (outAmt >= inLineAmt && outAmt >= underAmt && outAmt > 0) {
+      insight =
+          'Winning streak most of your funds are ahead of the benchmark. momentum is strong.';
+    } else if (underAmt >= inLineAmt && underAmt >= outAmt && underAmt > 0) {
+      insight =
+          'A large share of your funds are trailing their benchmark keep an eye on these holdings.';
+    } else {
+      insight =
+          'Most of your funds are tracking close to their benchmark steady, in-line performance.';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -44,9 +120,9 @@ class _MutualFundPerformanceSectionState
           ),
         ),
         const SizedBox(height: 12),
-        const Text(
-          '₹ 3,45,126',
-          style: TextStyle(
+        Text(
+          _formatInr(totalAmt),
+          style: const TextStyle(
             fontFamily: 'DMSans',
             fontSize: 22,
             fontWeight: FontWeight.w600,
@@ -96,7 +172,7 @@ class _MutualFundPerformanceSectionState
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,
                 builder: (context) =>
-                    MutualFundPerformanceSheet(initialIndex: tabIndex),
+                    MutualFundPerformanceSheet(initialIndex: tabIndex, data: perf),
               );
             },
             behavior: HitTestBehavior.opaque,
@@ -104,19 +180,22 @@ class _MutualFundPerformanceSectionState
               animation: _scrollPosition ?? const AlwaysStoppedAnimation(0.0),
               builder: (context, child) {
                 double progress = 1.0;
-                
+
                 if (_chartKey.currentContext != null && _scrollPosition != null) {
                   try {
-                    final RenderBox renderBox = _chartKey.currentContext!.findRenderObject() as RenderBox;
+                    final RenderBox renderBox =
+                        _chartKey.currentContext!.findRenderObject() as RenderBox;
                     final scrollableState = Scrollable.maybeOf(context);
-                    
+
                     double position = 0.0;
                     double viewportHeight = MediaQuery.of(context).size.height;
-                    
+
                     if (scrollableState != null) {
-                      final scrollableBox = scrollableState.context.findRenderObject() as RenderBox?;
+                      final scrollableBox =
+                          scrollableState.context.findRenderObject() as RenderBox?;
                       if (scrollableBox != null) {
-                        position = renderBox.localToGlobal(Offset.zero, ancestor: scrollableBox).dy;
+                        position = renderBox.localToGlobal(Offset.zero,
+                            ancestor: scrollableBox).dy;
                         viewportHeight = scrollableBox.size.height;
                       } else {
                         position = renderBox.localToGlobal(Offset.zero).dy;
@@ -124,20 +203,15 @@ class _MutualFundPerformanceSectionState
                     } else {
                       position = renderBox.localToGlobal(Offset.zero).dy;
                     }
-                    
+
                     // Scrollytelling mapping:
-                    // Start animating when the top of the chart reaches 80% down the screen
-                    // Finish animating when the top of the chart reaches 40% down the screen
                     final startY = viewportHeight * 0.8;
                     final endY = viewportHeight * 0.4;
-                    
+
                     progress = (startY - position) / (startY - endY);
-                    
-                    // Add a tiny bit of non-linear easing for polish (Framer Motion feel)
                     progress = progress.clamp(0.0, 1.0);
                     progress = Curves.easeOutCubic.transform(progress);
                   } catch (e) {
-                    // Fallback during initial layout phase
                     progress = 0.0;
                   }
                 }
@@ -145,6 +219,9 @@ class _MutualFundPerformanceSectionState
                 return CustomPaint(
                   painter: _Performance3DBarPainter(
                     progress: progress,
+                    underAmt: underAmt,
+                    inLineAmt: inLineAmt,
+                    outAmt: outAmt,
                   ),
                 );
               },
@@ -158,15 +235,15 @@ class _MutualFundPerformanceSectionState
         _buildFundListItem(
           color: const Color(0xFFE53E3E),
           title: 'Under-performing funds',
-          percentage: '0%',
-          amount: '₹ 0',
+          percentage: '${underPct.round()}%',
+          amount: _formatInr(underAmt),
           onTap: () {
             showModalBottomSheet(
               context: context,
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
               builder: (context) =>
-                  const MutualFundPerformanceSheet(initialIndex: 2),
+                  MutualFundPerformanceSheet(initialIndex: 2, data: perf),
             );
           },
         ),
@@ -174,15 +251,15 @@ class _MutualFundPerformanceSectionState
         _buildFundListItem(
           color: const Color(0xFF4ADE80), // Light green
           title: 'In line performing funds',
-          percentage: '31%',
-          amount: '₹ 1,08,587',
+          percentage: '${inLinePct.round()}%',
+          amount: _formatInr(inLineAmt),
           onTap: () {
             showModalBottomSheet(
               context: context,
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
               builder: (context) =>
-                  const MutualFundPerformanceSheet(initialIndex: 1),
+                  MutualFundPerformanceSheet(initialIndex: 1, data: perf),
             );
           },
         ),
@@ -190,15 +267,15 @@ class _MutualFundPerformanceSectionState
         _buildFundListItem(
           color: const Color(0xFF16A34A), // Dark green
           title: 'Out-performing funds',
-          percentage: '68%',
-          amount: '₹ 2,36,538',
+          percentage: '${outPct.round()}%',
+          amount: _formatInr(outAmt),
           onTap: () {
             showModalBottomSheet(
               context: context,
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
               builder: (context) =>
-                  const MutualFundPerformanceSheet(initialIndex: 0),
+                  MutualFundPerformanceSheet(initialIndex: 0, data: perf),
             );
           },
         ),
@@ -254,10 +331,10 @@ class _MutualFundPerformanceSectionState
                   color: const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const AnimatedGradientShimmer(
+                child: AnimatedGradientShimmer(
                   child: TypewriterText(
-                    text: 'Winning streak most of your funds are ahead of the benchmark. momentum is strong.',
-                    style: TextStyle(
+                    text: insight,
+                    style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 12,
                       height: 1.5,
@@ -340,8 +417,16 @@ class _MutualFundPerformanceSectionState
 
 class _Performance3DBarPainter extends CustomPainter {
   final double progress;
+  final double underAmt;
+  final double inLineAmt;
+  final double outAmt;
 
-  _Performance3DBarPainter({required this.progress});
+  _Performance3DBarPainter({
+    required this.progress,
+    this.underAmt = 0,
+    this.inLineAmt = 0,
+    this.outAmt = 0,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -370,27 +455,32 @@ class _Performance3DBarPainter extends CustomPainter {
         ..strokeWidth = 1.2,
     );
 
+    final total = underAmt + inLineAmt + outAmt;
+    final underVal = total > 0 ? (underAmt > 0 ? (underAmt / total * 180).clamp(15.0, 180.0) : 8.0) : 10.0;
+    final inLineVal = total > 0 ? (inLineAmt > 0 ? (inLineAmt / total * 180).clamp(15.0, 180.0) : 8.0) : 90.0;
+    final outVal = total > 0 ? (outAmt > 0 ? (outAmt / total * 180).clamp(15.0, 180.0) : 8.0) : 180.0;
+
     final bars = [
       {
         'label': 'UNDER\nPERFORMING',
-        'val': 10.0,
-        'amt': '₹ 0',
+        'val': underVal,
+        'amt': underAmt > 0 ? _formatInrCompact(underAmt) : '₹ 0',
         'colorFront': const Color(0xFFF87171),
         'colorSide': const Color(0xFFEF4444),
         'colorTop': const Color(0xFFFCA5A5),
       },
       {
         'label': 'IN LINE\nPERFORMING',
-        'val': 90.0,
-        'amt': '₹ 1.08L',
+        'val': inLineVal,
+        'amt': inLineAmt > 0 ? _formatInrCompact(inLineAmt) : '₹ 0',
         'colorFront': const Color(0xFF86EFAC),
         'colorSide': const Color(0xFF22C55E),
         'colorTop': const Color(0xFFBBF7D0),
       },
       {
         'label': 'OUT\nPERFORMING',
-        'val': 180.0,
-        'amt': '₹ 2.36L',
+        'val': outVal,
+        'amt': outAmt > 0 ? _formatInrCompact(outAmt) : '₹ 0',
         'colorFront': const Color(0xFF4ADE80),
         'colorSide': const Color(0xFF16A34A),
         'colorTop': const Color(0xFF86EFAC),
@@ -508,7 +598,6 @@ class _Performance3DBarPainter extends CustomPainter {
             final path = Path();
             path.moveTo(bx + offset, by);
             for (double step = 0; step <= currentH; step += 6) {
-              // Alternate left and right for a jagged, high-frequency energy look
               final zig = ((step / 6).floor() % 2 == 0) ? 3.0 : -3.0;
               path.lineTo(bx + offset + (step * 0.35) + zig, by - step);
             }
@@ -576,7 +665,10 @@ class _Performance3DBarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _Performance3DBarPainter oldDelegate) {
-    return oldDelegate.progress != progress;
+    return oldDelegate.progress != progress ||
+        oldDelegate.underAmt != underAmt ||
+        oldDelegate.inLineAmt != inLineAmt ||
+        oldDelegate.outAmt != outAmt;
   }
 }
 
@@ -611,4 +703,50 @@ class _DottedLinePainter2 extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Loading placeholder for [MutualFundPerformanceSection] — mirrors its overall
+/// footprint (title, total, chart block, three list rows) with shimmer bars so
+/// no fabricated numbers are ever shown.
+class _MfPerformanceSkeleton extends StatelessWidget {
+  const _MfPerformanceSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 32),
+        const ShimmerBar(width: 200, height: 20),
+        const SizedBox(height: 16),
+        const ShimmerBar(width: 160, height: 22),
+        const SizedBox(height: 48),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: ShimmerBar(
+            width: MediaQuery.of(context).size.width,
+            height: 200,
+            borderRadius: 8,
+          ),
+        ),
+        const SizedBox(height: 40),
+        for (int i = 0; i < 3; i++) ...[
+          const _DottedDivider(),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            child: Row(
+              children: [
+                ShimmerBar(width: 8, height: 8, borderRadius: 4),
+                SizedBox(width: 16),
+                Expanded(child: ShimmerBar(width: double.infinity, height: 12)),
+                SizedBox(width: 16),
+                ShimmerBar(width: 64, height: 12),
+              ],
+            ),
+          ),
+        ],
+        const SizedBox(height: 24),
+      ],
+    );
+  }
 }

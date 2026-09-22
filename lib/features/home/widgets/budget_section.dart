@@ -14,6 +14,16 @@ class BudgetSection extends ConsumerStatefulWidget {
 }
 
 class _BudgetSectionState extends ConsumerState<BudgetSection> {
+  @override
+  void initState() {
+    super.initState();
+    // App-start restore: pull budget status + latest dashboard so the home
+    // card reflects an existing budget without re-running the wizard.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(budgetStateProvider).checkBudgetStatus();
+    });
+  }
+
   IconData _getIconForName(String name) {
     final n = name.toLowerCase();
     if (n.contains('grocer') || n.contains('food')) return Icons.shopping_basket_rounded;
@@ -85,7 +95,7 @@ class _BudgetSectionState extends ConsumerState<BudgetSection> {
 }
 
 // ---------------------------------------------------------------------------
-// Empty-state card – matches Zeyro's _BudgetCard design (cream/yellow bg)
+// Empty-state card (cream/yellow bg)
 // ---------------------------------------------------------------------------
 class _BudgetCard extends StatelessWidget {
   final VoidCallback onTap;
@@ -145,29 +155,25 @@ class _BudgetCard extends StatelessWidget {
                             fontFamily: 'DMSans',
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: Colors.black54,
+                            height: 1.35,
+                            color: Color(0xFF64748B),
                           ),
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 22),
+                        const SizedBox(height: 14),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF27272A), Color(0xFF09090B)],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
+                            color: const Color(0xFF0F172A),
                             borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
                           ),
                           child: const Text(
                             'CREATE NOW',
                             style: TextStyle(
                               fontFamily: 'DMSans',
                               fontSize: 10,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                               color: Colors.white,
                               letterSpacing: 0.5,
                             ),

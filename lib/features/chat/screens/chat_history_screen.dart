@@ -2,53 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/chat_provider.dart';
-import '../providers/chat_session_provider.dart';
 import '../../../core/widgets/dashed_line.dart';
 
-class ChatHistoryScreen extends ConsumerStatefulWidget {
+class ChatHistoryScreen extends ConsumerWidget {
   const ChatHistoryScreen({super.key});
-
-  @override
-  ConsumerState<ChatHistoryScreen> createState() => _ChatHistoryScreenState();
-}
-
-class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
-  // Mock data as requested
-  final List<Map<String, dynamic>> _todayChats = [
-    {
-      'title': 'Portfolio optimization strategies',
-      'meta': '2 MESSAGES · 1M AGO',
-    },
-    {
-      'title': 'Tax loss harvesting opportunities',
-      'meta': '5 MESSAGES · 2H AGO',
-    },
-    {
-      'title': 'Analysis of Q3 earnings reports',
-      'meta': '12 MESSAGES · 4H AGO',
-    },
-    {'title': 'Rebalancing equity exposure', 'meta': '3 MESSAGES · 5H AGO'},
-    {'title': 'Funds in investment plan', 'meta': '4 MESSAGES · 8H AGO'},
-  ];
-
-  final List<Map<String, dynamic>> _lastMonthChats = [
-    {'title': 'Foundation Plan fund options', 'meta': '4 MESSAGES · 13 JUL'},
-    {'title': 'ELSS mutual funds tax benefits', 'meta': '8 MESSAGES · 7 JUL'},
-    {'title': 'Retirement corpus calculation', 'meta': '15 MESSAGES · 2 JUL'},
-    {
-      'title': 'Review of technology sector index',
-      'meta': '2 MESSAGES · 28 JUN',
-    },
-    {'title': 'Dividend yield vs growth stocks', 'meta': '6 MESSAGES · 25 JUN'},
-  ];
-
-  final List<Map<String, dynamic>> _previousChats = [
-    {'title': 'Tax saving investment options', 'meta': '6 MESSAGES · 5 JUN'},
-    {'title': 'How to set up your first SIP', 'meta': '12 MESSAGES · 21 MAY'},
-    {'title': 'Gold vs real estate investment', 'meta': '4 MESSAGES · 10 MAY'},
-    {'title': 'Emergency fund allocation rules', 'meta': '2 MESSAGES · 3 MAY'},
-    {'title': 'Understanding expense ratios', 'meta': '7 MESSAGES · 15 APR'},
-  ];
 
   Widget _buildSectionHeader(String title) {
     return Padding(
@@ -66,14 +23,38 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
     );
   }
 
-  Widget _buildChatItem(String title, {bool isLast = false, String? sessionId}) {
+  // "2 MESSAGES · 1H AGO" / "5 MESSAGES · 13 JUL" — same style the screen
+  // always used, now computed from the real message_count/updated_at the
+  // backend returns instead of being hand-typed mock text.
+  String _metaFor(int messageCount, DateTime updatedAt) {
+    final now = DateTime.now();
+    final diff = now.difference(updatedAt);
+    String when;
+    if (diff.inMinutes < 1) {
+      when = 'JUST NOW';
+    } else if (diff.inHours < 1) {
+      when = '${diff.inMinutes}M AGO';
+    } else if (diff.inHours < 24 && updatedAt.day == now.day) {
+      when = '${diff.inHours}H AGO';
+    } else {
+      const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+      when = '${updatedAt.day} ${months[updatedAt.month - 1]}';
+    }
+    final msgWord = messageCount == 1 ? 'MESSAGE' : 'MESSAGES';
+    return '$messageCount $msgWord · $when';
+  }
+
+  Widget _buildChatItem(
+    BuildContext context,
+    WidgetRef ref, {
+    required String title,
+    required String meta,
+    required String sessionId,
+    bool isLast = false,
+  }) {
     return ScaleButton(
       onTap: () {
-        if (sessionId != null) {
-          ref.read(chatNotifierProvider.notifier).loadSession(sessionId);
-        } else {
-          ref.read(chatNotifierProvider.notifier).loadDummyThread(title);
-        }
+        ref.read(chatNotifierProvider.notifier).loadSession(sessionId);
         context.pop();
       },
       child: Container(
@@ -82,18 +63,34 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1E293B),
-                  height: 1.3,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'DMSans',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF1E293B),
+                      height: 1.3,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    meta,
+                    style: const TextStyle(
+                      fontFamily: 'DMMono',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                  ),
+                ],
               ),
             ),
             if (!isLast)
@@ -109,10 +106,10 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
     final topPadding = MediaQuery.paddingOf(context).top;
-    final liveSessions = ref.watch(chatSessionManagerProvider);
+    final sessionsAsync = ref.watch(chatSessionsProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -163,45 +160,93 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
 
                 // Scrollable History List
                 Expanded(
-                  child: ListView(
-                    physics: const ClampingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 8,
-                    ),
-                    children: [
-                      _buildSectionHeader('Today'),
-                      for (int i = 0; i < liveSessions.length; i++)
-                        _buildChatItem(liveSessions[i].title, isLast: i == liveSessions.length - 1 && _todayChats.isEmpty, sessionId: liveSessions[i].id),
-                      
-                      for (int i = 0; i < _todayChats.length; i++)
-                        _buildChatItem(_todayChats[i]['title'], isLast: i == _todayChats.length - 1),
-
-                      _buildSectionHeader('Last Month'),
-                      for (int i = 0; i < _lastMonthChats.length; i++)
-                        _buildChatItem(_lastMonthChats[i]['title'], isLast: i == _lastMonthChats.length - 1),
-
-                      _buildSectionHeader('Long Time'),
-                      for (int i = 0; i < _previousChats.length; i++)
-                        _buildChatItem(_previousChats[i]['title'], isLast: i == _previousChats.length - 1),
-
-                      const SizedBox(height: 40),
-                      
-                      const Center(
+                  child: sessionsAsync.when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
                         child: Text(
-                          'END OF HISTORY',
-                          style: TextStyle(
-                            fontFamily: 'DMMono',
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 2.0,
-                            color: Color(0xFF94A3B8),
-                          ),
+                          "Couldn't load your chat history. Pull down to retry.",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
                         ),
                       ),
-                      
-                      const SizedBox(height: 40), // Bottom padding
-                    ],
+                    ),
+                    data: (sessions) {
+                      if (sessions.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'No past conversations yet.',
+                            style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF94A3B8)),
+                          ),
+                        );
+                      }
+
+                      final now = DateTime.now();
+                      final today = <Map<String, dynamic>>[];
+                      final lastMonth = <Map<String, dynamic>>[];
+                      final longTime = <Map<String, dynamic>>[];
+                      for (final s in sessions) {
+                        final updatedAt = DateTime.tryParse(s['updated_at']?.toString() ?? '') ?? now;
+                        final isToday = updatedAt.year == now.year && updatedAt.month == now.month && updatedAt.day == now.day;
+                        final isWithin30Days = now.difference(updatedAt).inDays < 30;
+                        if (isToday) {
+                          today.add(s);
+                        } else if (isWithin30Days) {
+                          lastMonth.add(s);
+                        } else {
+                          longTime.add(s);
+                        }
+                      }
+
+                      Widget buildGroup(String label, List<Map<String, dynamic>> group) {
+                        if (group.isEmpty) return const SizedBox.shrink();
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildSectionHeader(label),
+                            for (int i = 0; i < group.length; i++)
+                              _buildChatItem(
+                                context,
+                                ref,
+                                title: (group[i]['title'] as String?)?.trim().isNotEmpty == true
+                                    ? group[i]['title'] as String
+                                    : 'New Chat',
+                                meta: _metaFor(
+                                  (group[i]['message_count'] as num?)?.toInt() ?? 0,
+                                  DateTime.tryParse(group[i]['updated_at']?.toString() ?? '') ?? now,
+                                ),
+                                sessionId: group[i]['id'].toString(),
+                                isLast: i == group.length - 1,
+                              ),
+                          ],
+                        );
+                      }
+
+                      return ListView(
+                        physics: const ClampingScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                        children: [
+                          buildGroup('Today', today),
+                          buildGroup('Last Month', lastMonth),
+                          buildGroup('Long Time', longTime),
+                          const SizedBox(height: 40),
+                          const Center(
+                            child: Text(
+                              'END OF HISTORY',
+                              style: TextStyle(
+                                fontFamily: 'DMMono',
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 2.0,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                        ],
+                      );
+                    },
                   ),
                 ),
 

@@ -1,4 +1,3 @@
-import 'package:astra_frontend/features/budget/theme/budget_colors.dart';
 import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -159,6 +158,10 @@ class _BudgetControlScreenState extends ConsumerState<BudgetControlScreen> {
                       incomeAmount: dash?.incomeAmount ?? 0,
                       budgetPeriodStart: dash?.budgetPeriodStart,
                       budgetPeriodEnd: dash?.budgetPeriodEnd,
+                      title: "",
+                      showBreakdownRow: false,
+                      showRemainingAmount: false,
+                      showTotalWithCurrentAmount: true,
                       backgroundColor: _getHealthColor(dash?.status),
                       textColor: _getHealthTextColor(dash?.status),
                       onTopIconTap: () async {

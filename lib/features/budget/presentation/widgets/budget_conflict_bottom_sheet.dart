@@ -39,41 +39,46 @@ class BudgetConflictBottomSheet extends StatelessWidget {
             children: [
               // Warning Icon Header
               Container(
-                width: 64,
-                height: 64,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
-                  color: BudgetColors.errorBg,
-                  shape: BoxShape.circle,
+                  color: const Color(0xFFFEF2F2),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: const Color(0xFFFECACA), width: 1),
                 ),
                 child: const Icon(
                   Icons.warning_amber_rounded,
-                  color: Color(0xFFB71C1C),
-                  size: 32,
+                  color: Color(0xFFDC2626),
+                  size: 24,
                 ),
               ),
-              SizedBox(height: getProportionateScreenHeight(24)),
+              SizedBox(height: getProportionateScreenHeight(20)),
 
               // Title
-              Text("Budget conflict",
-                style: TextStyle(fontFamily: 'DMSans', 
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
+              Text(
+                "Budget conflict",
+                style: TextStyle(
+                  fontFamily: 'SpaceGrotesk', 
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: -0.5,
-                  color: const Color(0xFF133026),
+                  color: const Color(0xFF0F172A),
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: getProportionateScreenHeight(16)),
+              SizedBox(height: getProportionateScreenHeight(12)),
 
               // Description
               Text(
                 exception.type == 'scalable_floor_exceeded'
-                    ? "your new budget covers your protected bills, but doesn't leave enough room for your other categories. you are short by ${nf.format(exception.amount)}."
-                    : "we noticed your new spending limit is lower than what you've already committed to your protected bills. you are short by ${nf.format(exception.amount)}.",
-                style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
+                    ? "Your new budget covers your protected bills, but doesn't leave enough room for your other categories. You are short by ${nf.format(exception.amount)}."
+                    : "We noticed your new spending limit is lower than what you've already committed to your protected bills. You are short by ${nf.format(exception.amount)}.",
+                style: TextStyle(
+                  fontFamily: 'DMSans', 
                   fontSize: 14,
+                  fontWeight: FontWeight.w400,
                   height: 1.5,
-                  color: const Color(0xFF133026).withValues(alpha: 0.7),
+                  color: const Color(0xFF475569),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -81,31 +86,39 @@ class BudgetConflictBottomSheet extends StatelessWidget {
               if (exception.conflicts.isNotEmpty) ...[
                 SizedBox(height: getProportionateScreenHeight(16)),
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFAF5EA),
+                    color: const Color(0xFFF8FAFC),
                     borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: const Color(0xFF133026).withValues(alpha: 0.1)),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
                   ),
                   child: Column(
                     children: [
                       Text(
                         exception.type == 'scalable_floor_exceeded'
-                            ? (exception.conflicts.length > 1 ? "specifically, your flexible limits for" : "specifically, your flexible limit for")
-                            : (exception.conflicts.length > 1 ? "specifically, your fixed limits for" : "specifically, your fixed limit for"),
-                        style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                          fontSize: 13,
-                          color: const Color(0xFF133026).withValues(alpha: 0.7),
+                            ? (exception.conflicts.length > 1
+                                ? "Specifically, your flexible limits for:"
+                                : "Specifically, your flexible limit for:")
+                            : (exception.conflicts.length > 1
+                                ? "Specifically, your fixed limits for:"
+                                : "Specifically, your fixed limit for:"),
+                        style: TextStyle(
+                          fontFamily: 'DMSans', 
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF64748B),
                         ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 6),
                       Text(
                         exception.conflicts.map((c) => c.replaceAll('_', ' ')).join(', '),
-                        style: TextStyle(fontFamily: 'DMSans', 
-                          fontSize: 16,
+                        style: TextStyle(
+                          fontFamily: 'DMMono', 
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF133026),
+                          color: const Color(0xFF0F172A),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -113,14 +126,16 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                       Text(
                         exception.type == 'scalable_floor_exceeded'
                             ? (exception.conflicts.length > 1 
-                                ? "need more funding to stay above their safe minimums. try increasing your total budget."
-                                : "needs more funding to stay above its safe minimum. try increasing your total budget.")
+                                ? "need more funding to stay above their safe minimums. Try increasing your total budget."
+                                : "needs more funding to stay above its safe minimum. Try increasing your total budget.")
                             : (exception.conflicts.length > 1
-                                ? "add up to more than your new total. you'll need to lower those first to proceed."
-                                : "is more than your new total. you'll need to lower it first to proceed."),
-                        style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                          fontSize: 13,
-                          color: const Color(0xFF133026).withValues(alpha: 0.7),
+                                ? "add up to more than your new total. You'll need to lower those first to proceed."
+                                : "is more than your new total. You'll need to lower it first to proceed."),
+                        style: TextStyle(
+                          fontFamily: 'DMSans', 
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF64748B),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -129,22 +144,24 @@ class BudgetConflictBottomSheet extends StatelessWidget {
                 ),
               ],
 
-              SizedBox(height: getProportionateScreenHeight(32)),
+              SizedBox(height: getProportionateScreenHeight(28)),
 
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF133026),
+                  backgroundColor: const Color(0xFF0F172A),
                   foregroundColor: BudgetColors.white,
-                  minimumSize: const Size(double.infinity, 56),
+                  minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
                   elevation: 0,
                 ),
-                child: Text("I understand",
-                  style: TextStyle(fontFamily: 'DMSans', 
-                    fontSize: 16,
+                child: const Text(
+                  "I understand",
+                  style: TextStyle(
+                    fontFamily: 'DMSans', 
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

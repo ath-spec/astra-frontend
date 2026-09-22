@@ -1,52 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfReitsCollectionScreen extends StatefulWidget {
+class MfReitsCollectionScreen extends ConsumerStatefulWidget {
   const MfReitsCollectionScreen({super.key});
 
   @override
-  State<MfReitsCollectionScreen> createState() => _MfReitsCollectionScreenState();
+  ConsumerState<MfReitsCollectionScreen> createState() => _MfReitsCollectionScreenState();
 }
 
-class _MfReitsCollectionScreenState extends State<MfReitsCollectionScreen> {
+class _MfReitsCollectionScreenState extends ConsumerState<MfReitsCollectionScreen> {
+  static const _category = 'Other - REIT';
+
   String _activeFilter = 'All';
-
   final _filters = ['All', 'Commercial', 'Retail'];
-
-  final List<Map<String, dynamic>> _allFunds = [
-    {
-      'name': 'Embassy Office Parks REIT',
-      'category': 'Real Estate • Commercial',
-      'cap': 'Commercial',
-      'returns': {'1Y': '14.40%', '3Y': '8.80%', '5Y': '7.50%'},
-      'rating': 5,
-    },
-    {
-      'name': 'Mindspace Business Parks REIT',
-      'category': 'Real Estate • Commercial',
-      'cap': 'Commercial',
-      'returns': {'1Y': '16.10%', '3Y': '9.40%', '5Y': '8.10%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Nexus Select Trust',
-      'category': 'Real Estate • Retail',
-      'cap': 'Retail',
-      'returns': {'1Y': '18.60%', '3Y': '11.80%', '5Y': '10.20%'},
-      'rating': 5,
-    },
-  ];
-
   String _returnPeriod = '1Y';
 
-  List<Map<String, dynamic>> get _filteredFunds {
-    if (_activeFilter == 'All') return _allFunds;
-    return _allFunds.where((f) => f['cap'] == _activeFilter).toList();
+  List<CatalogFund> _filteredFunds(List<CatalogFund> allFunds) {
+    if (_activeFilter == 'All') return allFunds;
+    return allFunds.where((f) {
+      final text = '${f.category} ${f.schemeName}'.toLowerCase();
+      switch (_activeFilter) {
+        case 'Commercial':
+          return text.contains('commercial') || text.contains('office');
+        case 'Retail':
+          return text.contains('retail') || text.contains('mall');
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
+  String _returnFor(CatalogFund f) {
+    final value = switch (_returnPeriod) {
+      '3Y' => f.returns3y,
+      '5Y' => f.returns5y,
+      _ => f.returns1y,
+    };
+    return value != null ? '${value.toStringAsFixed(2)}%' : '—';
   }
 
   @override
   Widget build(BuildContext context) {
-    final funds = _filteredFunds;
+    final catalogAsync = ref.watch(catalogFundsByCategoryProvider(_category));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -85,8 +84,11 @@ class _MfReitsCollectionScreenState extends State<MfReitsCollectionScreen> {
                 setState(() {
                   if (_returnPeriod == '1Y') {
                     _returnPeriod = '3Y';
-                  } else if (_returnPeriod == '3Y') _returnPeriod = '5Y';
-                  else _returnPeriod = '1Y';
+                  } else if (_returnPeriod == '3Y') {
+                    _returnPeriod = '5Y';
+                  } else {
+                    _returnPeriod = '1Y';
+                  }
                 });
               },
               child: Container(
@@ -150,45 +152,83 @@ class _MfReitsCollectionScreenState extends State<MfReitsCollectionScreen> {
           ),
           // Divider
           Container(height: 1, color: const Color(0xFFF1F5F9)),
-          // Fund count hint
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-            child: Row(
-              children: [
-                Text(
-                  '${funds.length} trusts',
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF94A3B8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // List
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: funds.length,
-              separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
-              itemBuilder: (context, index) {
-                final fund = funds[index];
-                return _buildFundRow(fund);
-              },
-            ),
+            child: catalogAsync.isLoading
+                ? const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        AppThemeShimmerCard(height: 140),
+                        SizedBox(height: 12),
+                        AppThemeShimmerCard(height: 140),
+                        SizedBox(height: 12),
+                        AppThemeShimmerCard(height: 140),
+                      ],
+                    ),
+                  )
+                : catalogAsync.hasError
+                    ? const Center(
+                        child: Text(
+                          "Couldn't load REITs.",
+                          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                        ),
+                      )
+                    : _buildFundsList(_filteredFunds(catalogAsync.valueOrNull ?? [])),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFundRow(Map<String, dynamic> fund) {
+  Widget _buildFundsList(List<CatalogFund> funds) {
+    if (funds.isEmpty) {
+      return const Center(
+        child: Text(
+          'No REITs available yet.',
+          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+        ),
+      );
+    }
+    return Column(
+      children: [
+        // Fund count hint
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            children: [
+              Text(
+                '${funds.length} trusts',
+                style: const TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF94A3B8),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // List
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            itemCount: funds.length,
+            separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
+            itemBuilder: (context, index) {
+              final fund = funds[index];
+              return _buildFundRow(fund);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFundRow(CatalogFund fund) {
     return Column(
       children: [
         InkWell(
-          onTap: () => MfFundProfileScreen.showModal(context, fund['name'] as String),
+          onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
@@ -205,7 +245,7 @@ class _MfReitsCollectionScreenState extends State<MfReitsCollectionScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          (fund['name'] as String).substring(0, 1),
+                          fund.schemeName.isNotEmpty ? fund.schemeName.substring(0, 1) : '?',
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
@@ -236,19 +276,20 @@ class _MfReitsCollectionScreenState extends State<MfReitsCollectionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        fund['name'] as String,
+                        fund.schemeName,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          height: 1.25,
                           color: Color(0xFF1E1E1E),
                         ),
-                        maxLines: 1,
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        fund['category'] as String,
+                        fund.category,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 10,
@@ -258,12 +299,13 @@ class _MfReitsCollectionScreenState extends State<MfReitsCollectionScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(width: 12),
                 // Returns
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   child: Text(
-                    (fund['returns'] as Map<String, dynamic>)[_returnPeriod] as String,
-                    key: ValueKey<String>('${fund['name']}_$_returnPeriod'),
+                    _returnFor(fund),
+                    key: ValueKey<String>('${fund.schemeCode}_$_returnPeriod'),
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,

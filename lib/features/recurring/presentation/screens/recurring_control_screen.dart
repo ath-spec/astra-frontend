@@ -2,9 +2,12 @@ import 'package:astra_frontend/core/instrumentation/instrumentation.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:astra_frontend/core/responsive/size_config.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_mapping.dart';
+import 'package:astra_frontend/features/recurring/data/recurring_providers.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/recurring_calendar_widget.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/recurring_dues_sheet.dart';
 import 'package:astra_frontend/features/recurring/presentation/widgets/recurring_control/yearly_calendar_view.dart';
@@ -13,14 +16,14 @@ import 'package:astra_frontend/features/recurring/presentation/widgets/recurring
 import 'package:astra_frontend/features/recurring/widgets/noise_cache.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
 
-class RecurringControlScreen extends StatefulWidget {
+class RecurringControlScreen extends ConsumerStatefulWidget {
   const RecurringControlScreen({super.key});
 
   @override
-  State<RecurringControlScreen> createState() => _RecurringControlScreenState();
+  ConsumerState<RecurringControlScreen> createState() => _RecurringControlScreenState();
 }
 
-class _RecurringControlScreenState extends State<RecurringControlScreen>
+class _RecurringControlScreenState extends ConsumerState<RecurringControlScreen>
     with TickerProviderStateMixin {
   bool _isYearlyView = false;
   DateTime _selectedDate = DateTime.now();
@@ -36,9 +39,11 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
   final TextEditingController _searchController = TextEditingController();
   final ValueNotifier<String> _searchQuery = ValueNotifier<String>("");
 
-  // Lifted state for payments to handle session-wide cancellations
-  late List<Map<String, dynamic>> _payments;
-  
+  // Cached mapping of the last-known mandates list (from the backend) into
+  // the UI's Map<String, dynamic> shape. Kept as a fallback while a refetch
+  // (e.g. after invalidation) is in flight, so the sheet doesn't flash empty.
+  List<Map<String, dynamic>> _payments = [];
+
   // State for Day Payments Popup (screen-level overlay)
   int? _popupDate;
   List<Map<String, dynamic>>? _popupPayments;
@@ -59,114 +64,6 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
     } catch (e) {
       debugPrint('Error getting cached noise texture: $e');
     }
-
-    _payments = [
-      {
-        'id': '1',
-        'day': 11,
-        'name': 'Spotify India Pvt Ltd',
-        'type': 'Monthly',
-        'amount': 99.0,
-        'logoAsset': 'lib/core/images/spotify-icon.svg',
-        'isDark': true,
-        'backgroundColor': const Color(0xFF1DB954),
-        'dotColor': const Color(0xFFC0D72F),
-        'status': 'active',
-        'bank': 'HSBC •• 6006',
-      },
-      {
-        'id': '2',
-        'day': 11,
-        'name': 'Notion',
-        'type': 'Monthly',
-        'amount': 399.0,
-        'logoAsset': 'lib/core/images/Notion-logo.svg',
-        'isDark': false,
-        'backgroundColor': Colors.white,
-        'dotColor': const Color(0xFFE5803E),
-        'status': 'active',
-        'bank': 'Zeyro Bank •• 1234',
-      },
-      {
-        'id': '3',
-        'day': 17,
-        'name': 'Perplexity',
-        'type': 'Monthly',
-        'amount': 1699.0,
-        'logoAsset': 'lib/core/images/Perplexity_Black_0.svg',
-        'isDark': true,
-        'backgroundColor': Colors.black87,
-        'dotColor': const Color(0xFFC0D72F),
-        'status': 'active',
-        'bank': 'HDFC •• 4455',
-      },
-      {
-        'id': '4',
-        'day': 22,
-        'name': 'Netflix',
-        'type': 'Monthly',
-        'amount': 649.0,
-        'logoAsset': 'lib/core/images/Netflix_icon.svg',
-        'isDark': true,
-        'backgroundColor': Colors.black,
-        'dotColor': const Color(0xFFE5803E),
-        'status': 'active',
-        'bank': 'ICICI •• 7788',
-      },
-      {
-        'id': '5',
-        'day': 11,
-        'name': 'YouTube Premium',
-        'type': 'Monthly',
-        'amount': 79.0,
-        'logoAsset': 'lib/core/images/youtube-icon.svg',
-        'isDark': false,
-        'backgroundColor': Colors.white,
-        'dotColor': const Color(0xFFFF0000),
-        'status': 'active',
-        'bank': 'HDFC •• 4455',
-      },
-      {
-        'id': '6',
-        'day': 11,
-        'name': 'Claude AI',
-        'type': 'Monthly',
-        'amount': 1699.0,
-        'logoAsset': 'lib/core/images/Claude_AI_symbol.svg',
-        'isDark': true,
-        'backgroundColor': const Color(0xFFD97757),
-        'dotColor': const Color(0xFFD97757),
-        'status': 'active',
-        'bank': 'Zeyro Bank •• 4455',
-      },
-      {
-        'id': '7',
-        'day': 11,
-        'name': 'Disney+ Hotstar',
-        'type': 'Yearly',
-        'amount': 1499.0,
-        'logoAsset': 'lib/core/images/Disney.svg',
-        'isDark': true,
-        'backgroundColor': const Color(0xFF001524),
-        'dotColor': const Color(0xFF030B17),
-        'status': 'active',
-        'bank': 'ICICI •• 7788',
-      },
-      {
-        'id': '8',
-        'day': 19,
-        'month': 5,
-        'name': 'Canva',
-        'type': 'Yearly',
-        'amount': 8000.0,
-        'logoAsset': 'lib/core/images/canva.svg',
-        'isDark': false,
-        'backgroundColor': const Color(0xFF00C4CC),
-        'dotColor': const Color(0xFF00C4CC),
-        'status': 'active',
-        'bank': 'HDFC •• 4455',
-      },
-    ];
   }
 
   void _onSearchFocusChange() {
@@ -182,6 +79,9 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
   }
 
   void _onStatusChanged(String id, String newStatus, {DateTime? pauseUntil}) {
+    // The actual mutation already happened against the backend (see
+    // ManageAutopayScreen), which also invalidated the mandate providers.
+    // This just keeps the on-screen list optimistic until that refetch lands.
     setState(() {
       final index = _payments.indexWhere((p) => p['id'] == id);
       if (index != -1) {
@@ -243,6 +143,22 @@ class _RecurringControlScreenState extends State<RecurringControlScreen>
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
+    final mandatesAsync = ref.watch(allMandatesProvider);
+    ref.listen(allMandatesProvider, (previous, next) {
+      next.whenData((mandates) {
+        setState(() {
+          _payments = mandates.map(paymentMapFromMandate).toList();
+        });
+      });
+    });
+    // Keep _payments in sync on the very first build too (ref.listen only
+    // fires on subsequent changes).
+    mandatesAsync.whenData((mandates) {
+      if (_payments.isEmpty && mandates.isNotEmpty) {
+        _payments = mandates.map(paymentMapFromMandate).toList();
+      }
+    });
 
     final topPadding = MediaQuery.paddingOf(context).top;
 

@@ -12,7 +12,6 @@ import 'package:astra_frontend/core/responsive/size_config.dart';
 import 'package:astra_frontend/core/instrumentation/funnel_tracker.dart';
 import 'package:astra_frontend/features/budget/data/models/budget_api_models.dart';
 import 'package:astra_frontend/features/budget/presentation/screens/budget_category_analyzing_screen.dart';
-import 'package:astra_frontend/features/budget/presentation/screens/budget_control_screen.dart';
 import 'package:astra_frontend/features/budget/presentation/screens/set_budget_category_screen.dart';
 import 'package:astra_frontend/services/analytics_service.dart';
 
@@ -461,13 +460,13 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                               if (_conflictError != null) ...[
                                 Container(
                                   width: double.infinity,
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: BudgetColors.errorBg,
+                                    color: const Color(0xFFFEF2F2),
                                     borderRadius: BorderRadius.circular(4),
                                     border: Border.all(
-                                      color: const Color(0xFFB71C1C),
-                                      width: 1.5,
+                                      color: const Color(0xFFFCA5A5),
+                                      width: 1.0,
                                     ),
                                   ),
                                   child: Column(
@@ -476,48 +475,74 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          const Icon(
-                                            Icons.warning_amber_rounded,
-                                            color: Color(0xFFB71C1C),
-                                            size: 20,
+                                          Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFFEE2E2),
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            child: const Icon(
+                                              Icons.warning_amber_rounded,
+                                              color: Color(0xFFDC2626),
+                                              size: 16,
+                                            ),
                                           ),
                                           const SizedBox(width: 8),
                                           Text("Budget conflict",
-                                            style: TextStyle(fontFamily: 'DMSans', 
-                                              fontSize: 16,
+                                            style: TextStyle(
+                                              fontFamily: 'DMSans', 
+                                              fontSize: 14,
                                               fontWeight: FontWeight.w600,
-                                              letterSpacing: 1,
-                                              color: const Color(0xFFB71C1C),
+                                              letterSpacing: -0.2,
+                                              color: const Color(0xFF991B1B),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 12),
+                                      const SizedBox(height: 10),
                                       Text(
                                         _conflictError!.type == 'scalable_floor_exceeded'
-                                            ? "Your new budget covers your protected bills, but doesn't leave enough room for your other categories. you are short by ₹${_conflictError!.amount.toStringAsFixed(0)}."
+                                            ? "Your new budget covers your protected bills, but doesn't leave enough room for your other categories. You are short by ₹${_conflictError!.amount.toStringAsFixed(0)}."
                                             : "You have a conflict in your budget allocation.",
-                                        style: TextStyle(fontWeight: FontWeight.w600, fontFamily: 'DMSans', 
-                                          fontSize: 14,
-                                          color: const Color(0xFFB71C1C),
-                                          height: 1.5,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'DMSans', 
+                                          fontSize: 13,
+                                          color: const Color(0xFF7F1D1D),
+                                          height: 1.45,
                                         ),
                                       ),
                                       if (_conflictError!.conflicts.isNotEmpty) ...[
                                         const SizedBox(height: 8),
-                                        Text(
-                                          _conflictError!.type == 'scalable_floor_exceeded'
-                                            ? (_conflictError!.conflicts.length > 1
-                                                ? "Flexible categories: ${_conflictError!.conflicts.map((c) => c.replaceAll('_', ' ').toLowerCase()).join(', ')}"
-                                                : "Flexible category: " + _conflictError!.conflicts.first.replaceAll('_', ' ').toLowerCase())
-                                            : (_conflictError!.conflicts.length > 1
-                                                ? "Fixed categories: ${_conflictError!.conflicts.map((c) => c.replaceAll('_', ' ').toLowerCase()).join(', ')}"
-                                                : "Fixed category: " + _conflictError!.conflicts.first.replaceAll('_', ' ').toLowerCase()),
-                                          style: TextStyle(fontFamily: 'DMSans', 
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFFB71C1C),
-                                            height: 1.5,
+                                        Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withValues(alpha: 0.7),
+                                            borderRadius: BorderRadius.circular(4),
+                                            border: Border.all(
+                                              color: const Color(0xFFFECACA),
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            _conflictError!.type == 'scalable_floor_exceeded'
+                                              ? (_conflictError!.conflicts.length > 1
+                                                  ? "Flexible categories: ${_conflictError!.conflicts.map((c) => c.replaceAll('_', ' ').toLowerCase()).join(', ')}"
+                                                  : "Flexible category: ${_conflictError!.conflicts.first.replaceAll('_', ' ').toLowerCase()}")
+                                              : (_conflictError!.conflicts.length > 1
+                                                  ? "Fixed categories: ${_conflictError!.conflicts.map((c) => c.replaceAll('_', ' ').toLowerCase()).join(', ')}"
+                                                  : "Fixed category: ${_conflictError!.conflicts.first.replaceAll('_', ' ').toLowerCase()}"),
+                                            style: TextStyle(
+                                              fontFamily: 'DMMono', 
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: const Color(0xFF991B1B),
+                                              height: 1.4,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -525,7 +550,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: getProportionateScreenHeight(20),
+                                  height: getProportionateScreenHeight(16),
                                 ),
                               ],
                               AnimatedContainer(
@@ -584,12 +609,62 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
                         : () async {
                             FocusManager.instance.primaryFocus?.unfocus();
                             if (_currentBudget <= 0) {
-                              ScaffoldMessenger.of(context)..hideCurrentSnackBar()..showSnackBar(
-        const SnackBar(behavior: SnackBarBehavior.floating, duration: Duration(milliseconds: 1500), 
-                                  content: Text("Budget cannot be zero"),
-                                  backgroundColor: Color(0xFFB71C1C),
-                                ),
-                              );
+                              ScaffoldMessenger.of(context)
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(
+                                  SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: const Duration(milliseconds: 2000),
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
+                                    margin: EdgeInsets.only(
+                                      bottom: getProportionateScreenHeight(84),
+                                      left: getProportionateScreenWidth(24),
+                                      right: getProportionateScreenWidth(24),
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    content: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF0F172A),
+                                        borderRadius: BorderRadius.circular(4),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(alpha: 0.15),
+                                            blurRadius: 16,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.info_outline_rounded,
+                                            color: Color(0xFFF87171),
+                                            size: 18,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              "Budget cannot be ₹0",
+                                              style: TextStyle(
+                                                fontFamily: 'DMSans',
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.white,
+                                                letterSpacing: -0.2,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
                               return;
                             }
                             
@@ -737,7 +812,7 @@ class _FinalizeBudgetScreenState extends ConsumerState<FinalizeBudgetScreen> {
   }
 }
 
-// Custom DMSansactive dial mapped exactly to standard slider API
+// Custom interactive dial mapped exactly to standard slider API
 class _BudgetDial extends StatefulWidget {
   final double value;
   final double minValue;

@@ -1,17 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import '../../../data/portfolio_analysis_providers.dart';
+import '../../../data/portfolio_analysis_models.dart';
 import 'portfolio_genome_chart.dart';
 
-class EquitySectorExposureSection extends StatefulWidget {
+String _formatInr(double value) {
+  final rounded = value.round();
+  final isNegative = rounded < 0;
+  final digits = rounded.abs().toString();
+  String formatted;
+  if (digits.length <= 3) {
+    formatted = digits;
+  } else {
+    final head = digits.substring(0, digits.length - 3);
+    final tail = digits.substring(digits.length - 3);
+    final headFormatted = head.replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{2})+(?!\d))'),
+      (m) => '${m[1]},',
+    );
+    formatted = '$headFormatted,$tail';
+  }
+  return '${isNegative ? '-' : ''}₹ $formatted';
+}
+
+class EquitySectorExposureSection extends ConsumerStatefulWidget {
   const EquitySectorExposureSection({super.key});
 
   @override
-  State<EquitySectorExposureSection> createState() => _EquitySectorExposureSectionState();
+  ConsumerState<EquitySectorExposureSection> createState() => _EquitySectorExposureSectionState();
 }
 
-class _EquitySectorExposureSectionState extends State<EquitySectorExposureSection> with SingleTickerProviderStateMixin {
+class _EquitySectorExposureSectionState extends ConsumerState<EquitySectorExposureSection> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _hasAnimated = false;
@@ -34,6 +57,11 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
 
   @override
   Widget build(BuildContext context) {
+    final allocAsync = ref.watch(portfolioAllocationProvider);
+    final sectors =
+        allocAsync.valueOrNull?.sectorExposure ?? const <SectorExposureData>[];
+    final isLoading = allocAsync.isLoading && sectors.isEmpty;
+
     return VisibilityDetector(
       key: const Key('EquitySectorExposureSection'),
       onVisibilityChanged: (info) {
@@ -59,17 +87,12 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               ),
             ),
             const SizedBox(height: 24),
-            
-            _buildSectorBar('Financial Services', 34, '₹ 1,12,756'),
-            const SizedBox(height: 24),
-            _buildSectorBar('Consumer Cyclical', 13, '₹ 42,835'),
-            const SizedBox(height: 24),
-            _buildSectorBar('Industrials', 9, '₹ 30,140'),
-            const SizedBox(height: 24),
-            _buildSectorBar('Technology', 8, '₹ 26,533'),
-            const SizedBox(height: 24),
-            _buildSectorBar('Others', 34, '₹ 1,13,471'),
-            
+
+            if (isLoading)
+              ..._sectorBarsSkeleton()
+            else
+              ..._sectorBars(sectors),
+
             const SizedBox(height: 48),
 
             Row(
@@ -111,17 +134,29 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const AnimatedGradientShimmer(
-                    child: TypewriterText(
-                      text: 'Your portfolio has a strong tilt towards Financial Services (34%) and Cyclical sectors. While great for growth during economic expansions, this creates a blind spot in defensive sectors like Healthcare or Utilities. This means your portfolio is highly sensitive to interest rate changes and economic cycles, lacking stability during market downturns.',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 12,
-                        height: 1.5,
-                        color: Colors.white,
+                  if (sectors.isEmpty)
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ShimmerBar(width: double.infinity, height: 12),
+                        SizedBox(height: 8),
+                        ShimmerBar(width: double.infinity, height: 12),
+                        SizedBox(height: 8),
+                        ShimmerBar(width: 180, height: 12),
+                      ],
+                    )
+                  else
+                    AnimatedGradientShimmer(
+                      child: TypewriterText(
+                        text: _insightText(sectors),
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12,
+                          height: 1.5,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
                   const SizedBox(height: 32),
                   const PortfolioGenomeChart(),
                 ],
@@ -143,6 +178,45 @@ class _EquitySectorExposureSectionState extends State<EquitySectorExposureSectio
         ),
       ),
     );
+  }
+
+  String _insightText(List<SectorExposureData> sectors) {
+    final top = sectors.reduce((a, b) => a.percentage >= b.percentage ? a : b);
+    return 'Your portfolio has a strong tilt towards ${top.sector} (${top.percentage.round()}%) and Cyclical sectors. While great for growth during economic expansions, this creates a blind spot in defensive sectors like Healthcare or Utilities. This means your portfolio is highly sensitive to interest rate changes and economic cycles, lacking stability during market downturns.';
+  }
+
+  List<Widget> _sectorBars(List<SectorExposureData> sectors) {
+    final out = <Widget>[];
+    for (var i = 0; i < sectors.length; i++) {
+      if (i > 0) out.add(const SizedBox(height: 24));
+      final s = sectors[i];
+      out.add(_buildSectorBar(s.sector, s.percentage.round(), _formatInr(s.amount)));
+    }
+    return out;
+  }
+
+  List<Widget> _sectorBarsSkeleton() {
+    final out = <Widget>[];
+    for (var i = 0; i < 5; i++) {
+      if (i > 0) out.add(const SizedBox(height: 24));
+      out.add(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ShimmerBar(width: 150, height: 12),
+                ShimmerBar(width: 74, height: 12),
+              ],
+            ),
+            SizedBox(height: 8),
+            ShimmerBar(width: double.infinity, height: 10, borderRadius: 0),
+          ],
+        ),
+      );
+    }
+    return out;
   }
 
   Widget _buildSectorBar(String name, int percentage, String amount) {

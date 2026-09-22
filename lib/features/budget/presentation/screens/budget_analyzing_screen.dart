@@ -85,11 +85,31 @@ class _BudgetAnalyzingScreenState extends ConsumerState<BudgetAnalyzingScreen> {
 
 
     try {
+      // Kick off the real diagnosis fetch (POST /budgets/diagnosis). The
+      // downstream screens (BudgetIntroDiagnosisScreen, SuggestedBudgetScreen)
+      // read state.currentDiagnosis, so it has to be populated here.
+      await ref
+          .read(budgetStateProvider)
+          .fetchDiagnosis(forceRefresh: isRetry);
       await Future.delayed(const Duration(seconds: 4));
-      if (mounted && _hasError) setState(() => _hasError = false);
+      if (!mounted) return;
+      final state = ref.read(budgetStateProvider);
+      if (state.currentDiagnosis == null) {
+        throw Exception('diagnosis unavailable');
+      }
+      if (_hasError) setState(() => _hasError = false);
     } catch (e) {
       if (mounted) {
         _isAnalyzing = false;
+        setState(() {
+          _hasError = true;
+          const errMsg = "No internet connection. waiting to reconnect...";
+          if (!_loadingTexts.contains(errMsg)) _loadingTexts.add(errMsg);
+          _textIndex = _loadingTexts.indexOf(errMsg);
+        });
+        Future.delayed(const Duration(seconds: 5), () {
+          if (mounted && _hasError) _startAnalysis(isRetry: true);
+        });
       }
     }
   }

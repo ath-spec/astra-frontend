@@ -1,24 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../../data/portfolio_analysis_providers.dart';
+import '../../../data/portfolio_analysis_models.dart';
 import 'generic_info_sheet.dart';
 
-class YearlyInvestmentSection extends StatefulWidget {
+String _fmtInrFull(double value) {
+  final rounded = value.round();
+  final neg = rounded < 0;
+  final digits = rounded.abs().toString();
+  String out;
+  if (digits.length <= 3) {
+    out = digits;
+  } else {
+    final head = digits.substring(0, digits.length - 3);
+    final tail = digits.substring(digits.length - 3);
+    out =
+        '${head.replaceAllMapped(RegExp(r'(\d)(?=(\d{2})+(?!\d))'), (m) => '${m[1]},')},$tail';
+  }
+  return '${neg ? '-₹' : '₹'}$out';
+}
+
+class YearlyInvestmentSection extends ConsumerStatefulWidget {
   const YearlyInvestmentSection({super.key});
 
   @override
-  State<YearlyInvestmentSection> createState() =>
+  ConsumerState<YearlyInvestmentSection> createState() =>
       _YearlyInvestmentSectionState();
 }
 
-class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
+class _YearlyInvestmentSectionState
+    extends ConsumerState<YearlyInvestmentSection>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  int? _tappedIndex; // Starts null so no tooltip during animation
+  int? _tappedIndex; // null → default (last complete year), resolved in build
   bool _hasAnimated = false;
 
   @override
@@ -34,13 +55,8 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
     );
 
     _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        if (mounted) {
-          setState(() {
-            _tappedIndex ??=
-                5; // Select 2025 by default after animation finishes
-          });
-        }
+      if (status == AnimationStatus.completed && mounted) {
+        setState(() {}); // reveal the default tooltip once bars have grown
       }
     });
   }
@@ -64,6 +80,28 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
 
   @override
   Widget build(BuildContext context) {
+    final discAsync = ref.watch(portfolioDisciplineProvider);
+    final disc = discAsync.value;
+
+    if (disc == null) {
+      return discAsync.isLoading
+          ? const _YearlyInvestmentSkeleton()
+          : const SizedBox.shrink();
+    }
+
+    final years = disc.yearlyHistory;
+    if (years.isEmpty) return const SizedBox.shrink();
+
+    final current = years.last;
+    // Default selection: the last *complete* year (second to last), matching
+    // the original behaviour.
+    final defaultIdx = years.length >= 2 ? years.length - 2 : 0;
+    final effectiveTapped = _tappedIndex ?? defaultIdx;
+    final prior = years.length >= 2 ? years[years.length - 2] : current;
+    final proTip = current.netAmount >= prior.netAmount
+        ? 'Momentum is strong your yearly investment pattern shows positive growth trajectory. consistency is building wealth steadily.'
+        : 'Your pace has eased this year keeping contributions steady year over year compounds faster.';
+
     return VisibilityDetector(
       key: const Key('YearlyInvestmentSection'),
       onVisibilityChanged: (info) {
@@ -117,11 +155,11 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
             ),
             const SizedBox(height: 16),
             RichText(
-              text: const TextSpan(
+              text: TextSpan(
                 children: [
                   TextSpan(
-                    text: '₹-33,265 ',
-                    style: TextStyle(
+                    text: '${_fmtInrFull(current.netAmount)} ',
+                    style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
@@ -130,8 +168,8 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
                     ),
                   ),
                   TextSpan(
-                    text: 'in 2026 so far',
-                    style: TextStyle(
+                    text: 'in ${current.year} so far',
+                    style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
@@ -170,7 +208,8 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
                     return CustomPaint(
                       painter: _YearlyInvestmentChartPainter(
                         progress: _animation.value,
-                        tappedIndex: _tappedIndex,
+                        tappedIndex: effectiveTapped,
+                        years: years,
                       ),
                     );
                   },
@@ -222,9 +261,9 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
                 borderRadius: BorderRadius.circular(4),
               ),
               child: AnimatedGradientShimmer(
-                child: const TypewriterText(
-                  text: 'Momentum is strong your yearly investment pattern shows positive growth trajectory. consistency is building wealth steadily.',
-                  style: TextStyle(
+                child: TypewriterText(
+                  text: proTip,
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 12,
                     height: 1.5,
@@ -244,8 +283,25 @@ class _YearlyInvestmentSectionState extends State<YearlyInvestmentSection>
 class _YearlyInvestmentChartPainter extends CustomPainter {
   final double progress;
   final int? tappedIndex;
+  final List<YearlyInvestmentData> years;
 
-  _YearlyInvestmentChartPainter({required this.progress, this.tappedIndex});
+  _YearlyInvestmentChartPainter({
+    required this.progress,
+    required this.years,
+    this.tappedIndex,
+  });
+
+  static double _niceMax(double maxAbs) {
+    if (maxAbs <= 0) return 100000;
+    const steps = <double>[
+      10000, 20000, 25000, 50000, 100000, 200000, 250000, 500000,
+      1000000, 2000000, 2500000, 5000000, 10000000, 20000000
+    ];
+    for (final s in steps) {
+      if (maxAbs <= s) return s;
+    }
+    return maxAbs;
+  }
 
   String _formatIndianAmount(double value) {
     if (value == 0) return '₹0';
@@ -286,7 +342,7 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1 * scale;
 
-    final numBars = 7;
+    final numBars = years.length;
     final stepX = size.width / numBars;
     for (int i = 0; i <= numBars; i++) {
       canvas.drawLine(
@@ -307,19 +363,16 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
       zeroPaint,
     );
 
-    final maxVal = 200000.0;
+    double maxAbs = 0;
+    for (final y in years) {
+      final a = y.netAmount.abs();
+      if (a > maxAbs) maxAbs = a;
+    }
+    final maxVal = _niceMax(maxAbs);
     final maxBarHeight = 120.0 * scale;
 
-
-
     final data = [
-      {'year': '2020', 'val': 0.0},
-      {'year': '2021', 'val': 0.0},
-      {'year': '2022', 'val': 0.0},
-      {'year': '2023', 'val': 0.0},
-      {'year': '2024', 'val': 100000.0},
-      {'year': '2025', 'val': 181275.0},
-      {'year': '2026', 'val': -33265.0}, // Hollow negative box
+      for (final y in years) {'year': '${y.year}', 'val': y.netAmount},
     ];
 
     final barWidth = 24.0 * scale;
@@ -331,7 +384,7 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
       final centerX = (i + 0.5) * stepX;
       final val = data[i]['val'] as double;
       final isNegative = val < 0;
-      final isHollow = i == 6; // 2026 is hollow
+      final isHollow = i == years.length - 1; // current (partial) year is hollow
       final isTapped = tappedIndex == i || (tappedIndex == null && i == 5);
 
       // STAGGERED PROGRESS Calculation (fills from bottom)
@@ -416,26 +469,10 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
 
         // Tooltip for tapped item
         if (isTapped && barProgress > 0.9) {
-          final yearStr = data[i]['year'] as String;
-          final year = int.parse(yearStr);
-
-          double investment = 0;
-          double withdrawal = 0;
-          double total = val;
-
-          if (year == 2025) {
-            investment = 190199;
-            withdrawal = -8923;
-            total = 181275;
-          } else if (year == 2026) {
-            investment = 0;
-            withdrawal = -33265;
-            total = -33265;
-          } else if (year == 2024) {
-            investment = 100000;
-            withdrawal = 0;
-            total = 100000;
-          }
+          final year = years[i].year;
+          final investment = years[i].buyAmount;
+          final withdrawal = -years[i].sellAmount;
+          final total = years[i].netAmount;
 
           final barTopY = isNegative
               ? baseLine + (isHollow ? 24 * scale : barHeight)
@@ -457,8 +494,10 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
       }
     }
 
-    // Horizontal AVG line (dotted green)
-    final avgValue = 42570.0;
+    // Horizontal AVG line (dotted green) — mean net across the shown years
+    final avgValue = years.isEmpty
+        ? 0.0
+        : years.map((y) => y.netAmount).reduce((a, b) => a + b) / years.length;
     final avgY = baseLine - (avgValue / maxVal) * maxBarHeight;
 
     if (progress > 0.8) {
@@ -480,7 +519,7 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
 
       final textPainter = TextPainter(
         text: TextSpan(
-          text: '₹42.57K AVG',
+          text: '${_formatIndianAmount(avgValue)} AVG',
           style: TextStyle(
             fontFamily: 'DMSans',
             fontSize: 8 * textScale,
@@ -805,6 +844,39 @@ class _YearlyInvestmentChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _YearlyInvestmentChartPainter oldDelegate) {
     return oldDelegate.progress != progress ||
-        oldDelegate.tappedIndex != tappedIndex;
+        oldDelegate.tappedIndex != tappedIndex ||
+        !identical(oldDelegate.years, years);
+  }
+}
+
+/// Loading placeholder for [YearlyInvestmentSection].
+class _YearlyInvestmentSkeleton extends StatelessWidget {
+  const _YearlyInvestmentSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerBar(width: 180, height: 20),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 160, height: 22),
+          const SizedBox(height: 12),
+          const ShimmerBar(width: 220, height: 12),
+          const SizedBox(height: 48),
+          AspectRatio(
+            aspectRatio: 360 / 250,
+            child: ShimmerBar(
+              width: MediaQuery.of(context).size.width,
+              height: 250,
+              borderRadius: 8,
+            ),
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
   }
 }

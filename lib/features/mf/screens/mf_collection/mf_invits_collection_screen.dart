@@ -1,52 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfInvitsCollectionScreen extends StatefulWidget {
+class MfInvitsCollectionScreen extends ConsumerStatefulWidget {
   const MfInvitsCollectionScreen({super.key});
 
   @override
-  State<MfInvitsCollectionScreen> createState() => _MfInvitsCollectionScreenState();
+  ConsumerState<MfInvitsCollectionScreen> createState() => _MfInvitsCollectionScreenState();
 }
 
-class _MfInvitsCollectionScreenState extends State<MfInvitsCollectionScreen> {
+class _MfInvitsCollectionScreenState extends ConsumerState<MfInvitsCollectionScreen> {
+  static const _category = 'Other - InvIT';
+
   String _activeFilter = 'All';
-
   final _filters = ['All', 'Power', 'Roads'];
-
-  final List<Map<String, dynamic>> _allFunds = [
-    {
-      'name': 'PowerGrid InvIT',
-      'category': 'Infrastructure • Power',
-      'cap': 'Power',
-      'returns': {'1Y': '12.40%', '3Y': '10.80%', '5Y': '9.50%'},
-      'rating': 5,
-    },
-    {
-      'name': 'IRB InvIT Fund',
-      'category': 'Infrastructure • Roads',
-      'cap': 'Roads',
-      'returns': {'1Y': '14.10%', '3Y': '11.40%', '5Y': '10.10%'},
-      'rating': 4,
-    },
-    {
-      'name': 'India Grid Trust',
-      'category': 'Infrastructure • Power',
-      'cap': 'Power',
-      'returns': {'1Y': '11.60%', '3Y': '9.80%', '5Y': '8.20%'},
-      'rating': 4,
-    },
-  ];
-
   String _returnPeriod = '1Y';
 
-  List<Map<String, dynamic>> get _filteredFunds {
-    if (_activeFilter == 'All') return _allFunds;
-    return _allFunds.where((f) => f['cap'] == _activeFilter).toList();
+  List<CatalogFund> _filteredFunds(List<CatalogFund> allFunds) {
+    if (_activeFilter == 'All') return allFunds;
+    return allFunds.where((f) {
+      final text = '${f.category} ${f.schemeName}'.toLowerCase();
+      switch (_activeFilter) {
+        case 'Power':
+          return text.contains('power') || text.contains('grid') || text.contains('energy');
+        case 'Roads':
+          return text.contains('road') || text.contains('highway') || text.contains('infra');
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
+  String _returnFor(CatalogFund f) {
+    final value = switch (_returnPeriod) {
+      '3Y' => f.returns3y,
+      '5Y' => f.returns5y,
+      _ => f.returns1y,
+    };
+    return value != null ? '${value.toStringAsFixed(2)}%' : '—';
   }
 
   @override
   Widget build(BuildContext context) {
-    final funds = _filteredFunds;
+    final catalogAsync = ref.watch(catalogFundsByCategoryProvider(_category));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -85,8 +84,11 @@ class _MfInvitsCollectionScreenState extends State<MfInvitsCollectionScreen> {
                 setState(() {
                   if (_returnPeriod == '1Y') {
                     _returnPeriod = '3Y';
-                  } else if (_returnPeriod == '3Y') _returnPeriod = '5Y';
-                  else _returnPeriod = '1Y';
+                  } else if (_returnPeriod == '3Y') {
+                    _returnPeriod = '5Y';
+                  } else {
+                    _returnPeriod = '1Y';
+                  }
                 });
               },
               child: Container(
@@ -150,45 +152,83 @@ class _MfInvitsCollectionScreenState extends State<MfInvitsCollectionScreen> {
           ),
           // Divider
           Container(height: 1, color: const Color(0xFFF1F5F9)),
-          // Fund count hint
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-            child: Row(
-              children: [
-                Text(
-                  '${funds.length} trusts',
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF94A3B8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // List
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: funds.length,
-              separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
-              itemBuilder: (context, index) {
-                final fund = funds[index];
-                return _buildFundRow(fund);
-              },
-            ),
+            child: catalogAsync.isLoading
+                ? const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        AppThemeShimmerCard(height: 140),
+                        SizedBox(height: 12),
+                        AppThemeShimmerCard(height: 140),
+                        SizedBox(height: 12),
+                        AppThemeShimmerCard(height: 140),
+                      ],
+                    ),
+                  )
+                : catalogAsync.hasError
+                    ? const Center(
+                        child: Text(
+                          "Couldn't load InVITs.",
+                          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                        ),
+                      )
+                    : _buildFundsList(_filteredFunds(catalogAsync.valueOrNull ?? [])),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFundRow(Map<String, dynamic> fund) {
+  Widget _buildFundsList(List<CatalogFund> funds) {
+    if (funds.isEmpty) {
+      return const Center(
+        child: Text(
+          'No InVITs available yet.',
+          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+        ),
+      );
+    }
+    return Column(
+      children: [
+        // Fund count hint
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            children: [
+              Text(
+                '${funds.length} trusts',
+                style: const TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF94A3B8),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // List
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            itemCount: funds.length,
+            separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
+            itemBuilder: (context, index) {
+              final fund = funds[index];
+              return _buildFundRow(fund);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFundRow(CatalogFund fund) {
     return Column(
       children: [
         InkWell(
-          onTap: () => MfFundProfileScreen.showModal(context, fund['name'] as String),
+          onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
@@ -205,7 +245,7 @@ class _MfInvitsCollectionScreenState extends State<MfInvitsCollectionScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          (fund['name'] as String).substring(0, 1),
+                          fund.schemeName.isNotEmpty ? fund.schemeName.substring(0, 1) : '?',
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
@@ -236,19 +276,20 @@ class _MfInvitsCollectionScreenState extends State<MfInvitsCollectionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        fund['name'] as String,
+                        fund.schemeName,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          height: 1.25,
                           color: Color(0xFF1E1E1E),
                         ),
-                        maxLines: 1,
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        fund['category'] as String,
+                        fund.category,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 10,
@@ -258,12 +299,13 @@ class _MfInvitsCollectionScreenState extends State<MfInvitsCollectionScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(width: 12),
                 // Returns
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   child: Text(
-                    (fund['returns'] as Map<String, dynamic>)[_returnPeriod] as String,
-                    key: ValueKey<String>('${fund['name']}_$_returnPeriod'),
+                    _returnFor(fund),
+                    key: ValueKey<String>('${fund.schemeCode}_$_returnPeriod'),
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,

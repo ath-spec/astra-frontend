@@ -1,3 +1,4 @@
+import '../data/stocks_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,86 +22,50 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
 
   final Set<String> _activeFilters = {'Stocks'};
   String _activeSort = 'Current Value';
-  DateTime _lastRefreshed = DateTime.now().subtract(const Duration(days: 10));
-
-  String _getLastRefreshedText() {
-    final now = DateTime.now();
-    final difference = now.difference(_lastRefreshed);
-    if (difference.inSeconds < 60) return 'LAST REFRESHED - JUST NOW';
-    if (difference.inMinutes < 60) return 'LAST REFRESHED - ${difference.inMinutes} MINS AGO';
-    if (difference.inHours < 24) return 'LAST REFRESHED - ${difference.inHours} HOURS AGO';
-    return 'LAST REFRESHED - ${difference.inDays} DAYS AGO';
-  }
-
-
-  final List<StockData> _mockStocks = [
-    StockData(
-      name: 'Mazagon Dock',
-      sector: 'Aerospace & Defence',
-      allocation: 30.7,
-      currentVal: 45540,
-      oneDayChange: 2691,
-      oneDayChangePct: 6.28,
-      quantity: 18,
-      ltp: 2530.00,
-    ),
-    StockData(
-      name: 'Cochin Shipyard',
-      sector: 'Aerospace & Defence',
-      allocation: 30.2,
-      currentVal: 44700,
-      oneDayChange: 1950,
-      oneDayChangePct: 4.56,
-      quantity: 30,
-      ltp: 1490.00,
-    ),
-    StockData(
-      name: 'Garden Reach Sh.',
-      sector: 'Aerospace & Defence',
-      allocation: 17.5,
-      currentVal: 25994,
-      oneDayChange: 921,
-      oneDayChangePct: 3.67,
-      quantity: 10,
-      ltp: 2599.40,
-    ),
-    StockData(
-      name: 'MSTC',
-      sector: 'E-Commerce/App based Aggregator',
-      allocation: 16.3,
-      currentVal: 24208,
-      oneDayChange: 73,
-      oneDayChangePct: 0.30,
-      quantity: 40,
-      ltp: 605.20,
-    ),
-    StockData(
-      name: 'Refex Industries',
-      sector: 'Trading',
-      allocation: 5.0,
-      currentVal: 7466,
-      oneDayChange: -123,
-      oneDayChangePct: -1.62,
-      quantity: 22,
-      ltp: 339.36,
-    ),
-    StockData(
-      name: 'Nifty Bees',
-      sector: 'ETF',
-      allocation: 2.3,
-      currentVal: 3500,
-      oneDayChange: 20,
-      oneDayChangePct: 0.57,
-      quantity: 15,
-      ltp: 233.33,
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
     final isLocked = ref.watch(privacyProvider);
+    final holdingsAsync = ref.watch(stocksHoldingsProvider);
+
+    List<StockData> stockList = [];
+    double totalWealth = 0.0;
+    double total1DChange = 0.0;
+
+    if (holdingsAsync.hasValue && holdingsAsync.value!.isNotEmpty) {
+      final holdings = holdingsAsync.value!;
+      totalWealth = holdings.fold<double>(0.0, (acc, h) => acc + h.currentValue);
+      total1DChange = holdings.fold<double>(0.0, (acc, h) => acc + h.oneDayChangeAmount);
+      stockList = holdings.map((h) {
+        final alloc = totalWealth > 0 ? (h.currentValue / totalWealth * 100) : 0.0;
+        return StockData(
+          name: h.tradingSymbol,
+          sector: h.tradingSymbol.contains("BEES") || h.tradingSymbol.contains("ETF") ? "ETF" : "Equity",
+          allocation: double.parse(alloc.toStringAsFixed(1)),
+          currentVal: h.currentValue,
+          oneDayChange: h.oneDayChangeAmount,
+          oneDayChangePct: double.parse(h.oneDayChangePct.toStringAsFixed(2)),
+          quantity: h.quantity,
+          ltp: h.lastPrice,
+        );
+      }).toList();
+    }
+    // A failed fetch (network error, auth hiccup) used to silently swap in
+    // _mockStocks here — a fixed list of made-up holdings (Mazagon Dock,
+    // Cochin Shipyard, ...) with their own fake total wealth and no
+    // indication anything had gone wrong. That's a real portfolio screen
+    // showing fabricated numbers with no error, which is worse than an
+    // empty state: the user has no way to tell it's not their real data.
+    // holdingsAsync.hasError now drives a proper retry banner below instead.
+
+    final double total1DPct = (totalWealth - total1DChange) > 0
+        ? (total1DChange / (totalWealth - total1DChange) * 100)
+        : 0.0;
+    final bool is1DPositive = total1DChange >= 0;
+    final String liveTotalStr = '₹${intl.NumberFormat('#,##,###').format(totalWealth.round())}';
+    final String live1DStr = '${is1DPositive ? '↑' : '↓'} ₹${intl.NumberFormat('#,##,###').format(total1DChange.abs().round())} (${total1DPct.abs().toStringAsFixed(2)}%) today';
     
-    final filteredStocks = _mockStocks.where((s) {
+    final filteredStocks = stockList.where((s) {
       bool passType = true;
       bool passPerformance = true;
 
@@ -152,8 +117,8 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
             pinned: true,
             delegate: StocksHeaderDelegate(
               safeAreaTop: MediaQuery.paddingOf(context).top,
-              totalAmount: PrivacyFormatter.obscure('₹1,47,908', isLocked),
-              todayChange: PrivacyFormatter.obscure('↑ ₹5,635 (3.96%) today', isLocked),
+              totalAmount: PrivacyFormatter.obscure(liveTotalStr, isLocked),
+              todayChange: PrivacyFormatter.obscure(live1DStr, isLocked),
               onBackTap: () {
                 if (context.canPop()) {
                   context.pop();
@@ -164,15 +129,6 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
               onAddAccountsTap: () {
                 context.push('/aa-stocks-otp', extra: {'isOnboarding': false});
               },
-              lastRefreshedText: _getLastRefreshedText(),
-              onRefreshTap: () async {
-                await context.push('/mf-fetch-confirm');
-                if (mounted) {
-                  setState(() {
-                    _lastRefreshed = DateTime.now();
-                  });
-                }
-              },
               isLocked: isLocked,
               onLockTap: () {
                 ref.read(privacyProvider.notifier).state = !isLocked;
@@ -180,6 +136,43 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
             ),
           ),
           
+          // Fetch failed: a real error banner with retry, instead of the
+          // fabricated holdings list this screen used to substitute in
+          // silently (see the comment above where stockList is built).
+          if (holdingsAsync.hasError)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEF2F2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFFECACA)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.error_outline_rounded, size: 18, color: Color(0xFFDC2626)),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Text(
+                          "Couldn't load your holdings.",
+                          style: TextStyle(fontFamily: 'DMSans', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF991B1B)),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => ref.invalidate(stocksHoldingsProvider),
+                        child: const Text(
+                          'RETRY',
+                          style: TextStyle(fontFamily: 'DMSans', fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFFDC2626)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
           // Section Title & View Toggle
           SliverToBoxAdapter(
             child: Padding(
@@ -338,23 +331,29 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                     ],
                   ),
                 ),
-                // Rows
-                ...filteredStocks.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final stock = entry.value;
-                  return Container(
-                    height: rowHeight,
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: const Color(0xFFF1F5F9), width: 1),
+                // Rows — table view previously had no tap handling on rows
+                // at all (unlike Summary/Expanded view's StockCard, which
+                // toggles an inline expand). Tapping a row here switches to
+                // that same expanded card view instead of inventing a new
+                // detail screen.
+                ...filteredStocks.map((stock) {
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => setState(() => _viewMode = ViewMode.expanded),
+                    child: Container(
+                      height: rowHeight,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: const Color(0xFFF1F5F9), width: 1),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      stock.name,
-                      style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
-                      overflow: TextOverflow.ellipsis,
+                      child: Text(
+                        stock.name,
+                        style: TextStyle(fontFamily: 'DMSans', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   );
                 }),
@@ -385,7 +384,10 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                   ...filteredStocks.asMap().entries.map((entry) {
                     final stock = entry.value;
                     final isPositive = stock.oneDayChange >= 0;
-                    return Container(
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => setState(() => _viewMode = ViewMode.expanded),
+                      child: Container(
                       height: rowHeight,
                       decoration: BoxDecoration(
                         border: Border(
@@ -456,6 +458,7 @@ class _StocksScreenState extends ConsumerState<StocksScreen> {
                             ),
                           ),
                         ],
+                      ),
                       ),
                     );
                   }),

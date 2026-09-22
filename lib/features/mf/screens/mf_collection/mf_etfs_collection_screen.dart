@@ -1,59 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfEtfsCollectionScreen extends StatefulWidget {
+class MfEtfsCollectionScreen extends ConsumerStatefulWidget {
   const MfEtfsCollectionScreen({super.key});
 
   @override
-  State<MfEtfsCollectionScreen> createState() => _MfEtfsCollectionScreenState();
+  ConsumerState<MfEtfsCollectionScreen> createState() => _MfEtfsCollectionScreenState();
 }
 
-class _MfEtfsCollectionScreenState extends State<MfEtfsCollectionScreen> {
+class _MfEtfsCollectionScreenState extends ConsumerState<MfEtfsCollectionScreen> {
   String _activeFilter = 'All';
-
   final _filters = ['All', 'Equity', 'Debt', 'Gold'];
-
-  final List<Map<String, dynamic>> _allFunds = [
-    {
-      'name': 'Nippon India Nifty 50 BeES',
-      'category': 'Index • Equity',
-      'cap': 'Equity',
-      'returns': {'1Y': '24.40%', '3Y': '15.80%', '5Y': '13.50%'},
-      'rating': 5,
-    },
-    {
-      'name': 'SBI Nifty 50 ETF',
-      'category': 'Index • Equity',
-      'cap': 'Equity',
-      'returns': {'1Y': '24.30%', '3Y': '15.70%', '5Y': '13.40%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Liquid BeES',
-      'category': 'Index • Debt',
-      'cap': 'Debt',
-      'returns': {'1Y': '7.10%', '3Y': '6.20%', '5Y': '5.80%'},
-      'rating': 5,
-    },
-    {
-      'name': 'Nippon India Gold BeES',
-      'category': 'Commodity • Gold',
-      'cap': 'Gold',
-      'returns': {'1Y': '18.10%', '3Y': '12.40%', '5Y': '10.50%'},
-      'rating': 5,
-    },
-  ];
-
   String _returnPeriod = '1Y';
 
-  List<Map<String, dynamic>> get _filteredFunds {
-    if (_activeFilter == 'All') return _allFunds;
-    return _allFunds.where((f) => f['cap'] == _activeFilter).toList();
+  List<CatalogFund> _filteredFunds(List<CatalogFund> all) {
+    if (_activeFilter == 'All') return all;
+    return all.where((f) => f.category.toLowerCase().contains(_activeFilter.toLowerCase())).toList();
+  }
+
+  String _returnFor(CatalogFund f) {
+    final value = switch (_returnPeriod) {
+      '3Y' => f.returns3y,
+      '5Y' => f.returns5y,
+      _ => f.returns1y,
+    };
+    return value != null ? '${value.toStringAsFixed(2)}%' : '—';
   }
 
   @override
   Widget build(BuildContext context) {
-    final funds = _filteredFunds;
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+    final allFunds = catalogAsync.valueOrNull ?? <CatalogFund>[];
+    final funds = _filteredFunds(allFunds);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -76,7 +58,7 @@ class _MfEtfsCollectionScreenState extends State<MfEtfsCollectionScreen> {
           ),
         ),
         title: const Text(
-          'ETFs Collection',
+          'ETFs & Index Funds',
           style: TextStyle(
             fontFamily: 'DMSans',
             fontSize: 16,
@@ -92,8 +74,11 @@ class _MfEtfsCollectionScreenState extends State<MfEtfsCollectionScreen> {
                 setState(() {
                   if (_returnPeriod == '1Y') {
                     _returnPeriod = '3Y';
-                  } else if (_returnPeriod == '3Y') _returnPeriod = '5Y';
-                  else _returnPeriod = '1Y';
+                  } else if (_returnPeriod == '3Y') {
+                    _returnPeriod = '5Y';
+                  } else {
+                    _returnPeriod = '1Y';
+                  }
                 });
               },
               child: Container(
@@ -176,26 +161,59 @@ class _MfEtfsCollectionScreenState extends State<MfEtfsCollectionScreen> {
           ),
           // List
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: funds.length,
-              separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
-              itemBuilder: (context, index) {
-                final fund = funds[index];
-                return _buildFundRow(fund);
-              },
-            ),
+            child: catalogAsync.isLoading
+                ? ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                    children: _buildLoadingRows(),
+                  )
+                : catalogAsync.hasError
+                    ? const Center(
+                        child: Text(
+                          "Couldn't load ETFs.",
+                          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                        ),
+                      )
+                    : funds.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'No ETFs available yet.',
+                              style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                            ),
+                          )
+                        : ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            itemCount: funds.length,
+                            separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
+                            itemBuilder: (context, index) {
+                              final fund = funds[index];
+                              return _buildFundRow(fund);
+                            },
+                          ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFundRow(Map<String, dynamic> fund) {
+  List<Widget> _buildLoadingRows() {
+    return List.generate(
+      6,
+      (index) => const Padding(
+        padding: EdgeInsets.only(bottom: 12.0),
+        child: AppThemeShimmerCard(
+          height: 140,
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          barWidths: [140, 100, 60, 60],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFundRow(CatalogFund fund) {
     return Column(
       children: [
         InkWell(
-          onTap: () => MfFundProfileScreen.showModal(context, fund['name'] as String),
+          onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
@@ -212,7 +230,7 @@ class _MfEtfsCollectionScreenState extends State<MfEtfsCollectionScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          (fund['name'] as String).substring(0, 1),
+                          fund.schemeName.isNotEmpty ? fund.schemeName.substring(0, 1) : '?',
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
@@ -243,19 +261,20 @@ class _MfEtfsCollectionScreenState extends State<MfEtfsCollectionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        fund['name'] as String,
+                        fund.schemeName,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          height: 1.2,
                           color: Color(0xFF1E1E1E),
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        fund['category'] as String,
+                        fund.category,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 10,
@@ -265,12 +284,13 @@ class _MfEtfsCollectionScreenState extends State<MfEtfsCollectionScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 // Returns
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   child: Text(
-                    (fund['returns'] as Map<String, dynamic>)[_returnPeriod] as String,
-                    key: ValueKey<String>('${fund['name']}_$_returnPeriod'),
+                    _returnFor(fund),
+                    key: ValueKey<String>('${fund.schemeCode}_$_returnPeriod'),
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,

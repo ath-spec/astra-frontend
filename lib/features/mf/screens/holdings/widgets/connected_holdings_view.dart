@@ -1,8 +1,8 @@
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'sort_by_bottom_sheet.dart';
 import 'mf_holdings_header.dart';
-import '../../../../fund_profile/screens/your_fund_profile_screen.dart';
 import 'holding_item.dart';
 import 'simple_holdings_list.dart';
 import 'detailed_holdings_list.dart';
@@ -12,6 +12,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/providers/privacy_provider.dart';
 import '../../../../asset_connection/providers/asset_connection_provider.dart';
+import '../../../../dashboard/data/dashboard_providers.dart';
+import '../../../data/mf_holdings_models.dart';
+import '../../../data/mf_holdings_providers.dart';
+import '../../../../stocks/data/stocks_providers.dart';
+import '../../../../stocks/data/stocks_models.dart';
 
 class ConnectedHoldingsView extends ConsumerStatefulWidget {
   const ConnectedHoldingsView({super.key});
@@ -38,9 +43,9 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
     decimalDigits: 2,
   );
 
-  List<HoldingItem> _displayHoldings = [];
   SortOption? _currentSort;
   final Set<String> _activeFilters = {};
+  bool _animationStarted = false;
 
   void _toggleFilter(String filter) {
     setState(() {
@@ -49,14 +54,12 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
       } else {
         _activeFilters.add(filter);
       }
-      _applySort(_currentSort); // This will re-apply sorting AND filtering
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _displayHoldings = List.from(mockHoldings);
 
     _animationController = AnimationController(
       vsync: this,
@@ -69,49 +72,49 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
     _animationController.forward();
   }
 
+  /// Applies the active filter chips and current sort option to [source],
+  /// returning a new list (does not mutate [source]).
+  List<HoldingItem> _filterAndSort(List<HoldingItem> source) {
+    List<HoldingItem> result;
+    if (_activeFilters.isEmpty) {
+      result = List.from(source);
+    } else {
+      result = source.where((item) {
+        bool matchesEquity =
+            _activeFilters.contains('Equity') && item.filterBucket == 'Equity';
+        bool matchesDebt =
+            _activeFilters.contains('Debt') && item.filterBucket == 'Debt';
+        bool matchesGlobal =
+            _activeFilters.contains('Global') && item.filterBucket == 'Global';
+        bool matchesSip = _activeFilters.contains('SIP') && item.isSip;
+
+        // If the item matches ANY of the active filters, keep it
+        return matchesEquity || matchesDebt || matchesGlobal || matchesSip;
+      }).toList();
+    }
+
+    if (_currentSort == null) return result;
+
+    result.sort((a, b) {
+      switch (_currentSort!) {
+        case SortOption.currentValue:
+          return b.current.compareTo(a.current);
+        case SortOption.returns:
+          return b.returns.compareTo(a.returns);
+        case SortOption.xirr:
+          return b.xirr.compareTo(a.xirr);
+        case SortOption.oneDayChange:
+          return b.oneDayChange.compareTo(a.oneDayChange);
+        case SortOption.alphabetically:
+          return a.name.compareTo(b.name);
+      }
+    });
+    return result;
+  }
+
   void _applySort(SortOption? sortOption) {
     setState(() {
       _currentSort = sortOption;
-
-      // 1. Apply filtering
-      if (_activeFilters.isEmpty) {
-        _displayHoldings = List.from(mockHoldings);
-      } else {
-        _displayHoldings = mockHoldings.where((item) {
-          bool matchesEquity =
-              _activeFilters.contains('Equity') &&
-              item.category.contains('Equity');
-          bool matchesDebt =
-              _activeFilters.contains('Debt') && item.category.contains('Debt');
-          bool matchesGlobal =
-              _activeFilters.contains('Global') &&
-              item.category.contains('Global');
-          bool matchesSip = _activeFilters.contains('SIP') && item.isSip;
-
-          // If the item matches ANY of the active filters, keep it
-          return matchesEquity || matchesDebt || matchesGlobal || matchesSip;
-        }).toList();
-      }
-
-      // 2. Apply sorting
-      if (sortOption == null) {
-        return;
-      }
-
-      _displayHoldings.sort((a, b) {
-        switch (sortOption) {
-          case SortOption.currentValue:
-            return b.current.compareTo(a.current);
-          case SortOption.returns:
-            return b.returns.compareTo(a.returns);
-          case SortOption.xirr:
-            return b.xirr.compareTo(a.xirr);
-          case SortOption.oneDayChange:
-            return b.oneDayChange.compareTo(a.oneDayChange);
-          case SortOption.alphabetically:
-            return a.name.compareTo(b.name);
-        }
-      });
     });
   }
 
@@ -136,21 +139,23 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
   }
 
   String formatLargeNumber(double value) {
-    if (value >= 100000) {
-      return '₹${(value / 100000).toStringAsFixed(2)}L';
-    } else if (value >= 1000) {
-      return '₹${(value / 1000).toStringAsFixed(2)}K';
+    final absVal = value.abs();
+    final sign = value < 0 ? '-' : '';
+    if (absVal >= 100000) {
+      return '$sign₹${(absVal / 100000).toStringAsFixed(2)}L';
+    } else if (absVal >= 1000) {
+      return '$sign₹${(absVal / 1000).toStringAsFixed(2)}K';
     }
-    return '₹${value.toStringAsFixed(0)}';
+    return '$sign₹${absVal.toStringAsFixed(0)}';
   }
 
-  Widget _buildTopCard(bool isLocked) {
+  Widget _buildTopCard(bool isLocked, MfHoldingsSummary summary) {
     return AnimatedBuilder(
       animation: _numberAnimation,
       builder: (context, child) {
-        double investedVal = 299000 * _numberAnimation.value;
-        double xirrVal = 9.98 * _numberAnimation.value;
-        double returnsVal = 45120 * _numberAnimation.value;
+        double investedVal = summary.investedValue * _numberAnimation.value;
+        double xirrVal = summary.xirrPct * _numberAnimation.value;
+        double returnsVal = summary.returnsAmount * _numberAnimation.value;
 
         return GestureDetector(
           onTap: () {
@@ -160,12 +165,13 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
               current: investedVal + returnsVal,
               invested: investedVal,
               returns: returnsVal,
-              returnsPercent: (returnsVal / investedVal) * 100,
-              oneDayChange: 1250.0, // Mock
-              oneDayChangePercent: 0.45, // Mock
+              returnsPercent: summary.returnsPct,
+              oneDayChange: summary.oneDayChangeAmount,
+              oneDayChangePercent: summary.oneDayChangePct,
               xirr: xirrVal,
-              logoPath: 'lib/core/images/icici.png', // Mock default
+              logoPath: 'lib/core/images/icici.png', // Generic default — no logo for the aggregate row
               isSip: false,
+              filterBucket: 'Equity',
             );
 
             showModalBottomSheet(
@@ -296,14 +302,22 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          isLocked ? '₹ * * * *' : '+${formatLargeNumber(returnsVal)} (15.04%)',
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF22C55E),
-                          ),
+                        Builder(
+                          builder: (context) {
+                            final isPos = summary.returnsAmount >= 0;
+                            final sign = isPos ? '+' : '-';
+                            return Text(
+                              isLocked
+                                  ? '₹ * * * *'
+                                  : '$sign${formatLargeNumber(returnsVal.abs())} (${summary.returnsPct.abs().toStringAsFixed(2)}%)',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: isPos ? const Color(0xFF22C55E) : const Color(0xFFEF4444),
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(height: 2),
                         Text(
@@ -475,7 +489,10 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
     );
   }
 
-  Widget _buildTopStickyBar() {
+  // Currently unused (kept for parity with the design source); would need a
+  // [MfHoldingsSummary] passed in if wired up.
+  // ignore: unused_element
+  Widget _buildTopStickyBar(MfHoldingsSummary summary) {
     final isLocked = ref.watch(privacyProvider);
 
     return Container(
@@ -521,7 +538,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
                     animation: _numberAnimation,
                     builder: (context, child) {
                       return Text(
-                        isLocked ? '₹ * * * *' : formatCurrency.format(345126 * _numberAnimation.value),
+                        isLocked ? '₹ * * * *' : formatCurrency.format(summary.currentValue * _numberAnimation.value),
                         style: TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 14,
@@ -607,122 +624,220 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
     );
   }
 
+  String _formatSignedChange(double amount, double pct) {
+    final sign = amount >= 0 ? '' : '-';
+    return '$sign${formatCurrency.format(amount.abs())} (${pct.toStringAsFixed(2)}%)';
+  }
+
   @override
   Widget build(BuildContext context) {
     final assetState = ref.watch(assetConnectionProvider);
     final isLocked = ref.watch(privacyProvider);
+    final holdingsAsync = ref.watch(mfHoldingsProvider);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
-      body: Builder(
-        builder: (context) => SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: CustomScrollView(
-            slivers: [
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: HoldingsHeaderDelegate(
-                  safeAreaTop: MediaQuery.paddingOf(context).top,
-                  screenHeight: MediaQuery.sizeOf(context).height,
-                    hasImportedPortfolio: true,
-                    isLocked: isLocked,
-                    onLockTap: () {
-                      ref.read(privacyProvider.notifier).state = !isLocked;
-                    },
-                    onCartTap: () => context.push('/cart'),
-                    onRefreshTap: () => context.push('/mf-fetch-confirm'),
-                    mfConnected: assetState.mfConnected,
-                    stocksConnected: assetState.stocksConnected,
-                  ),
+    return holdingsAsync.when(
+      loading: () => const HoldingsSkeletonLoading(),
+      error: (error, stack) => Scaffold(
+        backgroundColor: const Color(0xFFF9FAFB),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.error_outline_rounded, size: 40, color: Color(0xFFCBD5E1)),
+                const SizedBox(height: 12),
+                Text(
+                  'Could not load your holdings.\n$error',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF64748B)),
                 ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildTopCard(isLocked),
-
-                      _buildHeaderRow(),
-                      SizedBox(height: 16),
-                      _buildFilterChips(),
-                      SizedBox(height: 24),
-                    ],
-                  ),
-                ),
-
-                if (_displayHoldings.isEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 64.0,
-                        horizontal: 24.0,
-                      ),
-                      child: Center(
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.filter_alt_off_rounded,
-                              size: 48,
-                              color: Color(0xFFCBD5E1),
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              'No holdings found',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF0F172A),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Try adjusting or clearing your filters to see your portfolio.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 14,
-                                color: Color(0xFF64748B),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                else ...[
-                  if (_viewType == 0)
-                    SimpleHoldingsList(
-                      displayHoldings: _displayHoldings,
-                      formatCurrency: formatCurrency,
-                      formatLargeNumber: formatLargeNumber,
-                      isLocked: isLocked,
-                    ),
-                  if (_viewType == 1)
-                    DetailedHoldingsList(
-                      displayHoldings: _displayHoldings,
-                      formatCurrency: formatCurrency,
-                      formatLargeNumber: formatLargeNumber,
-                      isLocked: isLocked,
-                    ),
-                  if (_viewType == 2)
-                    TableHoldingsList(
-                      displayHoldings: _displayHoldings,
-                      formatCurrency: formatCurrency,
-                      formatLargeNumber: formatLargeNumber,
-                      isLocked: isLocked,
-                    ),
-                ],
-
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 120,
-                  ), // Bottom padding for navigation
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => ref.invalidate(mfHoldingsProvider),
+                  child: const Text('Retry'),
                 ),
               ],
             ),
           ),
         ),
-      );
+      ),
+      data: (holdings) {
+        if (!_animationStarted) {
+          _animationStarted = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) => _animationController.forward());
+        }
+
+        // Load stock holdings and merge them into the unified list.
+        // Stock positions come from the separate /api/v1/stocks/holdings endpoint.
+        final stocksAsync = ref.watch(stocksHoldingsProvider);
+        final stockItems = stocksAsync.value ?? <StockHoldingItem>[];
+        final mfItems = holdings.folios.map(HoldingItem.fromFolio).toList();
+        final stockHoldingItems = stockItems.map(HoldingItem.fromStock).toList();
+        final allHoldings = [...mfItems, ...stockHoldingItems];
+        final displayHoldings = _filterAndSort(allHoldings);
+
+        // Build a combined summary that includes stock values on top of MF values.
+        final stockCurrentValue = stockItems.fold<double>(0.0, (sum, s) => sum + s.currentValue);
+        final stockInvestedValue = stockItems.fold<double>(0.0, (sum, s) => sum + s.investedValue);
+        final stockPnl = stockItems.fold<double>(0.0, (sum, s) => sum + s.pnl);
+        final stockOneDayChange = stockItems.fold<double>(0.0, (sum, s) => sum + s.oneDayChangeAmount);
+
+        final combinedCurrentValue = holdings.summary.currentValue + stockCurrentValue;
+        final combinedInvestedValue = holdings.summary.investedValue + stockInvestedValue;
+        final combinedReturns = holdings.summary.returnsAmount + stockPnl;
+        final combinedReturnsPct = combinedInvestedValue > 0
+            ? (combinedReturns / combinedInvestedValue) * 100
+            : 0.0;
+        final combinedOneDayChange = holdings.summary.oneDayChangeAmount + stockOneDayChange;
+        final combinedOneDayChangePct = (combinedCurrentValue - combinedOneDayChange) > 0
+            ? (combinedOneDayChange / (combinedCurrentValue - combinedOneDayChange)) * 100
+            : 0.0;
+
+        // Use a synthetic summary that covers both asset classes. This
+        // stays MF+stocks-only deliberately — it drives the folio-level
+        // list/sort/returns logic below, which only ever lists MF and stock
+        // holdings (an FD or bank balance has no "folio" to show here).
+        final summary = MfHoldingsSummary(
+          currentValue: combinedCurrentValue,
+          investedValue: combinedInvestedValue,
+          returnsAmount: combinedReturns,
+          returnsPct: combinedReturnsPct,
+          xirrPct: holdings.summary.xirrPct,
+          oneDayChangeAmount: combinedOneDayChange,
+          oneDayChangePct: combinedOneDayChangePct,
+          folioCount: holdings.summary.folioCount + stockItems.length,
+        );
+
+        // The hero total, unlike the list above, must reflect the same net
+        // worth as Home/Explore — MF + stocks + FDs + bank balances — not
+        // just MF+stocks. It previously used summary.currentValue (the
+        // MF+stocks-only figure above), which is why this screen's hero
+        // number silently excluded FDs and bank accounts. Pull the real
+        // total from the same dashboard summary endpoint Home/Explore use.
+        final dashboardSummary = ref.watch(dashboardSummaryProvider).valueOrNull;
+        final heroTotalValue = dashboardSummary?.totalWealth ?? summary.currentValue;
+        final heroOneDayChangeAmount = dashboardSummary?.oneDayChangeAmount ?? summary.oneDayChangeAmount;
+        final heroOneDayChangePct = dashboardSummary?.oneDayChangePct ?? summary.oneDayChangePct;
+
+        return Scaffold(
+          backgroundColor: const Color(0xFFF9FAFB),
+          body: Builder(
+            builder: (context) => SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: CustomScrollView(
+                slivers: [
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: HoldingsHeaderDelegate(
+                      safeAreaTop: MediaQuery.paddingOf(context).top,
+                      screenHeight: MediaQuery.sizeOf(context).height,
+                        hasImportedPortfolio: true,
+                        isLocked: isLocked,
+                        onLockTap: () {
+                          ref.read(privacyProvider.notifier).state = !isLocked;
+                        },
+                        onCartTap: () => context.push('/cart'),
+                        onRefreshTap: () => context.push('/mf-fetch-confirm'),
+                        mfConnected: assetState.mfConnected,
+                        stocksConnected: assetState.stocksConnected,
+                        totalValue: heroTotalValue,
+                        oneDayChangeText: _formatSignedChange(
+                          heroOneDayChangeAmount,
+                          heroOneDayChangePct,
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTopCard(isLocked, summary),
+
+                          _buildHeaderRow(),
+                          SizedBox(height: 16),
+                          _buildFilterChips(),
+                          SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+
+                    if (displayHoldings.isEmpty)
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 64.0,
+                            horizontal: 24.0,
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.filter_alt_off_rounded,
+                                  size: 48,
+                                  color: Color(0xFFCBD5E1),
+                                ),
+                                SizedBox(height: 16),
+                                Text(
+                                  'No holdings found',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF0F172A),
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Try adjusting or clearing your filters to see your portfolio.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 14,
+                                    color: Color(0xFF64748B),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    else ...[
+                      if (_viewType == 0)
+                        SimpleHoldingsList(
+                          displayHoldings: displayHoldings,
+                          formatCurrency: formatCurrency,
+                          formatLargeNumber: formatLargeNumber,
+                          isLocked: isLocked,
+                        ),
+                      if (_viewType == 1)
+                        DetailedHoldingsList(
+                          displayHoldings: displayHoldings,
+                          formatCurrency: formatCurrency,
+                          formatLargeNumber: formatLargeNumber,
+                          isLocked: isLocked,
+                        ),
+                      if (_viewType == 2)
+                        TableHoldingsList(
+                          displayHoldings: displayHoldings,
+                          formatCurrency: formatCurrency,
+                          formatLargeNumber: formatLargeNumber,
+                          isLocked: isLocked,
+                        ),
+                    ],
+
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 120,
+                      ), // Bottom padding for navigation
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+      },
+    );
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../data/catalog_providers.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfAlternativeCollectionScreen extends StatefulWidget {
+class MfAlternativeCollectionScreen extends ConsumerStatefulWidget {
   final String title;
   final String subtitle;
 
@@ -12,44 +15,11 @@ class MfAlternativeCollectionScreen extends StatefulWidget {
   });
 
   @override
-  State<MfAlternativeCollectionScreen> createState() => _MfAlternativeCollectionScreenState();
+  ConsumerState<MfAlternativeCollectionScreen> createState() => _MfAlternativeCollectionScreenState();
 }
 
-class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionScreen> {
+class _MfAlternativeCollectionScreenState extends ConsumerState<MfAlternativeCollectionScreen> {
   String _returnPeriod = '3Y'; // '1Y', '3Y', '5Y'
-
-  final List<Map<String, dynamic>> _mockFunds = [
-    {
-      'name': 'Union Liquid Fund',
-      'category': 'Debt • Liquid',
-      'returns': {'1Y': '7.0%', '3Y': '5.8%', '5Y': '5.2%'},
-      'initial': 'U',
-    },
-    {
-      'name': 'Nippon India Arbitrage Fund',
-      'category': 'Alternative to FD',
-      'returns': {'1Y': '7.8%', '3Y': '6.1%', '5Y': '5.5%'},
-      'initial': 'N',
-    },
-    {
-      'name': 'SBI Equity Savings Fund',
-      'category': 'Alternative to FD',
-      'returns': {'1Y': '9.2%', '3Y': '8.1%', '5Y': '7.3%'},
-      'initial': 'S',
-    },
-    {
-      'name': 'HDFC Liquid Fund',
-      'category': 'Debt • Liquid',
-      'returns': {'1Y': '7.1%', '3Y': '5.9%', '5Y': '5.3%'},
-      'initial': 'H',
-    },
-    {
-      'name': 'Kotak Equity Arbitrage',
-      'category': 'Alternative to FD',
-      'returns': {'1Y': '7.5%', '3Y': '6.0%', '5Y': '5.4%'},
-      'initial': 'K',
-    },
-  ];
 
   void _cycleReturnPeriod() {
     setState(() {
@@ -65,23 +35,41 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-        return Scaffold(
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+
+    final filtered = (catalogAsync.valueOrNull ?? const [])
+        .where((f) => f.category.contains('Debt') || f.category.contains('Liquid') || f.category.contains('Hybrid'))
+        .toList();
+
+    final displayFunds = filtered
+        .map((f) => {
+              'scheme_code': f.schemeCode,
+              'name': f.schemeName,
+              'category': f.category,
+              'returns': {
+                '1Y': f.returns1y != null ? '${f.returns1y!.toStringAsFixed(1)}%' : '—',
+                '3Y': f.returns3y != null ? '${f.returns3y!.toStringAsFixed(1)}%' : '—',
+                '5Y': f.returns5y != null ? '${f.returns5y!.toStringAsFixed(1)}%' : '—',
+              },
+            })
+        .toList();
+
+    return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
         leading: Padding(
-          padding: EdgeInsets.only(left: 16.0),
+          padding: const EdgeInsets.only(left: 16.0),
           child: Center(
             child: InkWell(
               onTap: () => Navigator.pop(context),
               borderRadius: BorderRadius.circular(4),
-              child: SizedBox(
+              child: const SizedBox(
                 width: 40,
                 height: 40,
-                child: Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: const Color(0xFF1E1E1E)),
+                child: Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Color(0xFF1E1E1E)),
               ),
             ),
           ),
@@ -94,7 +82,7 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
             child: SizedBox(
               width: maxWidth,
               child: ListView(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 children: [
                   // Header Section
                   Row(
@@ -106,28 +94,28 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                           children: [
                             Text(
                               widget.title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontFamily: 'DMSans',
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
-                                color: const Color(0xFF1E1E1E),
+                                color: Color(0xFF1E1E1E),
                                 letterSpacing: -0.5,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Text(
                               widget.subtitle,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontFamily: 'DMSans',
                                 fontSize: 10,
-                                color: const Color(0xFF64748B), // Slate 500
+                                color: Color(0xFF64748B), // Slate 500
                                 height: 1.4,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       // Graphic
                       Container(
                         width: 80,
@@ -136,14 +124,37 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                           color: Color(0xFFF1F5F9),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.account_balance, color: const Color(0xFFDC2626), size: 40),
+                        child: const Icon(Icons.account_balance, color: Color(0xFFDC2626), size: 40),
                       ),
                     ],
                   ),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   // Fund List
-                  ..._mockFunds.map((fund) => _buildFundRow(fund)),
-                  SizedBox(height: 32),
+                  if (catalogAsync.isLoading)
+                    ..._buildLoadingRows()
+                  else if (catalogAsync.hasError)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24.0),
+                      child: Center(
+                        child: Text(
+                          "Couldn't load funds.",
+                          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                        ),
+                      ),
+                    )
+                  else if (displayFunds.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 40.0),
+                      child: Center(
+                        child: Text(
+                          'No alternative funds available yet.',
+                          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                        ),
+                      ),
+                    )
+                  else
+                    ...displayFunds.map((fund) => _buildFundRow(fund)),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
@@ -153,13 +164,34 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
     );
   }
 
+  List<Widget> _buildLoadingRows() {
+    return List.generate(
+      5,
+      (index) => const Padding(
+        padding: EdgeInsets.only(bottom: 12.0),
+        child: AppThemeShimmerCard(
+          height: 140,
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          barWidths: [140, 100, 60, 60],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFundRow(Map<String, dynamic> fund) {
+    final schemeCode = fund['scheme_code']?.toString() ?? '';
+    final name = fund['name']?.toString() ?? 'Fund';
+    final initial = (fund['initial']?.toString().isNotEmpty ?? false)
+        ? fund['initial'].toString()
+        : (name.isNotEmpty ? name.substring(0, 1) : '?');
     return Column(
       children: [
         InkWell(
-          onTap: () => MfFundProfileScreen.showModal(context, fund['name']),
+          onTap: () => MfFundProfileScreen.showModal(
+              context, schemeCode.isNotEmpty ? schemeCode : name),
+          onLongPress: _cycleReturnPeriod,
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.0),
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
               children: [
                 // Logo
@@ -174,12 +206,12 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                       ),
                       child: Center(
                         child: Text(
-                          fund['initial'],
-                          style: TextStyle(
+                          initial,
+                          style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1E1E1E),
+                            color: Color(0xFF1E1E1E),
                           ),
                         ),
                       ),
@@ -188,54 +220,58 @@ class _MfAlternativeCollectionScreenState extends State<MfAlternativeCollectionS
                       bottom: 0,
                       right: 0,
                       child: Container(
-                        padding: EdgeInsets.all(2),
+                        padding: const EdgeInsets.all(2),
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.stars, color: const Color(0xFFDC2626), size: 12),
+                        child: const Icon(Icons.stars, color: Color(0xFFDC2626), size: 12),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 // Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        fund['name'],
-                        style: TextStyle(
+                        name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF1E1E1E),
+                          height: 1.2,
+                          color: Color(0xFF1E1E1E),
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
-                        fund['category'],
-                        style: TextStyle(
+                        fund['category']?.toString() ?? '',
+                        style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 10,
-                          color: const Color(0xFF64748B),
+                          color: Color(0xFF64748B),
                         ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 // Returns
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   child: Text(
-                    fund['returns'][_returnPeriod],
-                    key: ValueKey<String>('${fund['name']}_$_returnPeriod'),
-                    style: TextStyle(
+                    (fund['returns'] as Map?)?[_returnPeriod]?.toString() ?? '--',
+                    key: ValueKey<String>('${name}_$_returnPeriod'),
+                    style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF00C75A),
+                      color: Color(0xFF00C75A),
                     ),
                   ),
                 ),

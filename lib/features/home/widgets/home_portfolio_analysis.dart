@@ -1,74 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
 import '../../portfolio_analysis/models/portfolio_analysis_models.dart';
+import '../../portfolio_analysis/data/portfolio_analysis_providers.dart';
 
-final ValueNotifier<bool> hasSeenAnalysisWalkthrough = ValueNotifier<bool>(
-  false,
-);
-
-class HomePortfolioAnalysis extends StatelessWidget {
+class HomePortfolioAnalysis extends ConsumerWidget {
   const HomePortfolioAnalysis({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: hasSeenAnalysisWalkthrough,
-      builder: (context, hasSeen, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ShaderMask(
-              blendMode: BlendMode.srcIn,
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [
-                  Color(0xFF5BA1F7),
-                  Color(0xFF031E6B),
-                  Color(0xFF241714),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ).createShader(bounds),
-              child: const Row(
-                children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    size: 22,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    'Analyse your wealth',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -1.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasUnlocked = ref.watch(portfolioAnalysisUnlockedProvider);
+    final allocAsync = ref.watch(portfolioAllocationProvider);
+    final discAsync = ref.watch(portfolioDisciplineProvider);
+    final perfAsync = ref.watch(portfolioPerformanceProvider);
+
+    final allocationLevel = allocAsync.value?.level ?? AllocationLevel.veryAggressive;
+    final disciplineLevel = discAsync.value?.level ?? DisciplineLevel.moderate;
+    final performanceLevel = perfAsync.value?.level ?? PerformanceLevel.veryStrong;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ShaderMask(
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) => const LinearGradient(
+            colors: [
+              Color(0xFF5BA1F7),
+              Color(0xFF031E6B),
+              Color(0xFF241714),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ).createShader(bounds),
+          child: const Row(
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                size: 22,
+                color: Colors.white,
               ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'See your portfolio through a new lens',
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF64748B),
+              SizedBox(width: 8),
+              Text(
+                'Analyse your wealth',
+                style: TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -1.0,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            hasSeen ? _buildUnlockedView(context) : _buildLockedView(context),
-          ],
-        );
-      },
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'See your portfolio through a new lens',
+          style: TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF64748B),
+          ),
+        ),
+        const SizedBox(height: 24),
+        hasUnlocked
+            ? _buildUnlockedView(context, disciplineLevel, allocationLevel, performanceLevel)
+            : _buildLockedView(context),
+      ],
     );
   }
 
-  Widget _buildUnlockedView(BuildContext context) {
+  Widget _buildUnlockedView(
+    BuildContext context,
+    DisciplineLevel disciplineLevel,
+    AllocationLevel allocationLevel,
+    PerformanceLevel performanceLevel,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -77,11 +86,11 @@ class HomePortfolioAnalysis extends StatelessWidget {
             title: 'Discipline',
             tabIndex: 0,
             icon: Icons.track_changes,
-            valueText: DisciplineLevel.moderate.label,
-            valueColor: DisciplineLevel.moderate.color,
-            gradientColors: DisciplineLevel.moderate.gradientColors,
+            valueText: disciplineLevel.label,
+            valueColor: disciplineLevel.color,
+            gradientColors: disciplineLevel.gradientColors,
             bottomText: 'VIEW >',
-            painter: _MiniDisciplinePainter(level: DisciplineLevel.moderate),
+            painter: _MiniDisciplinePainter(level: disciplineLevel),
           ),
         ),
         const SizedBox(width: 8),
@@ -91,14 +100,14 @@ class HomePortfolioAnalysis extends StatelessWidget {
             title: 'Allocation',
             tabIndex: 1,
             icon: Icons.view_in_ar_outlined,
-            valueText: AllocationLevel.veryAggressive.label,
-            valueColor: AllocationLevel.veryAggressive.activeColor,
-            gradientColors: AllocationLevel.veryAggressive.gradientColors,
+            valueText: allocationLevel.label,
+            valueColor: allocationLevel.activeColor,
+            gradientColors: allocationLevel.gradientColors,
             bottomText: '• 2 INSIGHTS >',
             bottomBgColor: const Color(0xFFFEF3C7),
             bottomTextColor: const Color(0xFF92400E),
             painter: _MiniAllocationPainter(
-              level: AllocationLevel.veryAggressive,
+              level: allocationLevel,
             ),
           ),
         ),
@@ -109,12 +118,12 @@ class HomePortfolioAnalysis extends StatelessWidget {
             title: 'Performance',
             tabIndex: 2,
             icon: Icons.change_history,
-            valueText: PerformanceLevel.veryStrong.label,
-            valueColor: PerformanceLevel.veryStrong.activeColor,
-            gradientColors: PerformanceLevel.veryStrong.gradientColors,
+            valueText: performanceLevel.label,
+            valueColor: performanceLevel.activeColor,
+            gradientColors: performanceLevel.gradientColors,
             bottomText: 'VIEW >',
             painter: _MiniPerformancePainter(
-              level: PerformanceLevel.veryStrong,
+              level: performanceLevel,
             ),
           ),
         ),
@@ -137,7 +146,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
                   child: _buildLockedCard(
                     title: 'Discipline',
                     icon: Icons.track_changes,
-                    color: const Color(0xFF4299E1), // Blue
+                    color: const Color(0xFF4299E1),
                     brailleDots: '⠓⠕⠗⠍',
                   ),
                 ),
@@ -146,7 +155,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
                   child: _buildLockedCard(
                     title: 'Allocation',
                     icon: Icons.layers_outlined,
-                    color: const Color(0xFF6B46C1), // Matches AllocationLevel.veryAggressive.activeColor
+                    color: const Color(0xFF6B46C1),
                     brailleDots: '⠓⠕⠗⠍',
                   ),
                 ),
@@ -155,7 +164,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
                   child: _buildLockedCard(
                     title: 'Performance',
                     icon: Icons.change_history,
-                    color: const Color(0xFF48BB78), // Green
+                    color: const Color(0xFF48BB78),
                     brailleDots: '⠓⠕⠗⠍',
                   ),
                 ),
@@ -209,7 +218,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
     required String brailleDots,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 6),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
@@ -244,20 +253,29 @@ class HomePortfolioAnalysis extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              title,
+              maxLines: 1,
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF0F172A),
+              ),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             brailleDots,
-            style: TextStyle(fontSize: 20, color: color, letterSpacing: 2.0),
+            style: const TextStyle(
+              fontSize: 16,
+              letterSpacing: 2.0,
+              color: Color(0xFFCBD5E1),
+            ),
           ),
+          const SizedBox(height: 4),
         ],
       ),
     );
@@ -270,7 +288,7 @@ class HomePortfolioAnalysis extends StatelessWidget {
     required IconData icon,
     required String valueText,
     required Color valueColor,
-    List<Color>? gradientColors,
+    required List<Color> gradientColors,
     required String bottomText,
     Color? bottomBgColor,
     Color? bottomTextColor,
@@ -280,81 +298,100 @@ class HomePortfolioAnalysis extends StatelessWidget {
       onTap: () {
         context.push('/portfolio-analysis?tab=$tabIndex');
       },
+      behavior: HitTestBehavior.opaque,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 24, bottom: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
               child: Column(
                 children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      style: const TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   SizedBox(
                     width: 60,
                     height: 35,
                     child: Stack(
-                      alignment: Alignment.bottomCenter,
+                      alignment: Alignment.center,
                       children: [
                         CustomPaint(size: const Size(60, 35), painter: painter),
+                        // The gauge is a bottom-anchored semicircle (its flat
+                        // edge sits on the box's bottom, domed upward) — the
+                        // dome's visual/area centroid sits toward that bottom
+                        // edge, below the box's plain vertical middle, not
+                        // above it.
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 2.0),
-                          child: Icon(
-                            icon,
-                            size: 14,
-                            color: const Color(0xFF475569),
-                          ),
+                          padding: const EdgeInsets.only(top: 15),
+                          child: Icon(icon, size: 18, color: const Color(0xFF64748B)),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF0F172A),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  gradientColors != null
-                      ? ShaderMask(
-                          shaderCallback: (bounds) => LinearGradient(
-                            colors: gradientColors,
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds),
-                          child: Text(
+                  const SizedBox(height: 8),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: gradientColors.isNotEmpty
+                        ? ShaderMask(
+                            blendMode: BlendMode.srcIn,
+                            shaderCallback: (bounds) => LinearGradient(
+                              colors: gradientColors,
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ).createShader(bounds),
+                            child: Text(
+                              valueText,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : Text(
                             valueText,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            maxLines: 1,
+                            style: TextStyle(
                               fontFamily: 'DMSans',
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                              color: valueColor,
                             ),
                           ),
-                        )
-                      : Text(
-                          valueText,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: valueColor,
-                          ),
-                        ),
+                  ),
                 ],
               ),
             ),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               decoration: BoxDecoration(
                 color: bottomBgColor ?? const Color(0xFFF8FAFC),
                 borderRadius: const BorderRadius.only(
@@ -363,14 +400,18 @@ class HomePortfolioAnalysis extends StatelessWidget {
                 ),
                 border: const Border(top: BorderSide(color: Color(0xFFE2E8F0))),
               ),
-              child: Text(
-                bottomText,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: bottomTextColor ?? const Color(0xFF64748B),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  bottomText,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: bottomTextColor ?? const Color(0xFF64748B),
+                  ),
                 ),
               ),
             ),
@@ -398,7 +439,6 @@ class _LockedSemiCircleGaugePainter extends CustomPainter {
     final innerRadius = radius - 5;
     final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
 
-    // Grey background arc
     canvas.drawArc(innerRect, startAngle, sweepAngle, false,
       Paint()
         ..color = const Color(0xFFE2E8F0)
@@ -406,7 +446,6 @@ class _LockedSemiCircleGaugePainter extends CustomPainter {
         ..strokeWidth = 6
         ..strokeCap = StrokeCap.round);
 
-    // Show 3 filled segments (preview state) as a solid color
     canvas.drawArc(innerRect, startAngle, segmentSweep * 3, false,
       Paint()
         ..color = color
@@ -419,8 +458,6 @@ class _LockedSemiCircleGaugePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// Exact miniature of _DisciplineGaugePainter:
-// grey bg + multi-shade blue segments drawn right-to-left with overlapping round caps
 class _MiniDisciplinePainter extends CustomPainter {
   final DisciplineLevel level;
   _MiniDisciplinePainter({required this.level});
@@ -437,7 +474,6 @@ class _MiniDisciplinePainter extends CustomPainter {
     final innerRadius = radius - 5;
     final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
 
-    // Grey background arc (round caps like the real gauge)
     canvas.drawArc(innerRect, startAngle, sweepAngle, false,
       Paint()
         ..color = const Color(0xFFE2E8F0)
@@ -445,13 +481,14 @@ class _MiniDisciplinePainter extends CustomPainter {
         ..strokeWidth = 6
         ..strokeCap = StrokeCap.round);
 
-    // Same multi-shade blue colors as the real discipline gauge
+    // Matches the segment shades in DisciplineGaugeSection's full-tab gauge
+    // (discipline_gauge_section.dart) so the home card and the tab agree.
     const activeColors = [
-      Color(0xFFBCE3FF), // 1. Lightest Blue
-      Color(0xFF65B4FF), // 2. Light Blue
-      Color(0xFF2796FF), // 3. Blue (Moderate)
-      Color(0xFF0278D9), // 4. Dark Blue (Good)
-      Color(0xFF015294), // 5. Darkest Blue (Excellent)
+      Color(0xFF4FB6FF),
+      Color(0xFF1E9BFF),
+      Color(0xFF0080FF),
+      Color(0xFF0060B8),
+      Color(0xFF00305C),
     ];
 
     int targetSegments = 1;
@@ -461,7 +498,6 @@ class _MiniDisciplinePainter extends CustomPainter {
     if (score >= 0.85) targetSegments = 4;
     if (score >= 1.0) targetSegments = 5;
 
-    // Draw right-to-left so left segments' caps sit on top (matches real gauge)
     for (int i = targetSegments - 1; i >= 0; i--) {
       final start = startAngle + (i * segmentSweep);
       canvas.drawArc(innerRect, start, segmentSweep, false,
@@ -477,8 +513,6 @@ class _MiniDisciplinePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-// Exact miniature of _AllocationGaugePainter:
-// grey bg + single active segment + white gap lines
 class _MiniAllocationPainter extends CustomPainter {
   final AllocationLevel level;
   _MiniAllocationPainter({required this.level});
@@ -495,7 +529,6 @@ class _MiniAllocationPainter extends CustomPainter {
     final innerRadius = radius - 5;
     final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
 
-    // Grey background arc
     canvas.drawArc(innerRect, startAngle, sweepAngle, false,
       Paint()
         ..color = const Color(0xFFE2E8F0)
@@ -503,8 +536,7 @@ class _MiniAllocationPainter extends CustomPainter {
         ..strokeWidth = 6
         ..strokeCap = StrokeCap.round);
 
-    // Single active segment (same as real allocation gauge)
-    final activeIndex = level.activeSegments - 1;
+    final activeIndex = (level.activeSegments - 1).clamp(0, 4);
     final activeStart = startAngle + (activeIndex * segmentSweep);
     canvas.drawArc(innerRect, activeStart, segmentSweep, false,
       Paint()
@@ -513,7 +545,6 @@ class _MiniAllocationPainter extends CustomPainter {
         ..strokeWidth = 6
         ..strokeCap = StrokeCap.butt);
 
-    // White gap lines between segments
     final gapPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
@@ -536,8 +567,6 @@ class _MiniAllocationPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-// Exact miniature of _PerformanceGaugePainter:
-// grey bg + multi-shade green segments drawn right-to-left with overlapping round caps
 class _MiniPerformancePainter extends CustomPainter {
   final PerformanceLevel level;
   _MiniPerformancePainter({required this.level});
@@ -554,7 +583,6 @@ class _MiniPerformancePainter extends CustomPainter {
     final innerRadius = radius - 5;
     final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
 
-    // Grey background arc
     canvas.drawArc(innerRect, startAngle, sweepAngle, false,
       Paint()
         ..color = const Color(0xFFE2E8F0)
@@ -562,7 +590,6 @@ class _MiniPerformancePainter extends CustomPainter {
         ..strokeWidth = 6
         ..strokeCap = StrokeCap.round);
 
-    // Same multi-shade green colors as real performance gauge
     const activeColors = [
       Color(0xFFBBE5B3),
       Color(0xFF86EFAC),
@@ -571,9 +598,8 @@ class _MiniPerformancePainter extends CustomPainter {
       Color(0xFF16A34A),
     ];
 
-    final targetSegments = level.activeSegments;
+    final targetSegments = level.activeSegments.clamp(1, 5);
 
-    // Draw right-to-left so left segments' caps sit on top (matches real gauge)
     for (int i = targetSegments - 1; i >= 0; i--) {
       final start = startAngle + (i * segmentSweep);
       canvas.drawArc(innerRect, start, segmentSweep, false,
@@ -588,5 +614,3 @@ class _MiniPerformancePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
-
-

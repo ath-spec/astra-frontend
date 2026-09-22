@@ -1,20 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'generic_info_sheet.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../../data/portfolio_analysis_providers.dart';
+import '../../../data/portfolio_analysis_models.dart';
 import 'dart:math' as math;
 import 'dart:async';
 
-class MonthlyInvestmentSection extends StatefulWidget {
+/// Compact ₹ formatter used for chart labels (e.g. ₹50K, ₹1.2L, ₹-30K).
+String _fmtCompact(double v) {
+  final neg = v < 0;
+  final a = v.abs();
+  String s;
+  if (a >= 10000000) {
+    s = '${(a / 10000000).toStringAsFixed(a % 10000000 == 0 ? 0 : 1)}Cr';
+  } else if (a >= 100000) {
+    s = '${(a / 100000).toStringAsFixed(a % 100000 == 0 ? 0 : 1)}L';
+  } else if (a >= 1000) {
+    s = '${(a / 1000).toStringAsFixed(a % 1000 == 0 ? 0 : 1)}K';
+  } else {
+    s = a.round().toString();
+  }
+  return '${neg ? '₹-' : '₹'}$s';
+}
+
+/// Rounds [maxAbs] up to a friendly axis step (so the 40px grid unit maps to a
+/// clean number).
+double _niceStep(double maxAbs) {
+  if (maxAbs <= 0) return 50000;
+  const candidates = <double>[
+    1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000,
+    100000, 200000, 250000, 500000, 1000000, 2000000, 5000000
+  ];
+  for (final c in candidates) {
+    if (maxAbs <= c * 2) return c;
+  }
+  return maxAbs / 2;
+}
+
+class MonthlyInvestmentSection extends ConsumerStatefulWidget {
   const MonthlyInvestmentSection({super.key});
 
   @override
-  State<MonthlyInvestmentSection> createState() =>
+  ConsumerState<MonthlyInvestmentSection> createState() =>
       _MonthlyInvestmentSectionState();
 }
 
-class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
+class _MonthlyInvestmentSectionState
+    extends ConsumerState<MonthlyInvestmentSection>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -81,8 +117,41 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
     });
   }
 
+  String _fmtInrFull(double value) {
+    final rounded = value.round();
+    final neg = rounded < 0;
+    final digits = rounded.abs().toString();
+    String out;
+    if (digits.length <= 3) {
+      out = digits;
+    } else {
+      final head = digits.substring(0, digits.length - 3);
+      final tail = digits.substring(digits.length - 3);
+      out =
+          '${head.replaceAllMapped(RegExp(r'(\d)(?=(\d{2})+(?!\d))'), (m) => '${m[1]},')},$tail';
+    }
+    return '${neg ? '-₹' : '₹'}$out';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final discAsync = ref.watch(portfolioDisciplineProvider);
+    final disc = discAsync.value;
+
+    if (disc == null) {
+      return discAsync.isLoading
+          ? const _MonthlyInvestmentSkeleton()
+          : const SizedBox.shrink();
+    }
+
+    // Chart shows the most recent 9 months (8 columns).
+    final full = disc.monthlyHistory;
+    final months =
+        full.length > 9 ? full.sublist(full.length - 9) : full;
+    final proTip = disc.missedMonths > 0
+        ? 'Gaps in investing flow your investing rhythm has some breaks. keeping it steady will grow your money faster.'
+        : 'Steady rhythm your contributions have been consistent month after month. keep it going.';
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -132,7 +201,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                '₹4,001',
+                _fmtInrFull(disc.avgMonthlyInvested),
                 style: TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 22,
@@ -184,6 +253,7 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
                       progress: _animation.value,
                       hoverIndex: _hoverIndex,
                       isExpanded: _isExpanded,
+                      months: months,
                     ),
                   );
                 },
@@ -238,8 +308,8 @@ class _MonthlyInvestmentSectionState extends State<MonthlyInvestmentSection>
             ),
             child: AnimatedGradientShimmer(
               child: TypewriterText(
-                text: 'Gaps in investing flow your investing rhythm has some breaks. keeping it steady will grow your money faster.',
-                style: TextStyle(
+                text: proTip,
+                style: const TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 12,
                   height: 1.5,
@@ -258,12 +328,26 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
   final double progress; // 0.0 to 1.0
   final int hoverIndex;
   final bool isExpanded;
+  final List<MonthlyInvestmentData> months;
 
   _MonthlyNetInvestmentPainter({
     required this.progress,
     required this.hoverIndex,
     required this.isExpanded,
+    required this.months,
   });
+
+  static String _ymLabel(String ym) {
+    final parts = ym.split('-');
+    if (parts.length < 2) return ym;
+    const abbr = [
+      'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+      'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+    ];
+    final m = (int.tryParse(parts[1]) ?? 1).clamp(1, 12) - 1;
+    final yy = parts[0].length >= 2 ? parts[0].substring(parts[0].length - 2) : parts[0];
+    return "${abbr[m]}'$yy";
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -319,67 +403,42 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       textPainter.paint(canvas, Offset(0, y - textPainter.height / 2));
     }
 
-    drawLabel('₹1L', y0 - (80 * scale));
-    drawLabel('₹50K', y0 - (40 * scale));
-    drawLabel('₹0', y0);
-    drawLabel('₹-50K', y0 + (40 * scale));
+    // Y axis step: 40px grid unit maps to a friendly rounded value derived
+    // from the largest monthly net figure in the window.
+    double maxAbsNet = 0;
+    for (final m in months) {
+      final a = m.netAmount.abs();
+      if (a > maxAbsNet) maxAbsNet = a;
+    }
+    final step = _niceStep(maxAbsNet);
 
-    // Graph Data Points (Scaled)
+    drawLabel(_fmtCompact(step * 2), y0 - (80 * scale));
+    drawLabel(_fmtCompact(step), y0 - (40 * scale));
+    drawLabel('₹0', y0);
+    drawLabel(_fmtCompact(-step), y0 + (40 * scale));
+
+    // Graph Data Points (from live monthly net, mapped onto the 40px/step grid)
+    double netAt(int i) => i < months.length ? months[i].netAmount : 0.0;
+    double buyAt(int i) => i < months.length ? months[i].buyAmount : 0.0;
+    double sellAt(int i) => i < months.length ? months[i].sellAmount : 0.0;
+
     final points = [
-      Offset(paddingX + 0 * stepX, y0 - (10 * scale)),
-      Offset(paddingX + 1 * stepX, y0 - (50 * scale)),
-      Offset(paddingX + 2 * stepX, y0 - (10 * scale)),
-      Offset(paddingX + 3 * stepX, y0 - (5 * scale)),
-      Offset(paddingX + 4 * stepX, y0 + (30 * scale)),
-      Offset(paddingX + 5 * stepX, y0),
-      Offset(paddingX + 6 * stepX, y0),
-      Offset(paddingX + 7 * stepX, y0),
-      Offset(paddingX + 8 * stepX, y0),
+      for (int i = 0; i <= 8; i++)
+        Offset(paddingX + i * stepX, y0 - (netAt(i) / step) * 40 * scale),
     ];
 
     final labels = [
-      "AUG'25",
-      "SEP'25",
-      "OCT'25",
-      "NOV'25",
-      "DEC'25",
-      "JAN'26",
-      "FEB'26",
-      "MAR'26",
-      "AUG'26",
+      for (int i = 0; i <= 8; i++)
+        i < months.length ? _ymLabel(months[i].yearMonth) : '',
     ];
     final netValues = [
-      "₹10K",
-      "₹50K",
-      "₹10K",
-      "₹5K",
-      "₹-30K",
-      "₹0",
-      "₹0",
-      "₹0",
-      "₹0",
+      for (int i = 0; i <= 8; i++) _fmtCompact(netAt(i)),
     ];
     final buyValues = [
-      "₹20K",
-      "₹50K",
-      "₹20K",
-      "₹15K",
-      "₹0",
-      "₹0",
-      "₹0",
-      "₹0",
-      "₹0",
+      for (int i = 0; i <= 8; i++) _fmtCompact(buyAt(i)),
     ];
     final sellValues = [
-      "₹10K",
-      "₹0",
-      "₹10K",
-      "₹10K",
-      "₹30K",
-      "₹0",
-      "₹0",
-      "₹0",
-      "₹0",
+      for (int i = 0; i <= 8; i++) _fmtCompact(sellAt(i)),
     ];
 
     if (progress == 0) return;
@@ -427,7 +486,8 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
       );
 
       textPainter.text = TextSpan(
-        text: '₹4K AVG',
+        text:
+            '${_fmtCompact(months.isEmpty ? 0 : months.map((m) => m.netAmount).reduce((a, b) => a + b) / months.length)} AVG',
         style: TextStyle(
           fontFamily: 'DMSans',
           fontSize: 8 * textScale,
@@ -471,14 +531,14 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
     if (progress > 0.9) {
       _drawAxisTag(
         canvas,
-        'AUG\'25',
+        labels.first,
         Offset(paddingX, size.height - (12 * scale)),
         size,
         scale,
       );
       _drawAxisTag(
         canvas,
-        'AUG\'26',
+        months.isEmpty ? '' : _ymLabel(months.last.yearMonth),
         Offset(paddingX + 8 * stepX, size.height - (12 * scale)),
         size,
         scale,
@@ -924,6 +984,40 @@ class _MonthlyNetInvestmentPainter extends CustomPainter {
   bool shouldRepaint(covariant _MonthlyNetInvestmentPainter oldDelegate) {
     return oldDelegate.progress != progress ||
         oldDelegate.hoverIndex != hoverIndex ||
-        oldDelegate.isExpanded != isExpanded;
+        oldDelegate.isExpanded != isExpanded ||
+        !identical(oldDelegate.months, months);
+  }
+}
+
+/// Loading placeholder for [MonthlyInvestmentSection] — header + chart-area
+/// shimmer so no fabricated figures are shown while data loads.
+class _MonthlyInvestmentSkeleton extends StatelessWidget {
+  const _MonthlyInvestmentSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerBar(width: 200, height: 20),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 150, height: 22),
+          const SizedBox(height: 12),
+          const ShimmerBar(width: 220, height: 12),
+          const SizedBox(height: 16),
+          AspectRatio(
+            aspectRatio: 360 / 200,
+            child: ShimmerBar(
+              width: MediaQuery.of(context).size.width,
+              height: 200,
+              borderRadius: 8,
+            ),
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
   }
 }

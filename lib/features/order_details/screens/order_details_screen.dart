@@ -1,13 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../mf/screens/fund_profile/mf_fund_profile_screen.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
-  const OrderDetailsScreen({super.key});
+  final String? schemeName;
+  final String? category;
+  final double? amount;
+  final String? date;
+  final String? status;
+  final String? type;
+  final String? schemeId;
+  final String? folioNumber;
+
+  const OrderDetailsScreen({
+    super.key,
+    this.schemeName,
+    this.category,
+    this.amount,
+    this.date,
+    this.status,
+    this.type,
+    this.schemeId,
+    this.folioNumber,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-        return Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
@@ -15,12 +34,12 @@ class OrderDetailsScreen extends StatelessWidget {
             _buildTopBar(context),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildMainCard(context),
-                    SizedBox(height: 32),
+                    const SizedBox(height: 32),
                     _buildExpandableSection('More details'),
                     _buildDivider(),
                     _buildSupportSection(),
@@ -38,43 +57,25 @@ class OrderDetailsScreen extends StatelessWidget {
 
   Widget _buildTopBar(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(24, 16, 24, 8),
-      child: Stack(
-        alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
+          InkWell(
             onTap: () => Navigator.pop(context),
+            borderRadius: BorderRadius.circular(20),
             child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back_ios_new,
-                size: 16,
+              padding: const EdgeInsets.all(8),
+              child: const Icon(
+                Icons.arrow_back,
+                size: 20,
                 color: Colors.black,
               ),
             ),
           ),
-          Center(
-            child: Text(
-              'Order details',
-              style: TextStyle(
-                fontFamily: 'DMSans',
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ),
+          IconButton(
+            icon: const Icon(Icons.share_outlined, size: 20, color: Colors.black),
+            onPressed: () {},
           ),
         ],
       ),
@@ -82,124 +83,105 @@ class OrderDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildMainCard(BuildContext context) {
+    final currencyFormatter = NumberFormat('#,##,##0.00', 'en_IN');
+    final name = schemeName ?? 'Mutual Fund Investment';
+    final cat = category ?? 'Equity • Direct Growth';
+    final amtFormatted = amount != null ? '₹ ${currencyFormatter.format(amount)}' : '₹ 100.00';
+    final orderStatus = status ?? 'COMPLETED';
+    final orderType = type ?? 'Buy order';
+    final orderDate = date ?? DateFormat("dd MMM ''yy").format(DateTime.now());
+
     return Container(
-      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top half (Fund info) - Clickable
-          GestureDetector(
+          // Top half
+          InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MfFundProfileScreen(fundId: '1'),
-                ),
-              );
+              if (schemeId != null && schemeId!.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MfFundProfileScreen(fundId: schemeId!),
+                  ),
+                );
+              }
             },
-            behavior: HitTestBehavior.opaque,
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  // Logo with star badge
-                  SizedBox(
-                    width: 44,
-                    height: 44,
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: const Color(0xFFF1F5F9)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'CANARA\nROBECO',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 6,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF0F8387),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            padding: EdgeInsets.all(2),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.brightness_high,
-                              size: 12,
-                              color: const Color(0xFFE11D48),
-                            ),
-                          ),
-                        ),
-                      ],
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F172A),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      name.isNotEmpty ? name[0].toUpperCase() : 'M',
+                      style: const TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Canara Robeco Large Cap Fund',
-                          style: TextStyle(
+                          name,
+                          style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF475569),
+                            color: Color(0xFF475569),
                           ),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
-                          'Equity • Large-Cap',
-                          style: TextStyle(
+                          cat,
+                          style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 10,
-                            color: const Color(0xFF94A3B8),
+                            color: Color(0xFF94A3B8),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Icon(
+                  const Icon(
                     Icons.arrow_forward,
                     size: 16,
-                    color: const Color(0xFF475569),
+                    color: Color(0xFF475569),
                   ),
                 ],
               ),
             ),
           ),
           
-          Divider(color: const Color(0xFFE2E8F0), height: 1, thickness: 1),
+          const Divider(color: Color(0xFFE2E8F0), height: 1, thickness: 1),
           
           // Bottom half (Order info)
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -207,56 +189,56 @@ class OrderDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Buy order',
-                      style: TextStyle(
+                      orderType,
+                      style: const TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: 10,
-                        color: const Color(0xFF64748B),
+                        color: Color(0xFF64748B),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(color: const Color(0xFFE2E8F0)),
                         borderRadius: BorderRadius.circular(2),
                       ),
-                      child: Text(
+                      child: const Text(
                         'EXTERNAL',
                         style: TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 8,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
-                          color: const Color(0xFF64748B),
+                          color: Color(0xFF64748B),
                         ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '₹100',
-                      style: TextStyle(
+                      amtFormatted,
+                      style: const TextStyle(
                         fontFamily: 'DMSans',
-                        fontSize: 14, // Max allowed font size
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: Colors.black,
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981),
+                        color: orderStatus == 'COMPLETED' ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
                         borderRadius: BorderRadius.circular(2),
                       ),
                       child: Text(
-                        'COMPLETED',
-                        style: TextStyle(
+                        orderStatus,
+                        style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 8,
                           fontWeight: FontWeight.w700,
@@ -267,31 +249,31 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Text(
                           'Completion date',
                           style: TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
-                            color: const Color(0xFF64748B),
+                            color: Color(0xFF64748B),
                           ),
                         ),
                         SizedBox(width: 6),
                         Icon(
                           Icons.info_outline,
                           size: 14,
-                          color: const Color(0xFF94A3B8),
+                          color: Color(0xFF94A3B8),
                         ),
                       ],
                     ),
                     Text(
-                      '20 Jan \'26',
-                      style: TextStyle(
+                      orderDate,
+                      style: const TextStyle(
                         fontFamily: 'DMSans',
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -310,20 +292,20 @@ class OrderDetailsScreen extends StatelessWidget {
 
   Widget _buildExpandableSection(String title) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 14, // Strict max size
+              fontSize: 14,
               fontWeight: FontWeight.w700,
               color: Colors.black,
             ),
           ),
-          Icon(
+          const Icon(
             Icons.keyboard_arrow_down,
             size: 20,
             color: Colors.black,
@@ -334,7 +316,7 @@ class OrderDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildSupportSection() {
-    return Padding(
+    return const Padding(
       padding: EdgeInsets.symmetric(vertical: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -369,8 +351,8 @@ class OrderDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return Divider(
-      color: const Color(0xFFE2E8F0),
+    return const Divider(
+      color: Color(0xFFE2E8F0),
       height: 1,
       thickness: 1,
     );
@@ -378,16 +360,16 @@ class OrderDetailsScreen extends StatelessWidget {
 
   Widget _buildBottomSupportButton() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(24, 16, 24, 24),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: Colors.black, width: 1.5),
           borderRadius: BorderRadius.circular(4),
         ),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
@@ -400,7 +382,7 @@ class OrderDetailsScreen extends StatelessWidget {
               'Support',
               style: TextStyle(
                 fontFamily: 'DMSans',
-                fontSize: 12, // CTA size
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: Colors.black,
               ),

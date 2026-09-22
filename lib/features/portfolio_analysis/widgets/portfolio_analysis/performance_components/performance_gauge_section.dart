@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
 import 'dart:math' as math;
 import 'package:visibility_detector/visibility_detector.dart';
+import '../../../data/portfolio_analysis_providers.dart';
 import '../../../models/portfolio_analysis_models.dart';
 import 'performance_info_sheet.dart';
 
@@ -180,37 +181,48 @@ class _PerformanceGaugeSectionState extends State<PerformanceGaugeSection>
         const SizedBox(height: 32),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
-          child: ShaderMask(
-            blendMode: BlendMode.srcIn,
-            shaderCallback: (bounds) => LinearGradient(
-              colors: widget.level.gradientColors,
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ).createShader(bounds),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 2.0, right: 6.0),
-                  child: Icon(
-                    Icons.auto_awesome_rounded,
-                    size: 18,
-                    color: Colors.white,
-                  ),
-                ),
-                Expanded(
-                  child: TypewriterText(
-                    text: 'Your portfolio is earning well above what most Very Aggressive investors see. Your investment decisions are clearly paying off.',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 12,
-                      color: Colors.white,
+          child: Consumer(
+            builder: (context, ref, child) {
+              final tipAsync = ref.watch(portfolioPerformanceTipProvider);
+              final tipText = tipAsync.when(
+                data: (data) => data.tip.isNotEmpty ? data.tip : 'Analysis unavailable.',
+                loading: () => 'Analyzing your performance...',
+                error: (_, __) => 'Unable to load performance insights.',
+              );
+
+              return ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: widget.level.gradientColors,
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ).createShader(bounds),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2.0, right: 6.0),
+                      child: Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      child: TypewriterText(
+                        text: tipText,
+                        style: const TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
         const SizedBox(height: 40),

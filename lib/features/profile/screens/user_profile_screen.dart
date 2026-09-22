@@ -15,7 +15,9 @@ import '../../../core/providers/speech_provider.dart';
 import '../../../core/providers/nav_context_provider.dart';
 import '../../../core/providers/nav_input_provider.dart';
 import '../../../core/providers/privacy_provider.dart';
-import '../../home/widgets/home_portfolio_analysis.dart';
+import '../../portfolio_analysis/data/portfolio_analysis_providers.dart';
+import '../../recurring/data/recurring_providers.dart';
+import '../../dashboard/data/dashboard_providers.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {
   const UserProfileScreen({super.key});
@@ -297,7 +299,12 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
                         icon: Icons.settings_outlined,
                         title: 'Manage AA accounts',
                         onTap: () {
-                          if (assetState.banksConnected) {
+                          final dashboardAsync = ref.read(dashboardSummaryProvider);
+                          final backendConfirmedBankConnected = dashboardAsync.maybeWhen(
+                            data: (s) => s.bankBalancePresent,
+                            orElse: () => false,
+                          );
+                          if (assetState.banksConnected || backendConfirmedBankConnected) {
                             context.push('/manage-bank-accounts');
                           } else {
                             context.push('/banks-linking');
@@ -349,8 +356,12 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen>
                           ref.invalidate(learningsTabIndexProvider);
                           ref.invalidate(navInputModeProvider);
                           ref.invalidate(privacyProvider);
-
-                          hasSeenAnalysisWalkthrough.value = false;
+                          ref.read(portfolioAnalysisUnlockedProvider.notifier).setUnlocked(false);
+                          ref.read(billsTrackingUnlockedProvider.notifier).setUnlocked(false);
+                          ref.invalidate(portfolioAnalysisUnlockedProvider);
+                          ref.invalidate(billsTrackingUnlockedProvider);
+                          ref.invalidate(mandatesProvider);
+                          ref.invalidate(recurringSummaryProvider);
 
                           ref.read(authProvider.notifier).logout();
                           context.go('/intro');

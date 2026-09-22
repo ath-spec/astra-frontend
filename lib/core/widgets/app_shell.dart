@@ -35,6 +35,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     chatNavKey,
     newsNavKey,
     learningsNavKey,
+    analyticsNavKey,
   ];
 
   @override
@@ -69,7 +70,7 @@ class _AppShellState extends ConsumerState<AppShell> {
         ref.invalidate(chatNotifierProvider);
       }
     } else {
-      if (index == 0 || index == 3) {
+      if (index == 0 || index == 3 || index == 5) {
         ref.read(navContextProvider.notifier).state = NavContext.main;
       } else if (index == 1) {
         ref.read(navContextProvider.notifier).state = NavContext.mf;

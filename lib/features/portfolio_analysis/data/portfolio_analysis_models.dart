@@ -1,0 +1,587 @@
+import 'package:astra_frontend/features/portfolio_analysis/models/portfolio_analysis_models.dart';
+
+class AITipData {
+  final String topic;
+  final String tip;
+  final bool available;
+
+  const AITipData({
+    required this.topic,
+    required this.tip,
+    required this.available,
+  });
+
+  factory AITipData.fromJson(Map<String, dynamic> json) {
+    return AITipData(
+      topic: json['topic']?.toString() ?? '',
+      tip: json['tip']?.toString() ?? '',
+      available: json['available'] == true,
+    );
+  }
+}
+class PortfolioGenomeData {
+  final double growth;
+  final double income;
+  final double capitalPreservation;
+  final double inflationDefense;
+  final double liquidity;
+  final double sustainability;
+  final double realAssets;
+  final List<double> values;
+
+  const PortfolioGenomeData({
+    required this.growth,
+    required this.income,
+    required this.capitalPreservation,
+    required this.inflationDefense,
+    required this.liquidity,
+    required this.sustainability,
+    required this.realAssets,
+    required this.values,
+  });
+
+  factory PortfolioGenomeData.fromJson(Map<String, dynamic> json) {
+    final rawValues = (json['values'] as List?)
+            ?.map((v) => (v as num).toDouble())
+            .toList() ??
+        [];
+
+    return PortfolioGenomeData(
+      growth: (json['growth'] as num?)?.toDouble() ?? 0.85,
+      income: (json['income'] as num?)?.toDouble() ?? 0.30,
+      capitalPreservation:
+          (json['capital_preservation'] as num?)?.toDouble() ?? 0.15,
+      inflationDefense:
+          (json['inflation_defense'] as num?)?.toDouble() ?? 0.40,
+      liquidity: (json['liquidity'] as num?)?.toDouble() ?? 0.80,
+      sustainability: (json['sustainability'] as num?)?.toDouble() ?? 0.50,
+      realAssets: (json['real_assets'] as num?)?.toDouble() ?? 0.10,
+      values: rawValues.isNotEmpty
+          ? rawValues
+          : [0.85, 0.30, 0.15, 0.40, 0.80, 0.50, 0.10],
+    );
+  }
+}
+
+
+
+class VolatilityBucketData {
+  final String label;
+  final double amount;
+  final double sharePct;
+
+  const VolatilityBucketData({
+    required this.label,
+    required this.amount,
+    required this.sharePct,
+  });
+
+  factory VolatilityBucketData.fromJson(Map<String, dynamic> json) {
+    return VolatilityBucketData(
+      label: json['label']?.toString() ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      sharePct: (json['share_pct'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+class SectorExposureData {
+  final String sector;
+  final double amount;
+  final double percentage;
+
+  const SectorExposureData({
+    required this.sector,
+    required this.amount,
+    required this.percentage,
+  });
+
+  factory SectorExposureData.fromJson(Map<String, dynamic> json) {
+    return SectorExposureData(
+      sector: json['sector']?.toString() ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      percentage: (json['percentage'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+class AllocationData {
+  final AllocationLevel level;
+  final String rawLevel;
+  final double totalValue;
+  final double equityAmount;
+  final double debtAmount;
+  final double otherAmount;
+  final double equityPct;
+  final double debtPct;
+  final double otherPct;
+  final List<VolatilityBucketData> volatilityBuckets;
+  final List<SectorExposureData> sectorExposure;
+  final PortfolioGenomeData? genome;
+  final List<HoldingBreakdownData> holdings;
+  final EquityExposureData? equityExposure;
+
+  const AllocationData({
+    required this.level,
+    required this.rawLevel,
+    required this.totalValue,
+    required this.equityAmount,
+    required this.debtAmount,
+    required this.otherAmount,
+    required this.equityPct,
+    required this.debtPct,
+    required this.otherPct,
+    required this.volatilityBuckets,
+    required this.sectorExposure,
+    this.genome,
+    this.holdings = const [],
+    this.equityExposure,
+  });
+
+  static AllocationLevel parseLevel(String? val) {
+    switch (val?.toUpperCase()) {
+      case 'CONSERVATIVE':
+        return AllocationLevel.conservative;
+      case 'MODERATE_CONSERVATIVE':
+        return AllocationLevel.moderateConservative;
+      case 'BALANCED':
+        return AllocationLevel.balanced;
+      case 'AGGRESSIVE':
+        return AllocationLevel.aggressive;
+      case 'VERY_AGGRESSIVE':
+      default:
+        return AllocationLevel.veryAggressive;
+    }
+  }
+
+  factory AllocationData.fromJson(Map<String, dynamic> json) {
+    final rawLvl = json['level']?.toString() ?? 'BALANCED';
+    final buckets = (json['volatility_buckets'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .map(VolatilityBucketData.fromJson)
+            .toList() ??
+        [];
+    final sectors = (json['sector_exposure'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .map(SectorExposureData.fromJson)
+            .toList() ??
+        [];
+
+    return AllocationData(
+      level: parseLevel(rawLvl),
+      rawLevel: rawLvl,
+      totalValue: (json['total_value'] as num?)?.toDouble() ?? 0.0,
+      equityAmount: (json['equity_amount'] as num?)?.toDouble() ?? 0.0,
+      debtAmount: (json['debt_amount'] as num?)?.toDouble() ?? 0.0,
+      otherAmount: (json['other_amount'] as num?)?.toDouble() ?? 0.0,
+      equityPct: (json['equity_pct'] as num?)?.toDouble() ?? 0.0,
+      debtPct: (json['debt_pct'] as num?)?.toDouble() ?? 0.0,
+      otherPct: (json['other_pct'] as num?)?.toDouble() ?? 0.0,
+      volatilityBuckets: buckets,
+      sectorExposure: sectors,
+      genome: json['genome'] is Map<String, dynamic>
+          ? PortfolioGenomeData.fromJson(json['genome'] as Map<String, dynamic>)
+          : null,
+      holdings: (json['holdings'] as List?)
+              ?.whereType<Map<String, dynamic>>()
+              .map(HoldingBreakdownData.fromJson)
+              .toList() ??
+          const [],
+      equityExposure: json['equity_exposure'] is Map<String, dynamic>
+          ? EquityExposureData.fromJson(
+              json['equity_exposure'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+}
+
+class HoldingBreakdownData {
+  final String name;
+  final String subtitle;
+  final String type; // BANK / FD / MF / STOCK
+  final double value;
+  final double pct;
+  final String volatility; // STABLE / LOW / MEDIUM / HIGH
+
+  const HoldingBreakdownData({
+    required this.name,
+    required this.subtitle,
+    required this.type,
+    required this.value,
+    required this.pct,
+    required this.volatility,
+  });
+
+  factory HoldingBreakdownData.fromJson(Map<String, dynamic> json) {
+    return HoldingBreakdownData(
+      name: json['name']?.toString() ?? '',
+      subtitle: json['subtitle']?.toString() ?? '',
+      type: json['type']?.toString() ?? '',
+      value: (json['value'] as num?)?.toDouble() ?? 0.0,
+      pct: (json['pct'] as num?)?.toDouble() ?? 0.0,
+      volatility: json['volatility']?.toString() ?? '',
+    );
+  }
+}
+
+class MarketCapSliceData {
+  final String label;
+  final double value;
+  final double pct;
+
+  const MarketCapSliceData({
+    required this.label,
+    required this.value,
+    required this.pct,
+  });
+
+  factory MarketCapSliceData.fromJson(Map<String, dynamic> json) {
+    return MarketCapSliceData(
+      label: json['label']?.toString() ?? '',
+      value: (json['value'] as num?)?.toDouble() ?? 0.0,
+      pct: (json['pct'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+class EquityExposureData {
+  final double totalEquityValue;
+  final double indexFundValue;
+  final double indexFundPct;
+  final double peerIndexFundPct;
+  final List<MarketCapSliceData> marketCap;
+
+  const EquityExposureData({
+    required this.totalEquityValue,
+    required this.indexFundValue,
+    required this.indexFundPct,
+    required this.peerIndexFundPct,
+    required this.marketCap,
+  });
+
+  factory EquityExposureData.fromJson(Map<String, dynamic> json) {
+    return EquityExposureData(
+      totalEquityValue: (json['total_equity_value'] as num?)?.toDouble() ?? 0.0,
+      indexFundValue: (json['index_fund_value'] as num?)?.toDouble() ?? 0.0,
+      indexFundPct: (json['index_fund_pct'] as num?)?.toDouble() ?? 0.0,
+      peerIndexFundPct: (json['peer_index_fund_pct'] as num?)?.toDouble() ?? 0.0,
+      marketCap: (json['market_cap'] as List?)
+              ?.whereType<Map<String, dynamic>>()
+              .map(MarketCapSliceData.fromJson)
+              .toList() ??
+          const [],
+    );
+  }
+}
+
+class MonthlyInvestmentData {
+  final String monthName;
+  final String yearMonth;
+  final double amount;
+  final double buyAmount;
+  final double sellAmount;
+  final double netAmount;
+  final int orderCount;
+  final bool hasInvestment;
+
+  const MonthlyInvestmentData({
+    required this.monthName,
+    required this.yearMonth,
+    required this.amount,
+    required this.buyAmount,
+    required this.sellAmount,
+    required this.netAmount,
+    required this.orderCount,
+    required this.hasInvestment,
+  });
+
+  factory MonthlyInvestmentData.fromJson(Map<String, dynamic> json) {
+    final amt = (json['amount'] as num?)?.toDouble() ?? 0.0;
+    final buy = (json['buy_amount'] as num?)?.toDouble() ?? amt;
+    final sell = (json['sell_amount'] as num?)?.toDouble() ?? 0.0;
+    return MonthlyInvestmentData(
+      monthName: json['month_name']?.toString() ?? '',
+      yearMonth: json['year_month']?.toString() ?? '',
+      amount: amt,
+      buyAmount: buy,
+      sellAmount: sell,
+      netAmount: (json['net_amount'] as num?)?.toDouble() ?? (buy - sell),
+      orderCount: (json['order_count'] as num?)?.toInt() ?? 0,
+      hasInvestment: json['has_investment'] == true,
+    );
+  }
+}
+
+class YearlyInvestmentData {
+  final int year;
+  final double buyAmount;
+  final double sellAmount;
+  final double netAmount;
+
+  const YearlyInvestmentData({
+    required this.year,
+    required this.buyAmount,
+    required this.sellAmount,
+    required this.netAmount,
+  });
+
+  factory YearlyInvestmentData.fromJson(Map<String, dynamic> json) {
+    final buy = (json['buy_amount'] as num?)?.toDouble() ?? 0.0;
+    final sell = (json['sell_amount'] as num?)?.toDouble() ?? 0.0;
+    return YearlyInvestmentData(
+      year: (json['year'] as num?)?.toInt() ?? 0,
+      buyAmount: buy,
+      sellAmount: sell,
+      netAmount: (json['net_amount'] as num?)?.toDouble() ?? (buy - sell),
+    );
+  }
+}
+
+class DisciplineData {
+  final DisciplineLevel level;
+  final String rawLevel;
+  final double score;
+  final int activeSegments;
+  final double sipConsistencyPct;
+  final int currentStreakMonths;
+  final int missedMonths;
+  final double avgMonthlyInvested;
+  final double sipAutomationPct;
+  final int activeMandatesCount;
+  final List<MonthlyInvestmentData> monthlyHistory;
+  final List<YearlyInvestmentData> yearlyHistory;
+
+  const DisciplineData({
+    required this.level,
+    required this.rawLevel,
+    required this.score,
+    required this.activeSegments,
+    required this.sipConsistencyPct,
+    required this.currentStreakMonths,
+    required this.missedMonths,
+    required this.avgMonthlyInvested,
+    required this.sipAutomationPct,
+    required this.activeMandatesCount,
+    required this.monthlyHistory,
+    required this.yearlyHistory,
+  });
+
+  static DisciplineLevel parseLevel(String? val) {
+    switch (val?.toUpperCase()) {
+      case 'POOR':
+        return DisciplineLevel.poor;
+      case 'GOOD':
+        return DisciplineLevel.good;
+      case 'EXCELLENT':
+        return DisciplineLevel.excellent;
+      case 'MODERATE':
+      default:
+        return DisciplineLevel.moderate;
+    }
+  }
+
+  factory DisciplineData.fromJson(Map<String, dynamic> json) {
+    final rawLvl = json['level']?.toString() ?? 'MODERATE';
+    final history = (json['monthly_history'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .map(MonthlyInvestmentData.fromJson)
+            .toList() ??
+        [];
+    final yearly = (json['yearly_history'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .map(YearlyInvestmentData.fromJson)
+            .toList() ??
+        [];
+
+    return DisciplineData(
+      level: parseLevel(rawLvl),
+      rawLevel: rawLvl,
+      score: (json['score'] as num?)?.toDouble() ?? 0.70,
+      activeSegments: (json['active_segments'] as num?)?.toInt() ?? 2,
+      sipConsistencyPct:
+          (json['sip_consistency_pct'] as num?)?.toDouble() ?? 0.0,
+      currentStreakMonths:
+          (json['current_streak_months'] as num?)?.toInt() ?? 0,
+      missedMonths: (json['missed_months'] as num?)?.toInt() ?? 0,
+      avgMonthlyInvested:
+          (json['avg_monthly_invested'] as num?)?.toDouble() ?? 0.0,
+      sipAutomationPct: (json['sip_automation_pct'] as num?)?.toDouble() ?? 0.0,
+      activeMandatesCount:
+          (json['active_mandates_count'] as num?)?.toInt() ?? 0,
+      monthlyHistory: history,
+      yearlyHistory: yearly,
+    );
+  }
+}
+
+class BenchmarkData {
+  final String name;
+  final double benchmarkReturnPct;
+  final double portfolioReturnPct;
+  final double alphaPct;
+  final bool beatingBenchmark;
+
+  const BenchmarkData({
+    required this.name,
+    required this.benchmarkReturnPct,
+    required this.portfolioReturnPct,
+    required this.alphaPct,
+    required this.beatingBenchmark,
+  });
+
+  factory BenchmarkData.fromJson(Map<String, dynamic> json) {
+    return BenchmarkData(
+      name: json['name']?.toString() ?? '',
+      benchmarkReturnPct:
+          (json['benchmark_return_pct'] as num?)?.toDouble() ?? 0.0,
+      portfolioReturnPct:
+          (json['portfolio_return_pct'] as num?)?.toDouble() ?? 0.0,
+      alphaPct: (json['alpha_pct'] as num?)?.toDouble() ?? 0.0,
+      beatingBenchmark: json['beating_benchmark'] == true,
+    );
+  }
+}
+
+class ExpensiveFundData {
+  final String schemeCode;
+  final String schemeName;
+  final double expenseRatio;
+  final double categoryAvgExpenseRatio;
+  final double annualCostEstimate;
+  final String recommendation;
+
+  const ExpensiveFundData({
+    required this.schemeCode,
+    required this.schemeName,
+    required this.expenseRatio,
+    required this.categoryAvgExpenseRatio,
+    required this.annualCostEstimate,
+    required this.recommendation,
+  });
+
+  factory ExpensiveFundData.fromJson(Map<String, dynamic> json) {
+    return ExpensiveFundData(
+      schemeCode: json['scheme_code']?.toString() ?? '',
+      schemeName: json['scheme_name']?.toString() ?? '',
+      expenseRatio: (json['expense_ratio'] as num?)?.toDouble() ?? 0.0,
+      categoryAvgExpenseRatio:
+          (json['category_avg_expense_ratio'] as num?)?.toDouble() ?? 0.65,
+      annualCostEstimate:
+          (json['annual_cost_estimate'] as num?)?.toDouble() ?? 0.0,
+      recommendation: json['recommendation']?.toString() ?? '',
+    );
+  }
+}
+
+class FundPerformanceData {
+  final String schemeCode;
+  final String schemeName;
+  final double investedValue;
+  final double currentValue;
+  final double gainAmount;
+  final double returnsPct;
+  final String performanceRank;
+  final double expenseRatio;
+
+  const FundPerformanceData({
+    required this.schemeCode,
+    required this.schemeName,
+    required this.investedValue,
+    required this.currentValue,
+    required this.gainAmount,
+    required this.returnsPct,
+    required this.performanceRank,
+    this.expenseRatio = 0.85,
+  });
+
+  factory FundPerformanceData.fromJson(Map<String, dynamic> json) {
+    return FundPerformanceData(
+      schemeCode: json['scheme_code']?.toString() ?? '',
+      schemeName: json['scheme_name']?.toString() ?? '',
+      investedValue: (json['invested_value'] as num?)?.toDouble() ?? 0.0,
+      currentValue: (json['current_value'] as num?)?.toDouble() ?? 0.0,
+      gainAmount: (json['gain_amount'] as num?)?.toDouble() ?? 0.0,
+      returnsPct: (json['returns_pct'] as num?)?.toDouble() ?? 0.0,
+      performanceRank: json['performance_rank']?.toString() ?? 'AVERAGE',
+      expenseRatio: (json['expense_ratio'] as num?)?.toDouble() ?? 0.85,
+    );
+  }
+}
+
+class PerformanceData {
+  final PerformanceLevel level;
+  final String rawLevel;
+  final int activeSegments;
+  final double totalInvested;
+  final double totalCurrent;
+  final double totalGainAmount;
+  final double totalReturnPct;
+  final double annualizedReturnPct;
+  final List<BenchmarkData> benchmarks;
+  final List<ExpensiveFundData> expensiveFunds;
+  final List<FundPerformanceData> fundsPerformance;
+
+  const PerformanceData({
+    required this.level,
+    required this.rawLevel,
+    required this.activeSegments,
+    required this.totalInvested,
+    required this.totalCurrent,
+    required this.totalGainAmount,
+    required this.totalReturnPct,
+    required this.annualizedReturnPct,
+    required this.benchmarks,
+    required this.expensiveFunds,
+    required this.fundsPerformance,
+  });
+
+  static PerformanceLevel parseLevel(String? val) {
+    switch (val?.toUpperCase()) {
+      case 'SIGNIFICANTLY_BELOW':
+        return PerformanceLevel.significantlyBelow;
+      case 'BELOW_AVERAGE':
+        return PerformanceLevel.belowAverage;
+      case 'IN_LINE':
+        return PerformanceLevel.inLine;
+      case 'STRONG':
+        return PerformanceLevel.strong;
+      case 'VERY_STRONG':
+      default:
+        return PerformanceLevel.veryStrong;
+    }
+  }
+
+  factory PerformanceData.fromJson(Map<String, dynamic> json) {
+    final rawLvl = json['level']?.toString() ?? 'VERY_STRONG';
+    final benchmarks = (json['benchmarks'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .map(BenchmarkData.fromJson)
+            .toList() ??
+        [];
+    final expensive = (json['expensive_funds'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .map(ExpensiveFundData.fromJson)
+            .toList() ??
+        [];
+    final funds = (json['funds_performance'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .map(FundPerformanceData.fromJson)
+            .toList() ??
+        [];
+
+    return PerformanceData(
+      level: parseLevel(rawLvl),
+      rawLevel: rawLvl,
+      activeSegments: (json['active_segments'] as num?)?.toInt() ?? 5,
+      totalInvested: (json['total_invested'] as num?)?.toDouble() ?? 0.0,
+      totalCurrent: (json['total_current'] as num?)?.toDouble() ?? 0.0,
+      totalGainAmount: (json['total_gain_amount'] as num?)?.toDouble() ?? 0.0,
+      totalReturnPct: (json['total_return_pct'] as num?)?.toDouble() ?? 0.0,
+      annualizedReturnPct:
+          (json['annualized_return_pct'] as num?)?.toDouble() ?? 0.0,
+      benchmarks: benchmarks,
+      expensiveFunds: expensive,
+      fundsPerformance: funds,
+    );
+  }
+}

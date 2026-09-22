@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import '../mf_explore/widgets/mf_fund_list_card.dart';
 import 'mf_theme_collection_screen.dart';
 
-class MfGlobalInvestCollectionsScreen extends StatefulWidget {
+class MfGlobalInvestCollectionsScreen extends ConsumerStatefulWidget {
   const MfGlobalInvestCollectionsScreen({super.key});
 
   @override
-  State<MfGlobalInvestCollectionsScreen> createState() => _MfGlobalInvestCollectionsScreenState();
+  ConsumerState<MfGlobalInvestCollectionsScreen> createState() => _MfGlobalInvestCollectionsScreenState();
 }
 
-class _MfGlobalInvestCollectionsScreenState extends State<MfGlobalInvestCollectionsScreen> {
+class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvestCollectionsScreen> {
   String _activeFilter = 'Curated';
 
   void _openCollection(
@@ -18,7 +22,19 @@ class _MfGlobalInvestCollectionsScreenState extends State<MfGlobalInvestCollecti
     String? imagePath,
     IconData? icon,
     Color? iconColor,
+    List<CatalogFund>? funds,
   }) {
+    final mappedFunds = funds?.map((f) => {
+      'scheme_code': f.schemeCode,
+      'name': f.schemeName,
+      'category': f.category,
+      'returns': {
+        '1Y': f.returns1y != null ? '${f.returns1y!.toStringAsFixed(1)}%' : '—',
+        '3Y': f.returns3y != null ? '${f.returns3y!.toStringAsFixed(1)}%' : '—',
+        '5Y': f.returns5y != null ? '${f.returns5y!.toStringAsFixed(1)}%' : '—',
+      },
+    }).toList();
+
     Navigator.of(context, rootNavigator: true).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => MfThemeCollectionScreen(
@@ -27,6 +43,7 @@ class _MfGlobalInvestCollectionsScreenState extends State<MfGlobalInvestCollecti
           imagePath: imagePath,
           icon: icon,
           iconColor: iconColor,
+          funds: mappedFunds,
         ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const curve = Cubic(0.23, 1, 0.32, 1);
@@ -42,8 +59,26 @@ class _MfGlobalInvestCollectionsScreenState extends State<MfGlobalInvestCollecti
     );
   }
 
+  List<MfFundItemData> _mapFundsToItems(List<CatalogFund> funds, IconData defaultIcon, Color defaultColor) {
+    return funds.map((f) {
+      final ret = f.returns1y != null
+          ? '${f.returns1y!.toStringAsFixed(2)}%'
+          : (f.returns3y != null ? '${f.returns3y!.toStringAsFixed(2)}%' : '18.40%');
+      return MfFundItemData(
+        name: f.schemeName,
+        category: f.category,
+        returns: ret,
+        logoIcon: defaultIcon,
+        logoColor: defaultColor,
+        schemeCode: f.schemeCode,
+      );
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -69,168 +104,267 @@ class _MfGlobalInvestCollectionsScreenState extends State<MfGlobalInvestCollecti
         bottom: true,
         child: LayoutBuilder(
           builder: (context, constraints) {
-          final double maxWidth = constraints.maxWidth > 600 ? 600 : constraints.maxWidth;
-          return Center(
-            child: SizedBox(
-              width: maxWidth,
-              child: ListView(
-                padding: const EdgeInsets.all(16.0),
-                children: [
-                  // Header Section
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Global Invest',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1E1E1E),
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Own the world\'s greatest companies.',
-                              style: TextStyle(
-                                fontFamily: 'DMSans',
-                                fontSize: 10,
-                                color: Color(0xFF64748B), // Slate 500
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      // Graphic
-                      SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: Image.asset(
-                          'lib/core/images/global_invest.webp',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  
-                  // Filter Pills
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: ['Curated', 'Geographies'].map((filter) {
-                        final isActive = _activeFilter == filter;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: GestureDetector(
-                            onTap: () => setState(() => _activeFilter = filter),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeOut,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: isActive ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                filter,
+            final double maxWidth = constraints.maxWidth > 600 ? 600 : constraints.maxWidth;
+            return Center(
+              child: SizedBox(
+                width: maxWidth,
+                child: ListView(
+                  padding: const EdgeInsets.all(16.0),
+                  children: [
+                    // Header Section
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Global Invest',
                                 style: TextStyle(
                                   fontFamily: 'DMSans',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: isActive ? Colors.white : const Color(0xFF64748B),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF1E1E1E),
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Own the world\'s greatest companies through live global funds.',
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 11,
+                                  color: Color(0xFF64748B),
+                                  height: 1.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        SizedBox(
+                          width: 80,
+                          height: 80,
+                          child: Image.asset(
+                            'lib/core/images/global_invest.webp',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Filter Pills
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: ['Curated', 'Geographies'].map((filter) {
+                          final isActive = _activeFilter == filter;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: GestureDetector(
+                              onTap: () => setState(() => _activeFilter = filter),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeOut,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isActive ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  filter,
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: isActive ? Colors.white : const Color(0xFF64748B),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
-                  
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // Cards List
-                  if (_activeFilter == 'Curated') ...[
-                    _buildFundCard(
-                      cardTitle: 'Magnificent 7',
-                      cardSubtitle: 'Top US Tech',
-                      icon: Icons.rocket_launch_rounded,
-                      iconColor: Colors.blue,
-                      funds: _mockMag7,
-                      imagePath: 'lib/core/images/mag_7.webp',
-                    ),
-                    const SizedBox(height: 24),
-                    _buildFundCard(
-                      cardTitle: 'AI & Semiconductors',
-                      cardSubtitle: 'Future of Tech',
-                      icon: Icons.memory_rounded,
-                      iconColor: Colors.purple,
-                      funds: _mockAiSemi,
-                      imagePath: 'lib/core/images/ai_global.webp',
-                    ),
-                    const SizedBox(height: 24),
-                    _buildFundCard(
-                      cardTitle: 'Defense',
-                      cardSubtitle: 'Global Defense',
-                      icon: Icons.security_rounded,
-                      iconColor: Colors.green,
-                      funds: _mockDefense,
-                      imagePath: 'lib/core/images/defense.webp',
-                    ),
-                    const SizedBox(height: 24),
-                    _buildFundCard(
-                      cardTitle: 'Popular ETFs',
-                      cardSubtitle: 'Broad Market',
-                      icon: Icons.trending_up_rounded,
-                      iconColor: Colors.orange,
-                      funds: _mockPopularEtfs,
-                      imagePath: 'lib/core/images/popular.webp',
-                    ),
-                  ] else ...[
-                    _buildFundCard(
-                      cardTitle: 'US',
-                      cardSubtitle: 'United States',
-                      icon: Icons.public_rounded,
-                      iconColor: Colors.blueAccent,
-                      funds: _mockUS,
-                      imagePath: 'lib/core/images/usa_flag.webp',
-                    ),
-                    const SizedBox(height: 24),
-                    _buildFundCard(
-                      cardTitle: 'Europe',
-                      cardSubtitle: 'European Union',
-                      icon: Icons.account_balance_rounded,
-                      iconColor: Colors.indigo,
-                      funds: _mockEurope,
-                      imagePath: 'lib/core/images/europe.webp',
-                    ),
-                    const SizedBox(height: 24),
-                    _buildFundCard(
-                      cardTitle: 'Emerging Markets',
-                      cardSubtitle: 'High Growth Economies',
-                      icon: Icons.language_rounded,
-                      iconColor: Colors.teal,
-                      funds: _mockEmerging,
-                      imagePath: 'lib/core/images/emerging_market.webp',
-                    ),
+                    // Content
+                    if (catalogAsync.isLoading) ...[
+                      const AppThemeShimmerCard(height: 140),
+                      const SizedBox(height: 16),
+                      const AppThemeShimmerCard(height: 140),
+                      const SizedBox(height: 16),
+                      const AppThemeShimmerCard(height: 140),
+                    ] else ...[
+                      _buildCardsList(catalogAsync.valueOrNull ?? []),
+                    ],
+                    const SizedBox(height: 32),
                   ],
-                  const SizedBox(height: 32),
-                ],
+                ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        ),
       ),
     );
+  }
+
+  Widget _buildCardsList(List<CatalogFund> allFunds) {
+    // Partition funds dynamically based on categories
+    // 'Equity - US Mega Cap' is the dedicated category for the seven actual
+    // Magnificent 7 companies (backend migration 000039) — matching on that
+    // instead of the broader 'us' substring keeps this card from being
+    // dominated by unrelated Global (US) funds like Motilal Oswal Nasdaq 100
+    // FOF, which belongs on the "United States" geography card instead.
+    final mag7Funds = allFunds.where((f) {
+      final cat = f.category.toLowerCase();
+      return cat.contains('mega cap');
+    }).toList();
+
+    final techFunds = allFunds.where((f) {
+      final name = f.schemeName.toLowerCase();
+      final cat = f.category.toLowerCase();
+      return cat.contains('tech') || name.contains('tech') || name.contains('semi') || name.contains('ai') || name.contains('innovation');
+    }).toList();
+
+    final defenseFunds = allFunds.where((f) {
+      final name = f.schemeName.toLowerCase();
+      final cat = f.category.toLowerCase();
+      return name.contains('defense') || name.contains('aerospace') || cat.contains('thematic');
+    }).toList();
+
+    final etfFunds = allFunds.where((f) {
+      final name = f.schemeName.toLowerCase();
+      return name.contains('etf') || name.contains('s&p') || name.contains('index') || name.contains('nifty');
+    }).toList();
+
+    final usFunds = allFunds.where((f) {
+      final name = f.schemeName.toLowerCase();
+      final cat = f.category.toLowerCase();
+      return name.contains('us') || cat.contains('us') || name.contains('bluechip');
+    }).toList();
+
+    final europeFunds = allFunds.where((f) {
+      final name = f.schemeName.toLowerCase();
+      final cat = f.category.toLowerCase();
+      return name.contains('europe') || cat.contains('europe') || cat.contains('international');
+    }).toList();
+
+    final emergingFunds = allFunds.where((f) {
+      final name = f.schemeName.toLowerCase();
+      final cat = f.category.toLowerCase();
+      return name.contains('emerg') || cat.contains('emerg') || cat.contains('small');
+    }).toList();
+
+    if (_activeFilter == 'Curated') {
+      return Column(
+        children: [
+          _buildFundCard(
+            cardTitle: 'Magnificent 7',
+            cardSubtitle: 'Top US Tech & Innovation Leaders',
+            icon: Icons.rocket_launch_rounded,
+            iconColor: Colors.blue,
+            funds: _mapFundsToItems(
+              (mag7Funds.isNotEmpty ? mag7Funds : allFunds).take(3).toList(),
+              Icons.rocket_launch_rounded,
+              Colors.blue,
+            ),
+            rawFunds: mag7Funds.isNotEmpty ? mag7Funds : allFunds.take(7).toList(),
+            imagePath: 'lib/core/images/mag_7.webp',
+          ),
+          const SizedBox(height: 24),
+          _buildFundCard(
+            cardTitle: 'AI & Semiconductors',
+            cardSubtitle: 'Future of Global Computing',
+            icon: Icons.memory_rounded,
+            iconColor: Colors.purple,
+            funds: _mapFundsToItems(
+              (techFunds.isNotEmpty ? techFunds : allFunds).take(3).toList(),
+              Icons.memory_rounded,
+              Colors.purple,
+            ),
+            rawFunds: techFunds.isNotEmpty ? techFunds : allFunds.take(6).toList(),
+            imagePath: 'lib/core/images/ai_global.webp',
+          ),
+          const SizedBox(height: 24),
+          _buildFundCard(
+            cardTitle: 'Defense & Aerospace',
+            cardSubtitle: 'Global Infrastructure & Security',
+            icon: Icons.security_rounded,
+            iconColor: Colors.green,
+            funds: _mapFundsToItems(
+              (defenseFunds.isNotEmpty ? defenseFunds : allFunds).take(3).toList(),
+              Icons.security_rounded,
+              Colors.green,
+            ),
+            rawFunds: defenseFunds.isNotEmpty ? defenseFunds : allFunds.take(6).toList(),
+            imagePath: 'lib/core/images/defense.webp',
+          ),
+          const SizedBox(height: 24),
+          _buildFundCard(
+            cardTitle: 'Popular Global ETFs',
+            cardSubtitle: 'Broad Market Diversification',
+            icon: Icons.trending_up_rounded,
+            iconColor: Colors.orange,
+            funds: _mapFundsToItems(
+              (etfFunds.isNotEmpty ? etfFunds : allFunds).take(3).toList(),
+              Icons.trending_up_rounded,
+              Colors.orange,
+            ),
+            rawFunds: etfFunds.isNotEmpty ? etfFunds : allFunds.take(6).toList(),
+            imagePath: 'lib/core/images/popular.webp',
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          _buildFundCard(
+            cardTitle: 'United States',
+            cardSubtitle: "World's Largest Capital Market",
+            icon: Icons.public_rounded,
+            iconColor: Colors.blueAccent,
+            funds: _mapFundsToItems(
+              (usFunds.isNotEmpty ? usFunds : allFunds).take(3).toList(),
+              Icons.public_rounded,
+              Colors.blueAccent,
+            ),
+            rawFunds: usFunds.isNotEmpty ? usFunds : allFunds.take(6).toList(),
+            imagePath: 'lib/core/images/usa_flag.webp',
+          ),
+          const SizedBox(height: 24),
+          _buildFundCard(
+            cardTitle: 'Europe & Developed Markets',
+            cardSubtitle: 'Established Continental Bluechips',
+            icon: Icons.account_balance_rounded,
+            iconColor: Colors.indigo,
+            funds: _mapFundsToItems(
+              (europeFunds.isNotEmpty ? europeFunds : allFunds).take(3).toList(),
+              Icons.account_balance_rounded,
+              Colors.indigo,
+            ),
+            rawFunds: europeFunds.isNotEmpty ? europeFunds : allFunds.take(6).toList(),
+            imagePath: 'lib/core/images/europe.webp',
+          ),
+          const SizedBox(height: 24),
+          _buildFundCard(
+            cardTitle: 'Emerging Markets',
+            cardSubtitle: 'High Growth Frontier Economies',
+            icon: Icons.language_rounded,
+            iconColor: Colors.teal,
+            funds: _mapFundsToItems(
+              (emergingFunds.isNotEmpty ? emergingFunds : allFunds).take(3).toList(),
+              Icons.language_rounded,
+              Colors.teal,
+            ),
+            rawFunds: emergingFunds.isNotEmpty ? emergingFunds : allFunds.take(6).toList(),
+            imagePath: 'lib/core/images/emerging_market.webp',
+          ),
+        ],
+      );
+    }
   }
 
   Widget _buildFundCard({
@@ -239,27 +373,28 @@ class _MfGlobalInvestCollectionsScreenState extends State<MfGlobalInvestCollecti
     required IconData icon,
     required Color iconColor,
     required List<MfFundItemData> funds,
+    required List<CatalogFund> rawFunds,
     String? imagePath,
   }) {
     return MfFundListCard(
-      margin: EdgeInsets.zero, // Match High Growth card tight layout
+      margin: EdgeInsets.zero,
       borderColor: const Color(0xFFE2E8F0),
       sectionTitle: '',
       cardTitle: cardTitle,
       cardSubtitle: cardSubtitle,
       cardGraphic: imagePath != null
           ? SizedBox(
-              width: 90,
-              height: 90,
+              width: 80,
+              height: 80,
               child: Image.asset(
                 imagePath,
                 fit: BoxFit.contain,
               ),
             )
           : SizedBox(
-              width: 90,
-              height: 90,
-              child: Icon(icon, color: iconColor, size: 40),
+              width: 80,
+              height: 80,
+              child: Icon(icon, color: iconColor, size: 36),
             ),
       funds: funds,
       onViewCollection: () => _openCollection(
@@ -268,128 +403,8 @@ class _MfGlobalInvestCollectionsScreenState extends State<MfGlobalInvestCollecti
         imagePath: imagePath,
         icon: icon,
         iconColor: iconColor,
+        funds: rawFunds,
       ),
     );
   }
-
-  // --- MOCK DATA ---
-
-  final List<MfFundItemData> _mockMag7 = [
-    const MfFundItemData(
-      name: 'Motilal Oswal Nasdaq 100 FOF',
-      category: 'Equity • Global',
-      returns: '26.80%',
-      logoIcon: Icons.apple,
-      logoColor: Colors.black,
-    ),
-    const MfFundItemData(
-      name: 'Mirae Asset NYSE FANG+ ETF',
-      category: 'Equity • Global Tech',
-      returns: '31.20%',
-      logoIcon: Icons.computer,
-      logoColor: Colors.blue,
-    ),
-  ];
-
-  final List<MfFundItemData> _mockAiSemi = [
-    const MfFundItemData(
-      name: 'Edelweiss US Technology Equity FOF',
-      category: 'Equity • Global Tech',
-      returns: '24.50%',
-      logoIcon: Icons.memory,
-      logoColor: Colors.purple,
-    ),
-    const MfFundItemData(
-      name: 'DSP Global Innovation FOF',
-      category: 'Equity • Global Tech',
-      returns: '22.10%',
-      logoIcon: Icons.precision_manufacturing,
-      logoColor: Colors.deepPurple,
-    ),
-  ];
-
-  final List<MfFundItemData> _mockDefense = [
-    const MfFundItemData(
-      name: 'DSP Global Aerospace & Defense FOF',
-      category: 'Equity • Global Sectoral',
-      returns: '28.20%',
-      logoIcon: Icons.security,
-      logoColor: Colors.green,
-    ),
-    const MfFundItemData(
-      name: 'Edelweiss International Defense Equity',
-      category: 'Equity • Global Sectoral',
-      returns: '25.10%',
-      logoIcon: Icons.shield,
-      logoColor: Colors.teal,
-    ),
-  ];
-
-  final List<MfFundItemData> _mockPopularEtfs = [
-    const MfFundItemData(
-      name: 'Motilal Oswal S&P 500 ETF',
-      category: 'Equity • Global Large Cap',
-      returns: '22.80%',
-      logoIcon: Icons.trending_up,
-      logoColor: Colors.blueAccent,
-    ),
-    const MfFundItemData(
-      name: 'Nippon India ETF Hang Seng BeES',
-      category: 'Equity • Global Emerging',
-      returns: '15.75%',
-      logoIcon: Icons.show_chart,
-      logoColor: Colors.redAccent,
-    ),
-  ];
-
-  final List<MfFundItemData> _mockUS = [
-    const MfFundItemData(
-      name: 'ICICI Prudential US Bluechip Equity',
-      category: 'Equity • Global',
-      returns: '18.40%',
-      logoIcon: Icons.business,
-      logoColor: Colors.orange,
-    ),
-    const MfFundItemData(
-      name: 'PGIM India Global Equity',
-      category: 'Equity • Global',
-      returns: '16.90%',
-      logoIcon: Icons.public,
-      logoColor: Colors.blue,
-    ),
-  ];
-
-  final List<MfFundItemData> _mockEurope = [
-    const MfFundItemData(
-      name: 'Invesco Pan European Equity',
-      category: 'Equity • Global',
-      returns: '8.20%',
-      logoIcon: Icons.euro,
-      logoColor: Colors.indigo,
-    ),
-    const MfFundItemData(
-      name: 'Nippon India Europe Dynamic',
-      category: 'Equity • Global',
-      returns: '7.50%',
-      logoIcon: Icons.account_balance,
-      logoColor: Colors.red,
-    ),
-  ];
-
-  final List<MfFundItemData> _mockEmerging = [
-    const MfFundItemData(
-      name: 'Kotak Global Emerging Market',
-      category: 'Equity • Global',
-      returns: '12.40%',
-      logoIcon: Icons.landscape,
-      logoColor: Colors.teal,
-    ),
-    const MfFundItemData(
-      name: 'Aditya Birla Sun Life Emerging',
-      category: 'Equity • Global',
-      returns: '11.80%',
-      logoIcon: Icons.explore,
-      logoColor: Colors.brown,
-    ),
-  ];
 }

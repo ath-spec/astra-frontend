@@ -1,0 +1,11 @@
+.dart_tool/
+.git/
+.github/
+.idea/
+.vscode/
+build/
+*.iml
+.env
+analyze_output.txt
+_temp_simple.txt
+scratch*

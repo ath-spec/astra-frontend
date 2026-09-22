@@ -133,7 +133,7 @@ class _BudgetCategoryAnalyzingScreenState
             _hasError = true;
             _lastException = e;
             _loadingTexts.removeWhere((text) => text.contains("Retrying...") || text.contains("reconnect...") || text.contains("went wrong") || text.contains("server error"));
-            _loadingTexts.add("No internet connection. Please check network.");
+            _loadingTexts.add("Please check your internet connection and try again.");
             _textIndex = _loadingTexts.length - 1;
           });
         }

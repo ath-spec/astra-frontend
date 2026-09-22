@@ -1,8 +1,11 @@
-import 'dart:math';
+import '../../../core/widgets/shimmer_card_skeleton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:astra_frontend/features/dashboard/data/dashboard_providers.dart';
+import 'package:astra_frontend/features/dashboard/data/dashboard_models.dart';
 import 'portfolio_interactive_chart.dart';
 
-class HomePortfolioGrowth extends StatefulWidget {
+class HomePortfolioGrowth extends ConsumerStatefulWidget {
   final bool mfConnected;
   final bool stocksConnected;
 
@@ -13,112 +16,106 @@ class HomePortfolioGrowth extends StatefulWidget {
   });
 
   @override
-  State<HomePortfolioGrowth> createState() => _HomePortfolioGrowthState();
+  ConsumerState<HomePortfolioGrowth> createState() => _HomePortfolioGrowthState();
 }
 
-class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
+class _HomePortfolioGrowthState extends ConsumerState<HomePortfolioGrowth> {
   String _selectedPeriod = 'ALL';
-
-  List<ChartDataPoint> _generateMockData(String period) {
-    final random = Random(period.hashCode);
-    final now = DateTime.now();
-    int count = 30;
-    double startVal = 0;
-    
-    double endVal = 0;
-    if (widget.mfConnected) endVal += 352962;
-    if (widget.stocksConnected) endVal += 147908;
-    
-    // Fallback if somehow both are false but it was rendered
-    if (endVal == 0) endVal = 343158;
-    Duration step = const Duration(days: 1);
-
-    switch (period) {
-      case '1M':
-        startVal = 330000;
-        count = 30;
-        step = const Duration(days: 1);
-        break;
-      case '6M':
-        startVal = 280000;
-        count = 26; // approx weeks
-        step = const Duration(days: 7);
-        break;
-      case '1Y':
-        startVal = 200000;
-        count = 52; // weeks
-        step = const Duration(days: 7);
-        break;
-      case 'ALL':
-      default:
-        startVal = endVal * 0.35; // 35% of current value
-        count = 60; // months
-        step = const Duration(days: 30);
-        break;
-    }
-    
-    // adjust startVal proportionately
-    if (period == '1M') startVal = endVal * 0.95;
-    if (period == '6M') startVal = endVal * 0.82;
-    if (period == '1Y') startVal = endVal * 0.58;
-
-    final data = <ChartDataPoint>[];
-    double currentVal = startVal;
-    
-    for (int i = 0; i < count; i++) {
-      // Add some random walk noise leaning upwards
-      final progress = i / (count - 1);
-      final expectedVal = startVal + (endVal - startVal) * (progress * progress); // curve
-      
-      currentVal = expectedVal + (random.nextDouble() * 10000 - 5000); // noise
-      if (i == count - 1) currentVal = endVal; // force end value
-
-      final date = now.subtract(step * (count - 1 - i));
-      final dateStr = _formatDate(date);
-      
-      double mfValue = 0;
-      double stocksValue = 0;
-      
-      if (widget.mfConnected && widget.stocksConnected) {
-        mfValue = currentVal * (352962 / 500870);
-        stocksValue = currentVal * (147908 / 500870);
-      } else if (widget.mfConnected) {
-        mfValue = currentVal;
-      } else if (widget.stocksConnected) {
-        stocksValue = currentVal;
-      }
-      
-      data.add(ChartDataPoint(
-        value: currentVal, 
-        mfValue: mfValue,
-        stocksValue: stocksValue,
-        surplusValue: 0.0,
-        dateStr: dateStr,
-      ));
-    }
-
-    return data;
-  }
+  static const List<String> _timeframes = ['1M', '6M', '1Y', 'ALL'];
 
   String _formatDate(DateTime date) {
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     return '${date.day} ${months[date.month - 1]} \'${date.year.toString().substring(2)}';
   }
 
-  String _getStartLabel(String period) {
+  List<ChartDataPoint> _toChartData(List<DashboardGrowthPoint> points) {
+    if (points.isEmpty) return const [];
+    if (points.length == 1) {
+      final p = points.first;
+      return [
+        ChartDataPoint(value: p.totalWealth, dateStr: _formatDate(p.date)),
+        ChartDataPoint(value: p.totalWealth, dateStr: 'TODAY'),
+      ];
+    }
+    return points
+        .map((p) => ChartDataPoint(value: p.totalWealth, dateStr: _formatDate(p.date)))
+        .toList();
+  }
+
+  List<DashboardGrowthPoint> _slicePointsForPeriod(List<DashboardGrowthPoint> allPoints, String period) {
+    if (allPoints.isEmpty) return const [];
+    int takeDays;
     switch (period) {
-      case '1M': return '1 MONTH AGO';
-      case '6M': return '6 MONTHS AGO';
-      case '1Y': return '1 YEAR AGO';
+      case '1M':
+        takeDays = 30;
+        break;
+      case '6M':
+        takeDays = 182;
+        break;
+      case '1Y':
+        takeDays = 365;
+        break;
       case 'ALL':
-      default: return 'APR \'24';
+      default:
+        takeDays = allPoints.length;
+        break;
+    }
+
+    if (allPoints.length <= takeDays) {
+      return allPoints;
+    }
+    return allPoints.sublist(allPoints.length - takeDays);
+  }
+
+  String _getStartLabel(String period, List<DashboardGrowthPoint> currentPoints) {
+    if (currentPoints.isNotEmpty) {
+      return _formatDate(currentPoints.first.date).toUpperCase();
+    }
+    switch (period) {
+      case '1M':
+        return '1 MONTH AGO';
+      case '6M':
+        return '6 MONTHS AGO';
+      case '1Y':
+        return '1 YEAR AGO';
+      case 'ALL':
+      default:
+        return 'START';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentData = _generateMockData(_selectedPeriod);
-    final isPositive = currentData.last.value >= currentData.first.value;
+    // Always request the full 365-day dataset so all timeframe buttons work instantly
+    final growthAsync = ref.watch(dashboardGrowthProvider(365));
+
+    return growthAsync.when(
+      loading: () => _buildSkeletonLoading(),
+      error: (error, stack) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: const Text(
+          'Portfolio growth is unavailable right now.',
+          style: TextStyle(fontFamily: 'DMSans', fontSize: 13, color: Color(0xFF94A3B8)),
+        ),
+      ),
+      data: (allPoints) => _buildContent(allPoints),
+    );
+  }
+
+  Widget _buildContent(List<DashboardGrowthPoint> allPoints) {
+    if (allPoints.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    final activePoints = _slicePointsForPeriod(allPoints, _selectedPeriod);
+    final currentData = _toChartData(activePoints);
+    final hasEnoughHistory = allPoints.length >= 2;
+
+    final double displayValue = activePoints.isNotEmpty
+        ? activePoints.last.totalWealth
+        : 0.0;
+    final bool isPositive =
+        currentData.isEmpty || currentData.last.value >= currentData.first.value;
     final chartColor = isPositive ? const Color(0xFF10B981) : const Color(0xFFEF4444);
 
     return Column(
@@ -130,11 +127,10 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
             'Portfolio Growth',
             style: TextStyle(
               fontFamily: 'DMSans',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -1.0,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -1.0,
               color: Color(0xFF0F172A),
-
             ),
           ),
         ),
@@ -155,7 +151,7 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
-            '₹${currentData.last.value.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+            '₹${displayValue.round().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
             style: TextStyle(
               fontFamily: 'SpaceGrotesk',
               fontSize: 36,
@@ -175,7 +171,9 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Portfolio growth does not include your bank balance',
+                  hasEnoughHistory
+                      ? 'Portfolio growth does not include your bank balance'
+                      : 'Not enough history yet — check back after a few days to see your growth trend',
                   style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 11,
@@ -187,28 +185,29 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 110), // Pushed down so tooltip doesn't overlap text
-        
+
         // Chart
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: PortfolioInteractiveChart(
-              key: ValueKey(_selectedPeriod),
-              data: currentData,
-              lineColor: chartColor,
-              height: 180,
-              startDateLabel: _getStartLabel(_selectedPeriod),
-              endDateLabel: 'TODAY',
+        if (currentData.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: PortfolioInteractiveChart(
+                key: ValueKey(_selectedPeriod),
+                data: currentData,
+                lineColor: chartColor,
+                height: 180,
+                startDateLabel: _getStartLabel(_selectedPeriod, activePoints),
+                endDateLabel: 'TODAY',
+              ),
             ),
           ),
-        ),
-        
+
         const SizedBox(height: 32),
-        
-        // Timeline toggles
+
+        // Timeline toggles — ALWAYS visible and selectable
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Center(
@@ -217,17 +216,14 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
               spacing: 12,
               runSpacing: 12,
               children: [
-                _buildTimeframeToggle('1M'),
-                _buildTimeframeToggle('6M'),
-                _buildTimeframeToggle('1Y'),
-                _buildTimeframeToggle('ALL'),
+                for (final label in _timeframes) _buildTimeframeToggle(label),
               ],
             ),
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Bottom divider matching the design
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 24),
@@ -237,39 +233,113 @@ class _HomePortfolioGrowthState extends State<HomePortfolioGrowth> {
     );
   }
 
-  Widget _buildTimeframeToggle(String label) {
-    final isSelected = _selectedPeriod == label;
-    return GestureDetector(
-      onTap: () {
-        if (!isSelected) {
-          setState(() {
-            _selectedPeriod = label;
-          });
-        }
-      },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(100),
-            border: Border.all(
-            color: isSelected ? const Color(0xFF0F172A) : Colors.transparent,
-              width: 1.5,
+  Widget _buildSkeletonLoading() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Portfolio Growth',
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -1.0,
+              color: Color(0xFF0F172A),
             ),
           ),
-          child: Text(
-          label,
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 100, height: 10, borderRadius: 3),
+          const SizedBox(height: 8),
+          const ShimmerBar(width: 200, height: 36, borderRadius: 6),
+          const SizedBox(height: 12),
+          const ShimmerBar(width: 260, height: 12, borderRadius: 4),
+          const SizedBox(height: 32),
+          Container(
+            height: 180,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Center(
+            child: ShimmerBar(width: 180, height: 28, borderRadius: 4),
+          ),
+          const SizedBox(height: 16),
+          const Divider(color: Color(0xFFE2E8F0), thickness: 1, height: 1),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Portfolio Growth',
             style: TextStyle(
-              fontFamily: 'DMMono',
-              fontSize: 12,
+              fontFamily: 'DMSans',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -1.0,
+              color: Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFF1F5F9)),
+            ),
+            child: const Center(
+              child: Text(
+                'Connect Mutual Funds or Stocks to track your growth trend',
+                style: TextStyle(fontFamily: 'DMSans', fontSize: 12, color: Color(0xFF64748B)),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeframeToggle(String label) {
+    final bool isSelected = _selectedPeriod == label;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedPeriod = label;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF0F172A) : Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'DMSans',
+            fontSize: 10,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-            color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
+            color: isSelected ? Colors.white : const Color(0xFF64748B),
           ),
         ),
       ),
     );
   }
 }
-

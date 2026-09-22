@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 
 class MfFundDetailsHouse extends StatefulWidget {
-  const MfFundDetailsHouse({super.key});
+  final String? amcName;
+  final double? aum;
+  final String? fundManager;
+
+  const MfFundDetailsHouse({
+    super.key,
+    this.amcName,
+    this.aum,
+    this.fundManager,
+  });
 
   @override
   State<MfFundDetailsHouse> createState() => _MfFundDetailsHouseState();
@@ -13,6 +22,19 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
 
   @override
   Widget build(BuildContext context) {
+    final amc = (widget.amcName != null && widget.amcName!.trim().isNotEmpty) ? widget.amcName! : '—';
+    final aumStr = widget.aum != null ? '₹ ${(widget.aum! / 1000).toStringAsFixed(1)}K Cr' : '—';
+    final manager = (widget.fundManager != null && widget.fundManager!.trim().isNotEmpty) ? widget.fundManager! : '—';
+    final amcInitials = (widget.amcName != null && widget.amcName!.trim().isNotEmpty)
+        ? widget.amcName!
+            .trim()
+            .split(RegExp(r'\s+'))
+            .take(2)
+            .map((w) => w.isNotEmpty ? w[0] : '')
+            .join()
+            .toUpperCase()
+        : '—';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -28,14 +50,31 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Fund details & fund house',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F172A),
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Fund details & fund house',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      if (!_isMainExpanded)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            'AMC, AUM, Fund Manager',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              color: Color(0xFF94A3B8),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   Icon(
                     _isMainExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
@@ -65,29 +104,34 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'HSBC Mutual Fund',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF0F172A),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    amc,
+                                    style: const TextStyle(
+                                      fontFamily: 'DMSans',
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF0F172A),
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                const Text(
-                                  'Fund house • Since 13 years 6 months',
-                                  style: TextStyle(
-                                    fontFamily: 'DMSans',
-                                    fontSize: 10,
-                                    color: Color(0xFF64748B),
+                                  const SizedBox(height: 4),
+                                  const Text(
+                                    'Fund house',
+                                    style: TextStyle(
+                                      fontFamily: 'DMSans',
+                                      fontSize: 10,
+                                      color: Color(0xFF64748B),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: 12),
                             Container(
                               width: 48,
                               height: 48,
@@ -105,7 +149,7 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                               ),
                               child: Center(
                                 child: Text(
-                                  'HSBC',
+                                  amcInitials,
                                   style: TextStyle(
                                     fontFamily: 'DMSans',
                                     fontSize: 10,
@@ -118,10 +162,10 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                           ],
                         ),
                       ),
-                      _buildStatRow('Rank (total assets)', '17 in India'),
+                      _buildStatRow('Fund Manager', manager),
                       _buildDivider(),
-                      _buildStatRow('Total AUM', '₹1,36,788 Cr'),
-                      
+                      _buildStatRow('Total AUM', aumStr),
+
                       AnimatedCrossFade(
                         firstChild: const SizedBox(width: double.infinity, height: 0),
                         secondChild: Column(
@@ -142,9 +186,9 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  const Text(
-                                    '16, V N Road, Fort, Mumbai 400 001',
-                                    style: TextStyle(
+                                  Text(
+                                    '$amc, Registered Office, India',
+                                    style: const TextStyle(
                                       fontFamily: 'DMSans',
                                       fontSize: 10,
                                       color: Color(0xFF0F172A),
@@ -152,7 +196,7 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                                   ),
                                   const SizedBox(height: 12),
                                   const Text(
-                                    'Phone:',
+                                    'Investor Services:',
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
                                       fontSize: 10,
@@ -161,7 +205,7 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                                   ),
                                   const SizedBox(height: 4),
                                   const Text(
-                                    '022-66145000',
+                                    'Contact via registrar & transfer agent',
                                     style: TextStyle(
                                       fontFamily: 'DMSans',
                                       fontSize: 10,
@@ -176,7 +220,7 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                         crossFadeState: _isCardExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                         duration: const Duration(milliseconds: 300),
                       ),
-                      
+
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: InkWell(
@@ -220,7 +264,7 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                
+
                 // Investment Objective
                 const Text(
                   'Investment Objective',
@@ -233,7 +277,7 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  'To generate long-term capital appreciation from diversified portfolio of predominantly equity and equity related securities, in the Indian markets with higher focus on undervalued securities. The Scheme could also additionally invest in Foreign Securities in international markets.There is no assurance that the investment objective of the scheme will be realized.',
+                  'To generate long-term capital appreciation from a diversified portfolio of predominantly equity and equity related securities. There is no assurance that the investment objective of the scheme will be realized.',
                   style: TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 10,
@@ -242,12 +286,12 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // List Tiles
                 _buildListTile(Icons.description_outlined, 'Scheme Document'),
                 const Divider(color: Color(0xFFF1F5F9), height: 1, thickness: 1),
                 _buildListTile(Icons.person_outline, 'Fund managers'),
-                
+
                 const SizedBox(height: 16),
               ],
             ),
@@ -274,13 +318,16 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
               color: Color(0xFF64748B),
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF0F172A),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF0F172A),
+              ),
             ),
           ),
         ],
@@ -291,7 +338,7 @@ class _MfFundDetailsHouseState extends State<MfFundDetailsHouse> {
   Widget _buildDivider() {
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
-      child: Divider(color: Color(0xFFE2E8F0), height: 1, thickness: 1), // subtly dashed look originally, solid for now
+      child: Divider(color: Color(0xFFE2E8F0), height: 1, thickness: 1),
     );
   }
 

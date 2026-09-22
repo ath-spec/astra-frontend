@@ -59,10 +59,16 @@ class _LoginFormState extends ConsumerState<LoginForm>
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_phoneController.text.length == 10 && _isConsented) {
-      ref.read(authProvider.notifier).setPendingPhone(_phoneController.text);
-      context.push('/otp');
+      final notifier = ref.read(authProvider.notifier);
+      notifier.setPendingPhone(_phoneController.text);
+      await notifier.sendOtp(_phoneController.text);
+      if (!mounted) return;
+      final state = ref.read(authProvider);
+      if (state is! AuthError) {
+        context.push('/otp');
+      }
     }
   }
 
@@ -161,85 +167,78 @@ class _LoginFormState extends ConsumerState<LoginForm>
                 const SizedBox(height: 8),
                 Transform.translate(
                   offset: const Offset(-4, 0),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return SizedBox(
-                        width: constraints.maxWidth,
-                        child: Stack(
-                          alignment: Alignment.centerLeft,
-                          children: [
-                            // Visual Layer (Gradient Text)
-                            AnimatedBuilder(
-                              animation: _phoneController,
-                              builder: (context, child) {
-                                if (_phoneController.text.isEmpty) {
-                                  return const Text(
-                                    '9876543210',
-                                    style: TextStyle(
-                                      fontFamily: 'SpaceGrotesk',
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 2.0,
-                                      color: Color(0xFFE5E7EB),
-                                    ),
-                                  );
-                                }
-                                return Text(
-                                  _phoneController.text,
-                                  style: TextStyle(
-                                    fontFamily: 'SpaceGrotesk',
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 2.0,
-                                    foreground: Paint()
-                                      ..shader = const LinearGradient(
-                                        colors: [
-                                          Color(0xFF5BA1F7),
-                                          Color(0xFF031E6B),
-                                          Color(0xFF241714),
-                                        ],
-                                        stops: [0.0, 0.5, 1.0],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
-                                  ),
-                                );
-                              },
-                            ),
-                            // Interaction Layer (Invisible TextField, Visible Cursor)
-                            TextField(
-                              controller: _phoneController,
-                              focusNode: _focusNode,
-                              enabled: !isLoading,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(10),
-                              ],
-                              cursorColor: const Color(0xFF031E6B),
-                              style: const TextStyle(
+                  child: Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      // Visual Layer (Gradient Text)
+                      AnimatedBuilder(
+                        animation: _phoneController,
+                        builder: (context, child) {
+                          if (_phoneController.text.isEmpty) {
+                            return const Text(
+                              '9876543210',
+                              style: TextStyle(
                                 fontFamily: 'SpaceGrotesk',
                                 fontSize: 32,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 2.0,
-                                color: Colors.transparent, // Hides native text to show gradient below
+                                color: Color(0xFFE5E7EB),
                               ),
-                              decoration: const InputDecoration(
-                                filled: true,
-                                fillColor: Colors.transparent, // Defeats Safari Dark Mode
-                                hoverColor: Colors.transparent,
-                                focusColor: Colors.transparent,
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                              ),
+                            );
+                          }
+                          return Text(
+                            _phoneController.text,
+                            style: TextStyle(
+                              fontFamily: 'SpaceGrotesk',
+                              fontSize: 32,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 2.0,
+                              foreground: Paint()
+                                ..shader = const LinearGradient(
+                                  colors: [
+                                    Color(0xFF5BA1F7),
+                                    Color(0xFF031E6B),
+                                    Color(0xFF241714),
+                                  ],
+                                  stops: [0.0, 0.5, 1.0],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ).createShader(const Rect.fromLTWH(0, 0, 300, 50)),
                             ),
-                          ],
+                          );
+                        },
+                      ),
+                      // Interaction Layer (Invisible TextField, Visible Cursor)
+                      TextField(
+                        controller: _phoneController,
+                        focusNode: _focusNode,
+                        enabled: !isLoading,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        cursorColor: const Color(0xFF031E6B),
+                        style: const TextStyle(
+                          fontFamily: 'SpaceGrotesk',
+                          fontSize: 32,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0,
+                          color: Colors.transparent, // Hides native text to show gradient below
                         ),
-                      );
-                    },
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Colors.transparent, // Defeats Safari Dark Mode
+                          hoverColor: Colors.transparent,
+                          focusColor: Colors.transparent,
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                   const SizedBox(height: 16),

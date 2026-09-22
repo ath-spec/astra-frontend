@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'fund_asset_allocation_data.dart';
+export 'fund_asset_allocation_data.dart';
 
 class FundProfileData {
   final String id;
@@ -29,6 +30,15 @@ class FundProfileData {
   final FundInsightsData? insightsData;
   final InstrumentDeepDiveData? instrumentData;
 
+  final double? nav;
+  final double? expenseRatio;
+  final double? aum;
+  final double? minSipAmount;
+  final double? minInvestment;
+  final String? amcName;
+  final String? fundManager;
+  final String? exitLoad;
+
   const FundProfileData({
     required this.id,
     required this.name,
@@ -49,6 +59,14 @@ class FundProfileData {
     this.assetAllocation,
     this.insightsData,
     this.instrumentData,
+    this.nav,
+    this.expenseRatio,
+    this.aum,
+    this.minSipAmount,
+    this.minInvestment,
+    this.amcName,
+    this.fundManager,
+    this.exitLoad,
   });
 }
 
@@ -58,6 +76,8 @@ class FundInsightsData {
   final String suitableFor;
   final String avoidIf;
   final String impactText;
+  final String whatItDoesRightNow;
+  final String whatBuyingMoreWillDo;
   final List<double>? currentValues;
   final List<double>? projectedValues;
 
@@ -67,6 +87,8 @@ class FundInsightsData {
     required this.suitableFor,
     required this.avoidIf,
     required this.impactText,
+    this.whatItDoesRightNow = '',
+    this.whatBuyingMoreWillDo = '',
     this.currentValues,
     this.projectedValues,
   });

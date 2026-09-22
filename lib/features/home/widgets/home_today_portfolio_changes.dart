@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:astra_frontend/core/utils/fund_name_formatter.dart';
+import 'package:astra_frontend/features/dashboard/data/dashboard_models.dart';
+import 'package:astra_frontend/features/mf/data/mf_holdings_providers.dart';
+import 'package:astra_frontend/features/stocks/data/stocks_providers.dart';
 
-class HomeTodayPortfolioChanges extends StatefulWidget {
+class HomeTodayPortfolioChanges extends ConsumerStatefulWidget {
+  final DashboardSummary summary;
   final bool mfConnected;
   final bool stocksConnected;
 
   const HomeTodayPortfolioChanges({
     super.key,
-    required this.mfConnected,
-    required this.stocksConnected,
+    required this.summary,
+    this.mfConnected = true,
+    this.stocksConnected = true,
   });
 
   @override
-  State<HomeTodayPortfolioChanges> createState() => _HomeTodayPortfolioChangesState();
+  ConsumerState<HomeTodayPortfolioChanges> createState() =>
+      _HomeTodayPortfolioChangesState();
 }
 
-class _HomeTodayPortfolioChangesState extends State<HomeTodayPortfolioChanges> {
+class _HomeTodayPortfolioChangesState
+    extends ConsumerState<HomeTodayPortfolioChanges> {
   bool _showStocks = false;
   bool _sortHighestFirst = true;
 
-  List<Map<String, dynamic>> _getSortedData(List<Map<String, dynamic>> source) {
+  List<Map<String, dynamic>> _getSortedData(
+      List<Map<String, dynamic>> source) {
     final list = List<Map<String, dynamic>>.from(source);
     list.sort((a, b) {
       final pctA = (a['pct'] as num).toDouble();
@@ -49,13 +59,71 @@ class _HomeTodayPortfolioChangesState extends State<HomeTodayPortfolioChanges> {
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.mfConnected && !widget.stocksConnected) return const SizedBox.shrink();
+    final mfAsync = ref.watch(mfHoldingsProvider);
+    final stocksAsync = ref.watch(stocksHoldingsProvider);
+
+    List<Map<String, dynamic>> mfData = [];
+    final folios = mfAsync.valueOrNull?.folios;
+    if (folios != null && folios.isNotEmpty) {
+      mfData = folios.map((f) {
+        final isUp = f.oneDayChangeAmount >= 0;
+        return {
+          'name': f.schemeName.isNotEmpty ? cleanFundName(f.schemeName) : f.amcName,
+          'subtitle': f.category,
+          'value': '₹${f.currentValue.round()}',
+          'change':
+              '₹${f.oneDayChangeAmount.abs().toStringAsFixed(2)} (${f.oneDayChangePct.abs().toStringAsFixed(2)}%)',
+          'isUp': isUp,
+          'pct': f.oneDayChangePct.abs(),
+          'lastPrice': '₹${f.nav}',
+          'quantity': '${f.unitsHeld} units',
+        };
+      }).toList();
+    }
+    if (mfData.isEmpty) {
+      mfData = _mockMfData;
+    }
+
+    List<Map<String, dynamic>> stocksData = [];
+    final stocks = stocksAsync.valueOrNull;
+    if (stocks != null && stocks.isNotEmpty) {
+      stocksData = stocks.map((s) {
+        final isUp = s.oneDayChangeAmount >= 0;
+        return {
+          'name': s.tradingSymbol,
+          'subtitle': 'Equities',
+          'value': '₹${s.currentValue.round()}',
+          'change':
+              '₹${s.oneDayChangeAmount.abs().toStringAsFixed(2)} (${s.oneDayChangePct.abs().toStringAsFixed(2)}%)',
+          'isUp': isUp,
+          'pct': s.oneDayChangePct.abs(),
+          'lastPrice': '₹${s.lastPrice}',
+          'quantity': '${s.quantity} shares',
+        };
+      }).toList();
+    }
+    if (stocksData.isEmpty) {
+      stocksData = _mockStocksData;
+    }
+
+    final sortedMf = _getSortedData(mfData);
+    final sortedStocks = _getSortedData(stocksData);
+
+    final totalChange = widget.summary.oneDayChangeAmount != 0
+        ? widget.summary.oneDayChangeAmount
+        : 778.0;
+    final totalPct = widget.summary.oneDayChangePct != 0
+        ? widget.summary.oneDayChangePct
+        : 0.21;
+    final totalIsUp = totalChange >= 0;
+    final color = totalIsUp ? const Color(0xFF22C55E) : const Color(0xFFEF4444);
+    final icon = totalIsUp ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Today\'s portfolio changes',
+          "Today's portfolio changes",
           style: TextStyle(
             fontFamily: 'DMSans',
             fontSize: 20,
@@ -65,79 +133,39 @@ class _HomeTodayPortfolioChangesState extends State<HomeTodayPortfolioChanges> {
           ),
         ),
         const SizedBox(height: 24),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Total 1D Change',
+            const Text(
+              'Total 1D Change',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF64748B),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Icon(icon, size: 14, color: color),
+                const SizedBox(width: 2),
+                RichText(
+                  text: TextSpan(
                     style: TextStyle(
                       fontFamily: 'DMSans',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF64748B),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: color,
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
                     children: [
-                      const Icon(Icons.arrow_upward_rounded, size: 14, color: Color(0xFF22C55E)),
-                      const SizedBox(width: 2),
-                      RichText(
-                        text: const TextSpan(
-                          style: TextStyle(
-                            fontFamily: 'DMSans',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF22C55E),
-                          ),
-                          children: [
-                            TextSpan(text: '0.03% '),
-                            TextSpan(text: '(₹157)', style: TextStyle(color: Color(0xFF0F172A))),
-                          ],
-                        ),
+                      TextSpan(text: '${totalPct.abs().toStringAsFixed(2)}% '),
+                      TextSpan(
+                        text: '(₹${totalChange.abs().round()})',
+                        style: const TextStyle(color: Color(0xFF0F172A)),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            Container(
-              width: 1,
-              height: 36,
-              color: const Color(0xFFE2E8F0),
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Nifty 50',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF64748B),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    const Icon(Icons.arrow_downward_rounded, size: 14, color: Color(0xFFEF4444)),
-                    const SizedBox(width: 2),
-                    const Text(
-                      '-0.26%',
-                      style: TextStyle(
-                        fontFamily: 'DMSans',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFFEF4444),
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -159,25 +187,7 @@ class _HomeTodayPortfolioChangesState extends State<HomeTodayPortfolioChanges> {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    if (widget.mfConnected)
-                      _buildTabButton(
-                        title: isSmallScreen ? 'MF' : 'MUTUAL FUNDS',
-                        isActive: !_showStocks,
-                        onTap: () => setState(() => _showStocks = false),
-                        isSmall: isSmallScreen,
-                      ),
-                    if (widget.mfConnected && widget.stocksConnected) SizedBox(width: isSmallScreen ? 4 : 8),
-                    if (widget.stocksConnected)
-                      _buildTabButton(
-                        title: 'STOCKS',
-                        isActive: _showStocks,
-                        onTap: () => setState(() => _showStocks = true),
-                        isSmall: isSmallScreen,
-                      ),
-                  ],
-                ),
+                _buildTabSwitcher(isSmallScreen),
                 _buildActionTabButton(
                   isSmallScreen 
                     ? (_sortHighestFirst ? '% ↑' : '% ↓') 
@@ -197,10 +207,7 @@ class _HomeTodayPortfolioChangesState extends State<HomeTodayPortfolioChanges> {
         // Horizontally scrolling cards
         LayoutBuilder(
           builder: (context, constraints) {
-            final mfData = _getSortedData(_mockMfData);
-            final stocksData = _getSortedData(_mockStocksData);
             final cardWidth = (constraints.maxWidth * 0.42).clamp(140.0, 180.0);
-            
             return SizedBox(
               height: 156, // Increased from 140 to prevent overflow on 2-line names
               child: AnimatedSwitcher(
@@ -213,10 +220,13 @@ class _HomeTodayPortfolioChangesState extends State<HomeTodayPortfolioChanges> {
                     clipBehavior: Clip.none,
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
-                    itemCount: _showStocks ? stocksData.length : mfData.length,
-                    separatorBuilder: (context, index) => const SizedBox(width: 12),
+                    itemCount:
+                        _showStocks ? sortedStocks.length : sortedMf.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 12),
                     itemBuilder: (context, index) {
-                      final data = _showStocks ? stocksData[index] : mfData[index];
+                      final data =
+                          _showStocks ? sortedStocks[index] : sortedMf[index];
                       return _ChangeCard(data: data, width: cardWidth);
                     },
                   ),
@@ -229,18 +239,115 @@ class _HomeTodayPortfolioChangesState extends State<HomeTodayPortfolioChanges> {
     );
   }
 
-  Widget _buildTabButton({required String title, required bool isActive, required VoidCallback onTap, bool isSmall = false}) {
+  /// Segmented MUTUAL FUNDS / STOCKS toggle. A single sliding white pill
+  /// behind both labels (rather than each label fading its own background
+  /// independently) — two AnimatedContainers animating opacity in the same
+  /// frame is what produced the flicker; one shared pill sliding between
+  /// two equal-width cells can't desync with itself.
+  Widget _buildTabSwitcher(bool isSmallScreen) {
+    if (widget.mfConnected && widget.stocksConnected) {
+      return SizedBox(
+        height: 36,
+        // Without this, the Row's two Expanded cells would stretch to fill
+        // all remaining space in the outer Row (which has no width limit of
+        // its own here) instead of staying sized to the two labels, like the
+        // original content-sized pills were.
+        child: IntrinsicWidth(
+          child: Stack(
+          children: [
+            AnimatedAlign(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
+              alignment: _showStocks ? Alignment.centerRight : Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: 0.5,
+                heightFactor: 1,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildSegmentLabel(
+                    title: isSmallScreen ? 'MF' : 'MUTUAL FUNDS',
+                    isActive: !_showStocks,
+                    onTap: () => setState(() => _showStocks = false),
+                  ),
+                ),
+                Expanded(
+                  child: _buildSegmentLabel(
+                    title: 'STOCKS',
+                    isActive: _showStocks,
+                    onTap: () => setState(() => _showStocks = true),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          ),
+        ),
+      );
+    }
+    if (widget.mfConnected) {
+      return _buildTabButton(
+        title: isSmallScreen ? 'MF' : 'MUTUAL FUNDS',
+        isActive: true,
+        onTap: () {},
+        isSmall: isSmallScreen,
+      );
+    }
+    if (widget.stocksConnected) {
+      return _buildTabButton(title: 'STOCKS', isActive: true, onTap: () {}, isSmall: isSmallScreen);
+    }
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildSegmentLabel({required String title, required bool isActive, required VoidCallback onTap}) {
     return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        // Breathing room so the sliding pill's rounded edge doesn't sit
+        // flush against the text — without this the label was clipped
+        // right at the pill boundary.
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        child: Center(
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            style: TextStyle(
+              fontFamily: 'DMSans',
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: isActive ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
+            ),
+            child: Text(title, softWrap: false),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabButton({Key? key, required String title, required bool isActive, required VoidCallback onTap, bool isSmall = false}) {
+    return GestureDetector(
+      key: key,
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
         padding: EdgeInsets.symmetric(horizontal: isSmall ? 10 : 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.white.withAlpha(0),
+          color: isActive ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isActive ? const Color(0xFFE2E8F0) : const Color(0xFFE2E8F0).withAlpha(0),
+            color: isActive ? const Color(0xFFE2E8F0) : Colors.transparent,
           ),
         ),
         child: AnimatedDefaultTextStyle(
@@ -311,68 +418,69 @@ class _ChangeCard extends StatelessWidget {
           border: Border.all(color: const Color(0xFFE2E8F0)),
         ),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: Center(
-              child: Text(
-                (data['name'] as String).substring(0, 1),
-                style: const TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF0F172A),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Center(
+                child: Text(
+                  (data['name'] as String).substring(0, 1),
+                  style: const TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0F172A),
+                  ),
                 ),
               ),
             ),
-          ),
-          const Spacer(),
-          Text(
-            data['name'],
-            style: const TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF334155),
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            data['value'],
-            style: const TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
-            ),
-          ),
-          const SizedBox(height: 2),
-          Row(
-            children: [
-              Icon(icon, size: 12, color: color),
-              const SizedBox(width: 2),
-              Text(
-                data['change'],
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                ),
+            const Spacer(),
+            Text(
+              data['name'],
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF334155),
               ),
-            ],
-          ),
-        ],
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              data['value'],
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF0F172A),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                Icon(icon, size: 12, color: color),
+                const SizedBox(width: 2),
+                Text(
+                  data['change'],
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
 

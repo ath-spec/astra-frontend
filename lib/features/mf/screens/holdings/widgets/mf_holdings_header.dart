@@ -2,6 +2,7 @@ import 'dart:ui' show lerpDouble, ImageFilter;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
@@ -13,6 +14,13 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final VoidCallback onRefreshTap;
   final bool mfConnected;
   final bool stocksConnected;
+  /// Real total value to display (MF current value on the Holdings screen).
+  /// Falls back to the legacy mfConnected/stocksConnected-derived mock total
+  /// when omitted.
+  final double? totalValue;
+  /// Preformatted 1D change text, e.g. "₹800 (0.33%)". Falls back to the
+  /// legacy mock text when omitted.
+  final String? oneDayChangeText;
 
   HoldingsHeaderDelegate({
     required this.safeAreaTop,
@@ -24,6 +32,8 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.onRefreshTap,
     this.mfConnected = false,
     this.stocksConnected = false,
+    this.totalValue,
+    this.oneDayChangeText,
   });
 
   @override
@@ -66,16 +76,12 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
     if (mfConnected && !stocksConnected) subtitleText = 'MUTUAL FUNDS VALUE';
     if (!mfConnected && stocksConnected) subtitleText = 'STOCKS VALUE';
 
-    double totalWealthValue = (mfConnected ? 352962.0 : 0.0) + (stocksConnected ? 147908.0 : 0.0);
-    
-    String pillOneDayText = '';
-    if (mfConnected && stocksConnected) {
-      pillOneDayText = '₹3,402 (0.65%)';
-    } else if (mfConnected) {
-      pillOneDayText = '₹2,202 (0.62%)';
-    } else if (stocksConnected) {
-      pillOneDayText = '₹1,200 (0.81%)';
-    }
+    // Real values come from the caller (the MF holdings summary); default to
+    // 0/empty (not a hardcoded mock lookup) when the caller has none to show
+    // (e.g. the pre-import empty state, where hasImportedPortfolio is false
+    // anyway and this value is never displayed).
+    final double totalWealthValue = totalValue ?? 0.0;
+    final String pillOneDayText = oneDayChangeText ?? '';
 
     return Container(
       color: Colors.transparent,
@@ -195,7 +201,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                       ],
                     ),
                     child: _OdometerText(
-                      targetValue: (hasImportedPortfolio && (mfConnected || stocksConnected)) ? totalWealthValue.toInt() : 0,
+                      targetValue: (hasImportedPortfolio && (mfConnected || stocksConnected || totalWealthValue > 0)) ? totalWealthValue.round() : 0,
                       isLocked: isLocked,
                       style: TextStyle(
                         fontFamily: 'DMSans',
@@ -224,7 +230,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                           ),
                         ),
                       ),
-                      child: !hasImportedPortfolio
+                      child: (!hasImportedPortfolio || pillOneDayText.isEmpty)
                         ? const SizedBox.shrink(key: ValueKey('empty'))
                         : Opacity(
                             key: const ValueKey('content'),
@@ -237,37 +243,48 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                                   child: Align(
                                     alignment: Alignment.center,
                                     widthFactor: lerpDouble(1.0, 0.0, easedRatio)!,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.arrow_upward_rounded,
-                                          size: lerpDouble(14.0, 0.0, easedRatio)!,
-                                          color: const Color.fromARGB(255, 5, 134, 91), // Emerald 500
-                                        ),
-                                        SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
-                                        Text(
-                                          isLocked ? '₹ * * * *' : pillOneDayText,
-                                          style: TextStyle(
-                                            fontFamily: 'DMSans',
-                                            fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color.fromARGB(255, 5, 134, 91),
-                                            letterSpacing: 0.8,
-                                          ),
-                                        ),
-                                        SizedBox(width: lerpDouble(6.0, 0.0, easedRatio)!),
-                                        Text(
-                                          '1D change',
-                                          style: TextStyle(
-                                            fontFamily: 'DMSans',
-                                            fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF9CA3AF),
-                                          ),
-                                        ),
-                                      ],
+                                    child: Builder(
+                                      builder: (context) {
+                                        final bool isNegative = pillOneDayText.startsWith('-');
+                                        final Color changeColor = isNegative
+                                            ? const Color(0xFFDC2626)
+                                            : const Color.fromARGB(255, 5, 134, 91); // Emerald 500
+                                        final IconData changeIcon = isNegative
+                                            ? Icons.arrow_downward_rounded
+                                            : Icons.arrow_upward_rounded;
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              changeIcon,
+                                              size: lerpDouble(14.0, 0.0, easedRatio)!,
+                                              color: changeColor,
+                                            ),
+                                            SizedBox(width: lerpDouble(4.0, 0.0, easedRatio)!),
+                                            Text(
+                                              isLocked ? '₹ * * * *' : pillOneDayText,
+                                              style: TextStyle(
+                                                fontFamily: 'DMSans',
+                                                fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
+                                                fontWeight: FontWeight.w600,
+                                                color: changeColor,
+                                                letterSpacing: 0.8,
+                                              ),
+                                            ),
+                                            SizedBox(width: lerpDouble(6.0, 0.0, easedRatio)!),
+                                            Text(
+                                              '1D change',
+                                              style: TextStyle(
+                                                fontFamily: 'DMSans',
+                                                fontSize: lerpDouble(8.0, 0.0, easedRatio)!,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFF9CA3AF),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),
@@ -391,10 +408,14 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant HoldingsHeaderDelegate oldDelegate) {
-    return safeAreaTop != oldDelegate.safeAreaTop || 
+    return safeAreaTop != oldDelegate.safeAreaTop ||
            screenHeight != oldDelegate.screenHeight ||
            hasImportedPortfolio != oldDelegate.hasImportedPortfolio ||
-           isLocked != oldDelegate.isLocked;
+           isLocked != oldDelegate.isLocked ||
+           totalValue != oldDelegate.totalValue ||
+           oneDayChangeText != oldDelegate.oneDayChangeText ||
+           mfConnected != oldDelegate.mfConnected ||
+           stocksConnected != oldDelegate.stocksConnected;
   }
 }
 
@@ -472,23 +493,18 @@ class _OdometerTextState extends State<_OdometerText> with SingleTickerProviderS
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
-        String formatted;
-        int intVal = _animation.value.round();
         if (widget.isLocked) {
           return Text('₹ * * * *', style: widget.style);
         }
+        
+        int intVal = _animation.value.round();
+        String formatted;
         if (intVal == 0) {
           formatted = '0';
         } else {
-          String numStr = intVal.toString();
-          if (numStr.length <= 3) {
-            formatted = numStr;
-          } else {
-            String lastThree = numStr.substring(numStr.length - 3);
-            String otherNumbers = numStr.substring(0, numStr.length - 3);
-            formatted = '${otherNumbers.replaceAllMapped(RegExp(r".{1,2}(?=(.{2})+(?!.))"), (Match m) => "${m[0]},")},$lastThree';
-          }
+          formatted = NumberFormat('#,##,###').format(intVal);
         }
+        
         return Text('₹ $formatted', style: widget.style);
       }
     );

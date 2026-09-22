@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
+import '../../asset_connection/providers/asset_connection_provider.dart';
+import '../../asset_connection/screens/manage_bank_accounts_screen.dart' show getBankLogoAsset;
+import '../../../core/network/api.dart';
 import '../widgets/edit_number_overlay.dart';
 
 /// Screen matching Image 3 for Account Aggregator Stocks status result.
@@ -19,10 +22,15 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
   bool _hasDemat = true; // Happy case: demat is fetched
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  
+  bool _isLoadingBanks = true;
+  List<BankAccountItem> _detectedBanks = [];
+  String? _selectedBankId;
 
   @override
   void initState() {
     super.initState();
+    _fetchDetectedBanks();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 150),
@@ -36,6 +44,32 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchDetectedBanks() async {
+    try {
+      final res = await dioApiClient.dio.get('/api/v1/aa/accounts/detected');
+      final envelopeData = res.data is Map<String, dynamic> ? res.data['data'] : null;
+      final list = envelopeData is Map<String, dynamic> ? envelopeData['accounts'] as List<dynamic>? : null;
+      final discoveredAccounts = (list ?? const [])
+          .whereType<Map<String, dynamic>>()
+          .map((json) => BankAccountItem.fromJson(json))
+          .toList();
+          
+      if (mounted) {
+        setState(() {
+          _detectedBanks = discoveredAccounts;
+          if (_detectedBanks.isNotEmpty) {
+            _selectedBankId = _detectedBanks.first.id;
+          }
+          _isLoadingBanks = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingBanks = false);
+      }
+    }
   }
 
   Widget _buildDashedDivider() {
@@ -258,6 +292,103 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                               ],
                             ),
                           ),
+                          const SizedBox(height: 24),
+                          if (_isLoadingBanks)
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(24.0),
+                                child: CircularProgressIndicator(color: Color(0xFF031E6B)),
+                              ),
+                            )
+                          else if (_detectedBanks.isNotEmpty) ...[
+                            const Text(
+                              'Select your primary bank account:',
+                              style: TextStyle(
+                                fontFamily: 'DMSans',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF6B7280),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ..._detectedBanks.map((bank) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedBankId = bank.id;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: _selectedBankId == bank.id ? const Color(0xFFF0FDF4) : Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: _selectedBankId == bank.id
+                                              ? const Color(0xFF10B981)
+                                              : const Color(0xFFE5E7EB),
+                                          width: _selectedBankId == bank.id ? 2 : 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(color: const Color(0xFFE5E7EB)),
+                                              image: DecorationImage(
+                                                image: AssetImage(getBankLogoAsset(bank.bankName) ?? 'lib/core/images/icici_logo.webp'),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 14),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  bank.bankName,
+                                                  style: const TextStyle(
+                                                    fontFamily: 'DMSans',
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFF111827),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '•••• ${bank.shortId}',
+                                                  style: const TextStyle(
+                                                    fontFamily: 'DMSans',
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFF6B7280),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          if (_selectedBankId == bank.id)
+                                            const Icon(
+                                              Icons.radio_button_checked,
+                                              color: Color(0xFF10B981),
+                                              size: 24,
+                                            )
+                                          else
+                                            const Icon(
+                                              Icons.radio_button_unchecked,
+                                              color: Color(0xFFD1D5DB),
+                                              size: 24,
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )),
+                          ],
                         ] else ...[
                           Container(
                             padding: const EdgeInsets.all(16),
@@ -309,7 +440,12 @@ class _AaStocksStatusScreenState extends ConsumerState<AaStocksStatusScreen>
                           onTapDown: (_) => _animationController.forward(),
                           onTapUp: (_) => _animationController.reverse(),
                           onTapCancel: () => _animationController.reverse(),
-                          onTap: () => context.push('/banks-linking'),
+                          onTap: () {
+                            if (_selectedBankId != null) {
+                              ref.read(assetConnectionProvider.notifier).setPendingBaseBankId(_selectedBankId!);
+                            }
+                            context.push('/banks-linking');
+                          },
                           child: AnimatedBuilder(
                             animation: _scaleAnimation,
                             builder: (context, child) => Transform.scale(

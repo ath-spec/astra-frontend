@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/asset_connection_provider.dart';
 import '../../chat/widgets/thinking_orbs/thinking_orb.dart';
+import 'banks_linking_screen.dart' show kSkipBankDiscoveryExtra;
 
 /// Screen 2 of Banks Flow: Fetching Screen (Image 3) in clean light mode.
 /// Displays pulsing dots, skeleton account cards, and auto-navigates to HomeScreen.
@@ -16,9 +17,10 @@ class BanksSearchingScreen extends ConsumerStatefulWidget {
 
 class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
     with SingleTickerProviderStateMixin {
-  Timer? _timer;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+
+  bool _navigated = false;
 
   @override
   void initState() {
@@ -31,21 +33,56 @@ class _BanksSearchingScreenState extends ConsumerState<BanksSearchingScreen>
     _pulseAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+  }
 
-    _timer = Timer(const Duration(milliseconds: 2600), () {
-      if (mounted) {
-        final state = ref.read(assetConnectionProvider);
-        if (state.step == AssetConnectionStep.banksLinkingProgress) {
-          ref.read(assetConnectionProvider.notifier).completeBankLinking();
-        }
-        context.pushReplacement('/banks-linking');
-      }
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_navigated) return;
+    _navigated = true;
+    // extra carries the real Future for whatever network work this screen
+    // is covering (e.g. banks_linking_screen's searchAndAddBank calls) when
+    // the caller provided one. Previously this screen navigated back on a
+    // flat 2600ms timer no matter what — if the actual add/search took
+    // longer than that (any real network latency), the user landed back on
+    // the previous screen before their new bank had actually appeared. Now
+    // it waits for genuine completion (still floored at 2600ms so the
+    // animation never feels like a flash for fast responses).
+    final extra = GoRouterState.of(context).extra;
+    final pending = extra is Future ? extra : null;
+    _waitAndNavigate(pending);
+  }
+
+  Future<void> _waitAndNavigate(Future<dynamic>? pending) async {
+    final minDelay = Future<void>.delayed(const Duration(milliseconds: 2600));
+    bool success = false;
+    
+    if (pending != null) {
+      // Catch errors and default to false
+      final results = await Future.wait([minDelay, pending.catchError((_) => false)]);
+      success = results[1] == true;
+    } else {
+      await minDelay;
+    }
+    
+    if (!mounted) return;
+    
+    if (success) {
+      // Actually linked! Go to home screen as the user expects.
+      ref.read(assetConnectionProvider.notifier).finishAssetConnection();
+      context.go('/');
+    } else {
+      // Either we just staged (pending == null) or it failed (success == false).
+      // Return to linking screen so user can review or retry.
+      context.pushReplacement(
+        '/banks-linking',
+        extra: pending != null ? kSkipBankDiscoveryExtra : null,
+      );
+    }
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
     _pulseController.stop();
     _pulseController.dispose();
     super.dispose();

@@ -1,25 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/animated_gradient_text.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import '../../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../../data/portfolio_analysis_providers.dart';
+import '../../../data/portfolio_analysis_models.dart';
 import '../discipline_components/generic_info_sheet.dart';
 import 'expensive_funds_sheet.dart';
 
-class ExpensiveFundsSection extends StatefulWidget {
+String _formatInr(double value) {
+  final rounded = value.round();
+  final digits = rounded.abs().toString();
+  String formatted;
+  if (digits.length <= 3) {
+    formatted = digits;
+  } else {
+    final head = digits.substring(0, digits.length - 3);
+    final tail = digits.substring(digits.length - 3);
+    final headFormatted = head.replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{2})+(?!\d))'),
+      (m) => '${m[1]},',
+    );
+    formatted = '$headFormatted,$tail';
+  }
+  return '₹ $formatted';
+}
+
+class ExpensiveFundsSection extends ConsumerStatefulWidget {
   const ExpensiveFundsSection({super.key});
 
   @override
-  State<ExpensiveFundsSection> createState() => _ExpensiveFundsSectionState();
+  ConsumerState<ExpensiveFundsSection> createState() => _ExpensiveFundsSectionState();
 }
 
-class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
+class _ExpensiveFundsSectionState extends ConsumerState<ExpensiveFundsSection>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _hasAnimated = false;
-
-  // Example value: 0%. In reality this would come from your real data source.
-  final double _expenseRatioPercentage = 0.0;
 
   @override
   void initState() {
@@ -42,6 +61,38 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
 
   @override
   Widget build(BuildContext context) {
+    final perfAsync = ref.watch(portfolioPerformanceProvider);
+    final perf = perfAsync.value;
+
+    // No fabricated values: skeleton while loading, nothing on failure.
+    if (perf == null) {
+      return perfAsync.isLoading
+          ? const _ExpensiveFundsSkeleton()
+          : const SizedBox.shrink();
+    }
+
+    final funds = perf.fundsPerformance;
+    final expensiveKeys = perf.expensiveFunds
+        .map((e) => e.schemeCode.isNotEmpty ? e.schemeCode : e.schemeName)
+        .where((k) => k.isNotEmpty)
+        .toSet();
+    bool isExpensive(FundPerformanceData f) =>
+        expensiveKeys.contains(f.schemeCode.isNotEmpty ? f.schemeCode : f.schemeName);
+
+    double expensiveAmt = 0;
+    for (final f in funds) {
+      if (isExpensive(f)) {
+        expensiveAmt += f.currentValue;
+      }
+    }
+
+    final totalValue = funds.fold<double>(0.0, (sum, f) => sum + f.currentValue);
+    final expensiveRatio = totalValue > 0 ? (expensiveAmt / totalValue).clamp(0.0, 1.0) : 0.0;
+    final fillRatio = expensiveRatio > 0 ? expensiveRatio : 0.05;
+    final insightText = expensiveAmt > 0
+        ? 'A slice of your money sits in higher-fee funds those costs compound against you over time.'
+        : 'Fees aren\'t eating into your gains every rupee is compounding efficiently for you.';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -88,11 +139,11 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
           ),
           const SizedBox(height: 16),
           RichText(
-            text: const TextSpan(
+            text: TextSpan(
               children: [
                 TextSpan(
-                  text: '₹ 0 ',
-                  style: TextStyle(
+                  text: '${_formatInr(expensiveAmt)} ',
+                  style: const TextStyle(
                     fontFamily: 'DMSans',
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -100,7 +151,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
                     letterSpacing: -1.0,
                   ),
                 ),
-                TextSpan(
+                const TextSpan(
                   text: 'invested in funds with higher expense ratios',
                   style: TextStyle(
                     fontFamily: 'DMSans',
@@ -130,15 +181,11 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
                 builder: (context, child) {
                   return Container(
                     height: 12,
-                    // Hardcoded to 0.6 for demo purposes so you can see the bar fill up animation
-                    width:
-                        MediaQuery.of(context).size.width *
-                        0.6 *
+                    width: MediaQuery.of(context).size.width *
+                        fillRatio *
                         _animation.value,
                     decoration: BoxDecoration(
-                      color: const Color(
-                        0xFFE53E3E,
-                      ), // Red to highlight expensive funds
+                      color: const Color(0xFFE53E3E),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   );
@@ -156,7 +203,7 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,
                 builder: (context) =>
-                    const ExpensiveFundsSheet(initialIndex: 1),
+                    ExpensiveFundsSheet(initialIndex: 1, data: perf),
               );
             },
             child: Row(
@@ -230,10 +277,10 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
               color: const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: const AnimatedGradientShimmer(
+            child: AnimatedGradientShimmer(
               child: TypewriterText(
-                text: 'Fees aren\'t eating into your gains every rupee is compounding efficiently for you.',
-                style: TextStyle(
+                text: insightText,
+                style: const TextStyle(
                   fontFamily: 'DMSans',
                   fontSize: 12,
                   height: 1.5,
@@ -261,35 +308,40 @@ class _ExpensiveFundsSectionState extends State<ExpensiveFundsSection>
   }
 }
 
-class _DottedDivider extends StatelessWidget {
-  const _DottedDivider();
+/// Loading placeholder for [ExpensiveFundsSection]; mirrors its footprint with
+/// shimmer bars so no placeholder numbers are shown while data loads.
+class _ExpensiveFundsSkeleton extends StatelessWidget {
+  const _ExpensiveFundsSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(double.infinity, 1),
-      painter: _DottedLinePainter(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerBar(width: 160, height: 20),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 220, height: 22),
+          const SizedBox(height: 12),
+          ShimmerBar(
+            width: MediaQuery.of(context).size.width,
+            height: 12,
+            borderRadius: 2,
+          ),
+          const SizedBox(height: 16),
+          const ShimmerBar(width: 90, height: 12),
+          const SizedBox(height: 32),
+          const ShimmerBar(width: 180, height: 12),
+          const SizedBox(height: 16),
+          ShimmerBar(
+            width: MediaQuery.of(context).size.width,
+            height: 44,
+            borderRadius: 4,
+          ),
+          const SizedBox(height: 64),
+        ],
+      ),
     );
   }
-}
-
-class _DottedLinePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFE2E8F0)
-      ..strokeWidth = 1
-      ..strokeCap = StrokeCap.round;
-
-    double dashWidth = 3;
-    double dashSpace = 4;
-    double startX = 0;
-    while (startX < size.width) {
-      canvas.drawLine(Offset(startX, 0), Offset(startX + dashWidth, 0), paint);
-      startX += dashWidth + dashSpace;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

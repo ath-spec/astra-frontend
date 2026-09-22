@@ -37,7 +37,7 @@ class _MfFundAssetAllocationState extends State<MfFundAssetAllocation> {
                         'Asset Allocation',
                         style: TextStyle(
                           fontFamily: 'DMSans',
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF0F172A),
                         ),

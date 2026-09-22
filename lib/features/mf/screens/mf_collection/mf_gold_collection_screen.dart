@@ -1,59 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfGoldCollectionScreen extends StatefulWidget {
+class MfGoldCollectionScreen extends ConsumerStatefulWidget {
   const MfGoldCollectionScreen({super.key});
 
   @override
-  State<MfGoldCollectionScreen> createState() => _MfGoldCollectionScreenState();
+  ConsumerState<MfGoldCollectionScreen> createState() => _MfGoldCollectionScreenState();
 }
 
-class _MfGoldCollectionScreenState extends State<MfGoldCollectionScreen> {
+class _MfGoldCollectionScreenState extends ConsumerState<MfGoldCollectionScreen> {
   String _activeFilter = 'All';
-
-  final _filters = ['All', 'SGB', 'Gold ETF', 'Digital Gold'];
-
-  final List<Map<String, dynamic>> _allFunds = [
-    {
-      'name': 'SGB Aug 2028',
-      'category': 'Government • SGB',
-      'cap': 'SGB',
-      'returns': {'1Y': '18.40%', '3Y': '14.80%', '5Y': '12.50%'},
-      'rating': 5,
-    },
-    {
-      'name': 'SGB Dec 2029',
-      'category': 'Government • SGB',
-      'cap': 'SGB',
-      'returns': {'1Y': '18.10%', '3Y': '14.40%', '5Y': '12.10%'},
-      'rating': 5,
-    },
-    {
-      'name': 'SBI Gold ETF',
-      'category': 'Commodity • Gold ETF',
-      'cap': 'Gold ETF',
-      'returns': {'1Y': '17.60%', '3Y': '11.80%', '5Y': '10.20%'},
-      'rating': 4,
-    },
-    {
-      'name': 'MMTC-PAMP Digital Gold',
-      'category': 'Commodity • Digital Gold',
-      'cap': 'Digital Gold',
-      'returns': {'1Y': '16.50%', '3Y': '11.20%', '5Y': '9.80%'},
-      'rating': 4,
-    },
-  ];
-
+  final _filters = ['All', 'Gold ETF', 'Commodities', 'Silver'];
   String _returnPeriod = '1Y';
 
-  List<Map<String, dynamic>> get _filteredFunds {
-    if (_activeFilter == 'All') return _allFunds;
-    return _allFunds.where((f) => f['cap'] == _activeFilter).toList();
+  List<CatalogFund> _goldFunds(List<CatalogFund> all) {
+    final funds = all.where((f) {
+      final cat = f.category.toLowerCase();
+      final name = f.schemeName.toLowerCase();
+      return cat.contains('gold') || cat.contains('commodity') || cat.contains('silver') ||
+          name.contains('gold') || name.contains('silver');
+    }).toList();
+
+    if (_activeFilter == 'All') return funds;
+    return funds.where((f) {
+      final cat = f.category.toLowerCase();
+      final name = f.schemeName.toLowerCase();
+      switch (_activeFilter) {
+        case 'Gold ETF':
+          return cat.contains('gold') || name.contains('gold');
+        case 'Silver':
+          return cat.contains('silver') || name.contains('silver');
+        case 'Commodities':
+          return true; // gold + silver are both commodities; base list is already commodities-only
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
+  String _returnFor(CatalogFund f) {
+    final value = switch (_returnPeriod) {
+      '3Y' => f.returns3y,
+      '5Y' => f.returns5y,
+      _ => f.returns1y,
+    };
+    return value != null ? '${value.toStringAsFixed(2)}%' : '—';
   }
 
   @override
   Widget build(BuildContext context) {
-    final funds = _filteredFunds;
+    final catalogAsync = ref.watch(allCatalogFundsProvider);
+    final allFunds = catalogAsync.valueOrNull ?? <CatalogFund>[];
+    final funds = _goldFunds(allFunds);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -76,7 +78,7 @@ class _MfGoldCollectionScreenState extends State<MfGoldCollectionScreen> {
           ),
         ),
         title: const Text(
-          'Gold Collection',
+          'Gold & Commodities',
           style: TextStyle(
             fontFamily: 'DMSans',
             fontSize: 16,
@@ -92,8 +94,11 @@ class _MfGoldCollectionScreenState extends State<MfGoldCollectionScreen> {
                 setState(() {
                   if (_returnPeriod == '1Y') {
                     _returnPeriod = '3Y';
-                  } else if (_returnPeriod == '3Y') _returnPeriod = '5Y';
-                  else _returnPeriod = '1Y';
+                  } else if (_returnPeriod == '3Y') {
+                    _returnPeriod = '5Y';
+                  } else {
+                    _returnPeriod = '1Y';
+                  }
                 });
               },
               child: Container(
@@ -176,26 +181,59 @@ class _MfGoldCollectionScreenState extends State<MfGoldCollectionScreen> {
           ),
           // List
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: funds.length,
-              separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
-              itemBuilder: (context, index) {
-                final fund = funds[index];
-                return _buildFundRow(fund);
-              },
-            ),
+            child: catalogAsync.isLoading
+                ? ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                    children: _buildLoadingRows(),
+                  )
+                : catalogAsync.hasError
+                    ? const Center(
+                        child: Text(
+                          "Couldn't load gold & commodity funds.",
+                          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                        ),
+                      )
+                    : funds.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'No gold or commodity options available yet.',
+                              style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                            ),
+                          )
+                        : ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            itemCount: funds.length,
+                            separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
+                            itemBuilder: (context, index) {
+                              final fund = funds[index];
+                              return _buildFundRow(fund);
+                            },
+                          ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFundRow(Map<String, dynamic> fund) {
+  List<Widget> _buildLoadingRows() {
+    return List.generate(
+      6,
+      (index) => const Padding(
+        padding: EdgeInsets.only(bottom: 12.0),
+        child: AppThemeShimmerCard(
+          height: 140,
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          barWidths: [140, 100, 60, 60],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFundRow(CatalogFund fund) {
     return Column(
       children: [
         InkWell(
-          onTap: () => MfFundProfileScreen.showModal(context, fund['name'] as String),
+          onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
@@ -212,7 +250,7 @@ class _MfGoldCollectionScreenState extends State<MfGoldCollectionScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          (fund['name'] as String).substring(0, 1),
+                          fund.schemeName.isNotEmpty ? fund.schemeName.substring(0, 1) : '?',
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
@@ -243,19 +281,20 @@ class _MfGoldCollectionScreenState extends State<MfGoldCollectionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        fund['name'] as String,
+                        fund.schemeName,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          height: 1.2,
                           color: Color(0xFF1E1E1E),
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        fund['category'] as String,
+                        fund.category,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 10,
@@ -265,12 +304,13 @@ class _MfGoldCollectionScreenState extends State<MfGoldCollectionScreen> {
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 // Returns
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   child: Text(
-                    (fund['returns'] as Map<String, dynamic>)[_returnPeriod] as String,
-                    key: ValueKey<String>('${fund['name']}_$_returnPeriod'),
+                    _returnFor(fund),
+                    key: ValueKey<String>('${fund.schemeCode}_$_returnPeriod'),
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,

@@ -66,12 +66,46 @@ class ChatNotifier extends _$ChatNotifier {
     state = [];
   }
 
-  void loadSession(String sessionId) {
-    final session = ref.read(chatSessionManagerProvider.notifier).getSession(sessionId);
-    if (session != null) {
+  /// Loads a thread by ID. Checks the local on-device cache first (instant,
+  /// covers the common case of reopening a thread from this same session),
+  /// then falls back to fetching it from the backend — the real source of
+  /// truth now that chat_sessions persists every thread server-side, not
+  /// just whatever happens to still be in this device's local storage.
+  Future<void> loadSession(String sessionId) async {
+    final cached = ref.read(chatSessionManagerProvider.notifier).getSession(sessionId);
+    if (cached != null) {
       _currentSessionId = sessionId;
-      state = session.messages;
+      state = cached.messages;
+      return;
     }
+
+    final authState = ref.read(authProvider);
+    String phone = '+919876543210';
+    String name = 'Judge';
+    if (authState is AuthAuthenticated) {
+      phone = authState.user.email.replaceAll('@astra.dev', '');
+      name = authState.user.name;
+    }
+
+    final raw = await _aiService.fetchSessionMessages(phone: phone, name: name, sessionId: sessionId);
+    if (raw == null) return; // fetch failed — leave current state alone
+
+    final messages = <ChatMessage>[];
+    for (final msg in raw) {
+      final role = msg['role'] as String? ?? 'assistant';
+      final content = msg['content'] as String? ?? '';
+      if (role == 'system' || content.isEmpty) continue;
+      messages.add(ChatMessage(
+        id: _uuid.v4(),
+        text: content,
+        isUser: role == 'user',
+        timestamp: DateTime.now(),
+      ));
+    }
+
+    _currentSessionId = sessionId;
+    state = messages;
+    _saveSession();
   }
 
   Future<void> initializeHistory() async {
@@ -92,7 +126,7 @@ class ChatNotifier extends _$ChatNotifier {
         .where((b) => b.isLinked)
         .map((b) => {
               'bankName': b.bankName,
-              'accountType': b.accountNumber.split(' ').first.toUpperCase(),
+              'accountType': b.accountType.toUpperCase(),
               'balance': b.balance > 0 ? b.balance : 150000.0, // fallback balance if none
             })
         .toList();
@@ -193,10 +227,18 @@ class ChatNotifier extends _$ChatNotifier {
       }
 
       // Fetch response from Groq
-      final responseText = await _aiService.getChatResponse(messageHistory, phone: phone, name: name);
-      
+      final result = await _aiService.getChatResponse(messageHistory, phone: phone, name: name, sessionId: _currentSessionId);
+      final responseText = result.text;
+      // The backend echoes back which thread it actually saved this turn
+      // into — keep local state in sync so the NEXT message in this same
+      // conversation keeps landing in the same thread instead of the
+      // backend falling back to "most recent session" every time.
+      if (result.sessionId != null && result.sessionId!.isNotEmpty) {
+        _currentSessionId = result.sessionId!;
+      }
+
       if (_isCancelled) return;
-      
+
       if (isVoice) {
         String spokenText = responseText.replaceAll(RegExp(r'```json[\s\S]*?```'), '');
         spokenText = spokenText.replaceAll(RegExp(r'\|.*\|'), '');
@@ -246,18 +288,20 @@ class ChatNotifier extends _$ChatNotifier {
     }
   }
 
-  void loadDummyThread(String title) {
-    startNewSession();
-    final userMsg = ChatMessage(
-      id: _uuid.v4(),
-      text: 'Tell me about $title',
-      isUser: true,
-      timestamp: DateTime.now(),
-    );
-    state = [userMsg];
-    _saveSession();
-    
-    // Then trigger a real message flow
-    sendMessage('Tell me about $title');
-  }
 }
+
+/// Every saved chat thread for the signed-in user, fetched from the
+/// backend's chat_sessions table — backs the real History screen (which
+/// used to render hardcoded fake thread titles that never touched the
+/// server). autoDispose since the History screen is the only consumer and
+/// it should refetch fresh each time it's opened rather than go stale.
+final chatSessionsProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+  final authState = ref.watch(authProvider);
+  String phone = '+919876543210';
+  String name = 'Judge';
+  if (authState is AuthAuthenticated) {
+    phone = authState.user.email.replaceAll('@astra.dev', '');
+    name = authState.user.name;
+  }
+  return DemoAIService().fetchChatSessions(phone: phone, name: name);
+});

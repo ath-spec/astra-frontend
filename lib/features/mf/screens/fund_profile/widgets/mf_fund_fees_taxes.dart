@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'mf_fees_taxes_bottom_sheet.dart';
 
 class MfFundFeesTaxes extends StatefulWidget {
-  const MfFundFeesTaxes({super.key});
+  final double? expenseRatio;
+  final String? exitLoad;
+
+  const MfFundFeesTaxes({
+    super.key,
+    this.expenseRatio,
+    this.exitLoad,
+  });
 
   @override
   State<MfFundFeesTaxes> createState() => _MfFundFeesTaxesState();
@@ -13,6 +20,11 @@ class _MfFundFeesTaxesState extends State<MfFundFeesTaxes> {
 
   @override
   Widget build(BuildContext context) {
+    final expRatioStr = widget.expenseRatio != null
+        ? '${widget.expenseRatio!.toStringAsFixed(2)}%'
+        : '0.65%';
+    final exitLoadStr = widget.exitLoad ?? '1% if redeemed within 365 days; Nil thereafter';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -28,18 +40,36 @@ class _MfFundFeesTaxesState extends State<MfFundFeesTaxes> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Fees & Taxes on investment',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0F172A),
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Fees & Taxes on investment',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      if (!_isExpanded)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            'Expense ratio, exit load',
+                            style: TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 10,
+                              color: Color(0xFF94A3B8),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   Icon(
                     _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                     color: const Color(0xFF0F172A),
+                    size: 20,
                   ),
                 ],
               ),
@@ -47,131 +77,62 @@ class _MfFundFeesTaxesState extends State<MfFundFeesTaxes> {
           ),
           AnimatedCrossFade(
             firstChild: const SizedBox(width: double.infinity, height: 0),
-            secondChild: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildStatRow('Expense ratio', '0.63%'),
-                _buildDivider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Taxes',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12,
-                          color: Color(0xFF0F172A),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Capital Gains are classified as Long Term (LTCG) if holding period is more than 1 year else Short Term (STCG)\nLTCG > Rs 1.25 Lakhs is taxed at 12.5% and STCG is taxed at 20%',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 10,
-                          color: Color(0xFF64748B),
-                          height: 1.5,
-                        ),
-                      ),
-                    ],
-                  ),
+            secondChild: Padding(
+              padding: const EdgeInsets.only(bottom: 24.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
                 ),
-                _buildDivider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Exit load',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 12,
-                          color: Color(0xFF0F172A),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        '1% for redemption within 365 days',
-                        style: TextStyle(
-                          fontFamily: 'DMSans',
-                          fontSize: 10,
-                          color: Color(0xFF64748B),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) => const MfFeesTaxesBottomSheet(),
-                          );
-                        },
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Text(
-                                'Know more',
-                                style: TextStyle(
-                                  fontFamily: 'DMSans',
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF0F172A),
-                                ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(Icons.chevron_right, size: 14, color: Color(0xFF0F172A)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    _buildStatRow('Expense ratio', expRatioStr),
+                    const Divider(color: Color(0xFFE2E8F0), height: 1, thickness: 1),
+                    _buildStatRow('Exit load', exitLoadStr, isMultiline: true),
+                    const Divider(color: Color(0xFFE2E8F0), height: 1, thickness: 1),
+                    _buildStatRow('Stamp duty', '0.005% (from July 1st 2020)'),
+                    const Divider(color: Color(0xFFE2E8F0), height: 1, thickness: 1),
+                    _buildTaxImplicationRow(context),
+                  ],
                 ),
-              ],
+              ),
             ),
             crossFadeState: _isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
             duration: const Duration(milliseconds: 300),
           ),
-          const Divider(color: Color(0xFFF1F5F9), height: 1, thickness: 1), // Separator for the next accordion
+          const Divider(color: Color(0xFFE2E8F0), height: 1, thickness: 1),
         ],
       ),
     );
   }
 
-  Widget _buildStatRow(String label, String value) {
+  Widget _buildStatRow(String label, String value, {bool isMultiline = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: isMultiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
           Text(
             label,
             style: const TextStyle(
               fontFamily: 'DMSans',
-              fontSize: 12,
-              color: Color(0xFF0F172A), // In this section labels seem darker
+              fontSize: 11,
+              color: Color(0xFF64748B),
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF0F172A),
+          const SizedBox(width: 16),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF0F172A),
+              ),
             ),
           ),
         ],
@@ -179,7 +140,45 @@ class _MfFundFeesTaxesState extends State<MfFundFeesTaxes> {
     );
   }
 
-  Widget _buildDivider() {
-    return const Divider(color: Color(0xFFF1F5F9), height: 1, thickness: 1); // Subtle dashed-like line
+  Widget _buildTaxImplicationRow(BuildContext context) {
+    return InkWell(
+      onTap: () => showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => const MfFeesTaxesBottomSheet(),
+      ),
+      child: const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Tax implication',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 11,
+                color: Color(0xFF64748B),
+              ),
+            ),
+            Row(
+              children: [
+                Text(
+                  'Know more',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
+                SizedBox(width: 4),
+                Icon(Icons.chevron_right, size: 14, color: Color(0xFF0F172A)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

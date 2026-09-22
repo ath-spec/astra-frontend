@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 class DisciplineInfoSheet extends StatefulWidget {
-  final int currentLevelIndex; // 0 to 4 (e.g., Fair is 2)
+  // 0 to 3, matching DisciplineLevel's real 4-tier scale (Poor, Moderate,
+  // Good, Excellent) — this used to be a 0-4 index for a fake 5-tier
+  // "Very Low/Low/Fair/Good/Excellent" scale that didn't match what the
+  // backend actually sends.
+  final int currentLevelIndex;
 
-  const DisciplineInfoSheet({super.key, this.currentLevelIndex = 2});
+  const DisciplineInfoSheet({super.key, this.currentLevelIndex = 1});
 
   @override
   State<DisciplineInfoSheet> createState() => _DisciplineInfoSheetState();
@@ -247,11 +251,13 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
   }
 
   Widget _buildAnimatedChart() {
-    final labels = ['VERY LOW', 'LOW', 'FAIR', 'GOOD', 'EXCELLENT'];
+    // Real DisciplineLevel labels (Poor, Moderate, Good, Excellent) — was a
+    // fake 5-tier "Very Low/Low/Fair/Good/Excellent" scale that never
+    // matched what the backend sends.
+    final labels = ['POOR', 'MODERATE', 'GOOD', 'EXCELLENT'];
     final colors = [
-      const Color(0xFFBCE3FF), // Very Low
-      const Color(0xFF65B4FF), // Low
-      const Color(0xFF2796FF), // Fair
+      const Color(0xFF65B4FF), // Poor
+      const Color(0xFF2796FF), // Moderate
       const Color(0xFF1E56D0), // Good
       const Color(0xFF0F172A), // Excellent
     ];
@@ -273,7 +279,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final totalWidth = constraints.maxWidth;
-                    final targetFraction = (widget.currentLevelIndex + 1) / 5.0;
+                    final targetFraction = (widget.currentLevelIndex + 1) / 4.0;
                     final currentFraction = curvedAnimation.value * targetFraction;
                     final currentWidth = totalWidth * currentFraction;
 
@@ -296,7 +302,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                                 minWidth: totalWidth,
                                 maxWidth: totalWidth,
                                 child: Row(
-                                  children: List.generate(5, (index) {
+                                  children: List.generate(4, (index) {
                                     return Expanded(
                                       child: Container(
                                         color: colors[index],
@@ -314,7 +320,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                 ),
                 const SizedBox(height: 12),
                 Row(
-                  children: List.generate(5, (index) {
+                  children: List.generate(4, (index) {
                     return Expanded(
                       child: Center(
                         child: Text(
@@ -334,11 +340,11 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
               ],
             ),
 
-            // Dotted Separators
+            // Dotted Separators (3 dividers between the 4 segments)
             Positioned.fill(
               child: Row(
                 children:
-                    List.generate(4, (index) {
+                    List.generate(3, (index) {
                       return Expanded(
                         child: Align(
                           alignment: Alignment.centerRight,
@@ -366,7 +372,7 @@ class _DisciplineInfoSheetState extends State<DisciplineInfoSheet>
                 top: -30,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    final segmentWidth = constraints.maxWidth / 5;
+                    final segmentWidth = constraints.maxWidth / 4;
                     final leftOffset =
                         (widget.currentLevelIndex * segmentWidth);
 

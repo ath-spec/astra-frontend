@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -87,7 +89,13 @@ class _NameScreenState extends ConsumerState<NameScreen>
 
   void _submit() {
     if (_isEnabled) {
-      ref.read(authProvider.notifier).setPendingName(_nameController.text.trim());
+      final name = _nameController.text.trim();
+      final notifier = ref.read(authProvider.notifier);
+      notifier.setPendingName(name);
+      // Persist to the backend so the name reaches the profile / RM dashboard.
+      // Fire-and-forget: updateName handles its own errors and updates local
+      // state synchronously, so onboarding need not wait on the network.
+      unawaited(notifier.updateName(name));
       context.push('/pan', extra: {'isOnboarding': true});
     }
   }

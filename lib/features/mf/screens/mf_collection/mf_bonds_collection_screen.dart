@@ -1,59 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/shimmer_card_skeleton.dart';
+import '../../data/catalog_providers.dart';
+import '../../data/catalog_models.dart';
 import '../fund_profile/mf_fund_profile_screen.dart';
 
-class MfBondsCollectionScreen extends StatefulWidget {
+class MfBondsCollectionScreen extends ConsumerStatefulWidget {
   const MfBondsCollectionScreen({super.key});
 
   @override
-  State<MfBondsCollectionScreen> createState() => _MfBondsCollectionScreenState();
+  ConsumerState<MfBondsCollectionScreen> createState() => _MfBondsCollectionScreenState();
 }
 
-class _MfBondsCollectionScreenState extends State<MfBondsCollectionScreen> {
+class _MfBondsCollectionScreenState extends ConsumerState<MfBondsCollectionScreen> {
+  static const _category = 'Debt - Corporate Bond';
+
   String _activeFilter = 'All';
-
   final _filters = ['All', 'Government', 'Corporate', 'Tax-Free'];
-
-  final List<Map<String, dynamic>> _allFunds = [
-    {
-      'name': 'Adani Airport',
-      'category': 'Debt • Corporate',
-      'cap': 'Corporate',
-      'returns': {'1Y': '8.50%', '3Y': '8.50%', '5Y': '8.50%'},
-      'rating': 4,
-    },
-    {
-      'name': 'Akme Fintrade',
-      'category': 'Debt • Corporate',
-      'cap': 'Corporate',
-      'returns': {'1Y': '12.00%', '3Y': '12.00%', '5Y': '12.00%'},
-      'rating': 4,
-    },
-    {
-      'name': 'GOI Bond 2030',
-      'category': 'Debt • Government',
-      'cap': 'Government',
-      'returns': {'1Y': '7.10%', '3Y': '7.10%', '5Y': '7.10%'},
-      'rating': 5,
-    },
-    {
-      'name': 'NHAI Tax Free Bond',
-      'category': 'Debt • Tax-Free',
-      'cap': 'Tax-Free',
-      'returns': {'1Y': '5.50%', '3Y': '5.50%', '5Y': '5.50%'},
-      'rating': 5,
-    },
-  ];
-
   String _returnPeriod = '1Y';
 
-  List<Map<String, dynamic>> get _filteredFunds {
-    if (_activeFilter == 'All') return _allFunds;
-    return _allFunds.where((f) => f['cap'] == _activeFilter).toList();
+  List<CatalogFund> _filteredFunds(List<CatalogFund> allFunds) {
+    if (_activeFilter == 'All') return allFunds;
+    return allFunds.where((f) {
+      final text = '${f.category} ${f.schemeName}'.toLowerCase();
+      switch (_activeFilter) {
+        case 'Government':
+          return text.contains('government') || text.contains('gilt') || text.contains('sovereign');
+        case 'Corporate':
+          return text.contains('corporate');
+        case 'Tax-Free':
+          return text.contains('tax free') || text.contains('tax-free');
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
+  String _returnFor(CatalogFund f) {
+    final value = switch (_returnPeriod) {
+      '3Y' => f.returns3y,
+      '5Y' => f.returns5y,
+      _ => f.returns1y,
+    };
+    return value != null ? '${value.toStringAsFixed(2)}%' : '—';
   }
 
   @override
   Widget build(BuildContext context) {
-    final funds = _filteredFunds;
+    final catalogAsync = ref.watch(catalogFundsByCategoryProvider(_category));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -92,8 +86,11 @@ class _MfBondsCollectionScreenState extends State<MfBondsCollectionScreen> {
                 setState(() {
                   if (_returnPeriod == '1Y') {
                     _returnPeriod = '3Y';
-                  } else if (_returnPeriod == '3Y') _returnPeriod = '5Y';
-                  else _returnPeriod = '1Y';
+                  } else if (_returnPeriod == '3Y') {
+                    _returnPeriod = '5Y';
+                  } else {
+                    _returnPeriod = '1Y';
+                  }
                 });
               },
               child: Container(
@@ -157,45 +154,83 @@ class _MfBondsCollectionScreenState extends State<MfBondsCollectionScreen> {
           ),
           // Divider
           Container(height: 1, color: const Color(0xFFF1F5F9)),
-          // Fund count hint
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-            child: Row(
-              children: [
-                Text(
-                  '${funds.length} options',
-                  style: const TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF94A3B8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // List
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: funds.length,
-              separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
-              itemBuilder: (context, index) {
-                final fund = funds[index];
-                return _buildFundRow(fund);
-              },
-            ),
+            child: catalogAsync.isLoading
+                ? const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        AppThemeShimmerCard(height: 140),
+                        SizedBox(height: 12),
+                        AppThemeShimmerCard(height: 140),
+                        SizedBox(height: 12),
+                        AppThemeShimmerCard(height: 140),
+                      ],
+                    ),
+                  )
+                : catalogAsync.hasError
+                    ? const Center(
+                        child: Text(
+                          "Couldn't load bonds.",
+                          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+                        ),
+                      )
+                    : _buildFundsList(_filteredFunds(catalogAsync.valueOrNull ?? [])),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFundRow(Map<String, dynamic> fund) {
+  Widget _buildFundsList(List<CatalogFund> funds) {
+    if (funds.isEmpty) {
+      return const Center(
+        child: Text(
+          'No bonds available yet.',
+          style: TextStyle(fontFamily: 'DMSans', color: Color(0xFF64748B)),
+        ),
+      );
+    }
+    return Column(
+      children: [
+        // Fund count hint
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+          child: Row(
+            children: [
+              Text(
+                '${funds.length} options',
+                style: const TextStyle(
+                  fontFamily: 'DMSans',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF94A3B8),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // List
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            itemCount: funds.length,
+            separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF8F9FA)),
+            itemBuilder: (context, index) {
+              final fund = funds[index];
+              return _buildFundRow(fund);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFundRow(CatalogFund fund) {
     return Column(
       children: [
         InkWell(
-          onTap: () => MfFundProfileScreen.showModal(context, fund['name'] as String),
+          onTap: () => MfFundProfileScreen.showModal(context, fund.schemeCode),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
@@ -212,7 +247,7 @@ class _MfBondsCollectionScreenState extends State<MfBondsCollectionScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          (fund['name'] as String).substring(0, 1),
+                          fund.schemeName.isNotEmpty ? fund.schemeName.substring(0, 1) : '?',
                           style: const TextStyle(
                             fontFamily: 'DMSans',
                             fontSize: 12,
@@ -243,7 +278,7 @@ class _MfBondsCollectionScreenState extends State<MfBondsCollectionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        fund['name'] as String,
+                        fund.schemeName,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 12,
@@ -255,7 +290,7 @@ class _MfBondsCollectionScreenState extends State<MfBondsCollectionScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        fund['category'] as String,
+                        fund.category,
                         style: const TextStyle(
                           fontFamily: 'DMSans',
                           fontSize: 10,
@@ -269,8 +304,8 @@ class _MfBondsCollectionScreenState extends State<MfBondsCollectionScreen> {
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   child: Text(
-                    (fund['returns'] as Map<String, dynamic>)[_returnPeriod] as String,
-                    key: ValueKey<String>('${fund['name']}_$_returnPeriod'),
+                    _returnFor(fund),
+                    key: ValueKey<String>('${fund.schemeCode}_$_returnPeriod'),
                     style: const TextStyle(
                       fontFamily: 'DMSans',
                       fontSize: 10,
