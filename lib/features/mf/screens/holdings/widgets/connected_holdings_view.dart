@@ -69,6 +69,7 @@ class _ConnectedHoldingsViewState extends ConsumerState<ConnectedHoldingsView>
       parent: _animationController,
       curve: Curves.easeOutCubic,
     );
+    _animationController.forward();
   }
 
   /// Applies the active filter chips and current sort option to [source],

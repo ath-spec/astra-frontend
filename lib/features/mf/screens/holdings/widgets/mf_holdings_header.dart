@@ -2,6 +2,7 @@ import 'dart:ui' show lerpDouble, ImageFilter;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
@@ -200,7 +201,7 @@ class HoldingsHeaderDelegate extends SliverPersistentHeaderDelegate {
                       ],
                     ),
                     child: _OdometerText(
-                      targetValue: (hasImportedPortfolio && (mfConnected || stocksConnected || totalWealthValue > 0)) ? totalWealthValue.toInt() : 0,
+                      targetValue: (hasImportedPortfolio && (mfConnected || stocksConnected || totalWealthValue > 0)) ? totalWealthValue.round() : 0,
                       isLocked: isLocked,
                       style: TextStyle(
                         fontFamily: 'DMSans',
@@ -492,23 +493,18 @@ class _OdometerTextState extends State<_OdometerText> with SingleTickerProviderS
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
-        String formatted;
-        int intVal = _animation.value.round();
         if (widget.isLocked) {
           return Text('₹ * * * *', style: widget.style);
         }
+        
+        int intVal = _animation.value.round();
+        String formatted;
         if (intVal == 0) {
           formatted = '0';
         } else {
-          String numStr = intVal.toString();
-          if (numStr.length <= 3) {
-            formatted = numStr;
-          } else {
-            String lastThree = numStr.substring(numStr.length - 3);
-            String otherNumbers = numStr.substring(0, numStr.length - 3);
-            formatted = '${otherNumbers.replaceAllMapped(RegExp(r".{1,2}(?=(.{2})+(?!.))"), (Match m) => "${m[0]},")},$lastThree';
-          }
+          formatted = NumberFormat('#,##,###').format(intVal);
         }
+        
         return Text('₹ $formatted', style: widget.style);
       }
     );

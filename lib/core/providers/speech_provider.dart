@@ -13,7 +13,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../network/api.dart';
@@ -142,9 +141,15 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
 
       final tokenQuery = (token != null && token.isNotEmpty) ? '&token=$token' : '';
       final uri = Uri.parse('$wsUrl/api/chat/stt/stream?lang=auto$tokenQuery');
-      final headers = (token != null && token.isNotEmpty) ? {'Authorization': 'Bearer $token'} : null;
 
-      channel = IOWebSocketChannel.connect(uri, headers: headers);
+      // WebSocketChannel.connect (not IOWebSocketChannel from io.dart) is
+      // platform-adaptive: it uses the browser WebSocket on Flutter web and
+      // dart:io's WebSocket on native. IOWebSocketChannel wraps dart:io
+      // directly, which is a non-functional stub on web and threw
+      // immediately here, making voice input fail instantly on web builds.
+      // The browser WebSocket API also can't send custom headers, which is
+      // why auth already goes through tokenQuery above instead.
+      channel = WebSocketChannel.connect(uri);
       wsSub = channel.stream.listen(
         (message) {
           if (gen != _generation) return; // frame from a superseded session

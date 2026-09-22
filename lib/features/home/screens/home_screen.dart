@@ -220,7 +220,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     final double totalWealthValue = summary.totalWealth;
     final formattedTotal = PrivacyFormatter.obscure(
-      totalWealthValue == 0 ? '₹0' : '₹${NumberFormat('#,##,###').format(totalWealthValue)}',
+      totalWealthValue == 0 ? '₹0' : '₹${NumberFormat('#,##,###').format(totalWealthValue.round())}',
       isLocked
     );
 
