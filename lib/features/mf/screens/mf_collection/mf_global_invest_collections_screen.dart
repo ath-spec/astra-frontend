@@ -221,42 +221,42 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
     final mag7Funds = allFunds.where((f) {
       final cat = f.category.toLowerCase();
       return cat.contains('mega cap');
-    }).take(7).toList();
+    }).toList();
 
     final techFunds = allFunds.where((f) {
       final name = f.schemeName.toLowerCase();
       final cat = f.category.toLowerCase();
       return cat.contains('tech') || name.contains('tech') || name.contains('semi') || name.contains('ai') || name.contains('innovation');
-    }).take(3).toList();
+    }).toList();
 
     final defenseFunds = allFunds.where((f) {
       final name = f.schemeName.toLowerCase();
       final cat = f.category.toLowerCase();
       return name.contains('defense') || name.contains('aerospace') || cat.contains('thematic');
-    }).take(3).toList();
+    }).toList();
 
     final etfFunds = allFunds.where((f) {
       final name = f.schemeName.toLowerCase();
       return name.contains('etf') || name.contains('s&p') || name.contains('index') || name.contains('nifty');
-    }).take(3).toList();
+    }).toList();
 
     final usFunds = allFunds.where((f) {
       final name = f.schemeName.toLowerCase();
       final cat = f.category.toLowerCase();
       return name.contains('us') || cat.contains('us') || name.contains('bluechip');
-    }).take(3).toList();
+    }).toList();
 
     final europeFunds = allFunds.where((f) {
       final name = f.schemeName.toLowerCase();
       final cat = f.category.toLowerCase();
       return name.contains('europe') || cat.contains('europe') || cat.contains('international');
-    }).take(3).toList();
+    }).toList();
 
     final emergingFunds = allFunds.where((f) {
       final name = f.schemeName.toLowerCase();
       final cat = f.category.toLowerCase();
       return name.contains('emerg') || cat.contains('emerg') || cat.contains('small');
-    }).take(3).toList();
+    }).toList();
 
     if (_activeFilter == 'Curated') {
       return Column(
@@ -266,8 +266,12 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
             cardSubtitle: 'Top US Tech & Innovation Leaders',
             icon: Icons.rocket_launch_rounded,
             iconColor: Colors.blue,
-            funds: _mapFundsToItems(mag7Funds.isNotEmpty ? mag7Funds : allFunds.take(2).toList(), Icons.rocket_launch_rounded, Colors.blue),
-            rawFunds: mag7Funds.isNotEmpty ? mag7Funds : allFunds.take(4).toList(),
+            funds: _mapFundsToItems(
+              (mag7Funds.isNotEmpty ? mag7Funds : allFunds).take(3).toList(),
+              Icons.rocket_launch_rounded,
+              Colors.blue,
+            ),
+            rawFunds: mag7Funds.isNotEmpty ? mag7Funds : allFunds.take(7).toList(),
             imagePath: 'lib/core/images/mag_7.webp',
           ),
           const SizedBox(height: 24),
@@ -276,8 +280,12 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
             cardSubtitle: 'Future of Global Computing',
             icon: Icons.memory_rounded,
             iconColor: Colors.purple,
-            funds: _mapFundsToItems(techFunds.isNotEmpty ? techFunds : allFunds.take(2).toList(), Icons.memory_rounded, Colors.purple),
-            rawFunds: techFunds.isNotEmpty ? techFunds : allFunds.take(4).toList(),
+            funds: _mapFundsToItems(
+              (techFunds.isNotEmpty ? techFunds : allFunds).take(3).toList(),
+              Icons.memory_rounded,
+              Colors.purple,
+            ),
+            rawFunds: techFunds.isNotEmpty ? techFunds : allFunds.take(6).toList(),
             imagePath: 'lib/core/images/ai_global.webp',
           ),
           const SizedBox(height: 24),
@@ -286,8 +294,12 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
             cardSubtitle: 'Global Infrastructure & Security',
             icon: Icons.security_rounded,
             iconColor: Colors.green,
-            funds: _mapFundsToItems(defenseFunds.isNotEmpty ? defenseFunds : allFunds.take(2).toList(), Icons.security_rounded, Colors.green),
-            rawFunds: defenseFunds.isNotEmpty ? defenseFunds : allFunds.take(4).toList(),
+            funds: _mapFundsToItems(
+              (defenseFunds.isNotEmpty ? defenseFunds : allFunds).take(3).toList(),
+              Icons.security_rounded,
+              Colors.green,
+            ),
+            rawFunds: defenseFunds.isNotEmpty ? defenseFunds : allFunds.take(6).toList(),
             imagePath: 'lib/core/images/defense.webp',
           ),
           const SizedBox(height: 24),
@@ -296,8 +308,12 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
             cardSubtitle: 'Broad Market Diversification',
             icon: Icons.trending_up_rounded,
             iconColor: Colors.orange,
-            funds: _mapFundsToItems(etfFunds.isNotEmpty ? etfFunds : allFunds.take(2).toList(), Icons.trending_up_rounded, Colors.orange),
-            rawFunds: etfFunds.isNotEmpty ? etfFunds : allFunds.take(4).toList(),
+            funds: _mapFundsToItems(
+              (etfFunds.isNotEmpty ? etfFunds : allFunds).take(3).toList(),
+              Icons.trending_up_rounded,
+              Colors.orange,
+            ),
+            rawFunds: etfFunds.isNotEmpty ? etfFunds : allFunds.take(6).toList(),
             imagePath: 'lib/core/images/popular.webp',
           ),
         ],
@@ -310,8 +326,12 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
             cardSubtitle: "World's Largest Capital Market",
             icon: Icons.public_rounded,
             iconColor: Colors.blueAccent,
-            funds: _mapFundsToItems(usFunds.isNotEmpty ? usFunds : allFunds.take(2).toList(), Icons.public_rounded, Colors.blueAccent),
-            rawFunds: usFunds.isNotEmpty ? usFunds : allFunds.take(4).toList(),
+            funds: _mapFundsToItems(
+              (usFunds.isNotEmpty ? usFunds : allFunds).take(3).toList(),
+              Icons.public_rounded,
+              Colors.blueAccent,
+            ),
+            rawFunds: usFunds.isNotEmpty ? usFunds : allFunds.take(6).toList(),
             imagePath: 'lib/core/images/usa_flag.webp',
           ),
           const SizedBox(height: 24),
@@ -320,8 +340,12 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
             cardSubtitle: 'Established Continental Bluechips',
             icon: Icons.account_balance_rounded,
             iconColor: Colors.indigo,
-            funds: _mapFundsToItems(europeFunds.isNotEmpty ? europeFunds : allFunds.take(2).toList(), Icons.account_balance_rounded, Colors.indigo),
-            rawFunds: europeFunds.isNotEmpty ? europeFunds : allFunds.take(4).toList(),
+            funds: _mapFundsToItems(
+              (europeFunds.isNotEmpty ? europeFunds : allFunds).take(3).toList(),
+              Icons.account_balance_rounded,
+              Colors.indigo,
+            ),
+            rawFunds: europeFunds.isNotEmpty ? europeFunds : allFunds.take(6).toList(),
             imagePath: 'lib/core/images/europe.webp',
           ),
           const SizedBox(height: 24),
@@ -330,8 +354,12 @@ class _MfGlobalInvestCollectionsScreenState extends ConsumerState<MfGlobalInvest
             cardSubtitle: 'High Growth Frontier Economies',
             icon: Icons.language_rounded,
             iconColor: Colors.teal,
-            funds: _mapFundsToItems(emergingFunds.isNotEmpty ? emergingFunds : allFunds.take(2).toList(), Icons.language_rounded, Colors.teal),
-            rawFunds: emergingFunds.isNotEmpty ? emergingFunds : allFunds.take(4).toList(),
+            funds: _mapFundsToItems(
+              (emergingFunds.isNotEmpty ? emergingFunds : allFunds).take(3).toList(),
+              Icons.language_rounded,
+              Colors.teal,
+            ),
+            rawFunds: emergingFunds.isNotEmpty ? emergingFunds : allFunds.take(6).toList(),
             imagePath: 'lib/core/images/emerging_market.webp',
           ),
         ],

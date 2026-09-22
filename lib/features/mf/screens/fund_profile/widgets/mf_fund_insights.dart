@@ -159,20 +159,7 @@ class _MfFundInsightsState extends ConsumerState<MfFundInsights> with SingleTick
                 const SizedBox(height: 20),
                 _buildQaBlock('Impact on your portfolio', widget.impactText),
                 
-                const SizedBox(height: 32),
-                
-                // Radar / Spider Chart
-                Text(
-                  'PORTFOLIO IMPACT VISUALIZER',
-                  style: TextStyle(
-                    fontFamily: 'DMSans',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.0,
-                    color: const Color(0xFF94A3B8),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 
                 // Legend
                 Row(
