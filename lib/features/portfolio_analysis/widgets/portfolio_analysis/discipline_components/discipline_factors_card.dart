@@ -203,14 +203,7 @@ class DisciplineFactorsCard extends ConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-              ),
-              child: Icon(icon, size: 12, color: statusColor),
-            ),
+            Icon(icon, size: 16, color: const Color(0xFF64748B)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -238,20 +231,13 @@ class DisciplineFactorsCard extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                status,
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: statusColor,
-                ),
+            Text(
+              status,
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: statusColor,
               ),
             ),
             const SizedBox(width: 12),

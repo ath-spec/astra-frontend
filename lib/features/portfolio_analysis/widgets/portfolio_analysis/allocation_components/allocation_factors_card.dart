@@ -184,7 +184,6 @@ class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard>
                 subtitle: 'Bank Accounts, FDs, Surplus & Liquid Funds',
                 amount: stableAmt,
                 percentage: stablePct,
-                iconColor: const Color(0xFF38A169),
               ),
               const _DottedDivider(),
               _buildFactorItem(
@@ -195,7 +194,6 @@ class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard>
                 subtitle: 'Mostly steady, small ups and downs',
                 amount: lowAmt,
                 percentage: lowPct,
-                iconColor: const Color(0xFF38A169),
               ),
               const _DottedDivider(),
               _buildFactorItem(
@@ -206,7 +204,6 @@ class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard>
                 subtitle: 'Moderate swings, growth potential',
                 amount: medAmt,
                 percentage: medPct,
-                iconColor: const Color(0xFFDD6B20),
               ),
               const _DottedDivider(),
               _buildFactorItem(
@@ -217,7 +214,6 @@ class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard>
                 subtitle: 'High swings, high potential',
                 amount: highAmt,
                 percentage: highPct,
-                iconColor: const Color(0xFFE53E3E),
               ),
               const SizedBox(height: 8),
             ],
@@ -235,7 +231,6 @@ class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard>
     required String subtitle,
     required String amount,
     required String percentage,
-    required Color iconColor,
   }) {
     return GestureDetector(
       onTap: () {
@@ -252,14 +247,7 @@ class _AllocationFactorsCardState extends ConsumerState<AllocationFactorsCard>
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-              ),
-              child: Icon(icon, size: 12, color: iconColor),
-            ),
+            Icon(icon, size: 16, color: const Color(0xFF64748B)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

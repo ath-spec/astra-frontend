@@ -19,29 +19,33 @@ enum DisciplineLevel {
     }
   }
 
+  // Blue ramp, light to dark across the four tiers — matches the blue family
+  // _MiniDisciplinePainter already uses for the home card's gauge. Previously
+  // this ran red (poor) -> blue (moderate) -> green (good) -> dark green
+  // (excellent), an unrelated traffic-light scheme.
   Color get color {
     switch (this) {
       case DisciplineLevel.poor:
-        return const Color(0xFFE53E3E); // Red
+        return const Color(0xFFBCE3FF);
       case DisciplineLevel.moderate:
-        return const Color(0xFF3B82F6); // Blue
+        return const Color(0xFF65B4FF);
       case DisciplineLevel.good:
-        return const Color(0xFF38A169); // Green
+        return const Color(0xFF2796FF);
       case DisciplineLevel.excellent:
-        return const Color(0xFF22543D); // Dark Green
+        return const Color(0xFF015294);
     }
   }
 
   List<Color> get gradientColors {
     switch (this) {
       case DisciplineLevel.poor:
-        return const [Color(0xFFE53E3E), Color(0xFFF56565)];
+        return const [Color(0xFFBCE3FF), Color(0xFFE0F2FE)];
       case DisciplineLevel.moderate:
-        return const [Color(0xFF3B82F6), Color(0xFF60A5FA)];
+        return const [Color(0xFF65B4FF), Color(0xFFBCE3FF)];
       case DisciplineLevel.good:
-        return const [Color(0xFF38A169), Color(0xFF48BB78)];
+        return const [Color(0xFF2796FF), Color(0xFF65B4FF)];
       case DisciplineLevel.excellent:
-        return const [Color(0xFF22543D), Color(0xFF276749)];
+        return const [Color(0xFF015294), Color(0xFF2796FF)];
     }
   }
 
@@ -96,33 +100,41 @@ enum AllocationLevel {
 
   int get activeSegments => index + 1; // 1 to 5
 
+  // Purple ramp (Chakra's purple.200 -> purple.600), light to dark across the
+  // five levels — previously conservative/moderate/balanced/aggressive used
+  // an unrelated green/blue/orange traffic-light scheme and only
+  // veryAggressive was purple. Allocation's whole identity is purple now.
   Color get activeColor {
     switch (this) {
       case AllocationLevel.conservative:
-        return const Color(0xFF38A169);
+        return const Color(0xFFD6BCFA); // purple.200
       case AllocationLevel.moderateConservative:
-        return const Color(0xFF48BB78);
+        return const Color(0xFFB794F4); // purple.300
       case AllocationLevel.balanced:
-        return const Color(0xFF3B82F6);
+        return const Color(0xFF9F7AEA); // purple.400
       case AllocationLevel.aggressive:
-        return const Color(0xFFED8936);
+        return const Color(0xFF805AD5); // purple.500
       case AllocationLevel.veryAggressive:
-        return const Color(0xFF6B46C1); // Purple base
+        return const Color(0xFF6B46C1); // purple.600
     }
   }
 
+  // Darker than activeColor's pastel ramp — this feeds text/icon gradients
+  // (ShaderMask over the level label, the insight sentence), where the
+  // light 200/300 purples read as washed-out and low-contrast against a
+  // white card. activeColor keeps the lighter ramp for the gauge fill.
   List<Color> get gradientColors {
     switch (this) {
       case AllocationLevel.conservative:
-        return const [Color(0xFF38A169), Color(0xFF68D391)];
+        return const [Color(0xFF9F7AEA), Color(0xFFB794F4)];
       case AllocationLevel.moderateConservative:
-        return const [Color(0xFF48BB78), Color(0xFF9AE6B4)];
+        return const [Color(0xFF805AD5), Color(0xFF9F7AEA)];
       case AllocationLevel.balanced:
-        return const [Color(0xFF3B82F6), Color(0xFF90CDF4)];
+        return const [Color(0xFF6B46C1), Color(0xFF805AD5)];
       case AllocationLevel.aggressive:
-        return const [Color(0xFFED8936), Color(0xFFFBD38D)];
+        return const [Color(0xFF553C9A), Color(0xFF6B46C1)];
       case AllocationLevel.veryAggressive:
-        return const [Color(0xFF6B46C1), Color(0xFF9F7AEA), Color(0xFFB794F4)];
+        return const [Color(0xFF44337A), Color(0xFF553C9A), Color(0xFF6B46C1)];
     }
   }
 }
@@ -166,18 +178,23 @@ enum PerformanceLevel {
     }
   }
 
+  // Darker than activeColor's pastel ramp — matches the same fix applied to
+  // AllocationLevel.gradientColors, so text/icon gradients across the three
+  // gauge tabs (Discipline/Allocation/Performance) are consistently legible
+  // rather than some washed-out and some not. activeColor keeps the lighter
+  // ramp for the gauge fill.
   List<Color> get gradientColors {
     switch (this) {
       case PerformanceLevel.significantlyBelow:
-        return const [Color(0xFFC6F6D5), Color(0xFFF0FFF4)];
-      case PerformanceLevel.belowAverage:
-        return const [Color(0xFF9AE6B4), Color(0xFFC6F6D5)];
-      case PerformanceLevel.inLine:
         return const [Color(0xFF68D391), Color(0xFF9AE6B4)];
-      case PerformanceLevel.strong:
+      case PerformanceLevel.belowAverage:
         return const [Color(0xFF48BB78), Color(0xFF68D391)];
+      case PerformanceLevel.inLine:
+        return const [Color(0xFF38A169), Color(0xFF48BB78)];
+      case PerformanceLevel.strong:
+        return const [Color(0xFF2F855A), Color(0xFF38A169)];
       case PerformanceLevel.veryStrong:
-        return const [Color(0xFF22543D), Color(0xFF38A169), Color(0xFF48BB78)];
+        return const [Color(0xFF22543D), Color(0xFF2F855A), Color(0xFF38A169)];
     }
   }
 }

@@ -276,16 +276,6 @@ class HomePortfolioAnalysis extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            'LOCKED',
-            style: TextStyle(
-              fontFamily: 'DMSans',
-              fontSize: 9,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.8,
-              color: Color(0xFF94A3B8),
-            ),
-          ),
         ],
       ),
     );
@@ -328,33 +318,38 @@ class HomePortfolioAnalysis extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(icon, size: 13, color: const Color(0xFF64748B)),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            title,
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontFamily: 'DMSans',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF0F172A),
-                            ),
-                          ),
-                        ),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      style: const TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF0F172A),
                       ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
                     width: 60,
                     height: 35,
-                    child: CustomPaint(painter: painter),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CustomPaint(size: const Size(60, 35), painter: painter),
+                        // The gauge is a bottom-anchored semicircle (its flat
+                        // edge sits on the box's bottom, domed upward) — the
+                        // dome's visual/area centroid sits toward that bottom
+                        // edge, below the box's plain vertical middle, not
+                        // above it.
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15),
+                          child: Icon(icon, size: 18, color: const Color(0xFF64748B)),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 8),
                   FittedBox(
@@ -486,12 +481,14 @@ class _MiniDisciplinePainter extends CustomPainter {
         ..strokeWidth = 6
         ..strokeCap = StrokeCap.round);
 
+    // Matches the segment shades in DisciplineGaugeSection's full-tab gauge
+    // (discipline_gauge_section.dart) so the home card and the tab agree.
     const activeColors = [
-      Color(0xFFBCE3FF),
-      Color(0xFF65B4FF),
-      Color(0xFF2796FF),
-      Color(0xFF0278D9),
-      Color(0xFF015294),
+      Color(0xFF4FB6FF),
+      Color(0xFF1E9BFF),
+      Color(0xFF0080FF),
+      Color(0xFF0060B8),
+      Color(0xFF00305C),
     ];
 
     int targetSegments = 1;

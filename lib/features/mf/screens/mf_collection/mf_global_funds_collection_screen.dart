@@ -26,7 +26,20 @@ class _MfGlobalFundsCollectionScreenState extends ConsumerState<MfGlobalFundsCol
     }).toList();
 
     if (_activeFilter == 'All') return funds;
-    return funds.where((f) => f.category.toLowerCase().contains(_activeFilter.toLowerCase())).toList();
+    return funds.where((f) {
+      final cat = f.category.toLowerCase();
+      final name = f.schemeName.toLowerCase();
+      switch (_activeFilter) {
+        case 'US Equity':
+          return cat.contains('us') || name.contains('nasdaq') || name.contains('us');
+        case 'Global Thematic':
+          return name.contains('semi') || name.contains('tech') || name.contains('ai') || cat.contains('global');
+        case 'Tech':
+          return name.contains('tech') || name.contains('semi') || name.contains('nasdaq') || cat.contains('tech');
+        default:
+          return true;
+      }
+    }).toList();
   }
 
   String _returnFor(CatalogFund f) {

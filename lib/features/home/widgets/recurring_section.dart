@@ -319,7 +319,7 @@ class DuePaymentCard extends StatelessWidget {
                         fontFamily: 'DMSans',
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
-                        color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                        color: isDark ? Colors.white.withValues(alpha: 0.7) : const Color(0xFF0F172A).withValues(alpha: 0.7),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

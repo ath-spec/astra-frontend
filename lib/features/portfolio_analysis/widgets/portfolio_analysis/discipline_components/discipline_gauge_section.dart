@@ -5,6 +5,26 @@ import '../../../models/portfolio_analysis_models.dart';
 import 'discipline_info_sheet.dart';
 import '../../../../../core/widgets/typewriter_text.dart';
 
+// Shared with _DisciplineGaugePainter so the insight text below the gauge
+// can be tinted with the exact same shade as the currently-filled segment,
+// rather than a separately-defined gradient that could drift out of sync.
+const _kDisciplineSegmentColors = [
+  Color(0xFF4FB6FF), // 1. Very Low (Light Blue)
+  Color(0xFF1E9BFF), // 2. Low (Blue)
+  Color(0xFF0080FF), // 3. Fair / Moderate (Vivid Blue)
+  Color(0xFF0060B8), // 4. Good (Dark Blue)
+  Color(0xFF00305C), // 5. Excellent (Darkest Blue)
+];
+
+Color _disciplineCurrentSegmentColor(double score) {
+  int targetSegments = 1;
+  if (score > 0.3) targetSegments = 2;
+  if (score >= 0.7) targetSegments = 3;
+  if (score >= 0.85) targetSegments = 4;
+  if (score >= 1.0) targetSegments = 5;
+  return _kDisciplineSegmentColors[targetSegments - 1];
+}
+
 class DisciplineGaugeSection extends StatefulWidget {
   final DisciplineLevel level;
 
@@ -126,21 +146,15 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
         const SizedBox(height: 24),
         GestureDetector(
           onTap: () {
-            // Map the 4-tier DisciplineLevel to the 5-tier info sheet UI
-            int index = 2; // Default to Fair
-            if (widget.level == DisciplineLevel.poor) index = 1; // Low
-            if (widget.level == DisciplineLevel.moderate) index = 2; // Fair
-            if (widget.level == DisciplineLevel.good) index = 3; // Good
-            if (widget.level == DisciplineLevel.excellent) {
-              index = 4; // Excellent
-            }
-
+            // DisciplineLevel.index already runs 0-3 in the same order as
+            // the info sheet's 4-tier scale (Poor, Moderate, Good,
+            // Excellent) — no remapping needed.
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
               builder: (context) =>
-                  DisciplineInfoSheet(currentLevelIndex: index),
+                  DisciplineInfoSheet(currentLevelIndex: widget.level.index),
             );
           },
           child: Container(
@@ -171,37 +185,37 @@ class _DisciplineGaugeSectionState extends State<DisciplineGaugeSection>
         const SizedBox(height: 32),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
-          child: ShaderMask(
-            blendMode: BlendMode.srcIn,
-            shaderCallback: (bounds) => LinearGradient(
-              colors: widget.level.gradientColors,
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ).createShader(bounds),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 2.0, right: 6.0),
-                  child: Icon(
-                    Icons.auto_awesome_rounded,
-                    size: 18,
-                    color: Colors.white,
-                  ),
-                ),
-                Expanded(
-                  child: TypewriterText(
-                    text: 'Small withdrawals and some active months, but the habit needs to show up more consistently to move the score higher.',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      fontSize: 13,
-                      color: Colors.white,
+          child: Builder(
+            builder: (context) {
+              // Solid match to the exact shade the gauge's current segment
+              // is painted in, rather than a separate gradient constant.
+              final segmentColor =
+                  _disciplineCurrentSegmentColor(widget.level.score);
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2.0, right: 6.0),
+                    child: Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 18,
+                      color: segmentColor,
                     ),
                   ),
-                ),
-              ],
-            ),
+                  Expanded(
+                    child: TypewriterText(
+                      text: 'Small withdrawals and some active months, but the habit needs to show up more consistently to move the score higher.',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        fontSize: 13,
+                        color: segmentColor,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ],
@@ -296,14 +310,11 @@ class _DisciplineGaugePainter extends CustomPainter {
     if (score >= 0.85) targetSegments = 4; // Good is 4th
     if (score >= 1.0) targetSegments = 5; // Excellent is 5th
 
-    // Static multi-color track using different shades of blue for different values
-    final activeColors = [
-      const Color(0xFFBCE3FF), // 1. Very Low (Lightest Blue)
-      const Color(0xFF65B4FF), // 2. Low (Light Blue)
-      const Color(0xFF2796FF), // 3. Fair / Moderate (Blue)
-      const Color(0xFF0278D9), // 4. Good (Dark Blue)
-      const Color(0xFF015294), // 5. Excellent (Darkest Blue)
-    ];
+    // Static multi-color track using different shades of blue for different
+    // values — saturated further from the original pastel set (esp. the
+    // lightest two, which read as near-white/washed-out against the card
+    // background) so every segment stays clearly, vividly blue.
+    final activeColors = _kDisciplineSegmentColors;
 
     final targetAngle = targetSegments * segmentSweep;
     final currentAngle = targetAngle * progress;

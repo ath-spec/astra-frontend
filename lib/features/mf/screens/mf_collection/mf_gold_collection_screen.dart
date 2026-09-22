@@ -26,7 +26,20 @@ class _MfGoldCollectionScreenState extends ConsumerState<MfGoldCollectionScreen>
     }).toList();
 
     if (_activeFilter == 'All') return funds;
-    return funds.where((f) => f.category.toLowerCase().contains(_activeFilter.toLowerCase())).toList();
+    return funds.where((f) {
+      final cat = f.category.toLowerCase();
+      final name = f.schemeName.toLowerCase();
+      switch (_activeFilter) {
+        case 'Gold ETF':
+          return cat.contains('gold') || name.contains('gold');
+        case 'Silver':
+          return cat.contains('silver') || name.contains('silver');
+        case 'Commodities':
+          return true; // gold + silver are both commodities; base list is already commodities-only
+        default:
+          return true;
+      }
+    }).toList();
   }
 
   String _returnFor(CatalogFund f) {
