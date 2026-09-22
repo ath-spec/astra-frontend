@@ -760,6 +760,18 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     if (anyFailed) {
       state = state.copyWith(banksStatusMessage: 'Some accounts could not be linked — please retry.');
     }
+    // Without this, the Home screen's dashboardSummaryProvider (a plain
+    // FutureProvider, fetched once and cached) kept showing whatever it had
+    // before onboarding started — which for a first-time user is only the
+    // two hardcoded AA-discovery placeholders (ICICI/HDFC), since this is
+    // the call that actually links everything the user picked, including
+    // banks staged via the picker. Every other path that changes linked
+    // accounts (completeBankLinking, setMfConnected/StocksConnected/
+    // BanksConnected, revokeBankConnection) already invalidates it; this one
+    // was the gap, which is why the real accounts only appeared after a
+    // manual refresh.
+    final hasAnyLinked = state.bankAccounts.any((b) => b.isLinked);
+    if (hasAnyLinked) invalidateDashboardProviders(_ref);
     return !anyFailed;
   }
 

@@ -148,10 +148,19 @@ class _BanksLinkingScreenState extends ConsumerState<BanksLinkingScreen> {
     } else if (hasSelectedDiscovered || state.pendingBankNames.isNotEmpty) {
       ctaLabel = 'APPROVE AND CONNECT';
       ctaActive = true;
-      onCtaTap = () {
-        notifier.approveAndConnectAll(accountType: _selectedAccountType);
+      onCtaTap = () async {
+        // This used to fire approveAndConnectAll() without awaiting it, then
+        // immediately call finishAssetConnection() and navigate home in the
+        // same synchronous breath. The POSTs, the refetch, and the dashboard
+        // invalidation all happened later, in the background, after the
+        // home screen had already rendered — so it showed whatever stale
+        // state existed at that instant (e.g. just the two hardcoded
+        // discovery placeholders) until something else happened to trigger
+        // a rebuild. Awaiting it means the account is actually linked and
+        // the dashboard is actually invalidated before we ever navigate.
+        await notifier.approveAndConnectAll(accountType: _selectedAccountType);
         notifier.finishAssetConnection();
-        context.go('/');
+        if (context.mounted) context.go('/');
       };
     } else {
       ctaLabel = 'APPROVE AND CONNECT';

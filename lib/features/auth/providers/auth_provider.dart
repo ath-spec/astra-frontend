@@ -71,16 +71,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   String pendingName = 'Investor';
   String pendingPan = '';
 
-  /// Advisory opt-in from the login form. Sent as `wants_rm` on OTP verify;
-  /// the backend assigns a Relationship Manager only when this is true.
-  bool pendingWantsRm = false;
-
   void setPendingPhone(String phone) {
     pendingPhone = phone;
-  }
-
-  void setPendingWantsRm(bool value) {
-    pendingWantsRm = value;
   }
 
   void setPendingPan(String pan) {
@@ -223,7 +215,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           'phone_number': phoneDigits,
           'otp': otp,
           'name': pendingName,
-          'wants_rm': pendingWantsRm,
+          'wants_rm': true,
           'banks': <String>[],
         },
       );
@@ -388,7 +380,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
           );
         }
       }
-      pendingWantsRm = data['wants_rm'] == true;
 
       state = AuthAuthenticated(
         User(
