@@ -51,7 +51,12 @@ class BankAccountItem {
     final linked = json['is_linked'] as bool? ?? true;
 
     return BankAccountItem(
-      id: shortId,
+      // The full id, not shortId — shortId is a display-only fragment
+      // (last 4 chars, used for the masked account number below). Using it
+      // as the actual id meant every revoke/unlink call sent a 4-character
+      // string instead of the real UUID, so the backend's uuid.Parse always
+      // failed with "invalid account ID" — every account, every time.
+      id: idStr,
       bankName: bName,
       accountNumber: accNum,
       isSelected: true,
@@ -222,6 +227,13 @@ class AssetConnectionNotifier extends StateNotifier<AssetConnectionState> {
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next is AuthAuthenticated && previous is! AuthAuthenticated) {
         fetchLiveBankAccounts();
+        // dashboardSummaryProvider is a plain FutureProvider — it fetches
+        // once and then holds that result for the rest of the app session.
+        // Without this, a fresh login/signup after a previous session (a
+        // different test account, or the same account post-DB-clear) kept
+        // showing the Home screen's Bank Accounts total from whoever was
+        // logged in before, until the user happened to pull-to-refresh.
+        invalidateDashboardProviders(ref);
       }
     });
   }
