@@ -24,6 +24,12 @@ class SpeechState {
   final String recognizedWords;
   final bool hasError;
   final String errorMessage;
+  // True once listening has run for a while with no transcript event at
+  // all (partial or final) — distinct from hasError, which is a fatal
+  // connection failure that stops listening. isStruggling keeps the mic
+  // open (the user might just be in a noisy room) but gives the UI
+  // something to show instead of silently doing nothing for 20+ seconds.
+  final bool isStruggling;
 
   const SpeechState({
     this.isListening = false,
@@ -31,6 +37,7 @@ class SpeechState {
     this.recognizedWords = '',
     this.hasError = false,
     this.errorMessage = '',
+    this.isStruggling = false,
   });
 
   SpeechState copyWith({
@@ -39,6 +46,7 @@ class SpeechState {
     String? recognizedWords,
     bool? hasError,
     String? errorMessage,
+    bool? isStruggling,
   }) {
     return SpeechState(
       isListening: isListening ?? this.isListening,
@@ -46,6 +54,7 @@ class SpeechState {
       recognizedWords: recognizedWords ?? this.recognizedWords,
       hasError: hasError ?? this.hasError,
       errorMessage: errorMessage ?? this.errorMessage,
+      isStruggling: isStruggling ?? this.isStruggling,
     );
   }
 }
@@ -66,6 +75,21 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
   // whole listening session so pausing mid-thought doesn't wipe out
   // everything said before the pause.
   String _finalizedText = '';
+
+  // Sarvam's streaming partials frequently revise their own trailing words
+  // as more audio context arrives — normal for realtime ASR, but applying
+  // every single revision straight to the state (and from there into a live
+  // TextEditingController) made the visible text flicker/rewrite itself
+  // several times a second. Partial updates are debounced so only the
+  // settled value after a short pause gets applied; final segments (a real
+  // phrase boundary) still apply immediately since they won't be revised.
+  Timer? _partialDebounce;
+  static const _partialDebounceDelay = Duration(milliseconds: 220);
+
+  // Fires once if listening runs for a while with no transcript event at
+  // all — see SpeechState.isStruggling.
+  Timer? _noSpeechTimer;
+  static const _noSpeechTimeout = Duration(seconds: 7);
 
   // startListening does several awaits (permission check, secure-storage
   // read, socket connect, recorder start) before the mic/socket are fully
@@ -106,7 +130,7 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
     if (!initialized || gen != _generation) return;
 
     _finalizedText = '';
-    state = state.copyWith(isListening: true, isProcessing: false, recognizedWords: '', hasError: false, errorMessage: '');
+    state = state.copyWith(isListening: true, isProcessing: false, recognizedWords: '', hasError: false, errorMessage: '', isStruggling: false);
 
     WebSocketChannel? channel;
     StreamSubscription? wsSub;
@@ -128,6 +152,14 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
             if (message is String) {
               final data = json.decode(message);
               if (data['event'] == 'transcript.partial' || data['event'] == 'transcript.final') {
+                // Any transcript event at all means Sarvam is hearing us —
+                // cancel the "having trouble hearing you" timer/flag.
+                _noSpeechTimer?.cancel();
+                _noSpeechTimer = null;
+                if (state.isStruggling) {
+                  state = state.copyWith(isStruggling: false, errorMessage: '');
+                }
+
                 final segment = data['text'] as String?;
                 final isFinal = data['event'] == 'transcript.final';
                 // Combine everything already finalized this session with
@@ -142,9 +174,24 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
                 if (isFinal) {
                   _finalizedText = combined;
                 }
-                if (combined.trim().isNotEmpty) {
-                  state = state.copyWith(recognizedWords: combined);
-                  _onResultCallback?.call(combined);
+                if (combined.trim().isEmpty) {
+                  // nothing to apply yet
+                } else if (isFinal) {
+                  // Final segments are settled (won't be revised) — apply
+                  // immediately and drop any pending partial debounce so it
+                  // can't overwrite this with a stale, older partial.
+                  _partialDebounce?.cancel();
+                  _partialDebounce = null;
+                  _applyTranscript(gen, combined);
+                } else {
+                  // Partial: Sarvam commonly revises the last word or two as
+                  // more audio context arrives, so wait for a short pause in
+                  // updates before pushing this into the visible text —
+                  // avoids the field rewriting itself several times a second.
+                  _partialDebounce?.cancel();
+                  _partialDebounce = Timer(_partialDebounceDelay, () {
+                    _applyTranscript(gen, combined);
+                  });
                 }
                 // Do NOT stop on a final — Sarvam finalizes each segment as
                 // the speaker pauses between phrases; the session should
@@ -158,11 +205,16 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
         },
         onError: (_) async {
           if (gen != _generation) return;
+          _partialDebounce?.cancel();
+          _partialDebounce = null;
+          _noSpeechTimer?.cancel();
+          _noSpeechTimer = null;
           await _cleanupRecording();
           state = state.copyWith(
             isListening: false,
             isProcessing: false,
             hasError: true,
+            isStruggling: false,
             errorMessage: 'Voice stream connection unavailable. Please type your query.',
           );
         },
@@ -195,6 +247,21 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
           _channel?.sink.add(payload);
         } catch (_) {}
       });
+
+      // If nothing at all comes back from Sarvam for a while (e.g. it can't
+      // pick the user's voice out of background noise), say so instead of
+      // leaving the mic open with zero feedback — previously this state was
+      // never surfaced in the UI at all.
+      _noSpeechTimer?.cancel();
+      _noSpeechTimer = Timer(_noSpeechTimeout, () {
+        if (gen != _generation || !state.isListening) return;
+        if (state.recognizedWords.trim().isEmpty) {
+          state = state.copyWith(
+            isStruggling: true,
+            errorMessage: "Having trouble hearing you — try speaking louder or moving somewhere quieter.",
+          );
+        }
+      });
     } catch (e) {
       await wsSub?.cancel();
       await channel?.sink.close();
@@ -202,6 +269,12 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
       await _cleanupRecording();
       state = state.copyWith(isListening: false, hasError: true, errorMessage: 'Voice input service unavailable.');
     }
+  }
+
+  void _applyTranscript(int gen, String combined) {
+    if (gen != _generation) return;
+    state = state.copyWith(recognizedWords: combined);
+    _onResultCallback?.call(combined);
   }
 
   Future<void> _cleanupRecording() async {
@@ -217,7 +290,11 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
   Future<void> stopListening() async {
     if (!state.isListening) return;
     _generation++; // supersede any startListening still mid-flight
-    state = state.copyWith(isListening: false, isProcessing: true);
+    _partialDebounce?.cancel();
+    _partialDebounce = null;
+    _noSpeechTimer?.cancel();
+    _noSpeechTimer = null;
+    state = state.copyWith(isListening: false, isProcessing: true, isStruggling: false);
     try {
       await _audioSub?.cancel();
       _audioSub = null;
@@ -236,6 +313,10 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
 
   Future<void> cancelListening() async {
     _generation++; // supersede any startListening still mid-flight
+    _partialDebounce?.cancel();
+    _partialDebounce = null;
+    _noSpeechTimer?.cancel();
+    _noSpeechTimer = null;
     try {
       await _audioSub?.cancel();
       _audioSub = null;
@@ -249,7 +330,7 @@ class SpeechNotifier extends StateNotifier<SpeechState> {
     } catch (_) {}
     _onResultCallback = null;
     _finalizedText = '';
-    state = state.copyWith(isListening: false, isProcessing: false, recognizedWords: '');
+    state = state.copyWith(isListening: false, isProcessing: false, recognizedWords: '', isStruggling: false);
   }
 }
 

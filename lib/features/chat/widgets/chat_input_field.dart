@@ -112,9 +112,42 @@ class _ChatInputFieldState extends ConsumerState<ChatInputField> {
               child: (ref.watch(speechProvider).isListening || ref.watch(speechProvider).isProcessing)
                   ? Padding(
                       padding: const EdgeInsets.only(bottom: 12.0),
-                      child: Center(child: VoiceAnimationWidget(isListening: ref.watch(speechProvider).isListening)),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Center(child: VoiceAnimationWidget(isListening: ref.watch(speechProvider).isListening)),
+                          if (ref.watch(speechProvider).isStruggling && ref.watch(speechProvider).errorMessage.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                ref.watch(speechProvider).errorMessage,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontFamily: 'DMSans',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFFB45309),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     )
-                  : const SizedBox.shrink(),
+                  : (ref.watch(speechProvider).hasError && ref.watch(speechProvider).errorMessage.isNotEmpty)
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Text(
+                            ref.watch(speechProvider).errorMessage,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: 'DMSans',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFFDC2626),
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
